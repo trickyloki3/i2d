@@ -14,6 +14,7 @@ int i2d_panic_func(const char *, ...);
 
 #define i2d_is_invalid(ptr) (!(ptr) || *(ptr))
 #define i2d_free(ptr) if(ptr) { free(ptr); (ptr) = NULL; }
+#define i2d_deit(ptr, deit) if(ptr) { deit(&(ptr)); }
 
 struct i2d_str {
     char * string;
