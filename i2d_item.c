@@ -57,9 +57,8 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
                     status = i2d_panic("failed to parse buffer");
                 result = i2d_item_db_read(fd, READ_SIZE, buffer);
             }
-            if(buffer->offset)
-                if(i2d_item_db_parse(item_db, buffer))
-                        status = i2d_panic("failed to parse buffer");
+            if(!status && buffer->offset && i2d_item_db_parse(item_db, buffer))
+                status = i2d_panic("failed to parse buffer");
             i2d_buf_deit(&buffer);
         }
         close(fd);
