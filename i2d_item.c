@@ -48,7 +48,7 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
     if(0 > fd) {
         status = i2d_panic("failed to open item db -- %s", path->string);
     } else {
-        if(i2d_buf_init(&buffer, READ_SIZE)) {
+        if(i2d_buf_init(&buffer, READ_SIZE + 4096)) {
             status = i2d_panic("failed to create buffer object");
         } else {
             result = i2d_item_db_read(fd, READ_SIZE, buffer);
