@@ -78,7 +78,7 @@ static int i2d_item_db_read(int fd, size_t size, i2d_buf * buffer) {
 
     if(0 >= select(fd + 1, &set, NULL, NULL, &timeout) || !FD_ISSET(fd, &set)) {
         status = i2d_panic("failed on select error or timeout");
-    } else if(i2d_buf_fit(buffer, size)) {
+    } else if(i2d_buf_fit(buffer, size + 1)) {
         status = I2D_FAIL;
     } else {
         result = read(fd, buffer->buffer + buffer->offset, size);
@@ -86,6 +86,7 @@ static int i2d_item_db_read(int fd, size_t size, i2d_buf * buffer) {
             status = i2d_panic("failed on read");
         } else {
             buffer->offset += result;
+            buffer->buffer[buffer->offset] = 0;
         }
     }
 
