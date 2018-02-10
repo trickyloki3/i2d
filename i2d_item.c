@@ -4,6 +4,7 @@
 
 static int i2d_item_db_load(i2d_item_db *, i2d_str *);
 static int i2d_item_db_read(int, size_t, i2d_buf *);
+static int i2d_item_db_parse(i2d_item_db *, i2d_buf *);
 
 int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
     int status = I2D_OK;
@@ -51,10 +52,14 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
             status = i2d_panic("failed to create buffer object");
         } else {
             result = i2d_item_db_read(fd, READ_SIZE, buffer);
-            while(0 < result) {
-
+            while(0 < result && !status) {
+                if(i2d_item_db_parse(item_db, buffer))
+                    status = i2d_panic("failed to parse buffer");
                 result = i2d_item_db_read(fd, READ_SIZE, buffer);
             }
+            if(buffer->offset)
+                if(i2d_item_db_parse(item_db, buffer))
+                        status = i2d_panic("failed to parse buffer");
             i2d_buf_deit(&buffer);
         }
         close(fd);
@@ -91,4 +96,40 @@ static int i2d_item_db_read(int fd, size_t size, i2d_buf * buffer) {
     }
 
     return status ? -1 : result;
+}
+
+static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
+    int status = I2D_OK;
+    char * anchor;
+    char * delimit;
+    size_t consume;
+
+    anchor = buffer->buffer;
+    delimit = strchr(anchor, '\n');
+    while(delimit && !status) {
+        *delimit = 0;
+
+        /*
+         * to-do:
+         * parse line for item
+         */
+
+        anchor = delimit + 1;
+        delimit = strchr(anchor, '\n');
+    }
+
+    consume = (size_t) anchor - (size_t) buffer->buffer;
+    if(0 == consume) {
+        status = i2d_panic("line overflow");
+    } else if(buffer->offset < consume) {
+        status = i2d_panic("buffer overflow");
+    } else {
+        if(buffer->offset > consume)
+            memcpy(buffer->buffer, buffer->buffer + consume, buffer->offset - consume);
+
+        buffer->offset -= consume;
+        buffer->buffer[buffer->offset]= 0;
+    }
+
+    return status;
 }
