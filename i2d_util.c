@@ -130,6 +130,18 @@ int i2d_buf_format(i2d_buf * buffer, const char * format, ...) {
     return status;
 }
 
+int i2d_buf_binary(i2d_buf * buffer, void * binary, size_t length) {
+    int status = I2D_OK;
+
+    if(i2d_buf_fit(buffer, length)) {
+        status = I2D_FAIL;
+    } else {
+        memcpy(buffer->buffer + buffer->offset, binary, length);
+    }
+
+    return status;
+}
+
 void i2d_buf_dump(i2d_buf * buffer, const char * tag) {
     size_t i;
 
