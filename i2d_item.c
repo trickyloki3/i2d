@@ -79,6 +79,7 @@ static void i2d_item_remove(i2d_item * x) {
 int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
     int status = I2D_OK;
     i2d_item_db * object;
+    i2d_str * item = NULL;
 
     if(i2d_is_invalid(result) || !path) {
         status = i2d_panic("invalid paramater");
@@ -87,10 +88,15 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_item_init(&object->item_list, "0,head,node,,,,,,,,,,,,,,,,,{},{},{}", 36)) {
-                status = i2d_panic("failed to create item object");
-            } else if(i2d_item_db_load(object, path)) {
-                status = i2d_panic("failed to load item db -- %s", path->string);
+            if(i2d_str_copy(&item, "0,head,node,,,,,,,,,,,,,,,,,{},{},{}", 36)) {
+                status = i2d_panic("failed to create string object");
+            } else {
+                if(i2d_item_init(&object->item_list, item->string, item->length)) {
+                    status = i2d_panic("failed to create item object");
+                } else if(i2d_item_db_load(object, path)) {
+                    status = i2d_panic("failed to load item db -- %s", path->string);
+                }
+                i2d_str_deit(&item);
             }
 
             if(status)
@@ -182,7 +188,6 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
     int status = I2D_OK;
     char * anchor;
     char * delimit;
-    char * string;
     size_t length;
     size_t consume;
     i2d_item * item;
@@ -195,15 +200,14 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
         /*
          * skip initial whitespace
          */
-        string = anchor;
-        while(isspace(*string))
-            string++;
+        while(isspace(*anchor))
+            anchor++;
 
         /*
          * skip empty lines
          */
-        if(delimit > string) {
-            length = (size_t) delimit - (size_t) string;
+        if(delimit > anchor) {
+            length = (size_t) delimit - (size_t) anchor;
 
             /*
              * each item must have at least
@@ -211,10 +215,10 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
              * including the newline, hence
              * the minimum length is 28
              */
-            if(28 < length && isdigit(*string)) {
+            if(28 < length && isdigit(*anchor)) {
                 item = NULL;
 
-                if(i2d_item_init(&item, string, length)) {
+                if(i2d_item_init(&item, anchor, length)) {
                     status = i2d_panic("failed to create item object");
                 } else {
                     i2d_item_append(item, item_db->item_list);
