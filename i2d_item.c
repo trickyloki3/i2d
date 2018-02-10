@@ -101,6 +101,8 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
     int status = I2D_OK;
     char * anchor;
     char * delimit;
+    char * string;
+    size_t length;
     size_t consume;
 
     anchor = buffer->buffer;
@@ -109,9 +111,28 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
         *delimit = 0;
 
         /*
-         * to-do:
-         * parse line for item
+         * skip initial whitespace
          */
+        string = anchor;
+        while(isspace(*string))
+            string++;
+
+        /*
+         * skip empty lines
+         */
+        if(delimit > string) {
+            length = (size_t) delimit - (size_t) string;
+
+            /*
+             * each item must have at least
+             * 21 commas and 6 curly braces
+             * including the newline, hence
+             * the minimum length is 28
+             */
+            if(28 < length && isdigit(*string)) {
+
+            }
+        }
 
         anchor = delimit + 1;
         delimit = strchr(anchor, '\n');
