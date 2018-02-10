@@ -4,26 +4,26 @@
 #include "i2d_util.h"
 
 struct i2d_item {
-    int id;
+    long id;
     i2d_str * aegis_name;
     i2d_str * name;
-    int type;
-    int buy;
-    int sell;
-    int weight;
-    int atk;
-    int matk;
-    int def;
-    int range;
-    int slots;
-    unsigned job;
-    unsigned upper;
-    int gender;
-    unsigned location;
-    int weapon_level;
-    int base_level;
-    int refineable;
-    int view;
+    long type;
+    long buy;
+    long sell;
+    long weight;
+    long atk;
+    long matk;
+    long def;
+    long range;
+    long slots;
+    unsigned long job;
+    unsigned long upper;
+    long gender;
+    unsigned long location;
+    long weapon_level;
+    long base_level;
+    long refineable;
+    long view;
     i2d_str * script;
     i2d_str * onequip_script;
     i2d_str * onunequip_script;
