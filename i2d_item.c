@@ -218,6 +218,7 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
                     status = i2d_panic("failed to create item object");
                 } else {
                     i2d_item_append(item, item_db->item_list);
+                    item_db->item_count++;
                 }
             }
         }

@@ -38,6 +38,7 @@ void i2d_item_deit(i2d_item **);
 
 struct i2d_item_db {
     i2d_item * item_list;
+    size_t item_count;
 };
 
 typedef struct i2d_item_db i2d_item_db;
