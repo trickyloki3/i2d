@@ -2,9 +2,79 @@
 
 #define READ_SIZE 65536
 
+static int i2d_item_parse(i2d_item *, char *, size_t);
+static void i2d_item_append(i2d_item *, i2d_item *);
+static void i2d_item_remove(i2d_item *);
 static int i2d_item_db_load(i2d_item_db *, i2d_str *);
 static int i2d_item_db_read(int, size_t, i2d_buf *);
 static int i2d_item_db_parse(i2d_item_db *, i2d_buf *);
+
+int i2d_item_init(i2d_item ** result, char * string, size_t length) {
+    int status = I2D_OK;
+    i2d_item * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_item_parse(object, string, length)) {
+                status = i2d_panic("failed to load item -- %s", string);
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status)
+                i2d_item_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_item_deit(i2d_item ** result) {
+    i2d_item * object;
+
+    object = *result;
+    object->next = NULL;
+    object->prev = NULL;
+    i2d_deit(object->aegis_name, i2d_str_deit);
+    i2d_deit(object->name, i2d_str_deit);
+    i2d_deit(object->script, i2d_str_deit);
+    i2d_deit(object->onequip_script, i2d_str_deit);
+    i2d_deit(object->onunequip_script, i2d_str_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
+static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
+    int status = I2D_OK;
+
+    /*
+     * to-do: parse the fields
+     */
+
+    return status;
+}
+
+static void i2d_item_append(i2d_item * x, i2d_item * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+static void i2d_item_remove(i2d_item * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
 
 int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
     int status = I2D_OK;
@@ -17,8 +87,12 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_item_db_load(object, path))
+            if(i2d_item_init(&object->item_list, "0,head,node,,,,,,,,,,,,,,,,,{},{},{}", 36)) {
+                status = i2d_panic("failed to create item object");
+            } else if(i2d_item_db_load(object, path)) {
                 status = i2d_panic("failed to load item db -- %s", path->string);
+            }
+
             if(status)
                 i2d_item_db_deit(&object);
             else
@@ -31,8 +105,15 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
 
 void i2d_item_db_deit(i2d_item_db ** result) {
     i2d_item_db * object;
+    i2d_item * item;
 
     object = *result;
+    while(object->item_list != object->item_list->next) {
+        item = object->item_list->next;
+        i2d_item_remove(item);
+        i2d_item_deit(&item);
+    }
+    i2d_deit(object->item_list, i2d_item_deit)
     i2d_free(object);
     *result = NULL;
 }
@@ -104,6 +185,7 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
     char * string;
     size_t length;
     size_t consume;
+    i2d_item * item;
 
     anchor = buffer->buffer;
     delimit = strchr(anchor, '\n');
@@ -130,7 +212,13 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
              * the minimum length is 28
              */
             if(28 < length && isdigit(*string)) {
+                item = NULL;
 
+                if(i2d_item_init(&item, string, length)) {
+                    status = i2d_panic("failed to create item object");
+                } else {
+                    i2d_item_append(item, item_db->item_list);
+                }
             }
         }
 
