@@ -5,6 +5,8 @@
 #include "stdlib.h"
 #include "stdarg.h"
 #include "string.h"
+#include "stdint.h"
+#include "inttypes.h"
 
 #define I2D_OK      0
 #define I2D_FAIL    1
@@ -25,4 +27,18 @@ typedef struct i2d_str i2d_str;
 
 int i2d_str_init(i2d_str **, const char *, size_t);
 void i2d_str_deit(i2d_str **);
+
+struct i2d_buf {
+    uint8_t * buffer;
+    size_t length;
+    size_t offset;
+};
+
+typedef struct i2d_buf i2d_buf;
+
+int i2d_buf_init(i2d_buf **, size_t);
+void i2d_buf_deit(i2d_buf **);
+int i2d_buf_fit(i2d_buf *, size_t);
+int i2d_buf_format(i2d_buf *, const char *, ...);
+void i2d_buf_dump(i2d_buf *, const char *);
 #endif
