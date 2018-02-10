@@ -25,7 +25,7 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
             while(-1 < opt && !status) {
                 switch(opt) {
                     case 'i':
-                        if(i2d_str_copy(&object->path, optarg, strlen(optarg)))
+                        if(i2d_str_copy(&object->item_db_path, optarg, strlen(optarg)))
                             status = i2d_panic("failed on path argument -- %s", optarg);
                         break;
                 }
@@ -46,7 +46,7 @@ void i2d_option_deit(i2d_option ** result) {
     i2d_option * object;
 
     object = *result;
-    i2d_deit(object->path, i2d_str_deit);
+    i2d_deit(object->item_db_path, i2d_str_deit);
     i2d_free(object);
     *result = NULL;
 }
