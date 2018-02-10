@@ -1,5 +1,6 @@
 OBJECT:=i2d_util.o
 OBJECT+=i2d_opt.o
+OBJECT+=i2d_item.o
 
 all: clean i2d
 

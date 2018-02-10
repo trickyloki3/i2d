@@ -2,11 +2,13 @@
 #define i2d_util_h
 
 #include "stdio.h"
+#include "fcntl.h"
 #include "stdlib.h"
 #include "stdarg.h"
 #include "string.h"
 #include "stdint.h"
 #include "inttypes.h"
+#include "sys/time.h"
 
 #define I2D_OK      0
 #define I2D_FAIL    1
