@@ -1,7 +1,7 @@
 #include "i2d_rbt.h"
 
 struct i2d_rbt_node {
-    int key;                    /* key */
+    void * key;                 /* key */
     void * val;                 /* value */
     int c;                      /* color */
     struct i2d_rbt_node * l;    /* left */
@@ -13,6 +13,7 @@ typedef struct i2d_rbt_node i2d_rbt_node;
 
 struct i2d_rbt {
     i2d_rbt_node * root;
+    i2d_rbt_cmp compare;
 };
 
 enum { black, red };
@@ -26,11 +27,11 @@ enum { black, red };
 static void right_rotate(i2d_rbt *, i2d_rbt_node *);
 static void left_rotate(i2d_rbt *, i2d_rbt_node *);
 static void change_parent(i2d_rbt *, i2d_rbt_node *, i2d_rbt_node *);
-static int i2d_rbt_node_init(i2d_rbt_node **, int, void *);
+static int i2d_rbt_node_init(i2d_rbt_node **, void *, void *);
 static void i2d_rbt_node_deit(i2d_rbt_node **);
 static int i2d_rbt_node_insert(i2d_rbt *, i2d_rbt_node *);
 static int i2d_rbt_node_delete(i2d_rbt *, i2d_rbt_node *);
-static int i2d_rbt_node_search(i2d_rbt *, i2d_rbt_node **, int);
+static int i2d_rbt_node_search(i2d_rbt *, i2d_rbt_node **, void *);
 
 /* right rotation on x shifts the tree's height
  * from the left sub tree to the right sub tree
@@ -130,7 +131,12 @@ static void change_parent(i2d_rbt * tree, i2d_rbt_node * x, i2d_rbt_node * y) {
         y->p = x->p;
 }
 
-int i2d_rbt_init(i2d_rbt ** result) {
+int i2d_rbt_cmp_long(void * left, void * right) {
+    return *((long * ) left) <  *((long * ) right) ? -1 :
+           *((long * ) left) == *((long * ) right) ?  0 : 1;
+}
+
+int i2d_rbt_init(i2d_rbt ** result, i2d_rbt_cmp compare) {
     int status = I2D_OK;
     i2d_rbt * object;
 
@@ -142,6 +148,7 @@ int i2d_rbt_init(i2d_rbt ** result) {
             status = i2d_panic("out of memory");
         } else {
             object->root = NULL;
+            object->compare = compare;
 
             if(status)
                 i2d_rbt_deit(&object);
@@ -167,7 +174,7 @@ void i2d_rbt_deit(i2d_rbt ** result) {
     *result = NULL;
 }
 
-int i2d_rbt_insert(i2d_rbt * tree, int key, void * value) {
+int i2d_rbt_insert(i2d_rbt * tree, void * key, void * value) {
     int status = I2D_OK;
     i2d_rbt_node * node = NULL;
 
@@ -183,7 +190,7 @@ int i2d_rbt_insert(i2d_rbt * tree, int key, void * value) {
     return status;
 }
 
-int i2d_rbt_delete(i2d_rbt * tree, int key) {
+int i2d_rbt_delete(i2d_rbt * tree, void * key) {
     int status = I2D_OK;
     i2d_rbt_node * node = NULL;
 
@@ -198,7 +205,7 @@ int i2d_rbt_delete(i2d_rbt * tree, int key) {
     return status;
 }
 
-int i2d_rbt_search(i2d_rbt * tree, int key, void ** value) {
+int i2d_rbt_search(i2d_rbt * tree, void * key, void ** value) {
     int status = I2D_OK;
     i2d_rbt_node * node = NULL;
 
@@ -211,7 +218,7 @@ int i2d_rbt_search(i2d_rbt * tree, int key, void ** value) {
     return status;
 }
 
-static int i2d_rbt_node_init(i2d_rbt_node ** result, int key, void * val) {
+static int i2d_rbt_node_init(i2d_rbt_node ** result, void * key, void * val) {
     int status = I2D_OK;
     i2d_rbt_node * object;
 
@@ -254,7 +261,7 @@ static int i2d_rbt_node_insert(i2d_rbt * tree, i2d_rbt_node * x) {
     i = tree->root;
     while(i) {
         p = i;
-        i = (x->key < i->key) ? i->l : i->r;
+        i = (0 > tree->compare(x->key, i->key)) ? i->l : i->r;
     }
 
     /* link x with x's parent */
@@ -262,7 +269,7 @@ static int i2d_rbt_node_insert(i2d_rbt * tree, i2d_rbt_node * x) {
     if(is_nil(p)) {
         tree->root = x;
     } else {
-        if(x->key < p->key) {
+        if(0 > tree->compare(x->key, p->key)) {
             p->l = x;
         } else {
             p->r = x;
@@ -441,15 +448,17 @@ static int i2d_rbt_node_delete(i2d_rbt * tree, i2d_rbt_node * x) {
     return I2D_OK;
 }
 
-static int i2d_rbt_node_search(i2d_rbt * tree, i2d_rbt_node ** x, int key) {
+static int i2d_rbt_node_search(i2d_rbt * tree, i2d_rbt_node ** x, void * key) {
+    int result;
     i2d_rbt_node * i;
 
     i = tree->root;
     while(i != NULL) {
-        if(key == i->key) {
+        result = tree->compare(key, i->key);
+        if(!result) {
             *x = i;
             return I2D_OK;
-        } else if(key < i->key) {
+        } else if(0 > result) {
             i = i->l;
         } else {
             i = i->r;
