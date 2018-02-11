@@ -48,4 +48,6 @@ int i2d_buf_fit(i2d_buf *, size_t);
 int i2d_buf_format(i2d_buf *, const char *, ...);
 int i2d_buf_binary(i2d_buf *, void *, size_t);
 void i2d_buf_dump(i2d_buf *, const char *);
+
+int i2d_fd_read(int, size_t, i2d_buf *);
 #endif

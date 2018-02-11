@@ -196,3 +196,33 @@ void i2d_buf_dump(i2d_buf * buffer, const char * tag) {
     }
     fprintf(stderr, "\n");
 }
+
+int i2d_fd_read(int fd, size_t size, i2d_buf * buffer) {
+    int status = I2D_OK;
+
+    fd_set set;
+    struct timeval timeout;
+    ssize_t result;
+
+    FD_ZERO(&set);
+    FD_SET(fd, &set);
+
+    timeout.tv_sec = 5;
+    timeout.tv_usec = 0;
+
+    if(0 >= select(fd + 1, &set, NULL, NULL, &timeout) || !FD_ISSET(fd, &set)) {
+        status = i2d_panic("failed on select error or timeout");
+    } else if(i2d_buf_fit(buffer, size + 1)) {
+        status = I2D_FAIL;
+    } else {
+        result = read(fd, buffer->buffer + buffer->offset, size);
+        if(0 > result) {
+            status = i2d_panic("failed on read");
+        } else {
+            buffer->offset += result;
+            buffer->buffer[buffer->offset] = 0;
+        }
+    }
+
+    return status ? -1 : result;
+}

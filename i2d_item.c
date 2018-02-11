@@ -6,7 +6,6 @@ static int i2d_item_parse(i2d_item *, char *, size_t);
 static void i2d_item_append(i2d_item *, i2d_item *);
 static void i2d_item_remove(i2d_item *);
 static int i2d_item_db_load(i2d_item_db *, i2d_str *);
-static int i2d_item_db_read(int, size_t, i2d_buf *);
 static int i2d_item_db_parse(i2d_item_db *, i2d_buf *);
 static int i2d_item_db_index(i2d_item_db *);
 
@@ -208,11 +207,11 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
         if(i2d_buf_init(&buffer, READ_SIZE + 4096)) {
             status = i2d_panic("failed to create buffer object");
         } else {
-            result = i2d_item_db_read(fd, READ_SIZE, buffer);
+            result = i2d_fd_read(fd, READ_SIZE, buffer);
             while(0 < result && !status) {
                 if(i2d_item_db_parse(item_db, buffer))
                     status = i2d_panic("failed to parse buffer");
-                result = i2d_item_db_read(fd, READ_SIZE, buffer);
+                result = i2d_fd_read(fd, READ_SIZE, buffer);
             }
             if(!status && buffer->offset && i2d_item_db_parse(item_db, buffer))
                 status = i2d_panic("failed to parse buffer");
@@ -222,36 +221,6 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
     }
 
     return status;
-}
-
-static int i2d_item_db_read(int fd, size_t size, i2d_buf * buffer) {
-    int status = I2D_OK;
-
-    fd_set set;
-    struct timeval timeout;
-    ssize_t result;
-
-    FD_ZERO(&set);
-    FD_SET(fd, &set);
-
-    timeout.tv_sec = 5;
-    timeout.tv_usec = 0;
-
-    if(0 >= select(fd + 1, &set, NULL, NULL, &timeout) || !FD_ISSET(fd, &set)) {
-        status = i2d_panic("failed on select error or timeout");
-    } else if(i2d_buf_fit(buffer, size + 1)) {
-        status = I2D_FAIL;
-    } else {
-        result = read(fd, buffer->buffer + buffer->offset, size);
-        if(0 > result) {
-            status = i2d_panic("failed on read");
-        } else {
-            buffer->offset += result;
-            buffer->buffer[buffer->offset] = 0;
-        }
-    }
-
-    return status ? -1 : result;
 }
 
 static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
