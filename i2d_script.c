@@ -60,6 +60,8 @@ static int i2d_lexer_add_symbol(i2d_lexer * lexer, enum i2d_token_type type) {
         if(!status)
             lexer->size++;
     }
+
+    return status;
 }
 
 static int i2d_lexer_add_string(i2d_lexer * lexer, enum i2d_token_type type, char * string, size_t length) {
@@ -83,3 +85,24 @@ static int i2d_lexer_add_string(i2d_lexer * lexer, enum i2d_token_type type, cha
 
     return status;
 }
+
+#if i2d_debug
+int i2d_lexer_test(void) {
+    int status = I2D_OK;
+    i2d_lexer * lexer = NULL;
+
+    assert(!i2d_lexer_init(&lexer));
+    assert(!i2d_lexer_add_string(lexer, I2D_IDENTIFIER, "variable", 8));
+    assert(!i2d_lexer_add_string(lexer, I2D_IDENTIFIER, "identifier", 10));
+    assert(I2D_IDENTIFIER == lexer->tokens[0].type);
+    assert(!strcmp("variable", lexer->tokens[0].string));
+    assert(8 == lexer->tokens[0].length);
+    assert(I2D_IDENTIFIER == lexer->tokens[1].type);
+    assert(!strcmp("identifier", lexer->tokens[1].string));
+    assert(10 == lexer->tokens[1].length);
+    i2d_lexer_reset(lexer);
+    i2d_lexer_deit(&lexer);
+
+    return status;
+}
+#endif

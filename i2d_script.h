@@ -5,7 +5,8 @@
 
 enum i2d_token_type {
     I2D_CURLY_OPEN,
-    I2D_CURLY_CLOSE
+    I2D_CURLY_CLOSE,
+    I2D_IDENTIFIER
 };
 
 struct i2d_token {
@@ -27,4 +28,8 @@ typedef struct i2d_lexer i2d_lexer;
 
 int i2d_lexer_init(i2d_lexer **);
 void i2d_lexer_deit(i2d_lexer **);
+
+#if i2d_debug
+int i2d_lexer_test(void);
+#endif
 #endif
