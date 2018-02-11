@@ -8,6 +8,7 @@ static void i2d_item_remove(i2d_item *);
 static int i2d_item_db_load(i2d_item_db *, i2d_str *);
 static int i2d_item_db_read(int, size_t, i2d_buf *);
 static int i2d_item_db_parse(i2d_item_db *, i2d_buf *);
+static int i2d_item_db_index(i2d_item_db *);
 
 int i2d_item_init(i2d_item ** result, char * string, size_t length) {
     int status = I2D_OK;
@@ -156,7 +157,9 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
                 if(i2d_item_init(&object->list, item->string, item->length)) {
                     status = i2d_panic("failed to create item object");
                 } else if(i2d_item_db_load(object, path)) {
-                    status = i2d_panic("failed to load item db -- %s", path->string);
+                    status = i2d_panic("failed to load item db");
+                } else if(i2d_item_db_index(object)) {
+                    status = i2d_panic("failed to index item db");
                 }
                 i2d_str_deit(&item);
             }
@@ -176,6 +179,9 @@ void i2d_item_db_deit(i2d_item_db ** result) {
     i2d_item * item;
 
     object = *result;
+    i2d_deit(object->index_by_name, i2d_rbt_deit);
+    i2d_deit(object->index_by_aegis, i2d_rbt_deit);
+    i2d_deit(object->index_by_id, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
             item = object->list->next;
@@ -306,6 +312,31 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
 
         buffer->offset -= consume;
         buffer->buffer[buffer->offset]= 0;
+    }
+
+    return status;
+}
+
+static int i2d_item_db_index(i2d_item_db * item_db) {
+    int status = I2D_OK;
+    i2d_item * item = NULL;
+
+    if( i2d_rbt_init(&item_db->index_by_id, i2d_rbt_cmp_long) ||
+        i2d_rbt_init(&item_db->index_by_aegis, i2d_rbt_cmp_str) ||
+        i2d_rbt_init(&item_db->index_by_name, i2d_rbt_cmp_str) ) {
+        status = i2d_panic("failed to create red black tree objects");
+    } else {
+        item = item_db->list->next;
+        while(item != item_db->list && !status) {
+            if(i2d_rbt_insert(item_db->index_by_id, &item->id, item)) {
+                status = i2d_panic("failed to index item by id -- %ld", item->id);
+            } else if(i2d_rbt_insert(item_db->index_by_aegis, item->aegis_name, item)) {
+                status = i2d_panic("failed to index item by aegis name -- %s", item->aegis_name->string);
+            } else if(i2d_rbt_insert(item_db->index_by_name, item->name, item)) {
+                status = i2d_panic("failed to index item by name -- %s", item->name->string);
+            }
+            item = item->next;
+        }
     }
 
     return status;

@@ -6,6 +6,7 @@
 typedef struct i2d_rbt i2d_rbt;
 typedef int (*i2d_rbt_cmp)(void *, void *);
 int i2d_rbt_cmp_long(void *, void *);
+int i2d_rbt_cmp_str(void *, void *);
 
 int i2d_rbt_init(i2d_rbt **, i2d_rbt_cmp);
 void i2d_rbt_deit(i2d_rbt **);

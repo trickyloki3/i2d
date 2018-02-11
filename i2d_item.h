@@ -39,6 +39,9 @@ void i2d_item_deit(i2d_item **);
 
 struct i2d_item_db {
     i2d_item * list;
+    i2d_rbt * index_by_id;
+    i2d_rbt * index_by_aegis;
+    i2d_rbt * index_by_name;
     size_t size;
 };
 

@@ -136,6 +136,10 @@ int i2d_rbt_cmp_long(void * left, void * right) {
            *((long * ) left) == *((long * ) right) ?  0 : 1;
 }
 
+int i2d_rbt_cmp_str(void * left, void * right) {
+    return strcmp(((i2d_str *) left)->string, ((i2d_str *) right)->string);
+}
+
 int i2d_rbt_init(i2d_rbt ** result, i2d_rbt_cmp compare) {
     int status = I2D_OK;
     i2d_rbt * object;
