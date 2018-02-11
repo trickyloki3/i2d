@@ -32,6 +32,7 @@ struct i2d_lexer {
 typedef struct i2d_lexer i2d_lexer;
 
 int i2d_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
+int i2d_token_write(i2d_token *, void *, size_t);
 void i2d_token_append(i2d_token *, i2d_token *);
 void i2d_token_remove(i2d_token *);
 

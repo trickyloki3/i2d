@@ -30,6 +30,19 @@ int i2d_token_init(i2d_lexer * lexer, i2d_token ** result, enum i2d_token_type t
     return status;
 }
 
+int i2d_token_write(i2d_token * token, void * data, size_t size) {
+    int status = I2D_OK;
+
+    if( token->buffer->offset == token->buffer->length &&
+        i2d_buf_fit(token->buffer, token->buffer->length * 2) ) {
+        status = I2D_FAIL;
+    } else if(i2d_buf_binary(token->buffer, data, size)) {
+        status = i2d_panic("failed to write buffer object");
+    }
+
+    return status;
+}
+
 void i2d_token_append(i2d_token * x, i2d_token * y) {
     x->next->prev = y->prev;
     y->prev->next = x->next;
@@ -98,11 +111,14 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     int status = I2D_OK;
     size_t i;
     i2d_token * token = NULL;
+    i2d_token * state = NULL;
 
     if(i2d_buf_fit(lexer->tokens, sizeof(i2d_token) * script->length)) {
         status = I2D_FAIL;
     } else {
         for(i = 0; i < script->length && !status; i++) {
+            token = NULL;
+
             switch(script->string[i]) {
                 case '{': status = i2d_token_init(lexer, &token, I2D_CURLY_OPEN); break;
                 case '}': status = i2d_token_init(lexer, &token, I2D_CURLY_CLOSE); break;
@@ -114,7 +130,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
 
             if(token) {
                 i2d_token_append(token, lexer->list);
-                token = NULL;
+                state = token;
             }
         }
     }
@@ -131,8 +147,8 @@ int i2d_lexer_test(void) {
 
     assert(!i2d_lexer_init(&lexer));
     assert(!i2d_str_copy(&script, "{}(),; _var1 var2", 6));
-    tokens = (i2d_token *) lexer->tokens->buffer;
     assert(!i2d_lexer_tokenize(lexer, script));
+    tokens = (i2d_token *) lexer->tokens->buffer;
     assert(tokens[1].type == I2D_CURLY_OPEN);
     assert(tokens[2].type == I2D_CURLY_CLOSE);
     assert(tokens[3].type == I2D_PARENTHESIS_OPEN);
