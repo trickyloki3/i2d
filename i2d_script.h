@@ -5,8 +5,7 @@
 
 enum i2d_token_type {
     I2D_CURLY_OPEN,
-    I2D_CURLY_CLOSE,
-    I2D_VARIABLE
+    I2D_CURLY_CLOSE
 };
 
 struct i2d_token {

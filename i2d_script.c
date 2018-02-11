@@ -1,6 +1,8 @@
 #include "i2d_script.h"
 
-static int i2d_lexer_add_token(i2d_lexer *, enum i2d_token_type, char *, size_t);
+static void i2d_lexer_reset(i2d_lexer *);
+static int i2d_lexer_add_symbol(i2d_lexer *, enum i2d_token_type);
+static int i2d_lexer_add_string(i2d_lexer *, enum i2d_token_type, char *, size_t);
 
 int i2d_lexer_init(i2d_lexer ** result) {
     int status = I2D_OK;
@@ -20,10 +22,10 @@ int i2d_lexer_init(i2d_lexer ** result) {
             object->tokens = (i2d_token *) object->array->buffer;
         }
 
-            if(status)
-                i2d_lexer_deit(&object);
-            else
-                *result = object;
+        if(status)
+            i2d_lexer_deit(&object);
+        else
+            *result = object;
         }
     }
 
@@ -40,7 +42,13 @@ void i2d_lexer_deit(i2d_lexer ** result) {
     *result = NULL;
 }
 
-static int i2d_lexer_add_token(i2d_lexer * lexer, enum i2d_token_type type, char * string, size_t length) {
+static void i2d_lexer_reset(i2d_lexer * lexer) {
+    lexer->size = 0;
+    lexer->array->offset = 0;
+    lexer->buffer->offset = 0;
+}
+
+static int i2d_lexer_add_symbol(i2d_lexer * lexer, enum i2d_token_type type) {
     int status = I2D_OK;
     i2d_token * token = NULL;
 
@@ -49,14 +57,27 @@ static int i2d_lexer_add_token(i2d_lexer * lexer, enum i2d_token_type type, char
     } else {
         token->type = type;
 
-        if(string && length) {
-            if(i2d_buf_object(lexer->buffer, length + 1, (void **) &token->string)) {
-                status = i2d_panic("failed to create string object");
-            } else {
-                memcpy(token->string, string, length);
-                token->length = length;
-                token->string[token->length] = 0;
-            }
+        if(!status)
+            lexer->size++;
+    }
+}
+
+static int i2d_lexer_add_string(i2d_lexer * lexer, enum i2d_token_type type, char * string, size_t length) {
+    int status = I2D_OK;
+    i2d_token * token = NULL;
+
+    if(!string || !length) {
+        status = i2d_panic("invalid paramater");
+    } else if(i2d_lexer_add_symbol(lexer, type)) {
+        status = i2d_panic("failed to add symbol");
+    } else {
+        token = &lexer->tokens[lexer->size - 1];
+        if(i2d_buf_object(lexer->buffer, length + 1, (void **) &token->string)) {
+            status = i2d_panic("failed to create string object");
+        } else {
+            memcpy(token->string, string, length);
+            token->length = length;
+            token->string[token->length] = 0;
         }
     }
 
