@@ -179,6 +179,7 @@ int i2d_buf_binary(i2d_buf * buffer, void * binary, size_t length) {
         status = I2D_FAIL;
     } else {
         memcpy(buffer->buffer + buffer->offset, binary, length);
+        buffer->offset += length;
     }
 
     return status;
