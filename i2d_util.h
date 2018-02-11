@@ -10,6 +10,9 @@
 #include "stdint.h"
 #include "inttypes.h"
 #include "sys/time.h"
+#if i2d_debug
+#include "assert.h"
+#endif
 
 #define I2D_OK      0
 #define I2D_FAIL    1
