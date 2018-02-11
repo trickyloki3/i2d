@@ -55,9 +55,71 @@ void i2d_item_deit(i2d_item ** result) {
 static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
     int status = I2D_OK;
 
-    /*
-     * to-do: parse the fields
-     */
+    size_t i;
+    int quote_depth = 0;
+    int brace_depth = 0;
+
+    char * anchor;
+    size_t extent;
+
+    int field = 0;
+
+    anchor = string;
+    for(i = 0; i < length && !status; i++) {
+        if('"' == string[i]) {
+            quote_depth = !quote_depth;
+        } else if('{' == string[i]) {
+            brace_depth++;
+        } else if('}' == string[i]) {
+            brace_depth--;
+        } else if(',' == string[i] && !quote_depth && !brace_depth) {
+            string[i] = 0;
+
+            if((string + i) < anchor) {
+                status = i2d_panic("line overflow");
+            } else {
+                extent = (size_t) (string + i) - (size_t) anchor;
+                switch(field) {
+                    case 0: status = i2d_strtol(&item->id, anchor, extent, 10); break;
+                    case 1: status = i2d_str_copy(&item->aegis_name, anchor, extent); break;
+                    case 2: status = i2d_str_copy(&item->name, anchor, extent); break;
+                    case 3: status = i2d_strtol(&item->type, anchor, extent, 10); break;
+                    case 4: status = i2d_strtol(&item->buy, anchor, extent, 10); break;
+                    case 5: status = i2d_strtol(&item->sell, anchor, extent, 10); break;
+                    case 6: status = i2d_strtol(&item->weight, anchor, extent, 10); break;
+                    case 7: status = i2d_strtol(&item->atk, anchor, extent, 10); break;
+                    case 8: status = i2d_strtol(&item->def, anchor, extent, 10); break;
+                    case 9: status = i2d_strtol(&item->range, anchor, extent, 10); break;
+                    case 10: status = i2d_strtol(&item->slots, anchor, extent, 10); break;
+                    case 11: status = i2d_strtoul(&item->job, anchor, extent, 16); break;
+                    case 12: status = i2d_strtoul(&item->upper, anchor, extent, 10); break;
+                    case 13: status = i2d_strtol(&item->gender, anchor, extent, 10); break;
+                    case 14: status = i2d_strtoul(&item->location, anchor, extent, 10); break;
+                    case 15: status = i2d_strtol(&item->weapon_level, anchor, extent, 10); break;
+                    case 16: status = i2d_strtol(&item->base_level, anchor, extent, 10); break;
+                    case 17: status = i2d_strtol(&item->refineable, anchor, extent, 10); break;
+                    case 18: status = i2d_strtol(&item->view, anchor, extent, 10); break;
+                    case 19: status = i2d_str_copy(&item->script, anchor, extent); break;
+                    case 20: status = i2d_str_copy(&item->onequip_script, anchor, extent); break;
+                    default: status = i2d_panic("item has too many columns"); break;
+                }
+                field++;
+            }
+
+            anchor = (string + i + 1);
+        }
+    }
+
+    if(!status) {
+        if(21 != field) {
+            status = i2d_panic("item is missing columns");
+        } else if(&string[i] < anchor) {
+            status = i2d_panic("line overflow");
+        } else {
+            extent = (size_t) &string[i] - (size_t) anchor;
+            status = i2d_str_copy(&item->onunequip_script, anchor, extent);
+        }
+    }
 
     return status;
 }
