@@ -6,7 +6,7 @@ static int i2d_item_parse(i2d_item *, char *, size_t);
 static void i2d_item_append(i2d_item *, i2d_item *);
 static void i2d_item_remove(i2d_item *);
 static int i2d_item_db_load(i2d_item_db *, i2d_str *);
-static int i2d_item_db_parse(i2d_item_db *, i2d_buf *);
+static int i2d_item_db_parse(char *, size_t, void *);
 static int i2d_item_db_index(i2d_item_db *);
 
 int i2d_item_init(i2d_item ** result, char * string, size_t length) {
@@ -209,11 +209,11 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
         } else {
             result = i2d_fd_read(fd, READ_SIZE, buffer);
             while(0 < result && !status) {
-                if(i2d_item_db_parse(item_db, buffer))
+                if(i2d_by_line(buffer, i2d_item_db_parse, item_db))
                     status = i2d_panic("failed to parse buffer");
                 result = i2d_fd_read(fd, READ_SIZE, buffer);
             }
-            if(!status && buffer->offset && i2d_item_db_parse(item_db, buffer))
+            if(!status && buffer->offset && i2d_by_line(buffer, i2d_item_db_parse, item_db))
                 status = i2d_panic("failed to parse buffer");
             i2d_buf_deit(&buffer);
         }
@@ -223,64 +223,16 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
     return status;
 }
 
-static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
+static int i2d_item_db_parse(char * string, size_t length, void * data) {
     int status = I2D_OK;
-    char * anchor;
-    char * delimit;
-    size_t length;
-    size_t consume;
-    i2d_item * item;
+    i2d_item_db * item_db = data;
+    i2d_item * item = NULL;
 
-    anchor = buffer->buffer;
-    delimit = strchr(anchor, '\n');
-    while(delimit && !status) {
-        *delimit = 0;
-
-        /*
-         * skip initial whitespace
-         */
-        while(isspace(*anchor))
-            anchor++;
-
-        /*
-         * skip empty lines
-         */
-        if(delimit > anchor) {
-            length = (size_t) delimit - (size_t) anchor;
-
-            /*
-             * each item must have at least
-             * 21 commas and 6 curly braces
-             * including the newline, hence
-             * the minimum length is 28
-             */
-            if(28 < length && isdigit(*anchor)) {
-                item = NULL;
-
-                if(i2d_item_init(&item, anchor, length)) {
-                    status = i2d_panic("failed to create item object");
-                } else {
-                    i2d_item_append(item, item_db->list);
-                    item_db->size++;
-                }
-            }
-        }
-
-        anchor = delimit + 1;
-        delimit = strchr(anchor, '\n');
-    }
-
-    consume = (size_t) anchor - (size_t) buffer->buffer;
-    if(0 == consume) {
-        status = i2d_panic("line overflow");
-    } else if(buffer->offset < consume) {
-        status = i2d_panic("buffer overflow");
+    if(i2d_item_init(&item, string, length)) {
+        status = i2d_panic("failed to create item object");
     } else {
-        if(buffer->offset > consume)
-            memcpy(buffer->buffer, buffer->buffer + consume, buffer->offset - consume);
-
-        buffer->offset -= consume;
-        buffer->buffer[buffer->offset]= 0;
+        i2d_item_append(item, item_db->list);
+        item_db->size++;
     }
 
     return status;

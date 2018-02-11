@@ -226,3 +226,59 @@ int i2d_fd_read(int fd, size_t size, i2d_buf * buffer) {
 
     return status ? -1 : result;
 }
+
+int i2d_by_line(i2d_buf * buffer, i2d_by_line_cb cb, void * data) {
+    int status = I2D_OK;
+    char * anchor;
+    char * delimit;
+    size_t length;
+    size_t consume;
+
+
+    anchor = buffer->buffer;
+    delimit = strchr(anchor, '\n');
+    while(delimit && !status) {
+        *delimit = 0;
+
+        /*
+         * skip initial whitespace
+         */
+        while(isspace(*anchor))
+            anchor++;
+
+        /*
+         * skip empty lines
+         */
+        if(delimit > anchor) {
+            length = (size_t) delimit - (size_t) anchor;
+
+            /*
+             * each item must have at least
+             * 21 commas and 6 curly braces
+             * including the newline, hence
+             * the minimum length is 28
+             */
+            if(28 < length && isdigit(*anchor)) {
+                status = cb(anchor, length, data);
+            }
+        }
+
+        anchor = delimit + 1;
+        delimit = strchr(anchor, '\n');
+    }
+
+    consume = (size_t) anchor - (size_t) buffer->buffer;
+    if(0 == consume) {
+        status = i2d_panic("line overflow");
+    } else if(buffer->offset < consume) {
+        status = i2d_panic("buffer overflow");
+    } else {
+        if(buffer->offset > consume)
+            memcpy(buffer->buffer, buffer->buffer + consume, buffer->offset - consume);
+
+        buffer->offset -= consume;
+        buffer->buffer[buffer->offset]= 0;
+    }
+
+    return status;
+}
