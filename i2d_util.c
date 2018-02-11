@@ -8,6 +8,47 @@ int i2d_panic_func(const char * format, ...) {
     return I2D_FAIL;
 }
 
+int i2d_strtol(long * result, const char * string, size_t length, int base) {
+    int status = I2D_OK;
+
+    long number;
+    char * end = NULL;
+
+    if(!length) {
+        *result = 0;
+    } else {
+        number = strtol(string, &end, base);
+        if(string + length != end) {
+            status = i2d_panic("invalid string '%s' in '%s'", end, string);
+        } else {
+            *result = number;
+        }
+    }
+
+
+    return status;
+}
+
+int i2d_strtoul(unsigned long * result, const char * string, size_t length, int base) {
+    int status = I2D_OK;
+
+    unsigned long number;
+    char * end = NULL;
+
+    if(!length) {
+        *result = 0;
+    } else {
+        number = strtoul(string, &end, base);
+        if(string + length != end) {
+            status = i2d_panic("invalid string '%s' in '%s'", end, string);
+        } else {
+            *result = number;
+        }
+    }
+
+    return status;
+}
+
 int i2d_str_copy(i2d_str ** result, const char * string, size_t length) {
     int status = I2D_OK;
     i2d_str * object;
@@ -24,7 +65,8 @@ int i2d_str_copy(i2d_str ** result, const char * string, size_t length) {
             if(!object->string) {
                 status = i2d_panic("out of memory");
             } else {
-                memcpy(object->string, string, length);
+                if(length)
+                    memcpy(object->string, string, length);
                 object->string[object->length] = 0;
             }
 

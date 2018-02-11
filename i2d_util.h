@@ -21,6 +21,9 @@ int i2d_panic_func(const char *, ...);
 #define i2d_free(ptr) if(ptr) { free(ptr); (ptr) = NULL; }
 #define i2d_deit(ptr, deit) if(ptr) { deit(&(ptr)); }
 
+int i2d_strtol(long *, const char *, size_t, int);
+int i2d_strtoul(unsigned long *, const char *, size_t, int);
+
 struct i2d_str {
     char * string;
     size_t length;
