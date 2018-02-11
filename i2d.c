@@ -1,6 +1,7 @@
 #include "i2d_util.h"
 #include "i2d_opt.h"
 #include "i2d_item.h"
+#include "i2d_rbt.h"
 
 int main(int argc, char * argv[]) {
     int status = I2D_OK;
