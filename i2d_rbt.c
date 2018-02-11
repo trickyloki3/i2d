@@ -456,5 +456,5 @@ static int i2d_rbt_node_search(i2d_rbt * tree, i2d_rbt_node ** x, int key) {
         }
     }
 
-    return 1;
+    return I2D_FAIL;
 }

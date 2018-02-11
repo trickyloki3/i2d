@@ -153,7 +153,7 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
             if(i2d_str_copy(&item, "0,head,node,,,,,,,,,,,,,,,,,{},{},{}", 36)) {
                 status = i2d_panic("failed to create string object");
             } else {
-                if(i2d_item_init(&object->item_list, item->string, item->length)) {
+                if(i2d_item_init(&object->list, item->string, item->length)) {
                     status = i2d_panic("failed to create item object");
                 } else if(i2d_item_db_load(object, path)) {
                     status = i2d_panic("failed to load item db -- %s", path->string);
@@ -176,13 +176,13 @@ void i2d_item_db_deit(i2d_item_db ** result) {
     i2d_item * item;
 
     object = *result;
-    if(object->item_list) {
-        while(object->item_list != object->item_list->next) {
-            item = object->item_list->next;
+    if(object->list) {
+        while(object->list != object->list->next) {
+            item = object->list->next;
             i2d_item_remove(item);
             i2d_item_deit(&item);
         }
-        i2d_item_deit(&object->item_list);
+        i2d_item_deit(&object->list);
     }
     i2d_free(object);
     *result = NULL;
@@ -285,8 +285,8 @@ static int i2d_item_db_parse(i2d_item_db * item_db, i2d_buf * buffer) {
                 if(i2d_item_init(&item, anchor, length)) {
                     status = i2d_panic("failed to create item object");
                 } else {
-                    i2d_item_append(item, item_db->item_list);
-                    item_db->item_count++;
+                    i2d_item_append(item, item_db->list);
+                    item_db->size++;
                 }
             }
         }

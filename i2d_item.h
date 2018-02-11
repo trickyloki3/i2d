@@ -2,6 +2,7 @@
 #define i2d_item_h
 
 #include "i2d_util.h"
+#include "i2d_rbt.h"
 
 struct i2d_item {
     long id;
@@ -37,8 +38,8 @@ int i2d_item_init(i2d_item **, char *, size_t);
 void i2d_item_deit(i2d_item **);
 
 struct i2d_item_db {
-    i2d_item * item_list;
-    size_t item_count;
+    i2d_item * list;
+    size_t size;
 };
 
 typedef struct i2d_item_db i2d_item_db;
