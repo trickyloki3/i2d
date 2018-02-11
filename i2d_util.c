@@ -184,6 +184,24 @@ int i2d_buf_binary(i2d_buf * buffer, void * binary, size_t length) {
     return status;
 }
 
+int i2d_buf_object(i2d_buf * buffer, size_t length, void ** result) {
+    int status = I2D_OK;
+    uint8_t * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else if(i2d_buf_fit(buffer, length)) {
+        status = I2D_FAIL;
+    } else {
+        object = buffer->buffer + buffer->offset;
+        memset(object, 0, length);
+        buffer->offset += length;
+        *result = object;
+    }
+
+    return status;
+}
+
 void i2d_buf_dump(i2d_buf * buffer, const char * tag) {
     size_t i;
 
