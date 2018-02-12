@@ -203,6 +203,20 @@ int i2d_buf_object(i2d_buf * buffer, size_t length, void ** result) {
     return status;
 }
 
+int i2d_buf_add_null(i2d_buf * buffer) {
+    int status = I2D_OK;
+
+    if(buffer->length > buffer->offset) {
+        buffer->buffer[buffer->offset] = 0;
+    } else if(i2d_buf_fit(buffer, 1)) {
+        status = I2D_FAIL;
+    } else {
+        buffer->buffer[buffer->offset] = 0;
+    }
+
+    return status;
+}
+
 void i2d_buf_dump(i2d_buf * buffer, const char * tag) {
     size_t i;
 
