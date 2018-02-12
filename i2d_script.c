@@ -269,6 +269,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                 }
                 break;
             case '"': continue;
+            case '\\': continue;
             default:
                 if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
                     if(state && I2D_LITERAL == state->type) {
@@ -279,6 +280,8 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                     }
                 } else if(isspace(symbol)) {
                     state = NULL;
+                } else {
+                    status = i2d_panic("unknown symbol %c", symbol);
                 }
                 break;
         }
