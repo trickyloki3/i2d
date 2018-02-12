@@ -162,6 +162,12 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                         status = i2d_token_init(lexer, &token, I2D_PERMANENT_ACCOUNT_LOCAL);
                     }
                     break;
+                case  '+': status = i2d_token_init(lexer, &token, I2D_ADD); break;
+                case  '-': status = i2d_token_init(lexer, &token, I2D_SUBTRACT); break;
+                case  '*': status = i2d_token_init(lexer, &token, I2D_MULTIPLY); break;
+                case  '/': status = i2d_token_init(lexer, &token, I2D_DIVIDE); break;
+                case  '%': status = i2d_token_init(lexer, &token, I2D_MODULUS); break;
+                case  '=': status = i2d_token_init(lexer, &token, I2D_ASSIGN); break;
                 default:
                     if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
                         if(state && I2D_LITERAL == state->type) {
@@ -194,7 +200,7 @@ int i2d_lexer_test(void) {
     i2d_token * tokens = NULL;
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ##", 46));
+    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % =", 58));
     assert(!i2d_lexer_tokenize(lexer, script));
     tokens = (i2d_token *) lexer->tokens->buffer;
     assert(tokens[1].type == I2D_CURLY_OPEN);
@@ -215,7 +221,12 @@ int i2d_lexer_test(void) {
     assert(tokens[16].type == I2D_TEMPORARY_INSTANCE);
     assert(tokens[17].type == I2D_PERMANENT_ACCOUNT_LOCAL);
     assert(tokens[18].type == I2D_PERMANENT_ACCOUNT_GLOBAL);
-
+    assert(tokens[19].type == I2D_ADD);
+    assert(tokens[20].type == I2D_SUBTRACT);
+    assert(tokens[21].type == I2D_MULTIPLY);
+    assert(tokens[22].type == I2D_DIVIDE);
+    assert(tokens[23].type == I2D_MODULUS);
+    assert(tokens[24].type == I2D_ASSIGN);
     i2d_str_deit(&script);
     i2d_lexer_deit(&lexer);
 
