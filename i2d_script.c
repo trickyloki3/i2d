@@ -186,8 +186,20 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                 }
                 break;
             case  '!': status = i2d_token_init(&token, I2D_NOT); break;
-            case  '&': status = i2d_token_init(&token, I2D_BIT_AND); break;
-            case  '|': status = i2d_token_init(&token, I2D_BIT_OR); break;
+            case  '&':
+                if(state && I2D_BIT_AND == state->type) {
+                    state->type = I2D_AND;
+                } else {
+                    status = i2d_token_init(&token, I2D_BIT_AND);
+                }
+                break;
+            case  '|':
+                if(state && I2D_BIT_OR == state->type) {
+                    state->type = I2D_OR;
+                } else {
+                    status = i2d_token_init(&token, I2D_BIT_OR);
+                }
+                break;
             case  '^': status = i2d_token_init(&token, I2D_BIT_XOR); break;
             case  '~': status = i2d_token_init(&token, I2D_BIT_NOT); break;
             case  '=':
@@ -211,6 +223,14 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                     }
                 } else {
                     status = i2d_token_init(&token, I2D_ASSIGN);
+                }
+                break;
+            case  '?': status = i2d_token_init(&token, I2D_CONDITIONAL); break;
+            case  ':':
+                if(state && I2D_COLON == state->type) {
+                    state->type = I2D_UNIQUE_NAME;
+                } else {
+                    status = i2d_token_init(&token, I2D_COLON);
                 }
                 break;
             default:
@@ -291,11 +311,16 @@ int i2d_lexer_test(void) {
         I2D_BIT_AND_ASSIGN,
         I2D_BIT_OR_ASSIGN,
         I2D_BIT_XOR_ASSIGN,
+        I2D_AND,
+        I2D_OR,
+        I2D_CONDITIONAL,
+        I2D_COLON,
+        I2D_UNIQUE_NAME,
         I2D_ASSIGN
     };
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= =", 123));
+    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 136));
     assert(!i2d_lexer_tokenize(lexer, script));
     token = lexer->list->next;
     while(token != lexer->list) {

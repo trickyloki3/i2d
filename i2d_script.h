@@ -48,6 +48,11 @@ enum i2d_token_type {
     I2D_BIT_AND_ASSIGN,
     I2D_BIT_OR_ASSIGN,
     I2D_BIT_XOR_ASSIGN,
+    I2D_AND,
+    I2D_OR,
+    I2D_CONDITIONAL,
+    I2D_COLON,
+    I2D_UNIQUE_NAME,
     I2D_ASSIGN
 };
 
