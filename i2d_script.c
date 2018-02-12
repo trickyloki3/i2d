@@ -43,6 +43,21 @@ int i2d_token_write(i2d_token * token, void * data, size_t size) {
     return status;
 }
 
+int i2d_token_get_literal(i2d_token * token, i2d_str * result) {
+    int status = I2D_OK;
+
+    if(I2D_LITERAL != token->type) {
+        status = i2d_panic("invalid token type");
+    } else if(i2d_buf_add_null(token->buffer)) {
+        status = i2d_panic("failed to write buffer object");
+    } else {
+        result->string = token->buffer->buffer;
+        result->length = token->buffer->offset;
+    }
+
+    return status;
+}
+
 void i2d_token_append(i2d_token * x, i2d_token * y) {
     x->next->prev = y->prev;
     y->prev->next = x->next;
@@ -110,6 +125,7 @@ void i2d_lexer_reset(i2d_lexer * lexer) {
 int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     int status = I2D_OK;
     size_t i;
+    char symbol;
     i2d_token * token = NULL;
     i2d_token * state = NULL;
 
@@ -117,15 +133,28 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
         status = I2D_FAIL;
     } else {
         for(i = 0; i < script->length && !status; i++) {
+            symbol = script->string[i];
             token = NULL;
 
-            switch(script->string[i]) {
+            switch(symbol) {
                 case '{': status = i2d_token_init(lexer, &token, I2D_CURLY_OPEN); break;
                 case '}': status = i2d_token_init(lexer, &token, I2D_CURLY_CLOSE); break;
                 case '(': status = i2d_token_init(lexer, &token, I2D_PARENTHESIS_OPEN); break;
                 case ')': status = i2d_token_init(lexer, &token, I2D_PARENTHESIS_CLOSE); break;
                 case ',': status = i2d_token_init(lexer, &token, I2D_COMMA); break;
                 case ';': status = i2d_token_init(lexer, &token, I2D_SEMICOLON); break;
+                default:
+                    if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
+                        if(state && I2D_LITERAL == state->type) {
+                            status = i2d_token_write(state, &symbol, sizeof(symbol));
+                        } else {
+                            status = i2d_token_init(lexer, &token, I2D_LITERAL) ||
+                                     i2d_token_write(token, &symbol, sizeof(symbol));
+                        }
+                    } else if(isspace(symbol)) {
+                        state = NULL;
+                    }
+                    break;
             }
 
             if(token) {
@@ -146,7 +175,7 @@ int i2d_lexer_test(void) {
     i2d_token * tokens = NULL;
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "{}(),; _var1 var2", 6));
+    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234", 22));
     assert(!i2d_lexer_tokenize(lexer, script));
     tokens = (i2d_token *) lexer->tokens->buffer;
     assert(tokens[1].type == I2D_CURLY_OPEN);
@@ -155,6 +184,9 @@ int i2d_lexer_test(void) {
     assert(tokens[4].type == I2D_PARENTHESIS_CLOSE);
     assert(tokens[5].type == I2D_COMMA);
     assert(tokens[6].type == I2D_SEMICOLON);
+    assert(tokens[7].type == I2D_LITERAL);
+    assert(tokens[8].type == I2D_LITERAL);
+    assert(tokens[9].type == I2D_LITERAL);
     i2d_str_deit(&script);
     i2d_lexer_deit(&lexer);
 
