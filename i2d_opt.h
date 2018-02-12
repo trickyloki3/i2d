@@ -5,6 +5,7 @@
 
 struct i2d_option {
     i2d_str * item_db_path;
+    i2d_str * json_path;
 };
 
 typedef struct i2d_option i2d_option;

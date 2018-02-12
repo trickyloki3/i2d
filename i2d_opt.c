@@ -2,10 +2,11 @@
 
 #include "getopt.h"
 
-static const char * i2d_short_options = "i:";
+static const char * i2d_short_options = "i:j:";
 
 static struct option i2d_long_options[] = {
-    { "path", required_argument, NULL, 'i' }
+    { "item_db_path", required_argument, NULL, 'i' },
+    { "json_path", required_argument, NULL, 'j' }
 };
 
 int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
@@ -26,7 +27,11 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
                 switch(opt) {
                     case 'i':
                         if(i2d_str_copy(&object->item_db_path, optarg, strlen(optarg)))
-                            status = i2d_panic("failed on path argument -- %s", optarg);
+                            status = i2d_panic("failed on item db path argument -- %s", optarg);
+                        break;
+                    case 'j':
+                        if(i2d_str_copy(&object->json_path, optarg, strlen(optarg)))
+                            status = i2d_panic("failed on json path argument -- %s", optarg);
                         break;
                 }
                 opt = getopt_long(argc, argv, i2d_short_options, i2d_long_options, NULL);
