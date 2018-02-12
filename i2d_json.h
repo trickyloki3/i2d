@@ -4,8 +4,10 @@
 #include "i2d_util.h"
 
 struct i2d_json {
-    i2d_str * keywords;
-    i2d_buf * buffer;
+    struct {
+        i2d_str * list;
+        size_t size;
+    } keywords;
 };
 
 typedef struct i2d_json i2d_json;
