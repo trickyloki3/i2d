@@ -171,7 +171,27 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
             case  '*': status = i2d_token_init(&token, I2D_MULTIPLY); break;
             case  '/': status = i2d_token_init(&token, I2D_DIVIDE); break;
             case  '%': status = i2d_token_init(&token, I2D_MODULUS); break;
-            case  '=': status = i2d_token_init(&token, I2D_ASSIGN); break;
+            case  '>': status = i2d_token_init(&token, I2D_GREATER); break;
+            case  '<': status = i2d_token_init(&token, I2D_LESS); break;
+            case  '!': status = i2d_token_init(&token, I2D_NOT); break;
+            case  '=':
+                if(state) {
+                    switch(state->type) {
+                        case I2D_ADD: state->type = I2D_ADD_ASSIGN; break;
+                        case I2D_SUBTRACT: state->type = I2D_SUBTRACT_ASSIGN; break;
+                        case I2D_MULTIPLY: state->type = I2D_MULTIPLY_ASSIGN; break;
+                        case I2D_DIVIDE: state->type = I2D_DIVIDE_ASSIGN; break;
+                        case I2D_MODULUS: state->type = I2D_MODULUS_ASSIGN; break;
+                        case I2D_ASSIGN: state->type = I2D_EQUAL; break;
+                        case I2D_GREATER: state->type = I2D_GREATER_EQUAL; break;
+                        case I2D_LESS: state->type = I2D_LESS_EQUAL; break;
+                        case I2D_NOT: state->type = I2D_NOT_EQUAL; break;
+                        default: status = i2d_token_init(&token, I2D_ASSIGN); break;
+                    }
+                } else {
+                    status = i2d_token_init(&token, I2D_ASSIGN);
+                }
+                break;
             default:
                 if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
                     if(state && I2D_LITERAL == state->type) {
@@ -227,11 +247,23 @@ int i2d_lexer_test(void) {
         I2D_MULTIPLY,
         I2D_DIVIDE,
         I2D_MODULUS,
+        I2D_ADD_ASSIGN,
+        I2D_SUBTRACT_ASSIGN,
+        I2D_MULTIPLY_ASSIGN,
+        I2D_DIVIDE_ASSIGN,
+        I2D_MODULUS_ASSIGN,
+        I2D_GREATER,
+        I2D_LESS,
+        I2D_NOT,
+        I2D_EQUAL,
+        I2D_GREATER_EQUAL,
+        I2D_LESS_EQUAL,
+        I2D_NOT_EQUAL,
         I2D_ASSIGN
     };
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % =", 58));
+    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != =", 91));
     assert(!i2d_lexer_tokenize(lexer, script));
     token = lexer->list->next;
     while(token != lexer->list) {
