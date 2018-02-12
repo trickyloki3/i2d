@@ -51,6 +51,7 @@ int i2d_buf_fit(i2d_buf *, size_t);
 int i2d_buf_format(i2d_buf *, const char *, ...);
 int i2d_buf_binary(i2d_buf *, void *, size_t);
 int i2d_buf_object(i2d_buf *, size_t, void **);
+void i2d_buf_zero(i2d_buf *);
 int i2d_buf_add_null(i2d_buf *);
 void i2d_buf_dump(i2d_buf *, const char *);
 

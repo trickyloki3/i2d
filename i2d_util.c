@@ -203,6 +203,11 @@ int i2d_buf_object(i2d_buf * buffer, size_t length, void ** result) {
     return status;
 }
 
+void i2d_buf_zero(i2d_buf * buffer) {
+    memset(buffer->buffer, 0, buffer->offset);
+    buffer->offset = 0;
+}
+
 int i2d_buf_add_null(i2d_buf * buffer) {
     int status = I2D_OK;
 
