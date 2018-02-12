@@ -200,9 +200,42 @@ int i2d_lexer_test(void) {
     i2d_str * script = NULL;
     i2d_token * token = NULL;
 
+    int i = 0;
+    enum i2d_token_type sequence[] = {
+        I2D_CURLY_OPEN,
+        I2D_CURLY_CLOSE,
+        I2D_PARENTHESIS_OPEN,
+        I2D_PARENTHESIS_CLOSE,
+        I2D_COMMA,
+        I2D_SEMICOLON,
+        I2D_LITERAL,
+        I2D_LITERAL,
+        I2D_LITERAL,
+        I2D_LITERAL,
+        I2D_TEMPORARY_CHARACTER,
+        I2D_PERMANENT_GLOBAL,
+        I2D_TEMPORARY_GLOBAL,
+        I2D_TEMPORARY_NPC,
+        I2D_TEMPORARY_SCOPE,
+        I2D_TEMPORARY_INSTANCE,
+        I2D_PERMANENT_ACCOUNT_LOCAL,
+        I2D_PERMANENT_ACCOUNT_GLOBAL,
+        I2D_ADD,
+        I2D_SUBTRACT,
+        I2D_MULTIPLY,
+        I2D_DIVIDE,
+        I2D_MODULUS,
+        I2D_ASSIGN
+    };
+
     assert(!i2d_lexer_init(&lexer));
     assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % =", 58));
     assert(!i2d_lexer_tokenize(lexer, script));
+    token = lexer->list->next;
+    while(token != lexer->list) {
+        assert(token->type == sequence[i++]);
+        token = token->next;
+    }
     i2d_str_deit(&script);
     i2d_lexer_deit(&lexer);
 
