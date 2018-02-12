@@ -268,7 +268,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                     status = i2d_token_init(&token, I2D_COLON);
                 }
                 break;
-            case '"': continue;
+            case  '"': continue;
             case '\\': continue;
             default:
                 if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {

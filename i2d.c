@@ -23,6 +23,8 @@ int main(int argc, char * argv[]) {
                 item = item_db->list->next;
                 while(item != item_db->list) {
                     i2d_lexer_tokenize(lexer, item->script);
+                    i2d_lexer_tokenize(lexer, item->onequip_script);
+                    i2d_lexer_tokenize(lexer, item->onunequip_script);
                     item = item->next;
                 }
                 i2d_lexer_deit(&lexer);
