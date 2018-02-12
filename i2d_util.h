@@ -37,6 +37,7 @@ typedef struct i2d_str i2d_str;
 
 int i2d_str_init(i2d_str **, const char *, size_t);
 void i2d_str_deit(i2d_str **);
+int i2d_str_copy(i2d_str *, const char *, size_t);
 
 struct i2d_buf {
     uint8_t * buffer;

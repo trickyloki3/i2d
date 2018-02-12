@@ -60,21 +60,29 @@ int i2d_str_init(i2d_str ** result, const char * string, size_t length) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            object->length = length;
-            object->string = malloc(object->length + 1);
-            if(!object->string) {
-                status = i2d_panic("out of memory");
-            } else {
-                if(length)
-                    memcpy(object->string, string, length);
-                object->string[object->length] = 0;
-            }
+            status = i2d_str_copy(object, string, length);
 
             if(status)
                 i2d_str_deit(&object);
             else
                 *result = object;
         }
+    }
+
+    return status;
+}
+
+int i2d_str_copy(i2d_str * object, const char * string, size_t length) {
+    int status = I2D_OK;
+
+    object->length = length;
+    object->string = malloc(object->length + 1);
+    if(!object->string) {
+        status = i2d_panic("out of memory");
+    } else {
+        if(length)
+            memcpy(object->string, string, length);
+        object->string[object->length] = 0;
     }
 
     return status;
