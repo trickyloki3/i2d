@@ -248,6 +248,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                     status = i2d_token_init(&token, I2D_COLON);
                 }
                 break;
+            case '"': continue;
             default:
                 if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
                     if(state && I2D_LITERAL == state->type) {
@@ -335,7 +336,7 @@ int i2d_lexer_test(void) {
     };
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "//\n{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 139));
+    assert(!i2d_str_copy(&script, "//\n\"\"{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 139));
     assert(!i2d_lexer_tokenize(lexer, script));
     token = lexer->list->next;
     while(token != lexer->list) {
