@@ -26,11 +26,11 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
             while(-1 < opt && !status) {
                 switch(opt) {
                     case 'i':
-                        if(i2d_str_copy(&object->item_db_path, optarg, strlen(optarg)))
+                        if(i2d_str_init(&object->item_db_path, optarg, strlen(optarg)))
                             status = i2d_panic("failed on item db path argument -- %s", optarg);
                         break;
                     case 'j':
-                        if(i2d_str_copy(&object->json_path, optarg, strlen(optarg)))
+                        if(i2d_str_init(&object->json_path, optarg, strlen(optarg)))
                             status = i2d_panic("failed on json path argument -- %s", optarg);
                         break;
                 }

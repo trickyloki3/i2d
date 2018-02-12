@@ -49,7 +49,7 @@ int i2d_strtoul(unsigned long * result, const char * string, size_t length, int 
     return status;
 }
 
-int i2d_str_copy(i2d_str ** result, const char * string, size_t length) {
+int i2d_str_init(i2d_str ** result, const char * string, size_t length) {
     int status = I2D_OK;
     i2d_str * object;
 

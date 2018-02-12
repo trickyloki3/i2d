@@ -81,8 +81,8 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                 extent = (size_t) (string + i) - (size_t) anchor;
                 switch(field) {
                     case 0: status = i2d_strtol(&item->id, anchor, extent, 10); break;
-                    case 1: status = i2d_str_copy(&item->aegis_name, anchor, extent); break;
-                    case 2: status = i2d_str_copy(&item->name, anchor, extent); break;
+                    case 1: status = i2d_str_init(&item->aegis_name, anchor, extent); break;
+                    case 2: status = i2d_str_init(&item->name, anchor, extent); break;
                     case 3: status = i2d_strtol(&item->type, anchor, extent, 10); break;
                     case 4: status = i2d_strtol(&item->buy, anchor, extent, 10); break;
                     case 5: status = i2d_strtol(&item->sell, anchor, extent, 10); break;
@@ -99,8 +99,8 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                     case 16: status = i2d_strtol(&item->base_level, anchor, extent, 10); break;
                     case 17: status = i2d_strtol(&item->refineable, anchor, extent, 10); break;
                     case 18: status = i2d_strtol(&item->view, anchor, extent, 10); break;
-                    case 19: status = i2d_str_copy(&item->script, anchor, extent); break;
-                    case 20: status = i2d_str_copy(&item->onequip_script, anchor, extent); break;
+                    case 19: status = i2d_str_init(&item->script, anchor, extent); break;
+                    case 20: status = i2d_str_init(&item->onequip_script, anchor, extent); break;
                     default: status = i2d_panic("item has too many columns"); break;
                 }
                 field++;
@@ -117,7 +117,7 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
             status = i2d_panic("line overflow");
         } else {
             extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_str_copy(&item->onunequip_script, anchor, extent);
+            status = i2d_str_init(&item->onunequip_script, anchor, extent);
         }
     }
 
@@ -150,7 +150,7 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_str_copy(&item, "0,head,node,,,,,,,,,,,,,,,,,{},{},{}", 36)) {
+            if(i2d_str_init(&item, "0,head,node,,,,,,,,,,,,,,,,,{},{},{}", 36)) {
                 status = i2d_panic("failed to create string object");
             } else {
                 if(i2d_item_init(&object->list, item->string, item->length)) {
