@@ -51,6 +51,7 @@ void i2d_option_deit(i2d_option ** result) {
     i2d_option * object;
 
     object = *result;
+    i2d_deit(object->json_path, i2d_str_deit);
     i2d_deit(object->item_db_path, i2d_str_deit);
     i2d_free(object);
     *result = NULL;
