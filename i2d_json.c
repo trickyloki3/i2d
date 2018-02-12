@@ -1,7 +1,7 @@
 #include "i2d_json.h"
 
-static i2d_keywords_load(i2d_keywords *, json_t *);
-static i2d_json_load(i2d_json *, i2d_str *);
+static int i2d_keywords_load(i2d_keywords *, json_t *);
+static int i2d_json_load(i2d_json *, i2d_str *);
 
 int i2d_keywords_init(i2d_keywords ** result, json_t * json) {
     int status = I2D_OK;
@@ -40,7 +40,7 @@ void i2d_keywords_deit(i2d_keywords ** result) {
     *result = NULL;
 }
 
-static i2d_keywords_load(i2d_keywords * keywords, json_t * json) {
+static int i2d_keywords_load(i2d_keywords * keywords, json_t * json) {
     int status = I2D_OK;
     json_t * array;
     size_t i;
@@ -114,7 +114,7 @@ void i2d_json_deit(i2d_json ** result) {
     *result = NULL;
 }
 
-static i2d_json_load(i2d_json * json, i2d_str * path) {
+static int i2d_json_load(i2d_json * json, i2d_str * path) {
     int status = I2D_OK;
     json_t * object = NULL;
 
