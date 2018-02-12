@@ -1,13 +1,14 @@
 #include "i2d_script.h"
 
-int i2d_token_init(i2d_lexer * lexer, i2d_token ** result, enum i2d_token_type type) {
+int i2d_token_init(i2d_token ** result, enum i2d_token_type type) {
     int status = I2D_OK;
     i2d_token * object = NULL;
 
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
-        if(i2d_buf_object(lexer->tokens, sizeof(*object), (void **) &object)) {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
             status = i2d_panic("out of memory");
         } else {
             if(i2d_buf_init(&object->buffer, 64)) {
@@ -19,15 +20,23 @@ int i2d_token_init(i2d_lexer * lexer, i2d_token ** result, enum i2d_token_type t
             }
 
             if(status) {
-                lexer->tokens->offset -= sizeof(*object);
+                i2d_token_deit(&object);
             } else {
                 *result = object;
-                lexer->size++;
             }
         }
     }
 
     return status;
+}
+
+void i2d_token_deit(i2d_token ** result) {
+    i2d_token * object;
+
+    object = *result;
+    i2d_deit(object->buffer, i2d_buf_deit);
+    i2d_free(object);
+    *result = NULL;
 }
 
 int i2d_token_write(i2d_token * token, void * data, size_t size) {
@@ -83,11 +92,8 @@ int i2d_lexer_init(i2d_lexer ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_buf_init(&object->tokens, 4096)) {
-                status = i2d_panic("failed to create buffer object");
-            } else if(i2d_token_init(object, &object->list, I2D_HEAD)) {
+            if(i2d_token_init(&object->list, I2D_HEAD))
                 status = i2d_panic("failed to create token object");
-            }
 
             if(status)
                 i2d_lexer_deit(&object);
@@ -104,22 +110,21 @@ void i2d_lexer_deit(i2d_lexer ** result) {
 
     object = *result;
     i2d_lexer_reset(object);
-    i2d_deit(object->tokens, i2d_buf_deit);
+    i2d_deit(object->list, i2d_token_deit);
     i2d_free(object);
     *result = NULL;
 }
 
 void i2d_lexer_reset(i2d_lexer * lexer) {
-    size_t i;
-    i2d_token * tokens;
+    i2d_token * token = NULL;
 
-    tokens = (i2d_token *) lexer->tokens->buffer;
-    for(i = 0; i < lexer->size; i++)
-        i2d_deit(tokens[i].buffer, i2d_buf_deit);
-
-    lexer->list = NULL;
-    lexer->size = 0;
-    lexer->tokens->offset = 0;
+    if(lexer->list) {
+        while(lexer->list != lexer->list->next) {
+            token = lexer->list->next;
+            i2d_token_remove(token);
+            i2d_token_deit(&token);
+        }
+    }
 }
 
 int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
@@ -129,63 +134,59 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     i2d_token * token = NULL;
     i2d_token * state = NULL;
 
-    if(i2d_buf_fit(lexer->tokens, sizeof(i2d_token) * script->length)) {
-        status = I2D_FAIL;
-    } else {
-        for(i = 0; i < script->length && !status; i++) {
-            symbol = script->string[i];
-            token = NULL;
+    for(i = 0; i < script->length && !status; i++) {
+        symbol = script->string[i];
+        token = NULL;
 
-            switch(symbol) {
-                case  '{': status = i2d_token_init(lexer, &token, I2D_CURLY_OPEN); break;
-                case  '}': status = i2d_token_init(lexer, &token, I2D_CURLY_CLOSE); break;
-                case  '(': status = i2d_token_init(lexer, &token, I2D_PARENTHESIS_OPEN); break;
-                case  ')': status = i2d_token_init(lexer, &token, I2D_PARENTHESIS_CLOSE); break;
-                case  ',': status = i2d_token_init(lexer, &token, I2D_COMMA); break;
-                case  ';': status = i2d_token_init(lexer, &token, I2D_SEMICOLON); break;
-                case  '$': status = i2d_token_init(lexer, &token, I2D_PERMANENT_GLOBAL); break;
-                case  '.': status = i2d_token_init(lexer, &token, I2D_TEMPORARY_NPC); break;
-                case '\'': status = i2d_token_init(lexer, &token, I2D_TEMPORARY_INSTANCE); break;
-                case  '@':
-                    if(state && I2D_PERMANENT_GLOBAL == state->type) {
-                        state->type = I2D_TEMPORARY_GLOBAL;
-                    } else if(state && I2D_TEMPORARY_NPC == state->type) {
-                        state->type = I2D_TEMPORARY_SCOPE;
+        switch(symbol) {
+            case  '{': status = i2d_token_init(&token, I2D_CURLY_OPEN); break;
+            case  '}': status = i2d_token_init(&token, I2D_CURLY_CLOSE); break;
+            case  '(': status = i2d_token_init(&token, I2D_PARENTHESIS_OPEN); break;
+            case  ')': status = i2d_token_init(&token, I2D_PARENTHESIS_CLOSE); break;
+            case  ',': status = i2d_token_init(&token, I2D_COMMA); break;
+            case  ';': status = i2d_token_init(&token, I2D_SEMICOLON); break;
+            case  '$': status = i2d_token_init(&token, I2D_PERMANENT_GLOBAL); break;
+            case  '.': status = i2d_token_init(&token, I2D_TEMPORARY_NPC); break;
+            case '\'': status = i2d_token_init(&token, I2D_TEMPORARY_INSTANCE); break;
+            case  '@':
+                if(state && I2D_PERMANENT_GLOBAL == state->type) {
+                    state->type = I2D_TEMPORARY_GLOBAL;
+                } else if(state && I2D_TEMPORARY_NPC == state->type) {
+                    state->type = I2D_TEMPORARY_SCOPE;
+                } else {
+                    status = i2d_token_init(&token, I2D_TEMPORARY_CHARACTER); break;
+                }
+                break;
+            case  '#':
+                if(state && I2D_PERMANENT_ACCOUNT_LOCAL == state->type) {
+                    state->type = I2D_PERMANENT_ACCOUNT_GLOBAL;
+                } else {
+                    status = i2d_token_init(&token, I2D_PERMANENT_ACCOUNT_LOCAL);
+                }
+                break;
+            case  '+': status = i2d_token_init(&token, I2D_ADD); break;
+            case  '-': status = i2d_token_init(&token, I2D_SUBTRACT); break;
+            case  '*': status = i2d_token_init(&token, I2D_MULTIPLY); break;
+            case  '/': status = i2d_token_init(&token, I2D_DIVIDE); break;
+            case  '%': status = i2d_token_init(&token, I2D_MODULUS); break;
+            case  '=': status = i2d_token_init(&token, I2D_ASSIGN); break;
+            default:
+                if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
+                    if(state && I2D_LITERAL == state->type) {
+                        status = i2d_token_write(state, &symbol, sizeof(symbol));
                     } else {
-                        status = i2d_token_init(lexer, &token, I2D_TEMPORARY_CHARACTER); break;
+                        status = i2d_token_init(&token, I2D_LITERAL) ||
+                                 i2d_token_write(token, &symbol, sizeof(symbol));
                     }
-                    break;
-                case  '#':
-                    if(state && I2D_PERMANENT_ACCOUNT_LOCAL == state->type) {
-                        state->type = I2D_PERMANENT_ACCOUNT_GLOBAL;
-                    } else {
-                        status = i2d_token_init(lexer, &token, I2D_PERMANENT_ACCOUNT_LOCAL);
-                    }
-                    break;
-                case  '+': status = i2d_token_init(lexer, &token, I2D_ADD); break;
-                case  '-': status = i2d_token_init(lexer, &token, I2D_SUBTRACT); break;
-                case  '*': status = i2d_token_init(lexer, &token, I2D_MULTIPLY); break;
-                case  '/': status = i2d_token_init(lexer, &token, I2D_DIVIDE); break;
-                case  '%': status = i2d_token_init(lexer, &token, I2D_MODULUS); break;
-                case  '=': status = i2d_token_init(lexer, &token, I2D_ASSIGN); break;
-                default:
-                    if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
-                        if(state && I2D_LITERAL == state->type) {
-                            status = i2d_token_write(state, &symbol, sizeof(symbol));
-                        } else {
-                            status = i2d_token_init(lexer, &token, I2D_LITERAL) ||
-                                     i2d_token_write(token, &symbol, sizeof(symbol));
-                        }
-                    } else if(isspace(symbol)) {
-                        state = NULL;
-                    }
-                    break;
-            }
+                } else if(isspace(symbol)) {
+                    state = NULL;
+                }
+                break;
+        }
 
-            if(token) {
-                i2d_token_append(token, lexer->list);
-                state = token;
-            }
+        if(token) {
+            i2d_token_append(token, lexer->list);
+            state = token;
         }
     }
 
@@ -197,36 +198,11 @@ int i2d_lexer_test(void) {
     int status = I2D_OK;
     i2d_lexer * lexer = NULL;
     i2d_str * script = NULL;
-    i2d_token * tokens = NULL;
+    i2d_token * token = NULL;
 
     assert(!i2d_lexer_init(&lexer));
     assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % =", 58));
     assert(!i2d_lexer_tokenize(lexer, script));
-    tokens = (i2d_token *) lexer->tokens->buffer;
-    assert(tokens[1].type == I2D_CURLY_OPEN);
-    assert(tokens[2].type == I2D_CURLY_CLOSE);
-    assert(tokens[3].type == I2D_PARENTHESIS_OPEN);
-    assert(tokens[4].type == I2D_PARENTHESIS_CLOSE);
-    assert(tokens[5].type == I2D_COMMA);
-    assert(tokens[6].type == I2D_SEMICOLON);
-    assert(tokens[7].type == I2D_LITERAL);
-    assert(tokens[8].type == I2D_LITERAL);
-    assert(tokens[9].type == I2D_LITERAL);
-    assert(tokens[10].type == I2D_LITERAL);
-    assert(tokens[11].type == I2D_TEMPORARY_CHARACTER);
-    assert(tokens[12].type == I2D_PERMANENT_GLOBAL);
-    assert(tokens[13].type == I2D_TEMPORARY_GLOBAL);
-    assert(tokens[14].type == I2D_TEMPORARY_NPC);
-    assert(tokens[15].type == I2D_TEMPORARY_SCOPE);
-    assert(tokens[16].type == I2D_TEMPORARY_INSTANCE);
-    assert(tokens[17].type == I2D_PERMANENT_ACCOUNT_LOCAL);
-    assert(tokens[18].type == I2D_PERMANENT_ACCOUNT_GLOBAL);
-    assert(tokens[19].type == I2D_ADD);
-    assert(tokens[20].type == I2D_SUBTRACT);
-    assert(tokens[21].type == I2D_MULTIPLY);
-    assert(tokens[22].type == I2D_DIVIDE);
-    assert(tokens[23].type == I2D_MODULUS);
-    assert(tokens[24].type == I2D_ASSIGN);
     i2d_str_deit(&script);
     i2d_lexer_deit(&lexer);
 
