@@ -222,6 +222,11 @@ int i2d_rbt_search(i2d_rbt * tree, void * key, void ** value) {
     return status;
 }
 
+int i2d_rbt_exist(i2d_rbt * tree, void * key) {
+    i2d_rbt_node * node = NULL;
+    return i2d_rbt_node_search(tree, &node, key);
+}
+
 static int i2d_rbt_node_init(i2d_rbt_node ** result, void * key, void * val) {
     int status = I2D_OK;
     i2d_rbt_node * object;

@@ -13,4 +13,5 @@ void i2d_rbt_deit(i2d_rbt **);
 int i2d_rbt_insert(i2d_rbt *, void *, void *);
 int i2d_rbt_delete(i2d_rbt *, void *);
 int i2d_rbt_search(i2d_rbt *, void *, void **);
+int i2d_rbt_exist(i2d_rbt *, void *);
 #endif
