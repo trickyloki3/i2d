@@ -53,7 +53,8 @@ enum i2d_token_type {
     I2D_CONDITIONAL,
     I2D_COLON,
     I2D_UNIQUE_NAME,
-    I2D_ASSIGN
+    I2D_ASSIGN,
+    I2D_LINE_COMMENT
 };
 
 struct i2d_token {

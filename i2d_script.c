@@ -140,6 +140,15 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
         symbol = script->string[i];
         token = NULL;
 
+        if(state && I2D_LINE_COMMENT == state->type) {
+            if('\n' != symbol) {
+                continue;
+            } else {
+                i2d_token_remove(state);
+                i2d_token_deit(&state);
+            }
+        }
+
         switch(symbol) {
             case  '{': status = i2d_token_init(&token, I2D_CURLY_OPEN); break;
             case  '}': status = i2d_token_init(&token, I2D_CURLY_CLOSE); break;
@@ -169,7 +178,13 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
             case  '+': status = i2d_token_init(&token, I2D_ADD); break;
             case  '-': status = i2d_token_init(&token, I2D_SUBTRACT); break;
             case  '*': status = i2d_token_init(&token, I2D_MULTIPLY); break;
-            case  '/': status = i2d_token_init(&token, I2D_DIVIDE); break;
+            case  '/':
+                if(state && I2D_DIVIDE == state->type) {
+                    state->type = I2D_LINE_COMMENT;
+                } else {
+                    status = i2d_token_init(&token, I2D_DIVIDE);
+                }
+                break;
             case  '%': status = i2d_token_init(&token, I2D_MODULUS); break;
             case  '>':
                 if(state && I2D_GREATER == state->type) {
@@ -320,7 +335,7 @@ int i2d_lexer_test(void) {
     };
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 136));
+    assert(!i2d_str_copy(&script, "//\n{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 139));
     assert(!i2d_lexer_tokenize(lexer, script));
     token = lexer->list->next;
     while(token != lexer->list) {
