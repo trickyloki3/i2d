@@ -69,12 +69,14 @@ typedef struct i2d_token i2d_token;
 
 struct i2d_lexer {
     i2d_token * list;
+    i2d_token * cache;
 };
 
 typedef struct i2d_lexer i2d_lexer;
 
 int i2d_token_init(i2d_token **, enum i2d_token_type);
 void i2d_token_deit(i2d_token **);
+void i2d_token_reset(i2d_token *);
 int i2d_token_write(i2d_token *, void *, size_t);
 int i2d_token_get_literal(i2d_token *, i2d_str *);
 char i2d_token_get_last_symbol(i2d_token *);
@@ -84,6 +86,7 @@ void i2d_token_remove(i2d_token *);
 int i2d_lexer_init(i2d_lexer **);
 void i2d_lexer_deit(i2d_lexer **);
 void i2d_lexer_reset(i2d_lexer *);
+int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
 int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
 
 #if i2d_debug
