@@ -54,7 +54,8 @@ enum i2d_token_type {
     I2D_COLON,
     I2D_UNIQUE_NAME,
     I2D_ASSIGN,
-    I2D_LINE_COMMENT
+    I2D_LINE_COMMENT,
+    I2D_BLOCK_COMMENT
 };
 
 struct i2d_token {
@@ -76,6 +77,7 @@ int i2d_token_init(i2d_token **, enum i2d_token_type);
 void i2d_token_deit(i2d_token **);
 int i2d_token_write(i2d_token *, void *, size_t);
 int i2d_token_get_literal(i2d_token *, i2d_str *);
+char i2d_token_get_last_symbol(i2d_token *);
 void i2d_token_append(i2d_token *, i2d_token *);
 void i2d_token_remove(i2d_token *);
 

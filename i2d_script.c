@@ -67,6 +67,11 @@ int i2d_token_get_literal(i2d_token * token, i2d_str * result) {
     return status;
 }
 
+char i2d_token_get_last_symbol(i2d_token * token) {
+    i2d_buf * buffer = token->buffer;
+    return (buffer->offset > 0) ? buffer->buffer[buffer->offset - 1] : 0;
+}
+
 void i2d_token_append(i2d_token * x, i2d_token * y) {
     x->next->prev = y->prev;
     y->prev->next = x->next;
@@ -140,12 +145,21 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
         symbol = script->string[i];
         token = NULL;
 
-        if(state && I2D_LINE_COMMENT == state->type) {
-            if('\n' != symbol) {
+        if(state) {
+            if(I2D_LINE_COMMENT == state->type) {
+                if('\n' == symbol) {
+                    i2d_token_remove(state);
+                    i2d_token_deit(&state);
+                }
                 continue;
-            } else {
-                i2d_token_remove(state);
-                i2d_token_deit(&state);
+            } else if(I2D_BLOCK_COMMENT == state->type) {
+                if('/' != symbol) {
+                    i2d_token_write(state, &symbol, sizeof(symbol));
+                } else if('*' == i2d_token_get_last_symbol(state)) {
+                    i2d_token_remove(state);
+                    i2d_token_deit(&state);
+                }
+                continue;
             }
         }
 
@@ -177,7 +191,13 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                 break;
             case  '+': status = i2d_token_init(&token, I2D_ADD); break;
             case  '-': status = i2d_token_init(&token, I2D_SUBTRACT); break;
-            case  '*': status = i2d_token_init(&token, I2D_MULTIPLY); break;
+            case  '*':
+                if(state && I2D_DIVIDE == state->type) {
+                    state->type = I2D_BLOCK_COMMENT;
+                } else {
+                    status = i2d_token_init(&token, I2D_MULTIPLY);
+                }
+                break;
             case  '/':
                 if(state && I2D_DIVIDE == state->type) {
                     state->type = I2D_LINE_COMMENT;
@@ -336,7 +356,7 @@ int i2d_lexer_test(void) {
     };
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "//\n\"\"{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 139));
+    assert(!i2d_str_copy(&script, "//\n\"\"/*123*/{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 147));
     assert(!i2d_lexer_tokenize(lexer, script));
     token = lexer->list->next;
     while(token != lexer->list) {
