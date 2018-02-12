@@ -134,6 +134,8 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     i2d_token * token = NULL;
     i2d_token * state = NULL;
 
+    i2d_lexer_reset(lexer);
+
     for(i = 0; i < script->length && !status; i++) {
         symbol = script->string[i];
         token = NULL;
