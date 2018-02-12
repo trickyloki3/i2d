@@ -168,7 +168,7 @@ int i2d_buf_format(i2d_buf * buffer, const char * format, ...) {
     } else if(i2d_buf_fit(buffer, length + 1)) {
         status = I2D_FAIL;
     } else {
-        result = vsnprintf(buffer->buffer + buffer->offset, length + 1, format, copy);
+        result = vsnprintf((char *) (buffer->buffer + buffer->offset), length + 1, format, copy);
         if(result != length)
             status = i2d_panic("format message is truncated");
         else
@@ -281,7 +281,7 @@ int i2d_by_line(i2d_buf * buffer, i2d_by_line_cb cb, void * data) {
     size_t consume;
 
 
-    anchor = buffer->buffer;
+    anchor = (char *) buffer->buffer;
     delimit = strchr(anchor, '\n');
     while(delimit && !status) {
         *delimit = 0;

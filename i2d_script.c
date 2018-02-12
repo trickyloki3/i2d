@@ -66,7 +66,7 @@ int i2d_token_get_literal(i2d_token * token, i2d_str * result) {
     } else if(i2d_buf_add_null(token->buffer)) {
         status = i2d_panic("failed to write buffer object");
     } else {
-        result->string = token->buffer->buffer;
+        result->string = (char *) token->buffer->buffer;
         result->length = token->buffer->offset;
     }
 
