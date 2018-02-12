@@ -3,6 +3,7 @@ OBJECT+=i2d_opt.o
 OBJECT+=i2d_item.o
 OBJECT+=i2d_rbt.o
 OBJECT+=i2d_script.o
+OBJECT+=i2d_json.o
 
 all: clean i2d
 
