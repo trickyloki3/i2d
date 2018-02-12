@@ -171,9 +171,25 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
             case  '*': status = i2d_token_init(&token, I2D_MULTIPLY); break;
             case  '/': status = i2d_token_init(&token, I2D_DIVIDE); break;
             case  '%': status = i2d_token_init(&token, I2D_MODULUS); break;
-            case  '>': status = i2d_token_init(&token, I2D_GREATER); break;
-            case  '<': status = i2d_token_init(&token, I2D_LESS); break;
+            case  '>':
+                if(state && I2D_GREATER == state->type) {
+                    state->type = I2D_RIGHT_SHIFT;
+                } else {
+                    status = i2d_token_init(&token, I2D_GREATER);
+                }
+                break;
+            case  '<':
+                if(state && I2D_LESS == state->type) {
+                    state->type = I2D_LEFT_SHIFT;
+                } else {
+                    status = i2d_token_init(&token, I2D_LESS);
+                }
+                break;
             case  '!': status = i2d_token_init(&token, I2D_NOT); break;
+            case  '&': status = i2d_token_init(&token, I2D_BIT_AND); break;
+            case  '|': status = i2d_token_init(&token, I2D_BIT_OR); break;
+            case  '^': status = i2d_token_init(&token, I2D_BIT_XOR); break;
+            case  '~': status = i2d_token_init(&token, I2D_BIT_NOT); break;
             case  '=':
                 if(state) {
                     switch(state->type) {
@@ -186,6 +202,11 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                         case I2D_GREATER: state->type = I2D_GREATER_EQUAL; break;
                         case I2D_LESS: state->type = I2D_LESS_EQUAL; break;
                         case I2D_NOT: state->type = I2D_NOT_EQUAL; break;
+                        case I2D_RIGHT_SHIFT: state->type = I2D_RIGHT_SHIFT_ASSIGN; break;
+                        case I2D_LEFT_SHIFT: state->type = I2D_LEFT_SHIFT_ASSIGN; break;
+                        case I2D_BIT_AND: state->type = I2D_BIT_AND_ASSIGN; break;
+                        case I2D_BIT_OR: state->type = I2D_BIT_OR_ASSIGN; break;
+                        case I2D_BIT_XOR: state->type = I2D_BIT_XOR_ASSIGN; break;
                         default: status = i2d_token_init(&token, I2D_ASSIGN); break;
                     }
                 } else {
@@ -259,11 +280,22 @@ int i2d_lexer_test(void) {
         I2D_GREATER_EQUAL,
         I2D_LESS_EQUAL,
         I2D_NOT_EQUAL,
+        I2D_RIGHT_SHIFT,
+        I2D_LEFT_SHIFT,
+        I2D_BIT_AND,
+        I2D_BIT_OR,
+        I2D_BIT_XOR,
+        I2D_BIT_NOT,
+        I2D_RIGHT_SHIFT_ASSIGN,
+        I2D_LEFT_SHIFT_ASSIGN,
+        I2D_BIT_AND_ASSIGN,
+        I2D_BIT_OR_ASSIGN,
+        I2D_BIT_XOR_ASSIGN,
         I2D_ASSIGN
     };
 
     assert(!i2d_lexer_init(&lexer));
-    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != =", 91));
+    assert(!i2d_str_copy(&script, "{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= =", 123));
     assert(!i2d_lexer_tokenize(lexer, script));
     token = lexer->list->next;
     while(token != lexer->list) {
