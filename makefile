@@ -1,3 +1,6 @@
+CFLAGS+=$(shell pkg-config jansson --cflags)
+LDLIBS+=$(shell pkg-config jansson --libs)
+
 OBJECT:=i2d_util.o
 OBJECT+=i2d_opt.o
 OBJECT+=i2d_item.o
