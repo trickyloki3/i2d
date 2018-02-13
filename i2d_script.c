@@ -437,6 +437,7 @@ void i2d_block_deit(i2d_block ** result) {
     i2d_block * object;
 
     object = *result;
+    i2d_deit(object->statement, i2d_token_list_deit);
     i2d_free(object);
     *result = NULL;
 }
