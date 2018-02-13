@@ -27,9 +27,12 @@ int main(int argc, char * argv[]) {
                 } else {
                     item = item_db->list->next;
                     while(item != item_db->list) {
-                        i2d_lexer_tokenize(lexer, item->script);
-                        i2d_lexer_tokenize(lexer, item->onequip_script);
-                        i2d_lexer_tokenize(lexer, item->onunequip_script);
+                        if(!i2d_lexer_tokenize(lexer, item->script))
+                            i2d_lexer_print(lexer);
+                        if(!i2d_lexer_tokenize(lexer, item->onequip_script))
+                            i2d_lexer_print(lexer);
+                        if(!i2d_lexer_tokenize(lexer, item->onunequip_script))
+                            i2d_lexer_print(lexer);
                         item = item->next;
                     }
                     i2d_lexer_deit(&lexer);

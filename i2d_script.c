@@ -1,5 +1,58 @@
 #include "i2d_script.h"
 
+const char * i2d_token_string[] = {
+    "start",
+    "{",
+    "}",
+    "(",
+    ")",
+    ",",
+    ";",
+    "literal",
+    "@",
+    "$",
+    "$@",
+    ".",
+    ".@",
+    "'",
+    "#",
+    "##",
+    "+",
+    "-",
+    "*",
+    "/",
+    "%",
+    "+=",
+    "-=",
+    "*=",
+    "/=",
+    "%=",
+    ">",
+    "<",
+    "!",
+    "==",
+    ">=",
+    "<=",
+    "!=",
+    ">>",
+    "<<",
+    "&",
+    "|",
+    "^",
+    "!",
+    ">>=",
+    "<<=",
+    "&=",
+    "|=",
+    "^=",
+    "&&",
+    "||",
+    "?",
+    ":",
+    "::",
+    "=",
+};
+
 int i2d_token_init(i2d_token ** result, enum i2d_token_type type) {
     int status = I2D_OK;
     i2d_token * object = NULL;
@@ -330,6 +383,21 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     }
 
     return status;
+}
+
+void i2d_lexer_print(i2d_lexer * lexer) {
+    i2d_token * token = NULL;
+    i2d_str literal;
+    char space;
+
+    for(token = lexer->list->next; token != lexer->list; token = token->next) {
+        space = token->next == lexer->list ? '\n' : ' ';
+        if(I2D_LITERAL == token->type && !i2d_token_get_literal(token, &literal)) {
+            fprintf(stdout, "%s(%s)%c", i2d_token_string[token->type], literal.string, space);
+        } else {
+            fprintf(stdout, "%s%c", i2d_token_string[token->type], space);
+        }
+    }
 }
 
 #if i2d_debug
