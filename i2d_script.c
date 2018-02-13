@@ -407,6 +407,43 @@ void i2d_lexer_print(i2d_lexer * lexer) {
     }
 }
 
+int i2d_script_init(i2d_script ** result, i2d_str * path) {
+    int status = I2D_OK;
+    i2d_script * object;
+
+    if(i2d_is_invalid(result) || !path) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_json_init(&object->json, path)) {
+                status = i2d_panic("failed to create json object");
+            } else if(i2d_lexer_init(&object->lexer)) {
+                status = i2d_panic("failed to create lexer object");
+            }
+
+            if(status)
+                i2d_script_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_script_deit(i2d_script ** result) {
+    i2d_script * object;
+
+    object = *result;
+    i2d_deit(object->lexer, i2d_lexer_deit);
+    i2d_deit(object->json, i2d_json_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 #if i2d_debug
 int i2d_lexer_test(void) {
     int status = I2D_OK;

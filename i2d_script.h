@@ -2,6 +2,7 @@
 #define i2d_script_h
 
 #include "i2d_util.h"
+#include "i2d_json.h"
 
 enum i2d_token_type {
     I2D_HEAD,
@@ -75,6 +76,13 @@ struct i2d_lexer {
 
 typedef struct i2d_lexer i2d_lexer;
 
+struct i2d_script {
+    i2d_json * json;
+    i2d_lexer * lexer;
+};
+
+typedef struct i2d_script i2d_script;
+
 int i2d_token_init(i2d_token **, enum i2d_token_type);
 void i2d_token_deit(i2d_token **);
 void i2d_token_reset(i2d_token *);
@@ -90,6 +98,9 @@ void i2d_lexer_reset(i2d_lexer *);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
 int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
 void i2d_lexer_print(i2d_lexer *);
+
+int i2d_script_init(i2d_script **, i2d_str *);
+void i2d_script_deit(i2d_script **);
 
 #if i2d_debug
 int i2d_lexer_test(void);
