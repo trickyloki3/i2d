@@ -77,13 +77,6 @@ struct i2d_lexer {
 
 typedef struct i2d_lexer i2d_lexer;
 
-struct i2d_script {
-    i2d_json * json;
-    i2d_lexer * lexer;
-};
-
-typedef struct i2d_script i2d_script;
-
 int i2d_token_init(i2d_token **, enum i2d_token_type);
 void i2d_token_deit(i2d_token **);
 void i2d_token_reset(i2d_token *);
@@ -99,6 +92,37 @@ void i2d_lexer_reset(i2d_lexer *);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
 int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
 void i2d_lexer_print(i2d_lexer *);
+
+struct i2d_block {
+    i2d_token * statement;
+    struct i2d_block * parent;
+    struct i2d_block * child;
+    struct i2d_block * next;
+    struct i2d_block * prev;
+};
+
+typedef struct i2d_block i2d_block;
+
+struct i2d_parser {
+    i2d_block * list;
+    i2d_block * cache;
+};
+
+typedef struct i2d_parser i2d_parser;
+
+int i2d_block_init(i2d_block **, i2d_token *, i2d_block *);
+void i2d_block_deit(i2d_block **);
+
+int i2d_parser_init(i2d_parser **);
+void i2d_parser_deit(i2d_parser **);
+
+struct i2d_script {
+    i2d_json * json;
+    i2d_lexer * lexer;
+    i2d_parser * parser;
+};
+
+typedef struct i2d_script i2d_script;
 
 int i2d_script_init(i2d_script **, i2d_str *);
 void i2d_script_deit(i2d_script **);

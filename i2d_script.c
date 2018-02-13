@@ -407,6 +407,74 @@ void i2d_lexer_print(i2d_lexer * lexer) {
     }
 }
 
+int i2d_block_init(i2d_block ** result, i2d_token * statement, i2d_block * parent) {
+    int status = I2D_OK;
+    i2d_block * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->statement = statement;
+            object->parent = parent;
+            object->next = object;
+            object->prev = object;
+            if(status)
+                i2d_block_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_block_deit(i2d_block ** result) {
+    i2d_block * object;
+
+    object = *result;
+    i2d_free(object);
+    *result = NULL;
+}
+
+int i2d_parser_init(i2d_parser ** result) {
+    int status = I2D_OK;
+    i2d_parser * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if( i2d_block_init(&object->list, NULL, NULL) ||
+                i2d_block_init(&object->cache, NULL, NULL) )
+                status = i2d_panic("failed to create block objects");
+
+            if(status)
+                i2d_parser_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_parser_deit(i2d_parser ** result) {
+    i2d_parser * object;
+
+    object = *result;
+    i2d_deit(object->cache, i2d_block_deit);
+    i2d_deit(object->list, i2d_block_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 int i2d_script_init(i2d_script ** result, i2d_str * path) {
     int status = I2D_OK;
     i2d_script * object;
@@ -422,6 +490,8 @@ int i2d_script_init(i2d_script ** result, i2d_str * path) {
                 status = i2d_panic("failed to create json object");
             } else if(i2d_lexer_init(&object->lexer)) {
                 status = i2d_panic("failed to create lexer object");
+            } else if(i2d_parser_init(&object->parser)) {
+                status = i2d_panic("failed to create parser object");
             }
 
             if(status)
@@ -438,6 +508,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);
     i2d_deit(object->json, i2d_json_deit);
     i2d_free(object);
