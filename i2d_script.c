@@ -92,6 +92,22 @@ void i2d_token_deit(i2d_token ** result) {
     *result = NULL;
 }
 
+void i2d_token_list_deit(i2d_token ** result) {
+    i2d_token * object;
+    i2d_token * token;
+
+    object = *result;
+    if(object) {
+        while(object != object->next) {
+            token = object->next;
+            i2d_token_remove(token);
+            i2d_token_deit(&token);
+        }
+    }
+    i2d_deit(object, i2d_token_deit);
+    *result = NULL;
+}
+
 void i2d_token_reset(i2d_token * token) {
     i2d_token_remove(token);
     i2d_buf_zero(token->buffer);
@@ -172,26 +188,11 @@ int i2d_lexer_init(i2d_lexer ** result) {
 
 void i2d_lexer_deit(i2d_lexer ** result) {
     i2d_lexer * object;
-    i2d_token * token = NULL;
 
     object = *result;
-    if(object->list) {
-        while(object->list != object->list->next) {
-            token = object->list->next;
-            i2d_token_remove(token);
-            i2d_token_deit(&token);
-        }
-    }
-    if(object->cache) {
-        while(object->cache != object->cache->next) {
-            token = object->cache->next;
-            i2d_token_remove(token);
-            i2d_token_deit(&token);
-        }
-    }
     i2d_lexer_reset(object);
-    i2d_deit(object->cache, i2d_token_deit);
-    i2d_deit(object->list, i2d_token_deit);
+    i2d_deit(object->cache, i2d_token_list_deit);
+    i2d_deit(object->list, i2d_token_list_deit);
     i2d_free(object);
     *result = NULL;
 }
