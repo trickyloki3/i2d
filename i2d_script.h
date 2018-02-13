@@ -113,6 +113,7 @@ typedef struct i2d_parser i2d_parser;
 
 int i2d_block_init(i2d_block **, i2d_token *, i2d_block *);
 void i2d_block_deit(i2d_block **);
+void i2d_block_list_deit(i2d_block **);
 void i2d_block_append(i2d_block *, i2d_block *);
 void i2d_block_remove(i2d_block *);
 

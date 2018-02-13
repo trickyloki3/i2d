@@ -437,8 +437,25 @@ void i2d_block_deit(i2d_block ** result) {
     i2d_block * object;
 
     object = *result;
+    i2d_deit(object->child, i2d_block_list_deit);
     i2d_deit(object->statement, i2d_token_list_deit);
     i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_block_list_deit(i2d_block ** result) {
+    i2d_block * object;
+    i2d_block * block;
+
+    object = *result;
+    if(object) {
+        while(object != object->next) {
+            block = object->next;
+            i2d_block_remove(block);
+            i2d_block_deit(&block);
+        }
+    }
+    i2d_deit(object, i2d_block_deit);
     *result = NULL;
 }
 
@@ -485,8 +502,8 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_parser * object;
 
     object = *result;
-    i2d_deit(object->cache, i2d_block_deit);
-    i2d_deit(object->list, i2d_block_deit);
+    i2d_deit(object->cache, i2d_block_list_deit);
+    i2d_deit(object->list, i2d_block_list_deit);
     i2d_free(object);
     *result = NULL;
 }
