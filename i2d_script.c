@@ -236,7 +236,14 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
         token = NULL;
 
         if(state) {
-            if(I2D_LINE_COMMENT == state->type) {
+            if(I2D_QUOTE == state->type) {
+                if('"' == symbol) {
+                    state->type = I2D_LITERAL;
+                } else {
+                    status = i2d_token_write(state, &symbol, sizeof(symbol));
+                }
+                continue;
+            } else if(I2D_LINE_COMMENT == state->type) {
                 if('\n' == symbol) {
                     i2d_token_remove(state);
                     i2d_token_deit(&state);
@@ -244,7 +251,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                 continue;
             } else if(I2D_BLOCK_COMMENT == state->type) {
                 if('/' != symbol) {
-                    i2d_token_write(state, &symbol, sizeof(symbol));
+                    status = i2d_token_write(state, &symbol, sizeof(symbol));
                 } else if('*' == i2d_token_get_last_symbol(state)) {
                     i2d_token_remove(state);
                     i2d_token_deit(&state);
@@ -358,7 +365,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                     status = i2d_lexer_token_init(lexer, &token, I2D_COLON);
                 }
                 break;
-            case  '"': continue;
+            case  '"': status = i2d_lexer_token_init(lexer, &token, I2D_QUOTE); break;
             case '\\': continue;
             default:
                 if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
