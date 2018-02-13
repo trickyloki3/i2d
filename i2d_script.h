@@ -3,6 +3,7 @@
 
 #include "i2d_util.h"
 #include "i2d_json.h"
+#include "i2d_item.h"
 
 enum i2d_token_type {
     I2D_HEAD,
@@ -103,6 +104,7 @@ int i2d_script_init(i2d_script **, i2d_str *);
 void i2d_script_deit(i2d_script **);
 
 #if i2d_debug
+int i2d_script_test(i2d_script *, i2d_item *);
 int i2d_lexer_test(void);
 #endif
 #endif
