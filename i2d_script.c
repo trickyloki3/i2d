@@ -442,6 +442,20 @@ void i2d_block_deit(i2d_block ** result) {
     *result = NULL;
 }
 
+void i2d_block_append(i2d_block * x, i2d_block * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_block_remove(i2d_block * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
 int i2d_parser_init(i2d_parser ** result) {
     int status = I2D_OK;
     i2d_parser * object;
