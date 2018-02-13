@@ -444,9 +444,31 @@ void i2d_script_deit(i2d_script ** result) {
     *result = NULL;
 }
 
+int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target) {
+    int status = I2D_OK;
+
+    if(!strcmp("{}", source->string)) {
+        status = i2d_str_init(target, "", 0);
+    } else if(i2d_lexer_tokenize(script->lexer, source)) {
+        status = i2d_panic("failed to lex -- %s", source->string);
+    } else {
+
+    }
+
+    return status;
+}
+
 #if i2d_debug
 int i2d_script_test(i2d_script * script, i2d_item * item) {
     int status = I2D_OK;
+    i2d_str * description = NULL;
+
+    i2d_script_compile(script, item->script, &description);
+    i2d_deit(description, i2d_str_deit);
+    i2d_script_compile(script, item->onequip_script, &description);
+    i2d_deit(description, i2d_str_deit);
+    i2d_script_compile(script, item->onunequip_script, &description);
+    i2d_deit(description, i2d_str_deit);
 
     return status;
 }

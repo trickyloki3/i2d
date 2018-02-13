@@ -102,6 +102,7 @@ void i2d_lexer_print(i2d_lexer *);
 
 int i2d_script_init(i2d_script **, i2d_str *);
 void i2d_script_deit(i2d_script **);
+int i2d_script_compile(i2d_script *, i2d_str *, i2d_str **);
 
 #if i2d_debug
 int i2d_script_test(i2d_script *, i2d_item *);
