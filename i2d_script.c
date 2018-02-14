@@ -528,6 +528,9 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
 int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer) {
     int status = I2D_OK;
 
+    if(parser->list)
+        i2d_parser_reset(parser, lexer, &parser->list);
+
     if(I2D_CURLY_OPEN != lexer->list->next->type) {
         status = i2d_panic("script must start with a {");
     } else if(I2D_CURLY_CLOSE != lexer->list->prev->type) {
