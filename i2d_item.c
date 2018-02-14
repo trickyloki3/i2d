@@ -262,3 +262,7 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
 
     return status;
 }
+
+int i2d_item_db_search_by_id(i2d_item_db * item_db, long item_id, i2d_item ** item) {
+    return i2d_rbt_search(item_db->index_by_id, &item_id, (void **) item);
+}
