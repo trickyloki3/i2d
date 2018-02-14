@@ -221,7 +221,7 @@ void i2d_lexer_reset(i2d_lexer * lexer, i2d_token ** result) {
 
 int i2d_lexer_token_init(i2d_lexer * lexer, i2d_token ** result, enum i2d_token_type type) {
     int status = I2D_OK;
-    i2d_token * token = NULL;
+    i2d_token * token;
 
     if(lexer->cache != lexer->cache->next) {
         token = lexer->cache->next;
@@ -525,6 +525,23 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
     *result = NULL;
 }
 
+int i2d_parser_block_init(i2d_parser * parser, i2d_block ** result, i2d_token * statement, i2d_block * parent) {
+    int status = I2D_OK;
+    i2d_block * block;
+
+    if(parser->cache != parser->cache->next) {
+        block = parser->cache->next;
+        i2d_block_remove(block);
+        block->statement = statement;
+        block->parent = parent;
+        *result = block;
+    } else {
+        status = i2d_block_init(result, statement, parent);
+    }
+
+    return status;
+}
+
 int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer) {
     int status = I2D_OK;
 
@@ -558,7 +575,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                 token = token->next;
             }
         } else if(I2D_SEMICOLON == token->type) {
-            if(i2d_block_init(&block, anchor, parent)) {
+            if(i2d_parser_block_init(parser, &block, anchor, parent)) {
                 status = i2d_panic("failed to create block object");
             } else {
                 token = token->next;
