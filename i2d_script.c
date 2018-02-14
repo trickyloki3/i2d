@@ -8,7 +8,7 @@ const char * i2d_token_string[] = {
     ")",
     ",",
     ";",
-    "literal",
+    "id",
     "@",
     "$",
     "$@",
@@ -479,11 +479,11 @@ void i2d_block_print(i2d_block * block, int level) {
     i2d_block * iterator;
     int i;
 
-    fprintf(stderr, "block [%p]\n", block);
+    fprintf(stdout, "block [%p]\n", block);
     iterator = block;
     do {
         for(i = 0; i < level; i++)
-            putc('\t', stderr);
+            putc('\t', stdout);
         if(iterator->statement)
             i2d_token_print(iterator->statement);
         if(iterator->child)
