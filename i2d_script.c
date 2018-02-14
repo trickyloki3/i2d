@@ -475,6 +475,23 @@ void i2d_block_remove(i2d_block * x) {
     x->prev = x;
 }
 
+void i2d_block_print(i2d_block * block, int level) {
+    i2d_block * iterator;
+    int i;
+
+    fprintf(stderr, "block [%p]\n", block);
+    iterator = block;
+    do {
+        for(i = 0; i < level; i++)
+            putc('\t', stderr);
+        if(iterator->statement)
+            i2d_token_print(iterator->statement);
+        if(iterator->child)
+            i2d_block_print(iterator->child, level++);
+        iterator = iterator->next;
+    } while(iterator != block);
+}
+
 int i2d_parser_init(i2d_parser ** result) {
     int status = I2D_OK;
     i2d_parser * object;
@@ -653,6 +670,8 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer)) {
         status = i2d_panic("failed to parse -- %s", source->string);
+    } else {
+
     }
 
     return status;

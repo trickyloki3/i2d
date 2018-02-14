@@ -115,6 +115,7 @@ void i2d_block_deit(i2d_block **);
 void i2d_block_list_deit(i2d_block **);
 void i2d_block_append(i2d_block *, i2d_block *);
 void i2d_block_remove(i2d_block *);
+void i2d_block_print(i2d_block *, int);
 
 int i2d_parser_init(i2d_parser **);
 void i2d_parser_deit(i2d_parser **);
