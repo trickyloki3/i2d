@@ -89,7 +89,7 @@ void i2d_token_print(i2d_token *);
 
 int i2d_lexer_init(i2d_lexer **);
 void i2d_lexer_deit(i2d_lexer **);
-void i2d_lexer_reset(i2d_lexer *);
+void i2d_lexer_reset(i2d_lexer *, i2d_token **);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
 int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
 
