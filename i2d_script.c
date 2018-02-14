@@ -108,12 +108,6 @@ void i2d_token_list_deit(i2d_token ** result) {
     *result = NULL;
 }
 
-void i2d_token_reset(i2d_token * token) {
-    i2d_token_remove(token);
-    i2d_buf_zero(token->buffer);
-    token->type = I2D_HEAD;
-}
-
 int i2d_token_write(i2d_token * token, void * data, size_t size) {
     int status = I2D_OK;
 
@@ -162,7 +156,7 @@ void i2d_token_remove(i2d_token * x) {
 }
 
 void i2d_token_print(i2d_token * token) {
-    i2d_token * iterator = NULL;
+    i2d_token * iterator;
     i2d_str literal;
     char space;
 
@@ -219,7 +213,9 @@ void i2d_lexer_reset(i2d_lexer * lexer) {
 
     while(lexer->list != lexer->list->next) {
         token = lexer->list->next;
-        i2d_token_reset(token);
+        i2d_token_remove(token);
+        i2d_buf_zero(token->buffer);
+        token->type = I2D_HEAD;
         i2d_token_append(token, lexer->cache);
     }
 }
