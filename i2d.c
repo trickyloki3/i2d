@@ -21,12 +21,22 @@ int main(int argc, char * argv[]) {
             if(i2d_script_init(&script, option->json_path)) {
                 status = i2d_panic("failed to create script object");
             } else {
-                item = item_db->list->next;
-                while(item != item_db->list) {
+                if(option->item_id) {
+                    if(i2d_item_db_search_by_id(item_db, option->item_id, &item)) {
+                        status = i2d_panic("failed to find item id -- %ld", option->item_id);
+                    } else {
 #if i2d_debug
-                    i2d_script_test(script, item);
+                        i2d_script_test(script, item);
 #endif
-                    item = item->next;
+                    }
+                } else {
+                    item = item_db->list->next;
+                    while(item != item_db->list) {
+#if i2d_debug
+                        i2d_script_test(script, item);
+#endif
+                        item = item->next;
+                    }
                 }
                 i2d_script_deit(&script);
             }
