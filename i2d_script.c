@@ -207,20 +207,15 @@ void i2d_lexer_deit(i2d_lexer ** result) {
 }
 
 void i2d_lexer_reset(i2d_lexer * lexer, i2d_token ** result) {
-    i2d_token * object;
     i2d_token * token;
 
-    object = *result;
-    while(object != object->next) {
-        token = object->next;
-        i2d_token_remove(token);
+    token = *result;
+    do {
         i2d_buf_zero(token->buffer);
         token->type = I2D_HEAD;
-        i2d_token_append(token, lexer->cache);
-    }
-    i2d_buf_zero(object->buffer);
-    object->type = I2D_HEAD;
-    i2d_token_append(object, lexer->cache);
+        token = token->next;
+    } while(token != *result);
+    i2d_token_append(token, lexer->cache);
     *result = NULL;
 }
 
@@ -511,6 +506,22 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_deit(object->cache, i2d_block_list_deit);
     i2d_deit(object->list, i2d_block_list_deit);
     i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** result) {
+    i2d_block * block;
+
+    block = *result;
+    do {
+        if(block->child)
+            i2d_parser_reset(parser, lexer, &block->child);
+        block->parent = NULL;
+        if(block->statement)
+            i2d_lexer_reset(lexer, &block->statement);
+        block = block->next;
+    } while(block != *result);
+    i2d_block_append(block, parser->cache);
     *result = NULL;
 }
 
