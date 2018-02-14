@@ -86,13 +86,13 @@ int i2d_token_get_literal(i2d_token *, i2d_str *);
 char i2d_token_get_last_symbol(i2d_token *);
 void i2d_token_append(i2d_token *, i2d_token *);
 void i2d_token_remove(i2d_token *);
+void i2d_token_print(i2d_token *);
 
 int i2d_lexer_init(i2d_lexer **);
 void i2d_lexer_deit(i2d_lexer **);
 void i2d_lexer_reset(i2d_lexer *);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
 int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
-void i2d_lexer_print(i2d_lexer *);
 
 struct i2d_block {
     i2d_token * statement;
@@ -119,6 +119,8 @@ void i2d_block_remove(i2d_block *);
 
 int i2d_parser_init(i2d_parser **);
 void i2d_parser_deit(i2d_parser **);
+int i2d_parser_analysis(i2d_parser *, i2d_lexer *);
+int i2d_parser_analysis_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
 
 struct i2d_script {
     i2d_json * json;
