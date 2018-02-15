@@ -494,6 +494,8 @@ void i2d_block_print(i2d_block * block, int level) {
         fprintf(stdout, "%s [%p] ", i2d_block_string[iterator->type], iterator);
         if(iterator->statement)
             i2d_token_print(iterator->statement);
+        else
+            fprintf(stdout, "\n");
         if(iterator->child)
             i2d_block_print(iterator->child, level + 1);
         iterator = iterator->next;
@@ -603,7 +605,9 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
     anchor = token;
     while(I2D_TOKEN != token->type && I2D_CURLY_CLOSE != token->type && !status) {
         if(I2D_CURLY_OPEN == token->type) {
-            if(i2d_parser_analysis_recursive(parser, parent, &block, token->next)) {
+            if(i2d_parser_block_init(parser, &block, I2D_BLOCK, NULL, parent)) {
+                status = i2d_panic("failed to create block object");
+            } else if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
                 status = i2d_panic("failed to parse script");
             } else if(I2D_CURLY_CLOSE != token->next->type) {
                     status = i2d_panic("invalid syntax");
@@ -718,7 +722,7 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
     } else {
         fprintf(stdout, "%s\n", source->string);
         if(script->parser->list)
-            i2d_block_print(script->parser->list, 1);
+            i2d_block_print(script->parser->list, 0);
     }
 
     return status;
