@@ -50,7 +50,7 @@ const char * i2d_token_string[] = {
     "?",
     ":",
     "::",
-    "=",
+    "="
 };
 
 int i2d_token_init(i2d_token ** result, enum i2d_token_type type) {
@@ -479,6 +479,8 @@ void i2d_block_print(i2d_block * block, int level) {
     i2d_block * iterator;
     int i;
 
+    for(i = 0; i < level - 1; i++)
+        putc('\t', stdout);
     fprintf(stdout, "block [%p]\n", block);
     iterator = block;
     do {
@@ -487,7 +489,7 @@ void i2d_block_print(i2d_block * block, int level) {
         if(iterator->statement)
             i2d_token_print(iterator->statement);
         if(iterator->child)
-            i2d_block_print(iterator->child, level++);
+            i2d_block_print(iterator->child, level + 1);
         iterator = iterator->next;
     } while(iterator != block);
 }
@@ -671,7 +673,8 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
     } else if(i2d_parser_analysis(script->parser, script->lexer)) {
         status = i2d_panic("failed to parse -- %s", source->string);
     } else {
-
+        if(script->parser->list)
+            i2d_block_print(script->parser->list, 1);
     }
 
     return status;
