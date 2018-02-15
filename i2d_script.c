@@ -588,6 +588,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
     i2d_block * root;
     i2d_block * block;
     i2d_token * anchor;
+    i2d_str literal;
 
     root = NULL;
     block = NULL;
@@ -611,6 +612,28 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                 token = token->next;
                 i2d_token_append(anchor->prev, token);
                 anchor = token;
+            }
+        } else if(I2D_LITERAL == token->type) {
+            if(i2d_token_get_literal(token, &literal)) {
+                status = i2d_panic("failed to get literal");
+            } else if(!strcmp("if", literal.string)) {
+                if(i2d_parser_block_init(parser, &block, token, parent)) {
+                    status = i2d_panic("failed to create block object");
+                } else {
+                    token = token->next;
+                    i2d_token_remove(block->statement);
+                    anchor = token;
+                }
+            } else if(!strcmp("else", literal.string)) {
+                if(i2d_parser_block_init(parser, &block, token, parent)) {
+                    status = i2d_panic("failed to create block object");
+                } else {
+                    token = token->next;
+                    i2d_token_remove(block->statement);
+                    anchor = token;
+                }
+            } else {
+                token = token->next;
             }
         } else {
             token = token->next;
