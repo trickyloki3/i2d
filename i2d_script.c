@@ -679,7 +679,14 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                 } else {
                     token = token->next;
                     i2d_token_remove(block->statement);
-                    anchor = token;
+                    token = token->prev;
+
+                    if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
+                        status = i2d_panic("failed to parse script");
+                    } else {
+                        token = token->next;
+                        anchor = token;
+                    }
                 }
             } else {
                 token = token->next;
