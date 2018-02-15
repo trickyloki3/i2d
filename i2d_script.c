@@ -412,6 +412,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
 
 const char * i2d_block_string[] = {
     "block",
+    "expression",
     "statement",
     "if",
     "else"
@@ -448,6 +449,7 @@ void i2d_block_deit(i2d_block ** result) {
 
     object = *result;
     i2d_deit(object->child, i2d_block_list_deit);
+    i2d_deit(object->logic, i2d_block_list_deit);
     i2d_deit(object->statement, i2d_token_list_deit);
     i2d_free(object);
     *result = NULL;
@@ -496,6 +498,8 @@ void i2d_block_print(i2d_block * block, int level) {
             i2d_token_print(iterator->statement);
         else
             fprintf(stdout, "\n");
+        if(iterator->logic)
+            i2d_block_print(iterator->logic, level + 1);
         if(iterator->child)
             i2d_block_print(iterator->child, level + 1);
         iterator = iterator->next;
@@ -545,6 +549,8 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
         if(block->child)
             i2d_parser_reset(parser, lexer, &block->child);
         block->parent = NULL;
+        if(block->logic)
+            i2d_parser_reset(parser, lexer, &block->logic);
         if(block->statement)
             i2d_lexer_reset(lexer, &block->statement);
         block->type = I2D_BLOCK;
@@ -599,6 +605,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
     i2d_block * block;
     i2d_token * anchor;
     i2d_str literal;
+    int parenthesis;
 
     root = NULL;
     block = NULL;
@@ -610,7 +617,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
             } else if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
                 status = i2d_panic("failed to parse script");
             } else if(I2D_CURLY_CLOSE != token->next->type) {
-                    status = i2d_panic("invalid syntax");
+                    status = i2d_panic("missing } after {");
             } else {
                 token = token->next->next;
                 i2d_token_append(anchor->prev, token);
@@ -635,6 +642,29 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                     token = token->next;
                     i2d_token_remove(block->statement);
                     anchor = token;
+
+                    if(I2D_PARENTHESIS_OPEN != token->type) {
+                        status = i2d_panic("missing ( after if");
+                    } else {
+                        parenthesis = 1;
+                        while(I2D_TOKEN != token->type && parenthesis) {
+                            token = token->next;
+                            switch(token->type) {
+                                case I2D_PARENTHESIS_OPEN:  parenthesis++; break;
+                                case I2D_PARENTHESIS_CLOSE: parenthesis--; break;
+                                default: break;
+                            }
+                        }
+                        if(I2D_PARENTHESIS_CLOSE != token->type) {
+                            status = i2d_panic("missing ) after (");
+                        } else if(i2d_parser_block_init(parser, &block->logic, I2D_EXPRESSION, anchor, parent)) {
+                            status = i2d_panic("failed to create block object");
+                        } else {
+                            token = token->next;
+                            i2d_token_append(anchor->prev, token);
+                            anchor = token;
+                        }
+                    }
                 }
             } else if(!strcmp("else", literal.string)) {
                 if(i2d_parser_block_init(parser, &block, I2D_ELSE, token, parent)) {

@@ -95,6 +95,7 @@ int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
 
 enum i2d_block_type {
     I2D_BLOCK,
+    I2D_EXPRESSION,
     I2D_STATEMENT,
     I2D_IF,
     I2D_ELSE
@@ -103,6 +104,7 @@ enum i2d_block_type {
 struct i2d_block {
     enum i2d_block_type type;
     i2d_token * statement;
+    struct i2d_block * logic;
     struct i2d_block * parent;
     struct i2d_block * child;
     struct i2d_block * next;
