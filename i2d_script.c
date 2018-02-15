@@ -1,7 +1,7 @@
 #include "i2d_script.h"
 
 const char * i2d_token_string[] = {
-    "start",
+    "token",
     "{",
     "}",
     "(",
@@ -183,7 +183,7 @@ int i2d_lexer_init(i2d_lexer ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_token_init(&object->cache, I2D_HEAD))
+            if(i2d_token_init(&object->cache, I2D_TOKEN))
                 status = i2d_panic("failed to create token object");
 
             if(status)
@@ -212,7 +212,7 @@ void i2d_lexer_reset(i2d_lexer * lexer, i2d_token ** result) {
     token = *result;
     do {
         i2d_buf_zero(token->buffer);
-        token->type = I2D_HEAD;
+        token->type = I2D_TOKEN;
         token = token->next;
     } while(token != *result);
     i2d_token_append(token, lexer->cache);
@@ -245,7 +245,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     if(lexer->list)
         i2d_lexer_reset(lexer, &lexer->list);
 
-    if(i2d_lexer_token_init(lexer, &lexer->list, I2D_HEAD)) {
+    if(i2d_lexer_token_init(lexer, &lexer->list, I2D_TOKEN)) {
         status = i2d_panic("failed to create token object");
     } else {
         for(i = 0; i < script->length && !status; i++) {
@@ -410,7 +410,14 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     return status;
 }
 
-int i2d_block_init(i2d_block ** result, i2d_token * statement, i2d_block * parent) {
+const char * i2d_block_string[] = {
+    "block",
+    "statement",
+    "if",
+    "else"
+};
+
+int i2d_block_init(i2d_block ** result, enum i2d_block_type type, i2d_token * statement, i2d_block * parent) {
     int status = I2D_OK;
     i2d_block * object;
 
@@ -421,6 +428,7 @@ int i2d_block_init(i2d_block ** result, i2d_token * statement, i2d_block * paren
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
+            object->type = type;
             object->statement = statement;
             object->parent = parent;
             object->next = object;
@@ -479,13 +487,11 @@ void i2d_block_print(i2d_block * block, int level) {
     i2d_block * iterator;
     int i;
 
-    for(i = 0; i < level - 1; i++)
-        putc('\t', stdout);
-    fprintf(stdout, "block [%p]\n", block);
     iterator = block;
     do {
         for(i = 0; i < level; i++)
             putc('\t', stdout);
+        fprintf(stdout, "%s [%p] ", i2d_block_string[iterator->type], iterator);
         if(iterator->statement)
             i2d_token_print(iterator->statement);
         if(iterator->child)
@@ -505,7 +511,7 @@ int i2d_parser_init(i2d_parser ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_block_init(&object->cache, NULL, NULL))
+            if(i2d_block_init(&object->cache, I2D_BLOCK, NULL, NULL))
                 status = i2d_panic("failed to create block objects");
 
             if(status)
@@ -539,24 +545,26 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
         block->parent = NULL;
         if(block->statement)
             i2d_lexer_reset(lexer, &block->statement);
+        block->type = I2D_BLOCK;
         block = block->next;
     } while(block != *result);
     i2d_block_append(block, parser->cache);
     *result = NULL;
 }
 
-int i2d_parser_block_init(i2d_parser * parser, i2d_block ** result, i2d_token * statement, i2d_block * parent) {
+int i2d_parser_block_init(i2d_parser * parser, i2d_block ** result, enum i2d_block_type type, i2d_token * statement, i2d_block * parent) {
     int status = I2D_OK;
     i2d_block * block;
 
     if(parser->cache != parser->cache->next) {
         block = parser->cache->next;
         i2d_block_remove(block);
+        block->type = type;
         block->statement = statement;
         block->parent = parent;
         *result = block;
     } else {
-        status = i2d_block_init(result, statement, parent);
+        status = i2d_block_init(result, type, statement, parent);
     }
 
     return status;
@@ -574,7 +582,7 @@ int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer) {
         status = i2d_panic("script must start with a {");
     } else if(I2D_CURLY_CLOSE != lexer->list->prev->type) {
         status = i2d_panic("script must end with a {");
-    } else if(i2d_lexer_token_init(lexer, &parser->unused, I2D_HEAD)) {
+    } else if(i2d_lexer_token_init(lexer, &parser->unused, I2D_TOKEN)) {
         status = i2d_panic("failed to create token object");
     } else if(i2d_parser_analysis_recursive(parser, NULL, &parser->list, lexer->list->next)) {
         status = i2d_panic("failed to parse script");
@@ -593,7 +601,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
     root = NULL;
     block = NULL;
     anchor = token;
-    while(I2D_HEAD != token->type && I2D_CURLY_CLOSE != token->type && !status) {
+    while(I2D_TOKEN != token->type && I2D_CURLY_CLOSE != token->type && !status) {
         if(I2D_CURLY_OPEN == token->type) {
             if(i2d_parser_analysis_recursive(parser, parent, &block, token->next)) {
                 status = i2d_panic("failed to parse script");
@@ -606,7 +614,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                 anchor = token;
             }
         } else if(I2D_SEMICOLON == token->type) {
-            if(i2d_parser_block_init(parser, &block, anchor, parent)) {
+            if(i2d_parser_block_init(parser, &block, I2D_STATEMENT, anchor, parent)) {
                 status = i2d_panic("failed to create block object");
             } else {
                 token = token->next;
@@ -617,7 +625,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
             if(i2d_token_get_literal(token, &literal)) {
                 status = i2d_panic("failed to get literal");
             } else if(!strcmp("if", literal.string)) {
-                if(i2d_parser_block_init(parser, &block, token, parent)) {
+                if(i2d_parser_block_init(parser, &block, I2D_IF, token, parent)) {
                     status = i2d_panic("failed to create block object");
                 } else {
                     token = token->next;
@@ -625,7 +633,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                     anchor = token;
                 }
             } else if(!strcmp("else", literal.string)) {
-                if(i2d_parser_block_init(parser, &block, token, parent)) {
+                if(i2d_parser_block_init(parser, &block, I2D_ELSE, token, parent)) {
                     status = i2d_panic("failed to create block object");
                 } else {
                     token = token->next;

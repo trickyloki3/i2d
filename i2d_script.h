@@ -6,7 +6,7 @@
 #include "i2d_item.h"
 
 enum i2d_token_type {
-    I2D_HEAD,
+    I2D_TOKEN,
     I2D_CURLY_OPEN,
     I2D_CURLY_CLOSE,
     I2D_PARENTHESIS_OPEN,
@@ -93,7 +93,15 @@ void i2d_lexer_reset(i2d_lexer *, i2d_token **);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
 int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
 
+enum i2d_block_type {
+    I2D_BLOCK,
+    I2D_STATEMENT,
+    I2D_IF,
+    I2D_ELSE
+};
+
 struct i2d_block {
+    enum i2d_block_type type;
     i2d_token * statement;
     struct i2d_block * parent;
     struct i2d_block * child;
@@ -111,7 +119,7 @@ struct i2d_parser {
 
 typedef struct i2d_parser i2d_parser;
 
-int i2d_block_init(i2d_block **, i2d_token *, i2d_block *);
+int i2d_block_init(i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 void i2d_block_deit(i2d_block **);
 void i2d_block_list_deit(i2d_block **);
 void i2d_block_append(i2d_block *, i2d_block *);
@@ -121,7 +129,7 @@ void i2d_block_print(i2d_block *, int);
 int i2d_parser_init(i2d_parser **);
 void i2d_parser_deit(i2d_parser **);
 void i2d_parser_reset(i2d_parser *, i2d_lexer *, i2d_block **);
-int i2d_parser_block_init(i2d_parser *, i2d_block **, i2d_token *, i2d_block *);
+int i2d_parser_block_init(i2d_parser *, i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 int i2d_parser_analysis(i2d_parser *, i2d_lexer *);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
 
