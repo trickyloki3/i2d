@@ -524,6 +524,7 @@ void i2d_parser_deit(i2d_parser ** result) {
     object = *result;
     i2d_deit(object->cache, i2d_block_list_deit);
     i2d_deit(object->list, i2d_block_list_deit);
+    i2d_deit(object->unused, i2d_token_list_deit);
     i2d_free(object);
     *result = NULL;
 }
@@ -566,11 +567,15 @@ int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer) {
 
     if(parser->list)
         i2d_parser_reset(parser, lexer, &parser->list);
+    if(parser->unused)
+        i2d_lexer_reset(lexer, &parser->unused);
 
     if(I2D_CURLY_OPEN != lexer->list->next->type) {
         status = i2d_panic("script must start with a {");
     } else if(I2D_CURLY_CLOSE != lexer->list->prev->type) {
         status = i2d_panic("script must end with a {");
+    } else if(i2d_lexer_token_init(lexer, &parser->unused, I2D_HEAD)) {
+        status = i2d_panic("failed to create token object");
     } else if(i2d_parser_analysis_recursive(parser, NULL, &parser->list, lexer->list->next)) {
         status = i2d_panic("failed to parse script");
     }
@@ -580,18 +585,24 @@ int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer) {
 
 int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_block ** result, i2d_token * token) {
     int status = I2D_OK;
-    i2d_token * anchor = token;
-    i2d_block * root = NULL;
+    i2d_block * root;
     i2d_block * block;
+    i2d_token * anchor;
 
-    while(I2D_CURLY_CLOSE != token->type && !status) {
-        block = NULL;
-
+    root = NULL;
+    block = NULL;
+    anchor = token;
+    while(I2D_HEAD != token->type && I2D_CURLY_CLOSE != token->type && !status) {
         if(I2D_CURLY_OPEN == token->type) {
             if(i2d_parser_analysis_recursive(parser, parent, &block, token->next)) {
                 status = i2d_panic("failed to parse script");
+            } else if(I2D_CURLY_CLOSE != token->next->type) {
+                    status = i2d_panic("invalid syntax");
             } else {
-                token = token->next;
+                token = token->next->next;
+                i2d_token_append(anchor->prev, token);
+                i2d_token_append(anchor, parser->unused);
+                anchor = token;
             }
         } else if(I2D_SEMICOLON == token->type) {
             if(i2d_parser_block_init(parser, &block, anchor, parent)) {
@@ -611,6 +622,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
             } else {
                 i2d_block_append(block, root);
             }
+            block = NULL;
         }
     }
 
@@ -673,6 +685,7 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
     } else if(i2d_parser_analysis(script->parser, script->lexer)) {
         status = i2d_panic("failed to parse -- %s", source->string);
     } else {
+        fprintf(stdout, "%s\n", source->string);
         if(script->parser->list)
             i2d_block_print(script->parser->list, 1);
     }
