@@ -617,7 +617,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
             } else if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
                 status = i2d_panic("failed to parse script");
             } else if(I2D_CURLY_CLOSE != token->next->type) {
-                    status = i2d_panic("missing } after {");
+                status = i2d_panic("missing } after {");
             } else {
                 token = token->next->next;
                 i2d_token_append(anchor->prev, token);
@@ -657,12 +657,19 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                         }
                         if(I2D_PARENTHESIS_CLOSE != token->type) {
                             status = i2d_panic("missing ) after (");
-                        } else if(i2d_parser_block_init(parser, &block->logic, I2D_EXPRESSION, anchor, parent)) {
+                        } else if(i2d_parser_block_init(parser, &block->logic, I2D_EXPRESSION, anchor, block)) {
                             status = i2d_panic("failed to create block object");
                         } else {
                             token = token->next;
                             i2d_token_append(anchor->prev, token);
-                            anchor = token;
+                            token = token->prev;
+
+                            if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
+                                status = i2d_panic("failed to parse script");
+                            } else {
+                                token = token->next;
+                                anchor = token;
+                            }
                         }
                     }
                 }
@@ -688,6 +695,9 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                 i2d_block_append(block, root);
             }
             block = NULL;
+
+            if(parent && (I2D_IF == parent->type))
+                break;
         }
     }
 
