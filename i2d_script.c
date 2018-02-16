@@ -767,9 +767,7 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
     } else if(i2d_parser_analysis(script->parser, script->lexer)) {
         status = i2d_panic("failed to parse -- %s", source->string);
     } else {
-        fprintf(stdout, "%s\n", source->string);
-        if(script->parser->list)
-            i2d_block_print(script->parser->list, 0);
+
     }
 
     return status;

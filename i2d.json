@@ -26,8 +26,6 @@
         "setfont",
         "buyingstore",
         "searchstores",
-        "if",
-        "else",
         "set",
         "input",
         "announce",
@@ -62,7 +60,6 @@
         "petskillattack2",
         "petskillsupport",
         "petheal",
-        "for",
         "getmapxy",
         "specialeffect",
         "showscript"
