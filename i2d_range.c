@@ -93,12 +93,14 @@ void i2d_range_list_deit(i2d_range_list ** result) {
 void i2d_range_list_print(i2d_range_list * list) {
     i2d_range * walk;
 
-    walk = list->list;
-    do {
-        fprintf(stdout, "[%ld,%ld]", walk->min, walk->max);
-        walk = walk->next;
-    } while(walk != list->list);
-    fprintf(stdout, "\n");
+    if(list->list) {
+        walk = list->list;
+        do {
+            fprintf(stdout, "[%ld,%ld]", walk->min, walk->max);
+            walk = walk->next;
+        } while(walk != list->list);
+        fprintf(stdout, "\n");
+    }
 }
 
 int i2d_range_list_add(i2d_range_list * list, long x, long y) {
@@ -158,13 +160,15 @@ int i2d_range_list_copy(i2d_range_list ** result, i2d_range_list * list) {
         if(i2d_range_list_init(&object)) {
             status = i2d_panic("failed to create range list object");
         } else {
-            walk = list->list->next;
-            if(i2d_range_list_add(object, list->list->min, list->list->max))
-                status = i2d_panic("failed to add range object");
-            while(walk != list->list && !status) {
-                if(i2d_range_list_add(object, walk->min, walk->max))
+            if(list->list) {
+                walk = list->list->next;
+                if(i2d_range_list_add(object, list->list->min, list->list->max))
                     status = i2d_panic("failed to add range object");
-                walk = walk->next;
+                while(walk != list->list && !status) {
+                    if(i2d_range_list_add(object, walk->min, walk->max))
+                        status = i2d_panic("failed to add range object");
+                    walk = walk->next;
+                }
             }
 
             if(status) {
@@ -189,13 +193,15 @@ int i2d_range_list_negate(i2d_range_list ** result, i2d_range_list * list) {
         if(i2d_range_list_init(&object)) {
             status = i2d_panic("failed to create range list object");
         } else {
-            walk = list->list->next;
-            if(i2d_range_list_add(object, -1 * list->list->min, -1 * list->list->max))
-                status = i2d_panic("failed to add range object");
-            while(walk != list->list && !status) {
-                if(i2d_range_list_add(object, -1 * walk->min, -1 * walk->max))
+            if(list->list) {
+                walk = list->list->next;
+                if(i2d_range_list_add(object, -1 * list->list->min, -1 * list->list->max))
                     status = i2d_panic("failed to add range object");
-                walk = walk->next;
+                while(walk != list->list && !status) {
+                    if(i2d_range_list_add(object, -1 * walk->min, -1 * walk->max))
+                        status = i2d_panic("failed to add range object");
+                    walk = walk->next;
+                }
             }
 
             if(status) {
