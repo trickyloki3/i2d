@@ -516,8 +516,10 @@ int i2d_range_list_compute(i2d_range_list ** result, i2d_range_list * left, i2d_
                         }
                     } while(walk != right->list && !status);
                 }
-
-                i2d_range_list_deit(&object);
+                if(status)
+                    i2d_range_list_deit(&object);
+                else
+                    *result = object;
             }
             break;
     }
