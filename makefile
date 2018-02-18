@@ -7,16 +7,15 @@ OBJECT+=i2d_item.o
 OBJECT+=i2d_rbt.o
 OBJECT+=i2d_script.o
 OBJECT+=i2d_json.o
+OBJECT+=i2d_range.o
 
-all: clean i2d
-
-debug:
-	$(MAKE) clean
-	$(MAKE) i2d CFLAGS=-Di2d_debug\ -g\ -Wall
-	valgrind --leak-check=yes ./i2d -j i2d.json -i ~/Desktop/rathena/db/pre-re/item_db.txt
+all: clean i2d i2d_test
 
 i2d: $(OBJECT)
 	$(CC) $(CFLAGS) -o $@ i2d.c $^ $(LDFLAGS) $(LDLIBS)
+
+i2d_test: $(OBJECT)
+	$(CC) $(CFLAGS) -o $@ i2d_test.c $^ $(LDFLAGS) $(LDLIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
