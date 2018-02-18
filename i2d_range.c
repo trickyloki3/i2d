@@ -144,3 +144,32 @@ int i2d_range_list_add(i2d_range_list * list, long x, long y) {
 
     return status;
 }
+
+int i2d_range_list_copy(i2d_range_list ** result, i2d_range_list * list) {
+    int status = I2D_OK;
+    i2d_range_list * object = NULL;
+    i2d_range * walk;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        if(i2d_range_list_init(&object, list->list->min, list->list->max)) {
+            status = i2d_panic("failed to create range list object");
+        } else {
+            walk = list->list->next;
+            while(walk != list->list && !status) {
+                if(i2d_range_list_add(object, walk->min, walk->max))
+                    status = i2d_panic("failed to add range object");
+                walk = walk->next;
+            }
+
+            if(status) {
+                i2d_range_list_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
