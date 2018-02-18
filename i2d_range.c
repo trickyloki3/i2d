@@ -51,7 +51,7 @@ void i2d_range_remove(i2d_range * x) {
     x->prev = x;
 }
 
-int i2d_range_list_init(i2d_range_list ** result, long x, long y) {
+int i2d_range_list_init(i2d_range_list ** result) {
     int status = I2D_OK;
     i2d_range_list * object;
 
@@ -62,9 +62,6 @@ int i2d_range_list_init(i2d_range_list ** result, long x, long y) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_range_init(&object->list, min(x, y), max(x, y))) {
-                status = i2d_panic("failed to create range object");
-            }
 
             if(status)
                 i2d_range_list_deit(&object);
@@ -111,34 +108,39 @@ int i2d_range_list_add(i2d_range_list * list, long x, long y) {
     i2d_range * walk;
     i2d_range * range = NULL;
 
-    min = min(x, y);
-    max = max(x, y);
-    walk = list->list;
-    while(walk->max < min - 1 && walk->next != list->list)
-        walk = walk->next;
-
-    if(max < walk->min - 1) {
-        if(i2d_range_init(&range, min, max)) {
+    if(!list->list) {
+        if(i2d_range_init(&list->list, min(x, y), max(x, y)))
             status = i2d_panic("failed to create range object");
-        } else {
-            i2d_range_append(range, walk);
-            if(walk == list->list)
-                list->list = range;
-        }
-    } else if(walk->max < min - 1) {
-        if(i2d_range_init(&range, min, max)) {
-            status = i2d_panic("failed to create range object");
-        } else {
-            i2d_range_append(walk, range);
-        }
     } else {
-        walk->min = min(walk->min, min);
-        walk->max = max(walk->max, max);
-        while(walk != walk->next && walk->max >= walk->next->min - 1) {
-            range = walk->next;
-            walk->max = max(walk->max, range->max);
-            i2d_range_remove(range);
-            i2d_range_deit(&range);
+        min = min(x, y);
+        max = max(x, y);
+        walk = list->list;
+        while(walk->max < min - 1 && walk->next != list->list)
+            walk = walk->next;
+
+        if(max < walk->min - 1) {
+            if(i2d_range_init(&range, min, max)) {
+                status = i2d_panic("failed to create range object");
+            } else {
+                i2d_range_append(range, walk);
+                if(walk == list->list)
+                    list->list = range;
+            }
+        } else if(walk->max < min - 1) {
+            if(i2d_range_init(&range, min, max)) {
+                status = i2d_panic("failed to create range object");
+            } else {
+                i2d_range_append(walk, range);
+            }
+        } else {
+            walk->min = min(walk->min, min);
+            walk->max = max(walk->max, max);
+            while(walk != walk->next && walk->max >= walk->next->min - 1) {
+                range = walk->next;
+                walk->max = max(walk->max, range->max);
+                i2d_range_remove(range);
+                i2d_range_deit(&range);
+            }
         }
     }
 
@@ -153,10 +155,12 @@ int i2d_range_list_copy(i2d_range_list ** result, i2d_range_list * list) {
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
-        if(i2d_range_list_init(&object, list->list->min, list->list->max)) {
+        if(i2d_range_list_init(&object)) {
             status = i2d_panic("failed to create range list object");
         } else {
             walk = list->list->next;
+            if(i2d_range_list_add(object, list->list->min, list->list->max))
+                status = i2d_panic("failed to add range object");
             while(walk != list->list && !status) {
                 if(i2d_range_list_add(object, walk->min, walk->max))
                     status = i2d_panic("failed to add range object");
@@ -182,15 +186,115 @@ int i2d_range_list_negate(i2d_range_list ** result, i2d_range_list * list) {
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
-        if(i2d_range_list_init(&object, -1 * list->list->min, -1 * list->list->max)) {
+        if(i2d_range_list_init(&object)) {
             status = i2d_panic("failed to create range list object");
         } else {
             walk = list->list->next;
+            if(i2d_range_list_add(object, -1 * list->list->min, -1 * list->list->max))
+                status = i2d_panic("failed to add range object");
             while(walk != list->list && !status) {
                 if(i2d_range_list_add(object, -1 * walk->min, -1 * walk->max))
                     status = i2d_panic("failed to add range object");
                 walk = walk->next;
             }
+
+            if(status) {
+                i2d_range_list_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+int i2d_range_list_merge(i2d_range_list * list, i2d_range * left_root, i2d_range * right_root, i2d_range_merge_cb merge_cb) {
+    int status = I2D_OK;
+    i2d_range * left;
+    i2d_range * right;
+    i2d_range * next = NULL;
+    i2d_range * last = NULL;
+
+    left = left_root;
+    right = right_root;
+    while(left && right && !status) {
+        if(left->min < right->min) {
+            next = left;
+            left = left->next;
+            if(left == left_root)
+                left = NULL;
+        } else {
+            next = right;
+            right = right->next;
+            if(right == right_root)
+                right = NULL;
+        }
+
+        if(merge_cb(list, &last, next))
+            status = i2d_panic("failed to merge range");
+    }
+
+    while(left && !status) {
+        next = left;
+        left = left->next;
+        if(left == left_root)
+            left = NULL;
+
+        if(merge_cb(list, &last, next))
+            status = i2d_panic("failed to merge range");
+    }
+
+    while(right && !status) {
+        next = right;
+        right = right->next;
+        if(right == right_root)
+            right = NULL;
+
+        if(merge_cb(list, &last, next))
+            status = i2d_panic("failed to merge range");
+    }
+
+    return status;
+}
+
+int i2d_range_list_merge_or(i2d_range_list * list, i2d_range ** last, i2d_range * next) {
+    int status = I2D_OK;
+
+    if(!(*last)) {
+        if(i2d_range_list_add(list, next->min, next->max)) {
+            status = i2d_panic("failed to add range object");
+        } else {
+            *last = list->list->prev;
+        }
+    } else {
+        if(next->min - 1 > (*last)->max) {
+            if(i2d_range_list_add(list, next->min, next->max)) {
+                status = i2d_panic("failed to add range object");
+            } else {
+                *last = list->list->prev;
+            }
+        } else {
+            (*last)->min = min((*last)->min, next->min);
+            (*last)->max = max((*last)->max, next->max);
+        }
+    }
+
+    return status;
+}
+
+int i2d_range_list_or(i2d_range_list * left, i2d_range_list * right, i2d_range_list ** result) {
+    int status = I2D_OK;
+    i2d_range_list * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        if(i2d_range_list_init(&object)) {
+            status = i2d_panic("failed to create range list object");
+        } else {
+            if(i2d_range_list_merge(object, left->list, right->list, i2d_range_list_merge_or))
+                status = i2d_panic("failed to merge range list");
 
             if(status) {
                 i2d_range_list_deit(&object);
