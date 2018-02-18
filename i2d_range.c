@@ -390,3 +390,13 @@ int i2d_range_list_not(i2d_range_list * list, i2d_range_list ** result) {
 
     return status;
 }
+
+void i2d_range_list_get_range(i2d_range_list * list, long * min, long * max) {
+    if(!list->list) {
+        *min = 0;
+        *max = 0;
+    } else {
+        *min = list->list->min;
+        *max = list->list->prev->max;
+    }
+}
