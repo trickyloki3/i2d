@@ -34,6 +34,8 @@ int i2d_range_list_negate(i2d_range_list **, i2d_range_list *);
 typedef int (*i2d_range_merge_cb)(i2d_range_list *, i2d_range **, i2d_range *);
 int i2d_range_list_merge(i2d_range_list *, i2d_range *, i2d_range *, i2d_range_merge_cb);
 int i2d_range_list_merge_or(i2d_range_list *, i2d_range **, i2d_range *);
+int i2d_range_list_merge_and(i2d_range_list *, i2d_range **, i2d_range *);
 
 int i2d_range_list_or(i2d_range_list *, i2d_range_list *, i2d_range_list **);
+int i2d_range_list_and(i2d_range_list *, i2d_range_list *, i2d_range_list **);
 #endif

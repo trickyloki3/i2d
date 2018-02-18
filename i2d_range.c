@@ -289,6 +289,27 @@ int i2d_range_list_merge_or(i2d_range_list * list, i2d_range ** last, i2d_range 
     return status;
 }
 
+int i2d_range_list_merge_and(i2d_range_list * list, i2d_range ** last, i2d_range * next) {
+    int status = I2D_OK;
+
+    if(!(*last)) {
+        *last = next;
+    } else {
+        if((*last)->min <= next->max && (*last)->max >= next->min) {
+            if(i2d_range_list_add(list, max((*last)->min, next->min), min((*last)->max, next->max)))
+                status = i2d_panic("failed to add range object");
+        } else if(next->min <= (*last)->max && next->max >= (*last)->min) {
+            if(i2d_range_list_add(list, max((*last)->min, next->min), min((*last)->max, next->max)))
+                status = i2d_panic("failed to add range object");
+        }
+
+        if((*last)->max < next->max)
+            *last = next;
+    }
+
+    return status;
+}
+
 int i2d_range_list_or(i2d_range_list * left, i2d_range_list * right, i2d_range_list ** result) {
     int status = I2D_OK;
     i2d_range_list * object = NULL;
@@ -300,6 +321,30 @@ int i2d_range_list_or(i2d_range_list * left, i2d_range_list * right, i2d_range_l
             status = i2d_panic("failed to create range list object");
         } else {
             if(i2d_range_list_merge(object, left->list, right->list, i2d_range_list_merge_or))
+                status = i2d_panic("failed to merge range list");
+
+            if(status) {
+                i2d_range_list_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+int i2d_range_list_and(i2d_range_list * left, i2d_range_list * right, i2d_range_list ** result) {
+    int status = I2D_OK;
+    i2d_range_list * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        if(i2d_range_list_init(&object)) {
+            status = i2d_panic("failed to create range list object");
+        } else {
+            if(i2d_range_list_merge(object, left->list, right->list, i2d_range_list_merge_and))
                 status = i2d_panic("failed to merge range list");
 
             if(status) {
