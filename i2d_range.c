@@ -310,7 +310,7 @@ int i2d_range_list_merge_and(i2d_range_list * list, i2d_range ** last, i2d_range
     return status;
 }
 
-int i2d_range_list_or(i2d_range_list * left, i2d_range_list * right, i2d_range_list ** result) {
+int i2d_range_list_or(i2d_range_list ** result, i2d_range_list * left, i2d_range_list * right) {
     int status = I2D_OK;
     i2d_range_list * object = NULL;
 
@@ -334,7 +334,7 @@ int i2d_range_list_or(i2d_range_list * left, i2d_range_list * right, i2d_range_l
     return status;
 }
 
-int i2d_range_list_and(i2d_range_list * left, i2d_range_list * right, i2d_range_list ** result) {
+int i2d_range_list_and(i2d_range_list ** result, i2d_range_list * left, i2d_range_list * right) {
     int status = I2D_OK;
     i2d_range_list * object = NULL;
 
@@ -358,7 +358,7 @@ int i2d_range_list_and(i2d_range_list * left, i2d_range_list * right, i2d_range_
     return status;
 }
 
-int i2d_range_list_not(i2d_range_list * list, i2d_range_list ** result) {
+int i2d_range_list_not(i2d_range_list ** result, i2d_range_list * list) {
     int status = I2D_OK;
     i2d_range_list * object = NULL;
     i2d_range * walk = NULL;
