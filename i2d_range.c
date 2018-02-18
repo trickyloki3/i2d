@@ -405,6 +405,14 @@ int i2d_range_list_compute(i2d_range_list ** result, i2d_range_list * left, i2d_
     int status = I2D_OK;
     i2d_range_list * object = NULL;
 
+    long left_min;
+    long left_max;
+    long right_min;
+    long right_max;
+
+    i2d_range_list_get_range(left, &left_min, &left_max);
+    i2d_range_list_get_range(right, &right_min, &right_max);
+
     switch(operator) {
         case '|' + '|':
             if(i2d_range_list_or(result, left, right))
@@ -424,6 +432,38 @@ int i2d_range_list_compute(i2d_range_list ** result, i2d_range_list * left, i2d_
             } else {
                 if(i2d_range_list_not(result, object))
                     status = i2d_panic("failed to invert range list operand");
+                i2d_range_list_deit(&object);
+            }
+            break;
+        case '<':
+            right_max--;
+        case '<' + '=':
+            if(i2d_range_list_init(&object)) {
+                status = i2d_panic("failed to create range list object");
+            } else {
+                if( right_max < left_min ?
+                        i2d_range_list_add(object, 0, 0) :
+                        i2d_range_list_add(object, left_min, right_max) ) {
+                    status = i2d_panic("failed to add range object");
+                } else if(i2d_range_list_and(result, left, object)) {
+                    status = i2d_panic("failed to and range list operand");
+                }
+                i2d_range_list_deit(&object);
+            }
+            break;
+        case '>':
+            right_max++;
+        case '>' + '=':
+            if(i2d_range_list_init(&object)) {
+                status = i2d_panic("failed to create range list object");
+            } else {
+                if( left_max < right_max ?
+                        i2d_range_list_add(object, 0, 0) :
+                        i2d_range_list_add(object, right_max, left_max) ) {
+                    status = i2d_panic("failed to add range object");
+                } else if(i2d_range_list_and(result, left, object)) {
+                    status = i2d_panic("failed to and range list operand");
+                }
                 i2d_range_list_deit(&object);
             }
             break;
