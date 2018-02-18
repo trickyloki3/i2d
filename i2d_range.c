@@ -400,3 +400,34 @@ void i2d_range_list_get_range(i2d_range_list * list, long * min, long * max) {
         *max = list->list->prev->max;
     }
 }
+
+int i2d_range_list_compute(i2d_range_list ** result, i2d_range_list * left, i2d_range_list * right, int operator) {
+    int status = I2D_OK;
+    i2d_range_list * object = NULL;
+
+    switch(operator) {
+        case '|' + '|':
+            if(i2d_range_list_or(result, left, right))
+                status = i2d_panic("failed to or range list operand");
+            break;
+        case '&' + '&':
+            if(i2d_range_list_and(result, left, right))
+                status = i2d_panic("failed to and range list operand");
+            break;
+        case '=' + '=':
+            if(i2d_range_list_and(result, left, right))
+                status = i2d_panic("failed to and range list operand");
+            break;
+        case '!' + '=':
+            if(i2d_range_list_and(&object, left, right)) {
+                status = i2d_panic("failed to and range list operand");
+            } else {
+                if(i2d_range_list_not(result, object))
+                    status = i2d_panic("failed to invert range list operand");
+                i2d_range_list_deit(&object);
+            }
+            break;
+    }
+
+    return status;
+}

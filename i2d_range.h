@@ -41,4 +41,5 @@ int i2d_range_list_and(i2d_range_list **, i2d_range_list *, i2d_range_list *);
 int i2d_range_list_not(i2d_range_list **, i2d_range_list *);
 
 void i2d_range_list_get_range(i2d_range_list *, long *, long *);
+int i2d_range_list_compute(i2d_range_list **, i2d_range_list *, i2d_range_list *, int);
 #endif
