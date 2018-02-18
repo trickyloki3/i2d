@@ -173,3 +173,32 @@ int i2d_range_list_copy(i2d_range_list ** result, i2d_range_list * list) {
 
     return status;
 }
+
+int i2d_range_list_negate(i2d_range_list ** result, i2d_range_list * list) {
+    int status = I2D_OK;
+    i2d_range_list * object = NULL;
+    i2d_range * walk;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        if(i2d_range_list_init(&object, -1 * list->list->min, -1 * list->list->max)) {
+            status = i2d_panic("failed to create range list object");
+        } else {
+            walk = list->list->next;
+            while(walk != list->list && !status) {
+                if(i2d_range_list_add(object, -1 * walk->min, -1 * walk->max))
+                    status = i2d_panic("failed to add range object");
+                walk = walk->next;
+            }
+
+            if(status) {
+                i2d_range_list_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}

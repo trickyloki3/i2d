@@ -8,7 +8,7 @@ int main(int argc, char * argv[]) {
     i2d_range_list_init(&range1, 1, 3);
     i2d_range_list_add(range1, 6, 9);
     i2d_range_list_add(range1, 13, 15);
-    i2d_range_list_copy(&range2, range1);
+    i2d_range_list_negate(&range2, range1);
     i2d_range_list_print(range1);
     i2d_range_list_print(range2);
     i2d_range_list_deit(&range2);
