@@ -404,6 +404,7 @@ void i2d_range_list_get_range(i2d_range_list * list, long * min, long * max) {
 int i2d_range_list_compute(i2d_range_list ** result, i2d_range_list * left, i2d_range_list * right, int operator) {
     int status = I2D_OK;
     i2d_range_list * object = NULL;
+    i2d_range * walk;
 
     long left_min;
     long left_max;
@@ -464,6 +465,58 @@ int i2d_range_list_compute(i2d_range_list ** result, i2d_range_list * left, i2d_
                 } else if(i2d_range_list_and(result, left, object)) {
                     status = i2d_panic("failed to and range list operand");
                 }
+                i2d_range_list_deit(&object);
+            }
+            break;
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+        case '>' + '>' + 'b':
+        case '<' + '<' + 'b':
+        case '&':
+        case '|':
+        case '^' + 'b':
+            if(i2d_range_list_init(&object)) {
+                status = i2d_panic("failed to create range list object");
+            } else {
+                if(left->list) {
+                    walk = left->list;
+                    do {
+                        switch(operator) {
+                            case '+': status = i2d_range_list_add(object, walk->min + right_min, walk->max + right_max); break;
+                            case '-': status = i2d_range_list_add(object, walk->min - right_min, walk->max - right_max); break;
+                            case '*': status = i2d_range_list_add(object, walk->min * right_min, walk->max * right_max); break;
+                            case '/': status = i2d_range_list_add(object, right_min ? walk->min / right_min : 0, right_max ? walk->max / right_max : 0); break;
+                            case '%': status = i2d_range_list_add(object, walk->min % right_min, walk->max % right_max); break;
+                            case '>' + '>' + 'b': status = i2d_range_list_add(object, walk->min >> right_min, walk->max >> right_max); break;
+                            case '<' + '<' + 'b': status = i2d_range_list_add(object, walk->min << right_min, walk->max << right_max); break;
+                            case '&': status = i2d_range_list_add(object, walk->min & right_min, walk->max & right_max); break;
+                            case '|': status = i2d_range_list_add(object, walk->min | right_min, walk->max | right_max); break;
+                            case '^' + 'b': status = i2d_range_list_add(object, walk->min ^ right_min, walk->max ^ right_max); break;
+                        }
+                    } while(walk != left->list && !status);
+                }
+
+                if(right->list) {
+                    walk = right->list;
+                    do {
+                        switch(operator) {
+                            case '+': status = i2d_range_list_add(object, walk->min + left_min, walk->max + left_max); break;
+                            case '-': status = i2d_range_list_add(object, walk->min - left_min, walk->max - left_max); break;
+                            case '*': status = i2d_range_list_add(object, walk->min * left_min, walk->max * left_max); break;
+                            case '/': status = i2d_range_list_add(object, left_min ? walk->min / left_min : 0, left_max ? walk->max / left_max : 0); break;
+                            case '%': status = i2d_range_list_add(object, walk->min % left_min, walk->max % left_max); break;
+                            case '>' + '>' + 'b': status = i2d_range_list_add(object, walk->min >> left_min, walk->max >> left_max); break;
+                            case '<' + '<' + 'b': status = i2d_range_list_add(object, walk->min << left_min, walk->max << left_max); break;
+                            case '&': status = i2d_range_list_add(object, walk->min & left_min, walk->max & left_max); break;
+                            case '|': status = i2d_range_list_add(object, walk->min | left_min, walk->max | left_max); break;
+                            case '^' + 'b': status = i2d_range_list_add(object, walk->min ^ left_min, walk->max ^ left_max); break;
+                        }
+                    } while(walk != right->list && !status);
+                }
+
                 i2d_range_list_deit(&object);
             }
             break;
