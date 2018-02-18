@@ -19,7 +19,7 @@ void i2d_range_remove(i2d_range *);
 int i2d_range_add(i2d_range *, long, long);
 
 struct i2d_range_list {
-    struct i2d_range * list;
+    i2d_range * list;
 };
 
 typedef struct i2d_range_list i2d_range_list;

@@ -134,6 +134,12 @@ int i2d_range_list_add(i2d_range_list * list, long x, long y) {
     } else {
         walk->min = min(walk->min, min);
         walk->max = max(walk->max, max);
+        while(walk != walk->next && walk->max >= walk->next->min - 1) {
+            range = walk->next;
+            walk->max = max(walk->max, range->max);
+            i2d_range_remove(range);
+            i2d_range_deit(&range);
+        }
     }
 
     return status;
