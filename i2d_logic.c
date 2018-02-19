@@ -69,3 +69,120 @@ void i2d_logic_print(i2d_logic * logic, int level) {
         i2d_logic_print(logic->right, level + 1);
     }
 }
+
+int i2d_logic_link(i2d_logic ** result, i2d_logic * left, i2d_logic * right, int type) {
+    int status = I2D_OK;
+    i2d_logic * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->type = type;
+            object->left = left;
+            object->right = right;
+            object->left->parent = object;
+            object->right->parent = object;
+
+            if(status)
+                i2d_logic_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+int i2d_logic_var_copy(i2d_logic ** result, i2d_logic * logic) {
+    return i2d_logic_init(result, logic->name, logic->range);
+}
+
+int i2d_logic_and_copy(i2d_logic ** result, i2d_logic * logic) {
+    int status = I2D_OK;
+    i2d_logic * left = NULL;
+    i2d_logic * right = NULL;
+
+    if(or != logic->type) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        switch(logic->left->type) {
+            case var: status = i2d_logic_var_copy(&left, logic->left); break;
+            case and: status = i2d_logic_and_copy(&left, logic->left); break;
+            case or:  status = i2d_logic_or_copy(&left, logic->left);  break;
+        }
+        if(status) {
+            status = i2d_panic("failed to copy left logic object");
+        } else {
+            switch(logic->right->type) {
+                case var: status = i2d_logic_var_copy(&right, logic->right); break;
+                case and: status = i2d_logic_and_copy(&right, logic->right); break;
+                case or:  status = i2d_logic_or_copy(&right, logic->right);  break;
+            }
+            if(status) {
+                status = i2d_panic("failed to copy right logic object");
+            } else {
+                if(i2d_logic_link(result, left, right, and))
+                    status = i2d_panic("failed to copy logic object");
+                if(status)
+                    i2d_logic_deit(&right);
+            }
+            if(status)
+                i2d_logic_deit(&left);
+        }
+    }
+
+    return status;
+}
+
+int i2d_logic_or_copy(i2d_logic ** result, i2d_logic * logic) {
+    int status = I2D_OK;
+    i2d_logic * left = NULL;
+    i2d_logic * right = NULL;
+
+    if(or != logic->type) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        switch(logic->left->type) {
+            case var: status = i2d_logic_var_copy(&left, logic->left); break;
+            case and: status = i2d_logic_and_copy(&left, logic->left); break;
+            case or:  status = i2d_logic_or_copy(&left, logic->left);  break;
+        }
+        if(status) {
+            status = i2d_panic("failed to copy left logic object");
+        } else {
+            switch(logic->right->type) {
+                case var: status = i2d_logic_var_copy(&right, logic->right); break;
+                case and: status = i2d_logic_and_copy(&right, logic->right); break;
+                case or:  status = i2d_logic_or_copy(&right, logic->right);  break;
+            }
+            if(status) {
+                status = i2d_panic("failed to copy right logic object");
+            } else {
+                if(i2d_logic_link(result, left, right, or))
+                    status = i2d_panic("failed to copy logic object");
+                if(status)
+                    i2d_logic_deit(&right);
+            }
+            if(status)
+                i2d_logic_deit(&left);
+        }
+    }
+
+    return status;
+}
+
+int i2d_logic_copy(i2d_logic ** result, i2d_logic * logic) {
+    int status = I2D_OK;
+
+    switch(logic->type) {
+        case var: status = i2d_logic_var_copy(result, logic); break;
+        case and: status = i2d_logic_and_copy(result, logic); break;
+        case or:  status = i2d_logic_or_copy(result, logic);  break;
+    }
+
+    return status;
+}
