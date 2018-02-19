@@ -3,6 +3,13 @@
 
 #include "i2d_range.h"
 
+enum {
+    var,
+    and,
+    or,
+    not
+};
+
 struct i2d_logic {
     int type;
     i2d_str * name;
@@ -22,4 +29,5 @@ int i2d_logic_var_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_and_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_or_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_copy(i2d_logic **, i2d_logic *);
+int i2d_logic_var(i2d_logic **, i2d_logic *, i2d_logic *, int);
 #endif

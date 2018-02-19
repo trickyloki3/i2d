@@ -1,12 +1,5 @@
 #include "i2d_logic.h"
 
-enum {
-    var,
-    and,
-    or,
-    not
-};
-
 int i2d_logic_init(i2d_logic ** result, i2d_str * name, i2d_range_list * range) {
     int status = I2D_OK;
     i2d_logic * object;
@@ -55,7 +48,7 @@ void i2d_logic_print(i2d_logic * logic, int level) {
         for(i = 0; i < level; i++)
             putc('\t', stdout);
         switch(logic->type) {
-            case var: fprintf(stdout, "[var] "); break;
+            case var: fprintf(stdout, "[%s] ", logic->name->string); break;
             case and: fprintf(stdout, "[and] "); break;
             case or:  fprintf(stdout, "[or] ");  break;
             case not: fprintf(stdout, "[not] "); break;
@@ -134,7 +127,7 @@ int i2d_logic_and_copy(i2d_logic ** result, i2d_logic * logic) {
                 status = i2d_panic("failed to copy right logic object");
             } else {
                 if(i2d_logic_link(result, left, right, and))
-                    status = i2d_panic("failed to copy logic object");
+                    status = i2d_panic("failed to link logic object");
                 if(status)
                     i2d_logic_deit(&right);
             }
@@ -171,7 +164,7 @@ int i2d_logic_or_copy(i2d_logic ** result, i2d_logic * logic) {
                 status = i2d_panic("failed to copy right logic object");
             } else {
                 if(i2d_logic_link(result, left, right, or))
-                    status = i2d_panic("failed to copy logic object");
+                    status = i2d_panic("failed to link logic object");
                 if(status)
                     i2d_logic_deit(&right);
             }
@@ -190,6 +183,46 @@ int i2d_logic_copy(i2d_logic ** result, i2d_logic * logic) {
         case var: status = i2d_logic_var_copy(result, logic); break;
         case and: status = i2d_logic_and_copy(result, logic); break;
         case or:  status = i2d_logic_or_copy(result, logic);  break;
+    }
+
+    return status;
+}
+
+int i2d_logic_var(i2d_logic ** result, i2d_logic * left, i2d_logic * right, int type) {
+    int status = I2D_OK;
+    i2d_range_list * range = NULL;
+    i2d_logic * left_copy = NULL;
+    i2d_logic * right_copy = NULL;
+
+    if(var != left->type || var != right->type) {
+        status = i2d_panic("invalid paramater");
+    } else if(!strcmp(left->name->string, right->name->string)) {
+        switch(type) {
+            case and: status = i2d_range_list_and(&range, left->range, right->range); break;
+            case or:  status = i2d_range_list_or(&range, left->range, right->range);  break;
+        }
+        if(status) {
+            status = i2d_panic("failed to merge range list");
+        } else {
+            if(i2d_logic_init(result, left->name, range))
+                status = i2d_panic("failed to create logic object");
+            i2d_range_list_deit(&range);
+        }
+    } else {
+        if(i2d_logic_var_copy(&left_copy, left)) {
+            status = i2d_panic("failed to create logic object");
+        } else {
+            if(i2d_logic_var_copy(&right_copy, right)) {
+                status = i2d_panic("failed to create logic object");
+            } else {
+                if(i2d_logic_link(result, left_copy, right_copy, type))
+                    status = i2d_panic("failed to link logic object");
+                if(status)
+                    i2d_logic_deit(&right_copy);
+            }
+            if(status)
+                i2d_logic_deit(&left_copy);
+        }
     }
 
     return status;
