@@ -98,7 +98,15 @@ int i2d_logic_link(i2d_logic ** result, i2d_logic * left, i2d_logic * right, int
 }
 
 int i2d_logic_var_copy(i2d_logic ** result, i2d_logic * logic) {
-    return i2d_logic_init(result, logic->name, logic->range);
+    int status = I2D_OK;
+
+    if(var != logic->type) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        status = i2d_logic_init(result, logic->name, logic->range);
+    }
+
+    return status;
 }
 
 int i2d_logic_and_copy(i2d_logic ** result, i2d_logic * logic) {
