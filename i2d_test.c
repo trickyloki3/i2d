@@ -11,6 +11,7 @@ int main(int argc, char * argv[]) {
     i2d_range_list_init(&range);
     i2d_range_list_add(range, 0, 15);
     i2d_logic_init(&logic, name, range);
+    i2d_logic_print(logic, 0);
     i2d_logic_deit(&logic);
     i2d_range_list_deit(&range);
     i2d_str_deit(&name);

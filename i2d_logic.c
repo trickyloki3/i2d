@@ -47,3 +47,25 @@ void i2d_logic_deit(i2d_logic ** result) {
     i2d_free(object);
     *result = NULL;
 }
+
+void i2d_logic_print(i2d_logic * logic, int level) {
+    int i;
+
+    if(logic) {
+        for(i = 0; i < level; i++)
+            putc('\t', stdout);
+        switch(logic->type) {
+            case var: fprintf(stdout, "[var] "); break;
+            case and: fprintf(stdout, "[and] "); break;
+            case or:  fprintf(stdout, "[or] ");  break;
+            case not: fprintf(stdout, "[not] "); break;
+        }
+        if(logic->range)
+            i2d_range_list_print(logic->range, NULL);
+        else
+            fprintf(stdout, "\n");
+
+        i2d_logic_print(logic->left, level + 1);
+        i2d_logic_print(logic->right, level + 1);
+    }
+}

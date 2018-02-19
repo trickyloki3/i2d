@@ -16,4 +16,5 @@ typedef struct i2d_logic i2d_logic;
 
 int i2d_logic_init(i2d_logic **, i2d_str *, i2d_range_list *);
 void i2d_logic_deit(i2d_logic **);
+void i2d_logic_print(i2d_logic *, int);
 #endif
