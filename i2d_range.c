@@ -90,11 +90,13 @@ void i2d_range_list_deit(i2d_range_list ** result) {
     *result = NULL;
 }
 
-void i2d_range_list_print(i2d_range_list * list) {
+void i2d_range_list_print(i2d_range_list * list, const char * tag) {
     i2d_range * walk;
 
     if(list->list) {
         walk = list->list;
+        if(tag)
+            fprintf(stdout, "(%s) ", tag);
         do {
             fprintf(stdout, "[%ld,%ld]", walk->min, walk->max);
             walk = walk->next;

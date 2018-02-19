@@ -26,7 +26,7 @@ typedef struct i2d_range_list i2d_range_list;
 
 int i2d_range_list_init(i2d_range_list **);
 void i2d_range_list_deit(i2d_range_list **);
-void i2d_range_list_print(i2d_range_list *);
+void i2d_range_list_print(i2d_range_list *, const char *);
 int i2d_range_list_add(i2d_range_list *, long, long);
 int i2d_range_list_copy(i2d_range_list **, i2d_range_list *);
 int i2d_range_list_negate(i2d_range_list **, i2d_range_list *);
