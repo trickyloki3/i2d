@@ -8,6 +8,7 @@ OBJECT+=i2d_rbt.o
 OBJECT+=i2d_script.o
 OBJECT+=i2d_json.o
 OBJECT+=i2d_range.o
+OBJECT+=i2d_logic.o
 
 all: clean i2d i2d_test
 
