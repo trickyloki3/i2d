@@ -249,7 +249,7 @@ int i2d_logic_or_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
     i2d_range_list * range = NULL;
 
     if(var == logic->type) {
-        if(!i2d_logic_or_search(&twin, *result, logic->name)) {
+        if(or == *result->type && !i2d_logic_or_search(&twin, *result, logic->name)) {
             if(i2d_range_list_or(&range, twin->range, logic->range)) {
                 status = i2d_panic("failed to merge range list");
             } else {
