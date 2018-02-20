@@ -241,29 +241,6 @@ int i2d_logic_search(i2d_logic ** result, i2d_logic * logic, i2d_str * name) {
     return *result ? I2D_OK : I2D_FAIL;
 }
 
-int i2d_logic_or_link(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
-    int status = I2D_OK;
-    i2d_logic * left_copy = NULL;
-    i2d_logic * right_copy = NULL;
-
-    if(i2d_logic_copy(&left_copy, left)) {
-        status = i2d_panic("failed to copy logic object");
-    } else {
-        if(i2d_logic_copy(&right_copy, right)) {
-            status = i2d_panic("failed to copy logic object");
-        } else {
-            if(i2d_logic_link(result, left_copy, right_copy, or))
-                status = i2d_panic("failed to link logic object");
-            if(status)
-                i2d_logic_deit(&right_copy);
-        }
-        if(status)
-            i2d_logic_deit(&left_copy);
-    }
-
-    return status;
-}
-
 int i2d_logic_or_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
     int status = I2D_OK;
     i2d_logic * sibling = NULL;
@@ -312,21 +289,21 @@ int i2d_logic_or(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
         case var:
             switch(right->type) {
                 case var: status = i2d_logic_var(result, left, right, or); break;
-                case and: status = i2d_logic_or_link(result, left, right); break;
-                case or:  status = i2d_logic_or_link(result, left, right); break;
+                case and: status = i2d_logic_or_merge(result, left, right); break;
+                case or:  status = i2d_logic_or_merge(result, left, right); break;
             }
             break;
         case and:
             switch(right->type) {
-                case var: status = i2d_logic_or_link(result, left, right); break;
-                case and: status = i2d_logic_or_link(result, left, right); break;
-                case or:  status = i2d_logic_or_link(result, left, right); break;
+                case var: status = i2d_logic_or_merge(result, left, right); break;
+                case and: status = i2d_logic_or_merge(result, left, right); break;
+                case or:  status = i2d_logic_or_merge(result, left, right); break;
             }
             break;
         case or:
             switch(right->type) {
-                case var: status = i2d_logic_or_link(result, left, right); break;
-                case and: status = i2d_logic_or_link(result, left, right); break;
+                case var: status = i2d_logic_or_merge(result, left, right); break;
+                case and: status = i2d_logic_or_merge(result, left, right); break;
                 case or:  status = i2d_logic_or_merge(result, left, right); break;
             }
             break;
