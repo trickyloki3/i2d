@@ -30,4 +30,5 @@ int i2d_logic_and_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_or_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_var(i2d_logic **, i2d_logic *, i2d_logic *, int);
+int i2d_logic_search(i2d_logic **, i2d_logic *, i2d_str *);
 #endif

@@ -227,3 +227,16 @@ int i2d_logic_var(i2d_logic ** result, i2d_logic * left, i2d_logic * right, int 
 
     return status;
 }
+
+int i2d_logic_search(i2d_logic ** result, i2d_logic * logic, i2d_str * name) {
+    if(var == logic->type && !strcmp(logic->name->string, name->string)) {
+        *result = logic;
+    } else {
+        if(logic->left && !(*result))
+            i2d_logic_search(result, logic->left, name);
+        if(logic->right && !(*result))
+            i2d_logic_search(result, logic->right, name);
+    }
+
+    return *result ? I2D_OK : I2D_FAIL;
+}
