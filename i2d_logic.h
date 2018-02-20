@@ -31,4 +31,8 @@ int i2d_logic_or_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_var(i2d_logic **, i2d_logic *, i2d_logic *, int);
 int i2d_logic_search(i2d_logic **, i2d_logic *, i2d_str *);
+int i2d_logic_or_link(i2d_logic **, i2d_logic *, i2d_logic *);
+int i2d_logic_or_merge_recursive(i2d_logic **, i2d_logic *);
+int i2d_logic_or_merge(i2d_logic **, i2d_logic *, i2d_logic *);
+int i2d_logic_or(i2d_logic **, i2d_logic *, i2d_logic *);
 #endif
