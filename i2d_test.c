@@ -21,9 +21,10 @@ int main(int argc, char * argv[]) {
     i2d_logic_init(&logic, name, range);
     i2d_logic_init(&logic2, name2, range2);
     i2d_logic_var(&logic3, logic, logic2, and);
-    i2d_logic_search(&logic4, logic3, name2);
+    i2d_logic_copy(&logic4, logic3);
     i2d_logic_print(logic4, 0);
     i2d_logic_print(logic3, 0);
+    i2d_logic_deit(&logic4);
     i2d_logic_deit(&logic3);
     i2d_logic_deit(&logic2);
     i2d_logic_deit(&logic);
