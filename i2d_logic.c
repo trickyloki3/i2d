@@ -266,13 +266,20 @@ int i2d_logic_or_link(i2d_logic ** result, i2d_logic * left, i2d_logic * right) 
 
 int i2d_logic_or_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
     int status = I2D_OK;
+    i2d_logic * sibling = NULL;
     i2d_logic * parent = NULL;
 
     if(var == logic->type || and == logic->type) {
-        if(i2d_logic_link(&parent, *result, logic, or)) {
-            status = i2d_panic("failed to link logic object");
+        if(i2d_logic_copy(&sibling, logic)) {
+            status = i2d_panic("failed to copy logic object");
         } else {
-            *result = parent;
+            if(i2d_logic_link(&parent, *result, sibling, or)) {
+                status = i2d_panic("failed to link logic object");
+            } else {
+                *result = parent;
+            }
+            if(status)
+                i2d_logic_deit(&sibling):
         }
     } else if(i2d_logic_or_merge_recursive(result, logic->left)) {
         status = i2d_panic("failed to merge logic object");
@@ -288,8 +295,11 @@ int i2d_logic_or_merge(i2d_logic ** result, i2d_logic * left, i2d_logic * right)
 
     if(i2d_logic_copy(result, left)) {
         status = i2d_panic("failed to copy logic object");
-    } else if(i2d_logic_or_merge_recursive(result, right)) {
-        status = i2d_panic("failed to merge logic object");
+    } else {
+        if(i2d_logic_or_merge_recursive(result, right))
+            status = i2d_panic("failed to merge logic object");
+        if(status)
+            i2d_logic_deit(result);
     }
 
     return status;
