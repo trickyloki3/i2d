@@ -343,3 +343,79 @@ int i2d_logic_or(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
 
     return status;
 }
+
+int i2d_logic_and_search(i2d_logic ** result, i2d_logic * logic, i2d_str * name) {
+    if(var == logic->type && !strcmp(logic->name->string, name->string)) {
+        *result = logic;
+    } else {
+        if(and == logic->type) {
+            if(logic->left && !(*result))
+                i2d_logic_and_search(result, logic->left, name);
+            if(logic->right && !(*result))
+                i2d_logic_and_search(result, logic->right, name);
+        }
+    }
+
+    return *result ? I2D_OK : I2D_FAIL;
+}
+
+int i2d_logic_and_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
+    int status = I2D_OK;
+    i2d_logic * sibling = NULL;
+    i2d_logic * parent = NULL;
+    i2d_logic * twin = NULL;
+    i2d_range_list * range = NULL;
+
+    if(or == logic->type) {
+        status = i2d_panic("invalid paramater");
+    } else if(var == logic->type) {
+        if(var == (*result)->type) {
+            if(i2d_logic_var(&parent, logic, *result, and)) {
+                status = i2d_panic("failed to merge logic object");
+            } else {
+                i2d_logic_deit(result);
+                *result = parent;
+            }
+        } else if(and == (*result)->type && !i2d_logic_or_search(&twin, *result, logic->name)) {
+            if(i2d_range_list_and(&range, twin->range, logic->range)) {
+                status = i2d_panic("failed to merge range list");
+            } else {
+                i2d_range_list_deit(&twin->range);
+                twin->range = range;
+            }
+        } else {
+            if(i2d_logic_copy(&sibling, logic)) {
+                status = i2d_panic("failed to copy logic object");
+            } else {
+                if(i2d_logic_link(&parent, *result, sibling, and)) {
+                    status = i2d_panic("failed to link logic object");
+                } else {
+                    *result = parent;
+                }
+                if(status)
+                    i2d_logic_deit(&sibling);
+            }
+        }
+    } else if(logic->left && i2d_logic_and_merge_recursive(result, logic->left)) {
+        status = i2d_panic("failed to merge logic object");
+    } else if(logic->right && i2d_logic_and_merge_recursive(result, logic->right)) {
+        status = i2d_panic("failed to merge logic object");
+    }
+
+    return status;
+}
+
+int i2d_logic_and_merge(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
+    int status = I2D_OK;
+
+    if(i2d_logic_copy(result, left)) {
+        status = i2d_panic("failed to copy logic object");
+    } else {
+        if(i2d_logic_and_merge_recursive(result, right))
+            status = i2d_panic("failed to merge logic object");
+        if(status)
+            i2d_logic_deit(result);
+    }
+
+    return status;
+}
