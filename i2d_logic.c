@@ -376,7 +376,7 @@ int i2d_logic_and_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
                 i2d_logic_deit(result);
                 *result = parent;
             }
-        } else if(and == (*result)->type && !i2d_logic_or_search(&twin, *result, logic->name)) {
+        } else if(and == (*result)->type && !i2d_logic_and_search(&twin, *result, logic->name)) {
             if(i2d_range_list_and(&range, twin->range, logic->range)) {
                 status = i2d_panic("failed to merge range list");
             } else {
@@ -415,6 +415,36 @@ int i2d_logic_and_merge(i2d_logic ** result, i2d_logic * left, i2d_logic * right
             status = i2d_panic("failed to merge logic object");
         if(status)
             i2d_logic_deit(result);
+    }
+
+    return status;
+}
+
+int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
+    int status = I2D_OK;
+
+    switch(left->type) {
+        case var:
+            switch(right->type) {
+                case var: status = i2d_logic_var(result, left, right, or); break;
+                case and: status = i2d_logic_and_merge(result, left, right); break;
+                case or:  break;
+            }
+            break;
+        case and:
+            switch(right->type) {
+                case var: status = i2d_logic_and_merge(result, left, right); break;
+                case and: status = i2d_logic_and_merge(result, left, right); break;
+                case or:  break;
+            }
+            break;
+        case or:
+            switch(right->type) {
+                case var: break;
+                case and: break;
+                case or:  break;
+            }
+            break;
     }
 
     return status;
