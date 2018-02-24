@@ -37,5 +37,6 @@ int i2d_logic_or(i2d_logic **, i2d_logic *, i2d_logic *);
 int i2d_logic_and_search(i2d_logic **, i2d_logic *, i2d_str *);
 int i2d_logic_and_merge_recursive(i2d_logic **, i2d_logic *);
 int i2d_logic_and_merge(i2d_logic **, i2d_logic *, i2d_logic *);
+int i2d_logic_and_or_merge(i2d_logic **, i2d_logic *, i2d_logic *);
 int i2d_logic_and(i2d_logic **, i2d_logic *, i2d_logic *);
 #endif

@@ -420,6 +420,41 @@ int i2d_logic_and_merge(i2d_logic ** result, i2d_logic * left, i2d_logic * right
     return status;
 }
 
+int i2d_logic_and_or_merge(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
+    int status = I2D_OK;
+
+    i2d_logic * left_sibling = NULL;
+    i2d_logic * right_sibling = NULL;
+
+    if(or != left->type || or == right->type) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        switch(left->left->type) {
+            case or: status = i2d_logic_and_or_merge(&left_sibling, left->left, right); break;
+            default: status = i2d_logic_and(&left_sibling, left->left, right); break;
+        }
+        if(status) {
+            status = i2d_panic("failed to merge logic object");
+        } else {
+            switch(left->right->type) {
+                case or: status = i2d_logic_and_or_merge(&right_sibling, left->right, right); break;
+                default: status = i2d_logic_and(&right_sibling, left->right, right); break;
+            }
+            if(status) {
+                status = i2d_panic("failed to merge logic object");
+            } else {
+                if(i2d_logic_or(result, left_sibling, right_sibling))
+                    status = i2d_panic("failed to link logic object");
+                i2d_logic_deit(&right_sibling);
+            }
+            i2d_logic_deit(&left_sibling);
+        }
+    }
+
+    return status;
+
+}
+
 int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
     int status = I2D_OK;
 
@@ -428,20 +463,20 @@ int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
             switch(right->type) {
                 case var: status = i2d_logic_var(result, left, right, or); break;
                 case and: status = i2d_logic_and_merge(result, left, right); break;
-                case or:  break;
+                case or:  status = i2d_logic_and_or_merge(result, right, left); break;
             }
             break;
         case and:
             switch(right->type) {
                 case var: status = i2d_logic_and_merge(result, left, right); break;
                 case and: status = i2d_logic_and_merge(result, left, right); break;
-                case or:  break;
+                case or:  status = i2d_logic_and_or_merge(result, right, left); break;
             }
             break;
         case or:
             switch(right->type) {
-                case var: break;
-                case and: break;
+                case var: status = i2d_logic_and_or_merge(result, left, right); break;
+                case and: status = i2d_logic_and_or_merge(result, left, right); break;
                 case or:  break;
             }
             break;
