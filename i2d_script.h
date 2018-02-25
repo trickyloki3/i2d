@@ -143,6 +143,7 @@ typedef struct i2d_translator i2d_translator;
 
 int i2d_translator_init(i2d_translator **);
 int i2d_translator_deit(i2d_translator **);
+int i2d_translator_translate(i2d_translator *, i2d_block *);
 
 struct i2d_script {
     i2d_json * json;

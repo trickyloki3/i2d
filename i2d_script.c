@@ -746,6 +746,30 @@ int i2d_translator_deit(i2d_translator ** result) {
     *result = NULL;
 }
 
+int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
+    int status = I2D_OK;
+    i2d_block * block;
+
+    if(!list) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        block = list;
+        do {
+            switch(block->type) {
+                case I2D_BLOCK:
+                case I2D_EXPRESSION:
+                case I2D_STATEMENT:
+                case I2D_IF:
+                case I2D_ELSE:
+                default:
+                    break;
+            }
+            block = block->next;
+        } while(block != list && !status);
+    }
+
+    return status;
+}
 
 int i2d_script_init(i2d_script ** result, i2d_str * path) {
     int status = I2D_OK;
@@ -799,8 +823,8 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer)) {
         status = i2d_panic("failed to parse -- %s", source->string);
-    } else {
-
+    } else if(i2d_translator_translate(script->translator, script->parser->list)) {
+        status = i2d_panic("failed to translate -- %s", source->string);
     }
 
     return status;
