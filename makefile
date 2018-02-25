@@ -26,3 +26,4 @@ i2d_test: $(OBJECT)
 clean:
 	@rm -f *.o
 	@rm -f i2d
+	@rm -f i2d_test
