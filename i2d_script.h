@@ -135,10 +135,20 @@ int i2d_parser_block_init(i2d_parser *, i2d_block **, enum i2d_block_type, i2d_t
 int i2d_parser_analysis(i2d_parser *, i2d_lexer *);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
 
+struct i2d_translator {
+
+};
+
+typedef struct i2d_translator i2d_translator;
+
+int i2d_translator_init(i2d_translator **);
+int i2d_translator_deit(i2d_translator **);
+
 struct i2d_script {
     i2d_json * json;
     i2d_lexer * lexer;
     i2d_parser * parser;
+    i2d_translator * translator;
 };
 
 typedef struct i2d_script i2d_script;
