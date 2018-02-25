@@ -3,8 +3,8 @@
 
 static void i2d_logic_test(void);
 static void i2d_logic_or_test(i2d_logic *, i2d_logic *, i2d_logic *);
-static void i2d_logic_and_test(i2d_logic *, i2d_logic *, i2d_logic *, i2d_logic *);
-
+static void i2d_logic_and_test(i2d_logic *, i2d_logic *, i2d_logic *);
+static void i2d_logic_not_test(i2d_logic *, i2d_logic *, i2d_logic *);
 int main(int argc, char * argv[]) {
     i2d_logic_test();
     return 0;
@@ -31,7 +31,8 @@ static void i2d_logic_test(void) {
     i2d_logic_var(&and_logic, getrefine_logic, readparam_logic, and);
     i2d_logic_var(&or_logic, getrefine_logic, readparam_logic, or);
     i2d_logic_or_test(readparam_logic, and_logic, or_logic);
-    i2d_logic_and_test(getrefine_logic, readparam_logic, and_logic, or_logic);
+    i2d_logic_and_test(readparam_logic, and_logic, or_logic);
+    i2d_logic_not_test(readparam_logic, and_logic, or_logic);
     i2d_logic_deit(&or_logic);
     i2d_logic_deit(&and_logic);
     i2d_logic_deit(&readparam_logic);
@@ -61,6 +62,7 @@ void i2d_logic_or_test(i2d_logic * var_logic, i2d_logic * and_logic, i2d_logic *
     i2d_logic_or(&or_or_var, or_logic, var_logic);
     i2d_logic_or(&or_or_and, or_logic, and_logic);
     i2d_logic_or(&or_or_or, or_logic, or_logic);
+    fprintf(stderr, "or test results\n");
     i2d_logic_print(or_var_var, 0);
     i2d_logic_print(or_var_and, 0);
     i2d_logic_print(or_var_or, 0);
@@ -81,7 +83,7 @@ void i2d_logic_or_test(i2d_logic * var_logic, i2d_logic * and_logic, i2d_logic *
     i2d_logic_deit(&or_var_var);
 }
 
-static void i2d_logic_and_test(i2d_logic * var_logic, i2d_logic * var_logic2, i2d_logic * and_logic, i2d_logic * or_logic) {
+static void i2d_logic_and_test(i2d_logic * var_logic, i2d_logic * and_logic, i2d_logic * or_logic) {
     i2d_logic * and_var_var = NULL;
     i2d_logic * and_var_and = NULL;
     i2d_logic * and_var_or = NULL;
@@ -100,6 +102,7 @@ static void i2d_logic_and_test(i2d_logic * var_logic, i2d_logic * var_logic2, i2
     i2d_logic_and(&and_or_var, or_logic, var_logic);
     i2d_logic_and(&and_or_and, or_logic, and_logic);
     i2d_logic_and(&and_or_or, or_logic, or_logic);
+    fprintf(stderr, "and test results\n");
     i2d_logic_print(and_var_var, 0);
     i2d_logic_print(and_var_and, 0);
     i2d_logic_print(and_var_or, 0);
@@ -118,4 +121,20 @@ static void i2d_logic_and_test(i2d_logic * var_logic, i2d_logic * var_logic2, i2
     i2d_logic_deit(&and_var_or);
     i2d_logic_deit(&and_var_and);
     i2d_logic_deit(&and_var_var);
+}
+
+static void i2d_logic_not_test(i2d_logic * var_logic, i2d_logic * and_logic, i2d_logic * or_logic) {
+    i2d_logic * not_var = NULL;
+    i2d_logic * not_and = NULL;
+    i2d_logic * not_or = NULL;
+    i2d_logic_not(&not_var, var_logic);
+    i2d_logic_not(&not_and, and_logic);
+    i2d_logic_not(&not_or, or_logic);
+    fprintf(stderr, "not test results\n");
+    i2d_logic_print(not_var, 0);
+    i2d_logic_print(not_and, 0);
+    i2d_logic_print(not_or, 0);
+    i2d_logic_deit(&not_or);
+    i2d_logic_deit(&not_and);
+    i2d_logic_deit(&not_var);
 }

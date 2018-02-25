@@ -483,3 +483,40 @@ int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
 
     return status;
 }
+
+int i2d_logic_not(i2d_logic ** result, i2d_logic * logic) {
+    int status = I2D_OK;
+    i2d_range_list * range = NULL;
+    i2d_logic * left = NULL;
+    i2d_logic * right = NULL;
+
+    if(var == logic->type) {
+        if(i2d_range_list_not(&range, logic->range)) {
+            status = i2d_panic("failed to not range list");
+        } else {
+            if(i2d_logic_init(result, logic->name, range))
+                status = i2d_panic("failed to create logic object");
+            i2d_range_list_deit(&range);
+        }
+    } else {
+        if(i2d_logic_not(&left, logic->left)) {
+            status = i2d_panic("failed to not logic object");
+        } else {
+            if(i2d_logic_not(&right, logic->right)) {
+                status = i2d_panic("failed to not logic object");
+            } else {
+                /*
+                 * De Morgan's Law
+                 */
+                if( and == logic->type ?
+                    i2d_logic_or(result, left, right) :
+                    i2d_logic_and(result, left, right) )
+                status = i2d_panic("failed to not logic object");
+                i2d_logic_deit(&right);
+            }
+            i2d_logic_deit(&left);
+        }
+    }
+
+    return status;
+}

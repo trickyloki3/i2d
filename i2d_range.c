@@ -371,7 +371,7 @@ int i2d_range_list_not(i2d_range_list ** result, i2d_range_list * list) {
         if(i2d_range_list_init(&object)) {
             status = i2d_panic("failed to create range list object");
         } else {
-            if(list->list) {
+            if(list->list && list->list != list->list->next) {
                 walk = list->list;
                 do {
                     if(i2d_range_list_add(object, walk->max + 1, walk->next->min - 1))
