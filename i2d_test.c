@@ -90,6 +90,7 @@ static void i2d_logic_and_test(i2d_logic * var_logic, i2d_logic * var_logic2, i2
     i2d_logic * and_and_or = NULL;
     i2d_logic * and_or_var = NULL;
     i2d_logic * and_or_and = NULL;
+    i2d_logic * and_or_or = NULL;
     i2d_logic_and(&and_var_var, var_logic, var_logic);
     i2d_logic_and(&and_var_and, var_logic, and_logic);
     i2d_logic_and(&and_var_or, var_logic, or_logic);
@@ -98,6 +99,7 @@ static void i2d_logic_and_test(i2d_logic * var_logic, i2d_logic * var_logic2, i2
     i2d_logic_and(&and_and_or, and_logic, or_logic);
     i2d_logic_and(&and_or_var, or_logic, var_logic);
     i2d_logic_and(&and_or_and, or_logic, and_logic);
+    i2d_logic_and(&and_or_or, or_logic, or_logic);
     i2d_logic_print(and_var_var, 0);
     i2d_logic_print(and_var_and, 0);
     i2d_logic_print(and_var_or, 0);
@@ -106,6 +108,8 @@ static void i2d_logic_and_test(i2d_logic * var_logic, i2d_logic * var_logic2, i2
     i2d_logic_print(and_and_or, 0);
     i2d_logic_print(and_or_var, 0);
     i2d_logic_print(and_or_and, 0);
+    i2d_logic_print(and_or_or, 0);
+    i2d_logic_deit(&and_or_or);
     i2d_logic_deit(&and_or_and);
     i2d_logic_deit(&and_or_var);
     i2d_logic_deit(&and_and_or);

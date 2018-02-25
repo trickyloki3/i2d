@@ -426,7 +426,7 @@ int i2d_logic_and_or_merge(i2d_logic ** result, i2d_logic * left, i2d_logic * ri
     i2d_logic * left_sibling = NULL;
     i2d_logic * right_sibling = NULL;
 
-    if(or != left->type || or == right->type) {
+    if(or != left->type) {
         status = i2d_panic("invalid paramater");
     } else {
         switch(left->left->type) {
@@ -452,7 +452,6 @@ int i2d_logic_and_or_merge(i2d_logic ** result, i2d_logic * left, i2d_logic * ri
     }
 
     return status;
-
 }
 
 int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
@@ -477,7 +476,7 @@ int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
             switch(right->type) {
                 case var: status = i2d_logic_and_or_merge(result, left, right); break;
                 case and: status = i2d_logic_and_or_merge(result, left, right); break;
-                case or:  break;
+                case or:  status = i2d_logic_and_or_merge(result, left, right); break;
             }
             break;
     }
