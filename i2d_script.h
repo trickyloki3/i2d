@@ -104,7 +104,7 @@ enum i2d_block_type {
 struct i2d_block {
     enum i2d_block_type type;
     i2d_token * statement;
-    struct i2d_block * logic;
+    struct i2d_block * expression;
     struct i2d_block * parent;
     struct i2d_block * child;
     struct i2d_block * next;

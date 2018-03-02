@@ -449,7 +449,7 @@ void i2d_block_deit(i2d_block ** result) {
 
     object = *result;
     i2d_deit(object->child, i2d_block_list_deit);
-    i2d_deit(object->logic, i2d_block_list_deit);
+    i2d_deit(object->expression, i2d_block_list_deit);
     i2d_deit(object->statement, i2d_token_list_deit);
     i2d_free(object);
     *result = NULL;
@@ -491,8 +491,8 @@ void i2d_block_print(i2d_block * block, int level) {
         i2d_token_print(block->statement);
     else
         fprintf(stdout, "\n");
-    if(block->logic)
-        i2d_block_list_print(block->logic, level + 1);
+    if(block->expression)
+        i2d_block_list_print(block->expression, level + 1);
     if(block->child)
         i2d_block_list_print(block->child, level + 1);
 }
@@ -553,8 +553,8 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
         if(block->child)
             i2d_parser_reset(parser, lexer, &block->child);
         block->parent = NULL;
-        if(block->logic)
-            i2d_parser_reset(parser, lexer, &block->logic);
+        if(block->expression)
+            i2d_parser_reset(parser, lexer, &block->expression);
         if(block->statement)
             i2d_lexer_reset(lexer, &block->statement);
         block->type = I2D_BLOCK;
@@ -661,7 +661,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                         }
                         if(I2D_PARENTHESIS_CLOSE != token->type) {
                             status = i2d_panic("missing ) after (");
-                        } else if(i2d_parser_block_init(parser, &block->logic, I2D_EXPRESSION, anchor, block)) {
+                        } else if(i2d_parser_block_init(parser, &block->expression, I2D_EXPRESSION, anchor, block)) {
                             status = i2d_panic("failed to create block object");
                         } else {
                             token = token->next;
