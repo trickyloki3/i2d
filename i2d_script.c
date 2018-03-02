@@ -486,6 +486,18 @@ void i2d_block_remove(i2d_block * x) {
 }
 
 void i2d_block_print(i2d_block * block, int level) {
+    fprintf(stdout, "%s [%p] ", i2d_block_string[block->type], block);
+    if(block->statement)
+        i2d_token_print(block->statement);
+    else
+        fprintf(stdout, "\n");
+    if(block->logic)
+        i2d_block_list_print(block->logic, level + 1);
+    if(block->child)
+        i2d_block_list_print(block->child, level + 1);
+}
+
+void i2d_block_list_print(i2d_block * block, int level) {
     i2d_block * iterator;
     int i;
 
@@ -493,15 +505,7 @@ void i2d_block_print(i2d_block * block, int level) {
     do {
         for(i = 0; i < level; i++)
             putc('\t', stdout);
-        fprintf(stdout, "%s [%p] ", i2d_block_string[iterator->type], iterator);
-        if(iterator->statement)
-            i2d_token_print(iterator->statement);
-        else
-            fprintf(stdout, "\n");
-        if(iterator->logic)
-            i2d_block_print(iterator->logic, level + 1);
-        if(iterator->child)
-            i2d_block_print(iterator->child, level + 1);
+        i2d_block_print(iterator, level);
         iterator = iterator->next;
     } while(iterator != block);
 }
