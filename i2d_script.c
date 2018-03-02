@@ -740,11 +740,13 @@ int i2d_parser_statement_recursive(i2d_parser * parser, i2d_block * parent, i2d_
             parenthesis--;
         } else if(!parenthesis) {
             if(I2D_COMMA == token->type || I2D_SEMICOLON == token->type) {
-                if(i2d_parser_block_init(parser, &block, I2D_EXPRESSION, anchor->next, parent)) {
-                    status = i2d_panic("failed to create block object");
-                } else {
-                    i2d_token_append(anchor, token);
-                    anchor = token;
+                if(anchor->next != token) {
+                    if(i2d_parser_block_init(parser, &block, I2D_EXPRESSION, anchor->next, parent)) {
+                        status = i2d_panic("failed to create block object");
+                    } else {
+                        i2d_token_append(anchor, token);
+                        anchor = token;
+                    }
                 }
             }
         }
@@ -810,9 +812,7 @@ int i2d_translator_translate(i2d_translator * translator, i2d_parser * parser, i
     int status = I2D_OK;
     i2d_block * block;
 
-    if(!list) {
-        status = i2d_panic("invalid paramater");
-    } else {
+    if(list) {
         block = list;
         do {
             switch(block->type) {
