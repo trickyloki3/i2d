@@ -835,7 +835,7 @@ int i2d_translator_statement(i2d_translator * translator, i2d_parser * parser, i
 
     if(block->child) {
         status = i2d_panic("invalid paramater");
-    } else if(i2d_parser_statement_recursive(parser, NULL, &block->child, block->statement)) {
+    } else if(i2d_parser_statement_recursive(parser, block, &block->child, block->statement)) {
         status = i2d_panic("failed to parse statement");
     } else {
 
