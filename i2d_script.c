@@ -717,6 +717,62 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
     return status;
 }
 
+int i2d_parser_statement_recursive(i2d_parser * parser, i2d_block * parent, i2d_block ** result, i2d_token * token) {
+    int status = I2D_OK;
+    i2d_block * root;
+    i2d_block * block;
+    i2d_token * sentinel;
+    i2d_token * anchor;
+    int parenthesis = 0;
+
+    root = NULL;
+    block = NULL;
+    sentinel = token;
+    anchor = token;
+    do {
+        if(I2D_PARENTHESIS_OPEN == token->type) {
+            parenthesis++;
+        } else if(I2D_PARENTHESIS_CLOSE == token->type) {
+            parenthesis--;
+        } else if(!parenthesis) {
+            if(I2D_COMMA == token->type || I2D_SEMICOLON == token->type) {
+                if(i2d_parser_block_init(parser, &block, I2D_EXPRESSION, anchor->next, parent)) {
+                    status = i2d_panic("failed to create block object");
+                } else {
+                    i2d_token_append(anchor, token);
+                    anchor = token;
+                }
+            }
+        }
+        token = token->next;
+
+        if(block) {
+            if(!root) {
+                root = block;
+            } else {
+                i2d_block_append(block, root);
+            }
+            block = NULL;
+        }
+    } while(token != sentinel && !status);
+
+    if(!status) {
+        if(parenthesis) {
+            status = i2d_panic("statement is missing parenthesises");
+        } else if(I2D_SEMICOLON != token->prev->type) {
+            status = i2d_panic("statement is missing semicolon");
+        }
+    }
+
+    if(status) {
+        i2d_deit(root, i2d_block_list_deit);
+    } else {
+        *result = root;
+    }
+
+    return status;
+}
+
 int i2d_translator_init(i2d_translator ** result) {
     int status = I2D_OK;
     i2d_translator * object;
@@ -746,7 +802,7 @@ int i2d_translator_deit(i2d_translator ** result) {
     *result = NULL;
 }
 
-int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
+int i2d_translator_translate(i2d_translator * translator, i2d_parser * parser, i2d_block * list) {
     int status = I2D_OK;
     i2d_block * block;
 
@@ -756,15 +812,29 @@ int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
         block = list;
         do {
             switch(block->type) {
-                case I2D_BLOCK: status = i2d_translator_translate(translator, block->child); break;
+                case I2D_BLOCK: status = i2d_translator_translate(translator, parser, block->child); break;
                 case I2D_EXPRESSION: break;
-                case I2D_STATEMENT: break;
+                case I2D_STATEMENT: status = i2d_translator_statement(translator, parser, block); break;
                 case I2D_IF: break;
                 case I2D_ELSE: break;
                 default: status = i2d_panic("invalid block type -- %d", block->type); break;
             }
             block = block->next;
         } while(block != list && !status);
+    }
+
+    return status;
+}
+
+int i2d_translator_statement(i2d_translator * translator, i2d_parser * parser, i2d_block * block) {
+    int status = I2D_OK;
+
+    if(block->child) {
+        status = i2d_panic("invalid paramater");
+    } else if(i2d_parser_statement_recursive(parser, NULL, &block->child, block->statement)) {
+        status = i2d_panic("failed to parse statement");
+    } else {
+
     }
 
     return status;
@@ -822,7 +892,7 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer)) {
         status = i2d_panic("failed to parse -- %s", source->string);
-    } else if(i2d_translator_translate(script->translator, script->parser->list)) {
+    } else if(i2d_translator_translate(script->translator, script->parser, script->parser->list)) {
         status = i2d_panic("failed to translate -- %s", source->string);
     }
 
