@@ -284,7 +284,13 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                 case  ')': status = i2d_lexer_token_init(lexer, &token, I2D_PARENTHESIS_CLOSE); break;
                 case  ',': status = i2d_lexer_token_init(lexer, &token, I2D_COMMA); break;
                 case  ';': status = i2d_lexer_token_init(lexer, &token, I2D_SEMICOLON); break;
-                case  '$': status = i2d_lexer_token_init(lexer, &token, I2D_PERMANENT_GLOBAL); break;
+                case  '$':
+                    if(state && I2D_LITERAL == state->type && '$' != i2d_token_get_last_symbol(state)) {
+                        status = i2d_token_write(state, "$", 1);
+                    } else {
+                        status = i2d_lexer_token_init(lexer, &token, I2D_PERMANENT_GLOBAL);
+                    }
+                    break;
                 case  '.': status = i2d_lexer_token_init(lexer, &token, I2D_TEMPORARY_NPC); break;
                 case '\'': status = i2d_lexer_token_init(lexer, &token, I2D_TEMPORARY_INSTANCE); break;
                 case  '@':
