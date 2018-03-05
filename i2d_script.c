@@ -50,7 +50,10 @@ const char * i2d_token_string[] = {
     "?",
     ":",
     "::",
-    "="
+    "=",
+    "//"
+    "/**/",
+    "\"\""
 };
 
 int i2d_token_init(i2d_token ** result, enum i2d_token_type type) {
