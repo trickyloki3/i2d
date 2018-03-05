@@ -828,7 +828,7 @@ int i2d_translator_translate(i2d_translator * translator, i2d_parser * parser, i
         do {
             switch(block->type) {
                 case I2D_BLOCK: status = i2d_translator_translate(translator, parser, block->child); break;
-                case I2D_EXPRESSION: break;
+                case I2D_EXPRESSION: status = i2d_translator_expression(translator, block); break;
                 case I2D_STATEMENT: status = i2d_translator_statement(translator, parser, block); break;
                 case I2D_IF: break;
                 case I2D_ELSE: break;
@@ -843,14 +843,28 @@ int i2d_translator_translate(i2d_translator * translator, i2d_parser * parser, i
 
 int i2d_translator_statement(i2d_translator * translator, i2d_parser * parser, i2d_block * block) {
     int status = I2D_OK;
+    i2d_block * expression;
 
     if(block->child) {
         status = i2d_panic("invalid paramater");
     } else if(i2d_parser_statement_recursive(parser, block, &block->child, block->statement)) {
         status = i2d_panic("failed to parse statement");
     } else {
-
+        if(block->child) {
+            expression = block->child;
+            do {
+                if(i2d_translator_expression(translator, expression))
+                    status = i2d_panic("failed to evaluate expression");
+                expression = expression->next;
+            } while(expression != block->child && !status);
+        }
     }
+
+    return status;
+}
+
+int i2d_translator_expression(i2d_translator * translator, i2d_block * block) {
+    int status = I2D_OK;
 
     return status;
 }
