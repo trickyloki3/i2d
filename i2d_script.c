@@ -1021,6 +1021,17 @@ int i2d_lexer_test(void) {
     i2d_str_deit(&script);
     i2d_lexer_deit(&lexer);
 
+    assert(!i2d_lexer_init(&lexer));
+    assert(!i2d_str_init(&script, "@var $var $@var .var .@var 'var #var ##var @var$ $var$ $@var$ .var$ .@var$ 'var$ #var$ ##var$", 93));
+    assert(!i2d_lexer_tokenize(lexer, script));
+    token = lexer->list->next;
+    while(token != lexer->list) {
+        assert(token->type == I2D_LITERAL);
+        token = token->next;
+    }
+    i2d_str_deit(&script);
+    i2d_lexer_deit(&lexer);
+
     return status;
 }
 #endif
