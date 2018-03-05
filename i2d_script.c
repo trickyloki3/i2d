@@ -386,8 +386,56 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
                 case '\\': continue;
                 default:
                     if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
-                        if(state && I2D_LITERAL == state->type) {
-                            status = i2d_token_write(state, &symbol, sizeof(symbol));
+                        if(state) {
+                            switch(state->type) {
+                                case I2D_LITERAL:
+                                    status = i2d_token_write(state, &symbol, sizeof(symbol));
+                                    break;
+                                case I2D_TEMPORARY_CHARACTER:
+                                    status = i2d_token_write(state, "@", 1) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                case I2D_PERMANENT_GLOBAL:
+                                    status = i2d_token_write(state, "$", 1) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                case I2D_TEMPORARY_GLOBAL:
+                                    status = i2d_token_write(state, "$@", 2) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                case I2D_TEMPORARY_NPC:
+                                    status = i2d_token_write(state, ".", 1) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                case I2D_TEMPORARY_SCOPE:
+                                    status = i2d_token_write(state, ".@", 2) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                case I2D_TEMPORARY_INSTANCE:
+                                    status = i2d_token_write(state, "'", 1) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                case I2D_PERMANENT_ACCOUNT_LOCAL:
+                                    status = i2d_token_write(state, "#", 1) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                case I2D_PERMANENT_ACCOUNT_GLOBAL:
+                                    status = i2d_token_write(state, "##", 2) ||
+                                             i2d_token_write(state, &symbol, sizeof(symbol));
+                                    state->type = I2D_LITERAL;
+                                    break;
+                                default:
+                                    status = i2d_lexer_token_init(lexer, &token, I2D_LITERAL) ||
+                                             i2d_token_write(token, &symbol, sizeof(symbol));
+                                    break;
+                            }
                         } else {
                             status = i2d_lexer_token_init(lexer, &token, I2D_LITERAL) ||
                                      i2d_token_write(token, &symbol, sizeof(symbol));
