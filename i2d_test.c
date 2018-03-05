@@ -1,13 +1,20 @@
 #include "i2d_range.h"
 #include "i2d_logic.h"
+#include "i2d_script.h"
 
+static void i2d_compile_test(void);
 static void i2d_logic_test(void);
 static void i2d_logic_or_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_and_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_not_test(i2d_logic *, i2d_logic *, i2d_logic *);
+
 int main(int argc, char * argv[]) {
-    i2d_logic_test();
+    i2d_compile_test();
     return 0;
+}
+
+static void i2d_compile_test(void) {
+    i2d_lexer_test();
 }
 
 static void i2d_logic_test(void) {
