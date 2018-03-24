@@ -868,7 +868,7 @@ int i2d_translator_init(i2d_translator ** result) {
     return status;
 }
 
-int i2d_translator_deit(i2d_translator ** result) {
+void i2d_translator_deit(i2d_translator ** result) {
     i2d_translator * object;
 
     object = *result;

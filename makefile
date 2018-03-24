@@ -1,5 +1,9 @@
+ifeq ($(shell uname -s),Darwin)
+LDLIBS+=-ljansson
+else
 CFLAGS+=$(shell pkg-config jansson --cflags)
 LDLIBS+=$(shell pkg-config jansson --libs)
+endif
 
 OBJECT:=i2d_util.o
 OBJECT+=i2d_opt.o

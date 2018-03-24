@@ -200,7 +200,7 @@ struct i2d_translator {
 typedef struct i2d_translator i2d_translator;
 
 int i2d_translator_init(i2d_translator **);
-int i2d_translator_deit(i2d_translator **);
+void i2d_translator_deit(i2d_translator **);
 int i2d_translator_translate(i2d_translator *, i2d_parser *, i2d_block *);
 int i2d_translator_statement(i2d_translator *, i2d_parser *, i2d_block *);
 int i2d_translator_expression(i2d_translator *, i2d_block *);
