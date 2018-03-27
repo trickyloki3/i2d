@@ -56,6 +56,62 @@ const char * i2d_token_string[] = {
     "\"\""
 };
 
+int i2d_token_precedence[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    4, /* + */
+    4, /* - */
+    3, /* * */
+    3, /* / */
+    3, /* % */
+    14, /* += */
+    14, /* -= */
+    14, /* *= */
+    14, /* /= */
+    14, /* %= */
+    6, /* > */
+    6, /*< */
+    2, /* ! */
+    7, /* == */
+    6, /* >= */
+    6, /* <= */
+    7, /* != */
+    5, /* >> */
+    5, /* << */
+    8, /* & */
+    10, /* | */
+    9, /* ^ */
+    2, /* ~ */
+    14, /* >>= */
+    14, /* <<= */
+    14, /* &= */
+    14, /* |= */
+    14, /* ^= */
+    11, /* && */
+    12, /* || */
+    13, /* ? */
+    13, /* : */
+    0,
+    14, /* = */
+    0,
+    0,
+    0
+};
+
 int i2d_token_init(i2d_token ** result, enum i2d_token_type type) {
     int status = I2D_OK;
     i2d_token * object = NULL;
@@ -845,6 +901,40 @@ int i2d_parser_statement_recursive(i2d_parser * parser, i2d_block * parent, i2d_
     }
 
     return status;
+}
+
+int i2d_node_init(i2d_node ** result, i2d_token * tokens) {
+    int status = I2D_OK;
+    i2d_node * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->tokens = tokens;
+
+            if(status)
+                i2d_node_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_node_deit(i2d_node ** result) {
+    i2d_node * object;
+
+    object = *result;
+    i2d_deit(object->tokens, i2d_token_list_deit);
+    i2d_deit(object->right, i2d_node_deit);
+    i2d_deit(object->left, i2d_node_deit);
+    i2d_free(object);
+    *result = NULL;
 }
 
 int i2d_translator_init(i2d_translator ** result) {

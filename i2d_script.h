@@ -61,62 +61,6 @@ enum i2d_token_type {
     I2D_QUOTE
 };
 
-int i2d_token_precedence[] = {
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    4, /* + */
-    4, /* - */
-    3, /* * */
-    3, /* / */
-    3, /* % */
-    14, /* += */
-    14, /* -= */
-    14, /* *= */
-    14, /* /= */
-    14, /* %= */
-    6, /* > */
-    6, /*< */
-    2, /* ! */
-    7, /* == */
-    6, /* >= */
-    6, /* <= */
-    7, /* != */
-    5, /* >> */
-    5, /* << */
-    8, /* & */
-    10, /* | */
-    9, /* ^ */
-    2, /* ~ */
-    14, /* >>= */
-    14, /* <<= */
-    14, /* &= */
-    14, /* |= */
-    14, /* ^= */
-    11, /* && */
-    12, /* || */
-    13, /* ? */
-    13, /* : */
-    0,
-    14, /* = */
-    0,
-    0,
-    0
-};
-
 struct i2d_token {
     enum i2d_token_type type;
     i2d_buf * buffer;
@@ -192,6 +136,18 @@ int i2d_parser_block_init(i2d_parser *, i2d_block **, enum i2d_block_type, i2d_t
 int i2d_parser_analysis(i2d_parser *, i2d_lexer *);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_statement_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
+
+struct i2d_node {
+    int type;
+    i2d_token * tokens;
+    struct i2d_node * left;
+    struct i2d_node * right;
+};
+
+typedef struct i2d_node i2d_node;
+
+int i2d_node_init(i2d_node **, i2d_token *);
+void i2d_node_deit(i2d_node **);
 
 struct i2d_translator {
 
