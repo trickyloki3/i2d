@@ -103,7 +103,7 @@ enum i2d_block_type {
 
 struct i2d_block {
     enum i2d_block_type type;
-    i2d_token * statement;
+    i2d_token * tokens;
     struct i2d_block * expression;
     struct i2d_block * parent;
     struct i2d_block * child;
