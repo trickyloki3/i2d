@@ -903,7 +903,7 @@ int i2d_parser_statement_recursive(i2d_parser * parser, i2d_block * parent, i2d_
     return status;
 }
 
-int i2d_node_init(i2d_node ** result, i2d_token * tokens) {
+int i2d_node_init(i2d_node ** result, enum i2d_node_type type, i2d_token * tokens) {
     int status = I2D_OK;
     i2d_node * object = NULL;
 
@@ -914,6 +914,7 @@ int i2d_node_init(i2d_node ** result, i2d_token * tokens) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
+            object->type = type;
             object->tokens = tokens;
 
             if(status)

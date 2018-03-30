@@ -137,8 +137,16 @@ int i2d_parser_analysis(i2d_parser *, i2d_lexer *);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_statement_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
 
+enum i2d_node_type {
+    i2d_number,
+    i2d_variable,
+    i2d_function,
+    i2d_operator,
+    i2d_subexpression
+};
+
 struct i2d_node {
-    int type;
+    enum i2d_node_type type;
     i2d_token * tokens;
     struct i2d_node * left;
     struct i2d_node * right;
@@ -146,7 +154,7 @@ struct i2d_node {
 
 typedef struct i2d_node i2d_node;
 
-int i2d_node_init(i2d_node **, i2d_token *);
+int i2d_node_init(i2d_node **, enum i2d_node_type, i2d_token *);
 void i2d_node_deit(i2d_node **);
 
 struct i2d_translator {
