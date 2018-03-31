@@ -748,6 +748,9 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
                 token = token->next;
                 i2d_token_append(anchor->prev, token);
                 anchor = token;
+
+                if(i2d_parser_statement_recursive(parser, lexer, block, &block->child, block->tokens))
+                    status = i2d_panic("failed to parse statement");
             }
         } else if(I2D_LITERAL == token->type) {
             if(i2d_token_get_literal(token, &literal)) {
@@ -834,7 +837,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
     return status;
 }
 
-int i2d_parser_statement_recursive(i2d_parser * parser, i2d_block * parent, i2d_block ** result, i2d_token * token) {
+int i2d_parser_statement_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_block * parent, i2d_block ** result, i2d_token * token) {
     int status = I2D_OK;
     i2d_block * root;
     i2d_block * block;
@@ -994,18 +997,12 @@ int i2d_translator_statement(i2d_translator * translator, i2d_parser * parser, i
     i2d_block * expression;
 
     if(block->child) {
-        status = i2d_panic("invalid paramater");
-    } else if(i2d_parser_statement_recursive(parser, block, &block->child, block->tokens)) {
-        status = i2d_panic("failed to parse statement");
-    } else {
-        if(block->child) {
-            expression = block->child;
-            do {
-                if(i2d_translator_expression(translator, expression))
-                    status = i2d_panic("failed to evaluate expression");
-                expression = expression->next;
-            } while(expression != block->child && !status);
-        }
+        expression = block->child;
+        do {
+            if(i2d_translator_expression(translator, expression))
+                status = i2d_panic("failed to evaluate expression");
+            expression = expression->next;
+        } while(expression != block->child && !status);
     }
 
     return status;
