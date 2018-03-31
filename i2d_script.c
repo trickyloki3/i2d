@@ -709,14 +709,14 @@ int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer) {
         status = i2d_panic("script must end with a {");
     } else if(i2d_lexer_token_init(lexer, &parser->unused, I2D_TOKEN)) {
         status = i2d_panic("failed to create token object");
-    } else if(i2d_parser_analysis_recursive(parser, NULL, &parser->list, lexer->list->next)) {
+    } else if(i2d_parser_analysis_recursive(parser, lexer, NULL, &parser->list, lexer->list->next)) {
         status = i2d_panic("failed to parse script");
     }
 
     return status;
 }
 
-int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_block ** result, i2d_token * token) {
+int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_block * parent, i2d_block ** result, i2d_token * token) {
     int status = I2D_OK;
     i2d_block * root;
     i2d_block * block;
@@ -731,7 +731,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
         if(I2D_CURLY_OPEN == token->type) {
             if(i2d_parser_block_init(parser, &block, I2D_BLOCK, NULL, parent)) {
                 status = i2d_panic("failed to create block object");
-            } else if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
+            } else if(i2d_parser_analysis_recursive(parser, lexer ,block, &block->child, token->next)) {
                 status = i2d_panic("failed to parse script");
             } else if(I2D_CURLY_CLOSE != token->next->type) {
                 status = i2d_panic("missing } after {");
@@ -781,7 +781,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                             i2d_token_append(anchor->prev, token);
                             token = token->prev;
 
-                            if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
+                            if(i2d_parser_analysis_recursive(parser, lexer, block, &block->child, token->next)) {
                                 status = i2d_panic("failed to parse script");
                             } else {
                                 token = token->next;
@@ -798,7 +798,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_block * parent, i2d_b
                     i2d_token_remove(block->tokens);
                     token = token->prev;
 
-                    if(i2d_parser_analysis_recursive(parser, block, &block->child, token->next)) {
+                    if(i2d_parser_analysis_recursive(parser, lexer, block, &block->child, token->next)) {
                         status = i2d_panic("failed to parse script");
                     } else {
                         token = token->next;

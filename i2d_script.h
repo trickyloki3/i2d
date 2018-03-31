@@ -134,7 +134,7 @@ void i2d_parser_deit(i2d_parser **);
 void i2d_parser_reset(i2d_parser *, i2d_lexer *, i2d_block **);
 int i2d_parser_block_init(i2d_parser *, i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 int i2d_parser_analysis(i2d_parser *, i2d_lexer *);
-int i2d_parser_analysis_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
+int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_statement_recursive(i2d_parser *, i2d_block *, i2d_block **, i2d_token *);
 
 enum i2d_node_type {
