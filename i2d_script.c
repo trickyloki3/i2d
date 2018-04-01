@@ -765,7 +765,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
 
                 if(i2d_parser_block_token(lexer, block)) {
                     status = i2d_panic("failed to create token object");
-                } else if(i2d_parser_statement_recursive(parser, lexer, block, &block->child, block->tokens)) {
+                } else if(i2d_parser_statement_recursive(parser, lexer, block, &block->child, block->tokens->next)) {
                     status = i2d_panic("failed to parse statement");
                 }
             }
