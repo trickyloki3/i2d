@@ -139,11 +139,11 @@ int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_bl
 int i2d_parser_statement_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 
 enum i2d_node_type {
-    i2d_number,
-    i2d_variable,
-    i2d_function,
-    i2d_operator,
-    i2d_subexpression
+    I2D_NODE,
+    I2D_VARIABLE,
+    I2D_FUNCTION,
+    I2D_UNARY,
+    I2D_BINARY
 };
 
 struct i2d_node {
