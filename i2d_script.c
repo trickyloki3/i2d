@@ -19,6 +19,8 @@ const char * i2d_token_string[] = {
     "##",
     "+",
     "-",
+    "+",
+    "-",
     "*",
     "/",
     "%",
@@ -73,8 +75,10 @@ int i2d_token_precedence[] = {
     0,
     0,
     0,
-    4, /* + */
-    4, /* - */
+    4, /* + binary */
+    4, /* - binary */
+    2, /* +  unary*/
+    2, /* -  unary*/
     3, /* * */
     3, /* / */
     3, /* % */
@@ -523,6 +527,41 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
     return status;
 }
 
+int i2d_node_init(i2d_node ** result, enum i2d_node_type type, i2d_token * tokens) {
+    int status = I2D_OK;
+    i2d_node * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->type = type;
+            object->tokens = tokens;
+
+            if(status)
+                i2d_node_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_node_deit(i2d_node ** result) {
+    i2d_node * object;
+
+    object = *result;
+    i2d_deit(object->tokens, i2d_token_list_deit);
+    i2d_deit(object->right, i2d_node_deit);
+    i2d_deit(object->left, i2d_node_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 const char * i2d_block_string[] = {
     "block",
     "expression",
@@ -929,39 +968,150 @@ int i2d_parser_statement_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_b
     return status;
 }
 
-int i2d_node_init(i2d_node ** result, enum i2d_node_type type, i2d_token * tokens) {
+int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_token * tokens, i2d_node ** result) {
     int status = I2D_OK;
-    i2d_node * object = NULL;
+    i2d_node * root = NULL;
+    i2d_node * node = NULL;
+
+    int parenthesis;
+    i2d_token * anchor;
+    i2d_token * token = NULL;
 
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            object->type = type;
-            object->tokens = tokens;
+        while(tokens->type != I2D_TOKEN && !status) {
+            switch(tokens->type) {
+                case I2D_PARENTHESIS_OPEN:
+                    parenthesis = 1;
+                    anchor = tokens;
+                    while(I2D_TOKEN != token->type && parenthesis) {
+                        token = token->next;
+                        switch(token->type) {
+                            case I2D_PARENTHESIS_OPEN:  parenthesis++; break;
+                            case I2D_PARENTHESIS_CLOSE: parenthesis--; break;
+                            default: break;
+                        }
+                    }
+                    if(I2D_PARENTHESIS_CLOSE != token->type) {
+                        status = i2d_panic("missing ) after (");
+                    } else if(anchor->next == tokens) {
+                        if(i2d_node_init(&node, I2D_NODE, NULL))
+                            status = i2d_panic("failed to create node object");
+                    } else {
+                        anchor = anchor->next;
+                        i2d_token_append(anchor->prev, tokens);
+                        tokens = tokens->next;
 
-            if(status)
-                i2d_node_deit(&object);
-            else
-                *result = object;
+                        if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
+                            status = i2d_panic("failed to create token object");
+                        } else {
+                            i2d_token_append(token, anchor);
+                            if(i2d_parser_expression_recursive(parser, lexer, anchor, &node))
+                                status = i2d_panic("failed to parse expression");
+                        }
+                    }
+                    break;
+                case I2D_LITERAL:
+                    if(i2d_node_init(&node, I2D_VARIABLE, tokens)) {
+                        status = i2d_panic("failed to create node object");
+                    } else {
+                        tokens = tokens->next;
+                        i2d_token_remove(tokens->prev);
+                    }
+                    break;
+                case I2D_NOT:
+                case I2D_BIT_NOT:
+                    if(i2d_node_init(&node, I2D_UNARY, tokens)) {
+                        status = i2d_panic("failed to create node object");
+                    } else {
+                        tokens = tokens->next;
+                        i2d_token_remove(tokens->prev);
+                    }
+                    break;
+                case I2D_ADD:
+                case I2D_SUBTRACT:
+                    if(root && (!root->right || !root->right->right)) {
+                        if(i2d_node_init(&node, I2D_UNARY, tokens)) {
+                            status = i2d_panic("failed to create node object");
+                        } else {
+                            tokens = tokens->next;
+                            i2d_token_remove(tokens->prev);
+
+                            if(I2D_ADD == node->tokens->type) {
+                                node->tokens->type = I2D_ADD_UNARY;
+                            } else {
+                                node->tokens->type = I2D_SUBTRACT_UNARY;
+                            }
+                        }
+                    } else {
+                        if(i2d_node_init(&node, I2D_BINARY, tokens)) {
+                            status = i2d_panic("failed to create node object");
+                        } else {
+                            tokens = tokens->next;
+                            i2d_token_remove(token->prev);
+                        }
+                    }
+                    break;
+                case I2D_COMMA:
+                case I2D_MULTIPLY:
+                case I2D_DIVIDE:
+                case I2D_MODULUS:
+                case I2D_ADD_ASSIGN:
+                case I2D_SUBTRACT_ASSIGN:
+                case I2D_MULTIPLY_ASSIGN:
+                case I2D_DIVIDE_ASSIGN:
+                case I2D_MODULUS_ASSIGN:
+                case I2D_GREATER:
+                case I2D_LESS:
+                case I2D_EQUAL:
+                case I2D_GREATER_EQUAL:
+                case I2D_LESS_EQUAL:
+                case I2D_NOT_EQUAL:
+                case I2D_RIGHT_SHIFT:
+                case I2D_LEFT_SHIFT:
+                case I2D_BIT_AND:
+                case I2D_BIT_OR:
+                case I2D_BIT_XOR:
+                case I2D_RIGHT_SHIFT_ASSIGN:
+                case I2D_LEFT_SHIFT_ASSIGN:
+                case I2D_BIT_AND_ASSIGN:
+                case I2D_BIT_OR_ASSIGN:
+                case I2D_BIT_XOR_ASSIGN:
+                case I2D_AND:
+                case I2D_OR:
+                case I2D_CONDITIONAL:
+                case I2D_COLON:
+                case I2D_ASSIGN:
+                    if(i2d_node_init(&node, I2D_BINARY, tokens)) {
+                        status = i2d_panic("failed to create node object");
+                    } else {
+                        tokens = tokens->next;
+                        i2d_token_remove(tokens->prev);
+                    }
+                    break;
+                default:
+                    status = i2d_panic("invalid token - %d", tokens->type);
+            }
+        }
+
+        if(!status) {
+            if(i2d_node_init(&node, I2D_NODE, NULL)) {
+                status = i2d_panic("failed to create node object");
+            } else {
+                node->left = root;
+                root = node;
+            }
+        }
+
+        if(status) {
+            i2d_deit(root, i2d_node_deit);
+        } else {
+            *result = root;
         }
     }
 
     return status;
-}
-
-void i2d_node_deit(i2d_node ** result) {
-    i2d_node * object;
-
-    object = *result;
-    i2d_deit(object->tokens, i2d_token_list_deit);
-    i2d_deit(object->right, i2d_node_deit);
-    i2d_deit(object->left, i2d_node_deit);
-    i2d_free(object);
-    *result = NULL;
 }
 
 int i2d_translator_init(i2d_translator ** result) {
