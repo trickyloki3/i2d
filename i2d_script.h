@@ -95,26 +95,6 @@ void i2d_lexer_reset(i2d_lexer *, i2d_token **);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
 int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
 
-enum i2d_block_type {
-    I2D_BLOCK,
-    I2D_EXPRESSION,
-    I2D_STATEMENT,
-    I2D_IF,
-    I2D_ELSE
-};
-
-struct i2d_block {
-    enum i2d_block_type type;
-    i2d_token * tokens;
-    struct i2d_block * expression;
-    struct i2d_block * parent;
-    struct i2d_block * child;
-    struct i2d_block * next;
-    struct i2d_block * prev;
-};
-
-typedef struct i2d_block i2d_block;
-
 enum i2d_node_type {
     I2D_NODE,
     I2D_VARIABLE,
@@ -131,6 +111,27 @@ struct i2d_node {
 };
 
 typedef struct i2d_node i2d_node;
+
+enum i2d_block_type {
+    I2D_BLOCK,
+    I2D_EXPRESSION,
+    I2D_STATEMENT,
+    I2D_IF,
+    I2D_ELSE
+};
+
+struct i2d_block {
+    enum i2d_block_type type;
+    i2d_token * tokens;
+    i2d_node * nodes;
+    struct i2d_block * expression;
+    struct i2d_block * parent;
+    struct i2d_block * child;
+    struct i2d_block * next;
+    struct i2d_block * prev;
+};
+
+typedef struct i2d_block i2d_block;
 
 struct i2d_parser {
     i2d_token * unused;
