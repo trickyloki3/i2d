@@ -1143,7 +1143,44 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
             }
 
             if(node) {
-                i2d_node_deit(&node);
+                if(!root) {
+                    if(I2D_BINARY == node->type) {
+                        status = i2d_panic("binary operator without operand");
+                    } else {
+                        root = node;
+                    }
+                } else if(i2d_token_precedence[node->tokens->type] < i2d_token_precedence[root->tokens->type]) {
+                    if(I2D_BINARY == node->type) {
+                        if(!root->right) {
+                            status = i2d_panic("binary operator without operand");
+                        } else {
+                            node->left = root->right;
+                            root->right = node;
+                        }
+                    } else {
+                        iter = root;
+                        while(iter->right)
+                            iter = iter->right;
+
+                        if(I2D_BINARY != iter->type && I2D_UNARY != iter->type) {
+                            status = i2d_panic("operand without binary operator");
+                        } else {
+                            iter->right = node;
+                        }
+                    }
+                } else {
+                    if(I2D_BINARY != node->type) {
+                        status = i2d_panic("operand without binary operator");
+                    } else {
+                        node->left = root;
+                        root = node;
+                    }
+                }
+
+                if(status)
+                    i2d_node_deit(&node);
+                else
+                    node = NULL;
             }
         }
 
