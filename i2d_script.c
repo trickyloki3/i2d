@@ -1089,15 +1089,26 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                                     node->tokens->type = I2D_SUBTRACT_UNARY;
                                 }
                             }
+                        } else {
+                            if(i2d_node_init(&node, I2D_BINARY, tokens)) {
+                                status = i2d_panic("failed to create node object");
+                            } else {
+                                tokens = tokens->next;
+                                i2d_token_remove(tokens->prev);
+                            }
                         }
-                    }
-
-                    if(!status && !node) {
-                        if(i2d_node_init(&node, I2D_BINARY, tokens)) {
+                    } else {
+                        if(i2d_node_init(&node, I2D_UNARY, tokens)) {
                             status = i2d_panic("failed to create node object");
                         } else {
                             tokens = tokens->next;
                             i2d_token_remove(tokens->prev);
+
+                            if(I2D_ADD == node->tokens->type) {
+                                node->tokens->type = I2D_ADD_UNARY;
+                            } else {
+                                node->tokens->type = I2D_SUBTRACT_UNARY;
+                            }
                         }
                     }
                     break;
