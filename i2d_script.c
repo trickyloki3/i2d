@@ -1009,8 +1009,21 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                     if(I2D_PARENTHESIS_CLOSE != tokens->type) {
                         status = i2d_panic("missing ) after (");
                     } else if(anchor->next == tokens) {
-                        if(i2d_node_init(&node, I2D_NODE, NULL))
-                            status = i2d_panic("failed to create node object");
+                        if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
+                            status = i2d_panic("failed to create token object");
+                        } else {
+                            if(i2d_node_init(&node, I2D_NODE, token)) {
+                                status = i2d_panic("failed to create node object");
+                            } else {
+                                tokens = tokens->next;
+                            }
+
+                            if(status) {
+                                i2d_lexer_reset(lexer, &token);
+                            } else {
+                                token = NULL;
+                            }
+                        }
                     } else {
                         anchor = anchor->next;
                         i2d_token_append(anchor->prev, tokens);
@@ -1022,7 +1035,20 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                             i2d_token_append(token, anchor);
                             if(i2d_parser_expression_recursive(parser, lexer, anchor, &node))
                                 status = i2d_panic("failed to parse expression");
+
                             i2d_lexer_reset(lexer, &token);
+                        }
+                    }
+
+                    if(!status && root) {
+                        iter = root;
+                        while(iter->right)
+                            iter = iter->right;
+
+                        if(I2D_VARIABLE == iter->type) {
+                            iter->left = node;
+                            iter->type = I2D_FUNCTION;
+                            node = NULL;
                         }
                     }
                     break;
@@ -1049,7 +1075,8 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                         iter = root;
                         while(iter->right)
                             iter = iter->right;
-                        if(iter->type == I2D_UNARY || iter->type == I2D_BINARY) {
+
+                        if(I2D_UNARY == iter->type || I2D_BINARY == iter->type) {
                             if(i2d_node_init(&node, I2D_UNARY, tokens)) {
                                 status = i2d_panic("failed to create node object");
                             } else {
@@ -1121,11 +1148,18 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
         }
 
         if(!status) {
-            if(i2d_node_init(&node, I2D_NODE, NULL)) {
-                status = i2d_panic("failed to create node object");
+            if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
+                status = i2d_panic("failed to create token object");
             } else {
-                node->left = root;
-                root = node;
+                if(i2d_node_init(&node, I2D_NODE, token)) {
+                    status = i2d_panic("failed to create node object");
+                } else {
+                    node->left = root;
+                    root = node;
+                }
+
+                if(status)
+                    i2d_lexer_reset(lexer, &token);
             }
         }
 
@@ -1276,12 +1310,23 @@ int i2d_script_test(i2d_script * script, i2d_item * item) {
     int status = I2D_OK;
     i2d_str * description = NULL;
 
-    i2d_script_compile(script, item->script, &description);
-    i2d_deit(description, i2d_str_deit);
-    i2d_script_compile(script, item->onequip_script, &description);
-    i2d_deit(description, i2d_str_deit);
-    i2d_script_compile(script, item->onunequip_script, &description);
-    i2d_deit(description, i2d_str_deit);
+    if(i2d_script_compile(script, item->script, &description)) {
+        status = i2d_panic("failed to translate script for item %ld", item->id);
+    } else {
+        i2d_deit(description, i2d_str_deit);
+    }
+
+    if(i2d_script_compile(script, item->onequip_script, &description)) {
+        status = i2d_panic("failed to translate script for item %ld", item->id);
+    } else {
+        i2d_deit(description, i2d_str_deit);
+    }
+
+    if(i2d_script_compile(script, item->onunequip_script, &description)) {
+        status = i2d_panic("failed to translate script for item %ld", item->id);
+    } else {
+        i2d_deit(description, i2d_str_deit);
+    }
 
     return status;
 }
