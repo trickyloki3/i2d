@@ -918,29 +918,29 @@ int i2d_parser_statement_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_b
             parenthesis--;
         } else if(!parenthesis) {
             if(I2D_COMMA == tokens->type) {
-                if(anchor->next == tokens) {
+                if(anchor == tokens) {
                     status = i2d_panic("empty expression");
-                } else {
-                    if(i2d_parser_block_init(parser, &block, I2D_EXPRESSION, anchor->next, parent)) {
+                } else if(i2d_parser_block_init(parser, &block, I2D_EXPRESSION, anchor, parent)) {
                         status = i2d_panic("failed to create block object");
-                    } else {
-                        i2d_token_append(anchor, tokens);
-                        anchor = tokens;
+                } else {
+                    i2d_token_append(anchor->prev, tokens);
+                    anchor = tokens->next;
 
-                        if(i2d_parser_block_token(lexer, block)) {
-                            status = i2d_panic("failed to create token object");
-                        } else if(i2d_parser_expression_recursive(parser, lexer, block->tokens->next, &block->nodes)) {
-                            status = i2d_panic("failed to parse expression");
-                        }
+                    if(i2d_parser_block_token(lexer, block)) {
+                        status = i2d_panic("failed to create token object");
+                    } else if(i2d_parser_expression_recursive(parser, lexer, block->tokens->next, &block->nodes)) {
+                        status = i2d_panic("failed to parse expression");
                     }
                 }
             } else if(I2D_SEMICOLON == tokens->type) {
-                if(anchor->next->type != I2D_TOKEN && anchor->next != tokens) {
-                    if(i2d_parser_block_init(parser, &block, I2D_EXPRESSION, anchor->next, parent)) {
+                if(anchor == tokens) {
+                    status = i2d_panic("empty statement");
+                } else {
+                    if(i2d_parser_block_init(parser, &block, I2D_EXPRESSION, anchor, parent)) {
                         status = i2d_panic("failed to create block object");
                     } else {
-                        i2d_token_append(anchor, tokens);
-                        anchor = tokens;
+                        i2d_token_append(anchor->prev, tokens);
+                        anchor = tokens->next;
 
                         if(i2d_parser_block_token(lexer, block)) {
                             status = i2d_panic("failed to create token object");
