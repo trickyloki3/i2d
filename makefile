@@ -20,7 +20,7 @@ i2d: $(OBJECT)
 	$(CC) $(CFLAGS) -o $@ i2d.c $^ $(LDFLAGS) $(LDLIBS)
 
 i2d_test: $(OBJECT)
-	$(CC) $(CFLAGS) -o $@ i2d_test.c $^ $(LDFLAGS) $(LDLIBS)
+	$(CC) $(CFLAGS) -Di2d_debug -o $@ i2d_test.c $^ $(LDFLAGS) $(LDLIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
