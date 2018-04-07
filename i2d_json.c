@@ -3,6 +3,7 @@
 static int i2d_block_data_load(i2d_block_data *, json_t *);
 static int i2d_json_load(i2d_json *, i2d_str *);
 static int i2d_json_block_data_load(i2d_json *, json_t *);
+static int i2d_json_block_data_index(i2d_json *);
 
 int i2d_block_data_init(i2d_block_data ** result, json_t * json) {
     int status = I2D_OK;
@@ -120,6 +121,7 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json * object;
 
     object = *result;
+    i2d_deit(object->block_data_index, i2d_rbt_deit);
     i2d_deit(object->block_data_list, i2d_block_data_list_deit);
     i2d_free(object);
     *result = NULL;
@@ -136,8 +138,11 @@ static int i2d_json_load(i2d_json * json, i2d_str * path) {
     if(!object) {
         status = i2d_panic("%s (line %d column %d)", error.text, error.line, error.column);
     } else {
-        if(i2d_json_block_data_load(json, object))
+        if(i2d_json_block_data_load(json, object)) {
             status = i2d_panic("failed to load block data");
+        } else if(i2d_json_block_data_index(json)) {
+            status = i2d_panic("failed to index block data");
+        }
         json_decref(object);
     }
 
@@ -176,6 +181,27 @@ static int i2d_json_block_data_load(i2d_json * json, json_t * object) {
                 }
             }
         }
+    }
+
+    return status;
+}
+
+static int i2d_json_block_data_index(i2d_json * json) {
+    int status = I2D_OK;
+    i2d_block_data * block_data;
+
+    if(i2d_rbt_init(&json->block_data_index, i2d_rbt_cmp_str)) {
+        status = i2d_panic("failed to create red block tree object");
+    } else if(json->block_data_list) {
+        status = i2d_panic("block data list is empty");
+    } else {
+        block_data = json->block_data_list;
+        do {
+            if(i2d_rbt_insert(json->block_data_index, block_data->name, block_data))
+                status = i2d_panic("failed to add block data to index");
+
+            block_data = block_data->next;
+        } while(block_data != json->block_data_list && !status);
     }
 
     return status;

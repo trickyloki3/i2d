@@ -21,6 +21,7 @@ void i2d_block_data_remove(i2d_block_data *);
 
 struct i2d_json {
     i2d_block_data * block_data_list;
+    i2d_rbt * block_data_index;
 };
 
 typedef struct i2d_json i2d_json;
