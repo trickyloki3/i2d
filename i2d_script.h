@@ -136,8 +136,8 @@ typedef struct i2d_block i2d_block;
 
 struct i2d_parser {
     i2d_token * unused;
-    i2d_block * list;
-    i2d_block * cache;
+    i2d_block * block_list;
+    i2d_block * block_cache;
 };
 
 typedef struct i2d_parser i2d_parser;

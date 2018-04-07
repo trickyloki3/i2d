@@ -726,7 +726,7 @@ int i2d_parser_init(i2d_parser ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_block_init(&object->cache, I2D_BLOCK, NULL, NULL))
+            if(i2d_block_init(&object->block_cache, I2D_BLOCK, NULL, NULL))
                 status = i2d_panic("failed to create block objects");
 
             if(status)
@@ -743,8 +743,8 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_parser * object;
 
     object = *result;
-    i2d_deit(object->cache, i2d_block_list_deit);
-    i2d_deit(object->list, i2d_block_list_deit);
+    i2d_deit(object->block_cache, i2d_block_list_deit);
+    i2d_deit(object->block_list, i2d_block_list_deit);
     i2d_deit(object->unused, i2d_token_list_deit);
     i2d_free(object);
     *result = NULL;
@@ -767,7 +767,7 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
         block->type = I2D_BLOCK;
         block = block->next;
     } while(block != *result);
-    i2d_block_append(block, parser->cache);
+    i2d_block_append(block, parser->block_cache);
     *result = NULL;
 }
 
@@ -775,8 +775,8 @@ int i2d_parser_block_init(i2d_parser * parser, i2d_block ** result, enum i2d_blo
     int status = I2D_OK;
     i2d_block * block;
 
-    if(parser->cache != parser->cache->next) {
-        block = parser->cache->next;
+    if(parser->block_cache != parser->block_cache->next) {
+        block = parser->block_cache->next;
         i2d_block_remove(block);
         block->type = type;
         block->tokens = tokens;
@@ -792,8 +792,8 @@ int i2d_parser_block_init(i2d_parser * parser, i2d_block ** result, enum i2d_blo
 int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_json * json) {
     int status = I2D_OK;
 
-    if(parser->list)
-        i2d_parser_reset(parser, lexer, &parser->list);
+    if(parser->block_list)
+        i2d_parser_reset(parser, lexer, &parser->block_list);
     if(parser->unused)
         i2d_lexer_reset(lexer, &parser->unused);
 
@@ -803,7 +803,7 @@ int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_json * json)
         status = i2d_panic("script must end with a {");
     } else if(i2d_lexer_token_init(lexer, &parser->unused, I2D_TOKEN)) {
         status = i2d_panic("failed to create token object");
-    } else if(i2d_parser_analysis_recursive(parser, lexer, json, NULL, &parser->list, lexer->list->next)) {
+    } else if(i2d_parser_analysis_recursive(parser, lexer, json, NULL, &parser->block_list, lexer->list->next)) {
         status = i2d_panic("failed to parse script");
     }
 
@@ -1388,10 +1388,8 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer, script->json)) {
         status = i2d_panic("failed to parse -- %s", source->string);
-    } else if(i2d_translator_translate(script->translator, script->parser, script->parser->list)) {
+    } else if(i2d_translator_translate(script->translator, script->parser, script->parser->block_list)) {
         status = i2d_panic("failed to translate -- %s", source->string);
-    } else {
-        i2d_block_list_print(script->parser->list, 0);
     }
 
     return status;
