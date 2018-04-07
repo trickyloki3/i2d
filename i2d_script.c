@@ -562,6 +562,20 @@ void i2d_node_deit(i2d_node ** result) {
     *result = NULL;
 }
 
+void i2d_node_print(i2d_node * node, int level) {
+    int i;
+
+    for(i = 0; i < level; i++)
+        putc('\t', stdout);
+
+    i2d_token_print(node->tokens);
+
+    if(node->left)
+        i2d_node_print(node->left, level + 1);
+    if(node->right)
+        i2d_node_print(node->right, level + 1);
+}
+
 const char * i2d_block_string[] = {
     "block",
     "expression",

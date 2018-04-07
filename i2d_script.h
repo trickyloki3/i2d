@@ -144,6 +144,7 @@ typedef struct i2d_parser i2d_parser;
 
 int i2d_node_init(i2d_node **, enum i2d_node_type, i2d_token *);
 void i2d_node_deit(i2d_node **);
+void i2d_node_print(i2d_node *, int);
 
 int i2d_block_init(i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 void i2d_block_deit(i2d_block **);
