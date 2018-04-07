@@ -317,7 +317,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
 
             if(state) {
                 if(I2D_QUOTE == state->type) {
-                    if('"' == symbol) {
+                    if('"' == symbol && '\\' != i2d_token_get_last_symbol(state)) {
                         state->type = I2D_LITERAL;
                     } else {
                         status = i2d_token_write(state, &symbol, sizeof(symbol));
