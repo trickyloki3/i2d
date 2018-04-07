@@ -653,11 +653,18 @@ void i2d_block_remove(i2d_block * x) {
 }
 
 void i2d_block_print(i2d_block * block, int level) {
-    fprintf(stdout, "%s [%p] ", i2d_block_string[block->type], block);
-    if(block->tokens)
-        i2d_token_print(block->tokens);
+    int i;
+
+    for(i = 0; i < level; i++)
+        putc('\t', stdout);
+
+    if(block->block_data)
+        fprintf(stdout, "%s [%p]\n", block->block_data->name->string, block);
     else
-        fprintf(stdout, "\n");
+        fprintf(stdout, "%s [%p]\n", i2d_block_string[block->type], block);
+
+    if(block->nodes)
+        i2d_node_print(block->nodes, level + 1);
     if(block->expression)
         i2d_block_list_print(block->expression, level + 1);
     if(block->child)
@@ -666,12 +673,9 @@ void i2d_block_print(i2d_block * block, int level) {
 
 void i2d_block_list_print(i2d_block * block, int level) {
     i2d_block * iterator;
-    int i;
 
     iterator = block;
     do {
-        for(i = 0; i < level; i++)
-            putc('\t', stdout);
         i2d_block_print(iterator, level);
         iterator = iterator->next;
     } while(iterator != block);
@@ -1386,6 +1390,8 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to parse -- %s", source->string);
     } else if(i2d_translator_translate(script->translator, script->parser, script->parser->list)) {
         status = i2d_panic("failed to translate -- %s", source->string);
+    } else {
+        i2d_block_list_print(script->parser->list, 0);
     }
 
     return status;
