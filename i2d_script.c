@@ -829,6 +829,8 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_js
                     status = i2d_panic("failed to create token object");
                 } else if(i2d_block_data_lookup(block, lexer, json)) {
                     status = i2d_panic("failed to lookup block data object");
+                } else if(block->block_data && block->tokens->next->type == I2D_SEMICOLON) {
+                    /* support statements without arguments */
                 } else if(i2d_parser_statement_recursive(parser, lexer, block, &block->child, block->tokens->next)) {
                     status = i2d_panic("failed to parse statement");
                 }
