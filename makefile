@@ -1,3 +1,9 @@
+ifeq ($(BUILD), debug)
+CFLAGS+=-Di2d_debug -g
+else
+CFLAGS+=-O1
+endif
+
 ifeq ($(shell uname -s),Darwin)
 LDLIBS+=-ljansson
 else
@@ -14,13 +20,13 @@ OBJECT+=i2d_json.o
 OBJECT+=i2d_range.o
 OBJECT+=i2d_logic.o
 
-all: clean i2d i2d_test
+all: clean i2d
 
 i2d: $(OBJECT)
 	$(CC) $(CFLAGS) -o $@ i2d.c $^ $(LDFLAGS) $(LDLIBS)
 
 i2d_test: $(OBJECT)
-	$(CC) $(CFLAGS) -Di2d_debug -o $@ i2d_test.c $^ $(LDFLAGS) $(LDLIBS)
+	$(CC) $(CFLAGS) -o $@ i2d_test.c $^ $(LDFLAGS) $(LDLIBS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
