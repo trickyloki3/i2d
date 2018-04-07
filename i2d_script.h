@@ -124,6 +124,7 @@ struct i2d_block {
     enum i2d_block_type type;
     i2d_token * tokens;
     i2d_node * nodes;
+    i2d_block_data * block_data;
     struct i2d_block * expression;
     struct i2d_block * parent;
     struct i2d_block * child;
@@ -152,6 +153,7 @@ void i2d_block_remove(i2d_block *);
 void i2d_block_print(i2d_block *, int);
 void i2d_block_list_print(i2d_block *, int);
 int i2d_block_token_augment(i2d_block *, i2d_lexer *);
+int i2d_block_data_lookup(i2d_block *, i2d_lexer *, i2d_json *);
 
 int i2d_parser_init(i2d_parser **);
 void i2d_parser_deit(i2d_parser **);

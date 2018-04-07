@@ -677,6 +677,26 @@ int i2d_block_token_augment(i2d_block * block, i2d_lexer * lexer) {
     return status;
 }
 
+int i2d_block_data_lookup(i2d_block * block, i2d_lexer * lexer, i2d_json * json) {
+    int status = I2D_OK;
+    i2d_token * token;
+    i2d_str name;
+    i2d_zero(name);
+
+    token = block->tokens->next;
+    if(I2D_LITERAL == token->type) {
+        if(i2d_token_get_literal(token, &name)) {
+            status = i2d_panic("failed to get literal");
+        } else {
+            if(!i2d_rbt_search(json->block_data_index, &name, (void *) &block->block_data)) {
+                i2d_token_remove(token);
+                i2d_lexer_reset(lexer, &token);
+            }
+        }
+    }
+    return status;
+}
+
 int i2d_parser_init(i2d_parser ** result) {
     int status = I2D_OK;
     i2d_parser * object;
@@ -807,6 +827,8 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_js
 
                 if(i2d_block_token_augment(block, lexer)) {
                     status = i2d_panic("failed to create token object");
+                } else if(i2d_block_data_lookup(block, lexer, json)) {
+                    status = i2d_panic("failed to lookup block data object");
                 } else if(i2d_parser_statement_recursive(parser, lexer, block, &block->child, block->tokens->next)) {
                     status = i2d_panic("failed to parse statement");
                 }
