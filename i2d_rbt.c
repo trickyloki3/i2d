@@ -214,7 +214,7 @@ int i2d_rbt_search(i2d_rbt * tree, void * key, void ** value) {
     i2d_rbt_node * node = NULL;
 
     if(i2d_rbt_node_search(tree, &node, key)) {
-        status = i2d_panic("failed to search for node object");
+        status = I2D_FAIL;
     } else {
         *value = node->val;
     }
