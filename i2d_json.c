@@ -192,7 +192,7 @@ static int i2d_json_block_data_index(i2d_json * json) {
 
     if(i2d_rbt_init(&json->block_data_index, i2d_rbt_cmp_str)) {
         status = i2d_panic("failed to create red block tree object");
-    } else if(json->block_data_list) {
+    } else if(!json->block_data_list) {
         status = i2d_panic("block data list is empty");
     } else {
         block_data = json->block_data_list;
