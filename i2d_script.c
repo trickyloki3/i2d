@@ -792,13 +792,14 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
 
     block = *result;
     do {
-        if(block->nodes)
-            i2d_parser_node_reset(parser, lexer, &block->nodes);
         if(block->child)
             i2d_parser_reset(parser, lexer, &block->child);
         block->parent = NULL;
         if(block->expression)
             i2d_parser_reset(parser, lexer, &block->expression);
+        block->block_data = NULL;
+        if(block->nodes)
+            i2d_parser_node_reset(parser, lexer, &block->nodes);
         if(block->tokens)
             i2d_lexer_reset(lexer, &block->tokens);
         block->type = I2D_BLOCK;
@@ -1463,6 +1464,8 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to parse -- %s", source->string);
     } else if(i2d_translator_translate(script->translator, script->parser, script->parser->block_list)) {
         status = i2d_panic("failed to translate -- %s", source->string);
+    } else {
+        i2d_block_list_print(script->parser->block_list, 0);
     }
 
     return status;
