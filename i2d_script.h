@@ -238,7 +238,9 @@ enum i2d_translate_type {
 };
 
 struct i2d_translator {
-
+    size_t block_size;
+    i2d_str ** block_name;
+    i2d_rbt * block_index;
 };
 
 typedef struct i2d_translator i2d_translator;

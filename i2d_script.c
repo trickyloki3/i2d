@@ -1402,11 +1402,12 @@ const char * i2d_translate_string[] = {
     "getmapxy",
     "specialeffect",
     "showscript"
-}
+};
 
 int i2d_translator_init(i2d_translator ** result) {
     int status = I2D_OK;
     i2d_translator * object;
+    size_t i;
 
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
@@ -1415,6 +1416,24 @@ int i2d_translator_init(i2d_translator ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
+            object->block_size = i2d_size(i2d_translate_string);
+            object->block_name = calloc(object->block_size, sizeof(*object->block_name));
+            if(!object->block_name) {
+                status = i2d_panic("out of memory");
+            } else {
+                for(i = 0; i < object->block_size && !status; i++)
+                    status = i2d_str_init(&object->block_name[i], i2d_translate_string[i], strlen(i2d_translate_string[i]));
+
+                if(status) {
+                    status = i2d_panic("failed to create string object");
+                } else if(i2d_rbt_init(&object->block_index, i2d_rbt_cmp_str)) {
+                    status = i2d_panic("failed to create red black tree object");
+                } else {
+                    for(i = 0; i < object->block_size && !status; i++)
+                        status = i2d_rbt_insert(object->block_index, object->block_name[i], (void *) i);
+                }
+            }
+
             if(status)
                 i2d_translator_deit(&object);
             else
@@ -1427,8 +1446,14 @@ int i2d_translator_init(i2d_translator ** result) {
 
 void i2d_translator_deit(i2d_translator ** result) {
     i2d_translator * object;
+    size_t i;
 
     object = *result;
+    if(object->block_name)
+        for(i = 0; i < object->block_size; i++)
+            i2d_deit(object->block_name[i], i2d_str_deit);
+    i2d_free(object->block_name);
+    i2d_deit(object->block_index, i2d_rbt_deit);
     i2d_free(object);
     *result = NULL;
 }
