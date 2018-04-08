@@ -843,6 +843,25 @@ int i2d_parser_block_init(i2d_parser * parser, i2d_block ** result, enum i2d_blo
     return status;
 }
 
+int i2d_parser_node_init(i2d_parser * parser, i2d_node ** result, enum i2d_node_type type, i2d_token * tokens) {
+    int status = I2D_OK;
+    i2d_node * node;
+
+    if(parser->node_cache != parser->node_cache->left) {
+        node = parser->node_cache->left;
+        i2d_node_remove(node);
+        node->type = type;
+        node->tokens = tokens;
+        node->left = NULL;
+        node->right = NULL;
+        *result = node;
+    } else {
+        status = i2d_node_init(result, type, tokens);
+    }
+
+    return status;
+}
+
 int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_json * json) {
     int status = I2D_OK;
 
@@ -1108,7 +1127,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                         if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
                             status = i2d_panic("failed to create token object");
                         } else {
-                            if(i2d_node_init(&node, I2D_NODE, token)) {
+                            if(i2d_parser_node_init(parser, &node, I2D_NODE, token)) {
                                 status = i2d_panic("failed to create node object");
                             } else {
                                 tokens = tokens->next;
@@ -1149,7 +1168,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                     }
                     break;
                 case I2D_LITERAL:
-                    if(i2d_node_init(&node, I2D_VARIABLE, tokens)) {
+                    if(i2d_parser_node_init(parser, &node, I2D_VARIABLE, tokens)) {
                         status = i2d_panic("failed to create node object");
                     } else {
                         tokens = tokens->next;
@@ -1158,7 +1177,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                     break;
                 case I2D_NOT:
                 case I2D_BIT_NOT:
-                    if(i2d_node_init(&node, I2D_UNARY, tokens)) {
+                    if(i2d_parser_node_init(parser, &node, I2D_UNARY, tokens)) {
                         status = i2d_panic("failed to create node object");
                     } else {
                         tokens = tokens->next;
@@ -1173,7 +1192,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                             iter = iter->right;
 
                         if(I2D_UNARY == iter->type || I2D_BINARY == iter->type) {
-                            if(i2d_node_init(&node, I2D_UNARY, tokens)) {
+                            if(i2d_parser_node_init(parser, &node, I2D_UNARY, tokens)) {
                                 status = i2d_panic("failed to create node object");
                             } else {
                                 tokens = tokens->next;
@@ -1186,7 +1205,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                                 }
                             }
                         } else {
-                            if(i2d_node_init(&node, I2D_BINARY, tokens)) {
+                            if(i2d_parser_node_init(parser, &node, I2D_BINARY, tokens)) {
                                 status = i2d_panic("failed to create node object");
                             } else {
                                 tokens = tokens->next;
@@ -1194,7 +1213,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                             }
                         }
                     } else {
-                        if(i2d_node_init(&node, I2D_UNARY, tokens)) {
+                        if(i2d_parser_node_init(parser, &node, I2D_UNARY, tokens)) {
                             status = i2d_panic("failed to create node object");
                         } else {
                             tokens = tokens->next;
@@ -1238,7 +1257,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                 case I2D_CONDITIONAL:
                 case I2D_COLON:
                 case I2D_ASSIGN:
-                    if(i2d_node_init(&node, I2D_BINARY, tokens)) {
+                    if(i2d_parser_node_init(parser, &node, I2D_BINARY, tokens)) {
                         status = i2d_panic("failed to create node object");
                     } else {
                         tokens = tokens->next;
