@@ -79,12 +79,6 @@
             "name" : "searchstores"
         },
         {
-            "name" : "if"
-        },
-        {
-            "name" : "else"
-        },
-        {
             "name" : "set"
         },
         {

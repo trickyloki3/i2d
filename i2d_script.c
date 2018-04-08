@@ -1464,8 +1464,6 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to parse -- %s", source->string);
     } else if(i2d_translator_translate(script->translator, script->parser, script->parser->block_list)) {
         status = i2d_panic("failed to translate -- %s", source->string);
-    } else {
-        i2d_block_list_print(script->parser->block_list, 0);
     }
 
     return status;
