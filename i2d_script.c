@@ -562,6 +562,36 @@ void i2d_node_deit(i2d_node ** result) {
     *result = NULL;
 }
 
+void i2d_node_list_deit(i2d_node ** result) {
+    i2d_node * object;
+    i2d_node * node;
+
+    object = *result;
+    if(object) {
+        while(object != object->left) {
+            node = object->left;
+            i2d_node_remove(node);
+            i2d_free(node);
+        }
+        i2d_free(object);
+    }
+    *result = NULL;
+}
+
+void i2d_node_append(i2d_node * x, i2d_node * y) {
+    x->left->right = y->right;
+    y->right->left = x->left;
+    x->left = y;
+    y->right = x;
+}
+
+void i2d_node_remove(i2d_node * x) {
+    x->right->left = x->left;
+    x->left->right = x->right;
+    x->left = x;
+    x->right = x;
+}
+
 void i2d_node_print(i2d_node * node, int level) {
     int i;
 
@@ -726,8 +756,14 @@ int i2d_parser_init(i2d_parser ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_block_init(&object->block_cache, I2D_BLOCK, NULL, NULL))
-                status = i2d_panic("failed to create block objects");
+            if(i2d_block_init(&object->block_cache, I2D_BLOCK, NULL, NULL)) {
+                status = i2d_panic("failed to create block object");
+            } else if(i2d_node_init(&object->node_cache, I2D_NODE, NULL)) {
+                status = i2d_panic("failed to create node object");
+            } else {
+                object->node_cache->left = object->node_cache;
+                object->node_cache->right = object->node_cache;
+            }
 
             if(status)
                 i2d_parser_deit(&object);
@@ -743,6 +779,7 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_parser * object;
 
     object = *result;
+    i2d_deit(object->node_cache, i2d_node_list_deit);
     i2d_deit(object->block_cache, i2d_block_list_deit);
     i2d_deit(object->block_list, i2d_block_list_deit);
     i2d_deit(object->unused, i2d_token_list_deit);
@@ -756,7 +793,7 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
     block = *result;
     do {
         if(block->nodes)
-            i2d_node_deit(&block->nodes);
+            i2d_parser_node_reset(parser, lexer, &block->nodes);
         if(block->child)
             i2d_parser_reset(parser, lexer, &block->child);
         block->parent = NULL;
@@ -768,6 +805,23 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
         block = block->next;
     } while(block != *result);
     i2d_block_append(block, parser->block_cache);
+    *result = NULL;
+}
+
+void i2d_parser_node_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_node ** result) {
+    i2d_node * node;
+
+    node = *result;
+    if(node->left)
+        i2d_parser_node_reset(parser, lexer, &node->left);
+    if(node->right)
+        i2d_parser_node_reset(parser, lexer, &node->right);
+    if(node->tokens)
+        i2d_lexer_reset(lexer, &node->tokens);
+    node->type = I2D_NODE;
+    node->left = node;
+    node->right = node;
+    i2d_node_append(node, parser->node_cache);
     *result = NULL;
 }
 
