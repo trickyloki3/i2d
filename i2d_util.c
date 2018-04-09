@@ -280,7 +280,6 @@ int i2d_by_line(i2d_buf * buffer, i2d_by_line_cb cb, void * data) {
     size_t length;
     size_t consume;
 
-
     anchor = (char *) buffer->buffer;
     delimit = strchr(anchor, '\n');
     while(delimit && !status) {
