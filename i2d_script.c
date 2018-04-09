@@ -1467,12 +1467,25 @@ int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
         block = list;
         do {
             switch(block->type) {
-                case I2D_BLOCK: status = i2d_translator_translate(translator, block->child); break;
-                case I2D_EXPRESSION: status = i2d_translator_expression(translator, block); break;
-                case I2D_STATEMENT: status = i2d_translator_statement(translator, block); break;
-                case I2D_IF: break;
-                case I2D_ELSE: break;
-                default: status = i2d_panic("invalid block type -- %d", block->type); break;
+                case I2D_BLOCK:
+                    status = i2d_translator_translate(translator, block->child);
+                    break;
+                case I2D_EXPRESSION:
+                    status = i2d_translator_expression(translator, block);
+                    break;
+                case I2D_STATEMENT:
+                    status = i2d_translator_statement(translator, block);
+                    break;
+                case I2D_IF:
+                    status = i2d_translator_expression(translator, block->expression) ||
+                             i2d_translator_statement(translator, block->child);
+                    break;
+                case I2D_ELSE:
+                    status = i2d_translator_statement(translator, block->child);
+                    break;
+                default:
+                    status = i2d_panic("invalid block type -- %d", block->type);
+                    break;
             }
             block = block->next;
         } while(block != list && !status);
