@@ -1338,6 +1338,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
 }
 
 const char * i2d_translate_string[] = {
+    "translate",
     "bonus",
     "bonus2",
     "bonus3",
@@ -1482,15 +1483,84 @@ int i2d_translator_translate(i2d_translator * translator, i2d_parser * parser, i
 
 int i2d_translator_statement(i2d_translator * translator, i2d_parser * parser, i2d_block * block) {
     int status = I2D_OK;
-    i2d_block * expression;
+    uintptr_t type = 0;
 
-    if(block->child) {
-        expression = block->child;
-        do {
-            if(i2d_translator_expression(translator, expression))
-                status = i2d_panic("failed to evaluate expression");
-            expression = expression->next;
-        } while(expression != block->child && !status);
+    if(!block->block_data) {
+        /* skip unsupported blocks */
+    } else if(i2d_rbt_search(translator->block_index, block->block_data->name, (void **) &type)) {
+        status = i2d_panic("failed to map block %s", block->block_data->name->string);
+    } else {
+        switch(type) {
+            case I2D_BLOCK_TRANSLATE:
+            case I2D_BLOCK_BONUS:
+            case I2D_BLOCK_BONUS2:
+            case I2D_BLOCK_BONUS3:
+            case I2D_BLOCK_BONUS4:
+            case I2D_BLOCK_BONUS5:
+            case I2D_BLOCK_AUTOBONUS:
+            case I2D_BLOCK_AUTOBONUS2:
+            case I2D_BLOCK_AUTOBONUS3:
+            case I2D_BLOCK_HEAL:
+            case I2D_BLOCK_PERCENTHEAL:
+            case I2D_BLOCK_ITEMHEAL:
+            case I2D_BLOCK_SKILL:
+            case I2D_BLOCK_ITEMSKILL:
+            case I2D_BLOCK_UNITSKILLUSEID:
+            case I2D_BLOCK_SC_START:
+            case I2D_BLOCK_SC_START4:
+            case I2D_BLOCK_SC_END:
+            case I2D_BLOCK_GETITEM:
+            case I2D_BLOCK_RENTITEM:
+            case I2D_BLOCK_DELITEM:
+            case I2D_BLOCK_GETRANDGROUPITEM:
+            case I2D_BLOCK_SKILLEFFECT:
+            case I2D_BLOCK_SPECIALEFFECT2:
+            case I2D_BLOCK_SETFONT:
+            case I2D_BLOCK_BUYINGSTORE:
+            case I2D_BLOCK_SEARCHSTORES:
+            case I2D_BLOCK_SET:
+            case I2D_BLOCK_INPUT:
+            case I2D_BLOCK_ANNOUNCE:
+            case I2D_BLOCK_CALLFUNC:
+            case I2D_BLOCK_END:
+            case I2D_BLOCK_WARP:
+            case I2D_BLOCK_PET:
+            case I2D_BLOCK_BPET:
+            case I2D_BLOCK_MERCENARY_CREATE:
+            case I2D_BLOCK_MERCENARY_HEAL:
+            case I2D_BLOCK_MERCENARY_SC_START:
+            case I2D_BLOCK_PRODUCE:
+            case I2D_BLOCK_COOKING:
+            case I2D_BLOCK_MAKERUNE:
+            case I2D_BLOCK_GUILDGETEXP:
+            case I2D_BLOCK_GETEXP:
+            case I2D_BLOCK_MONSTER:
+            case I2D_BLOCK_HOMEVOLUTION:
+            case I2D_BLOCK_SETOPTION:
+            case I2D_BLOCK_SETMOUNTING:
+            case I2D_BLOCK_SETFALCON:
+            case I2D_BLOCK_GETGROUPITEM:
+            case I2D_BLOCK_RESETSTATUS:
+            case I2D_BLOCK_BONUS_SCRIPT:
+            case I2D_BLOCK_PLAYBGM:
+            case I2D_BLOCK_TRANSFORM:
+            case I2D_BLOCK_SC_START2:
+            case I2D_BLOCK_PETLOOT:
+            case I2D_BLOCK_PETRECOVERY:
+            case I2D_BLOCK_PETSKILLBONUS:
+            case I2D_BLOCK_PETSKILLATTACK:
+            case I2D_BLOCK_PETSKILLATTACK2:
+            case I2D_BLOCK_PETSKILLSUPPORT:
+            case I2D_BLOCK_PETHEAL:
+            case I2D_BLOCK_FOR:
+            case I2D_BLOCK_GETMAPXY:
+            case I2D_BLOCK_SPECIALEFFECT:
+            case I2D_BLOCK_SHOWSCRIPT:
+                break;
+            default:
+                status = i2d_panic("invalid translate type -- %zu", type);
+                break;
+        }
     }
 
     return status;

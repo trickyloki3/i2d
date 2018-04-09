@@ -171,6 +171,7 @@ int i2d_parser_statement_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_b
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 
 enum i2d_translate_type {
+    I2D_BLOCK_TRANSLATE,
     I2D_BLOCK_BONUS,
     I2D_BLOCK_BONUS2,
     I2D_BLOCK_BONUS3,
