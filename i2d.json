@@ -1,196 +1,68 @@
 {
-    "block_data" : [
-        {
-            "name" : "bonus"
-        },
-        {
-            "name" : "bonus2"
-        },
-        {
-            "name" : "bonus3"
-        },
-        {
-            "name" : "bonus4"
-        },
-        {
-            "name" : "bonus5"
-        },
-        {
-            "name" : "autobonus"
-        },
-        {
-            "name" : "autobonus2"
-        },
-        {
-            "name" : "autobonus3"
-        },
-        {
-            "name" : "heal"
-        },
-        {
-            "name" : "percentheal"
-        },
-        {
-            "name" : "itemheal"
-        },
-        {
-            "name" : "skill"
-        },
-        {
-            "name" : "itemskill"
-        },
-        {
-            "name" : "unitskilluseid"
-        },
-        {
-            "name" : "sc_start"
-        },
-        {
-            "name" : "sc_start4"
-        },
-        {
-            "name" : "sc_end"
-        },
-        {
-            "name" : "getitem"
-        },
-        {
-            "name" : "rentitem"
-        },
-        {
-            "name" : "delitem"
-        },
-        {
-            "name" : "getrandgroupitem"
-        },
-        {
-            "name" : "skilleffect"
-        },
-        {
-            "name" : "specialeffect2"
-        },
-        {
-            "name" : "setfont"
-        },
-        {
-            "name" : "buyingstore"
-        },
-        {
-            "name" : "searchstores"
-        },
-        {
-            "name" : "set"
-        },
-        {
-            "name" : "input"
-        },
-        {
-            "name" : "announce"
-        },
-        {
-            "name" : "callfunc"
-        },
-        {
-            "name" : "end"
-        },
-        {
-            "name" : "warp"
-        },
-        {
-            "name" : "pet"
-        },
-        {
-            "name" : "bpet"
-        },
-        {
-            "name" : "mercenary_create"
-        },
-        {
-            "name" : "mercenary_heal"
-        },
-        {
-            "name" : "mercenary_sc_start"
-        },
-        {
-            "name" : "produce"
-        },
-        {
-            "name" : "cooking"
-        },
-        {
-            "name" : "makerune"
-        },
-        {
-            "name" : "guildgetexp"
-        },
-        {
-            "name" : "getexp"
-        },
-        {
-            "name" : "monster"
-        },
-        {
-            "name" : "homevolution"
-        },
-        {
-            "name" : "setoption"
-        },
-        {
-            "name" : "setmounting"
-        },
-        {
-            "name" : "setfalcon"
-        },
-        {
-            "name" : "getgroupitem"
-        },
-        {
-            "name" : "resetstatus"
-        },
-        {
-            "name" : "bonus_script"
-        },
-        {
-            "name" : "playbgm"
-        },
-        {
-            "name" : "transform"
-        },
-        {
-            "name" : "sc_start2"
-        },
-        {
-            "name" : "petloot"
-        },
-        {
-            "name" : "petrecovery"
-        },
-        {
-            "name" : "petskillbonus"
-        },
-        {
-            "name" : "petskillattack"
-        },
-        {
-            "name" : "petskillattack2"
-        },
-        {
-            "name" : "petskillsupport"
-        },
-        {
-            "name" : "petheal"
-        },
-        {
-            "name" : "for"
-        },
-        {
-            "name" : "getmapxy"
-        },
-        {
-            "name" : "specialeffect"
-        },
-        {
-            "name" : "showscript"
-        }
-    ]
+    "blocks" : {
+        "bonus" : {},
+        "bonus2" : {},
+        "bonus3" : {},
+        "bonus4" : {},
+        "bonus5" : {},
+        "autobonus" : {},
+        "autobonus2" : {},
+        "autobonus3" : {},
+        "heal" : {},
+        "percentheal" : {},
+        "itemheal" : {},
+        "skill" : {},
+        "itemskill" : {},
+        "unitskilluseid" : {},
+        "sc_start" : {},
+        "sc_start4" : {},
+        "sc_end" : {},
+        "getitem" : {},
+        "rentitem" : {},
+        "delitem" : {},
+        "getrandgroupitem" : {},
+        "skilleffect" : {},
+        "specialeffect2" : {},
+        "setfont" : {},
+        "buyingstore" : {},
+        "searchstores" : {},
+        "set" : {},
+        "input" : {},
+        "announce" : {},
+        "callfunc" : {},
+        "end" : {},
+        "warp" : {},
+        "pet" : {},
+        "bpet" : {},
+        "mercenary_create" : {},
+        "mercenary_heal" : {},
+        "mercenary_sc_start" : {},
+        "produce" : {},
+        "cooking" : {},
+        "makerune" : {},
+        "guildgetexp" : {},
+        "getexp" : {},
+        "monster" : {},
+        "homevolution" : {},
+        "setoption" : {},
+        "setmounting" : {},
+        "setfalcon" : {},
+        "getgroupitem" : {},
+        "resetstatus" : {},
+        "bonus_script" : {},
+        "playbgm" : {},
+        "transform" : {},
+        "sc_start2" : {},
+        "petloot" : {},
+        "petrecovery" : {},
+        "petskillbonus" : {},
+        "petskillattack" : {},
+        "petskillattack2" : {},
+        "petskillsupport" : {},
+        "petheal" : {},
+        "for" : {},
+        "getmapxy" : {},
+        "specialeffect" : {},
+        "showscript" : {}
+    }
 }
