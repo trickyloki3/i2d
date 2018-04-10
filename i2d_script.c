@@ -950,6 +950,10 @@ int i2d_parser_statement_load(i2d_parser * parser) {
     return status;
 }
 
+int i2d_parser_statement_map(i2d_parser * parser, i2d_str * name, i2d_statement ** result) {
+    return i2d_rbt_search(parser->statement_index, name, (void **) result);
+}
+
 void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** result) {
     i2d_block * block;
 
