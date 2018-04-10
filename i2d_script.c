@@ -898,7 +898,7 @@ int i2d_parser_init(i2d_parser ** result) {
                 object->node_cache->left = object->node_cache;
                 object->node_cache->right = object->node_cache;
 
-                if(i2d_parser_load_statement(object))
+                if(i2d_parser_statement_load(object))
                     status = i2d_panic("failed to load statement objects");
             }
 
@@ -916,6 +916,7 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_parser * object;
 
     object = *result;
+    i2d_deit(object->statement_index, i2d_rbt_deit);
     i2d_deit(object->statement_list, i2d_statement_list_deit);
     i2d_deit(object->node_cache, i2d_node_list_deit);
     i2d_deit(object->block_cache, i2d_block_list_deit);
@@ -924,13 +925,15 @@ void i2d_parser_deit(i2d_parser ** result) {
     *result = NULL;
 }
 
-int i2d_parser_load_statement(i2d_parser * parser) {
+int i2d_parser_statement_load(i2d_parser * parser) {
     int status = I2D_OK;
     size_t i;
     i2d_statement * statement;
 
     if(i2d_statement_init(&parser->statement_list, I2D_STATEMENT_START)) {
         status = i2d_panic("failed to create statement object");
+    } else if(i2d_rbt_init(&parser->statement_index, i2d_rbt_cmp_str)) {
+        status = i2d_panic("failed to create red black tree object");
     } else {
         for(i = I2D_STATEMENT_START + 1; i < I2D_STATEMENT_END && !status; i++) {
             statement = NULL;
@@ -938,6 +941,8 @@ int i2d_parser_load_statement(i2d_parser * parser) {
                 status = i2d_panic("failed to create statement object");
             } else {
                 i2d_statement_append(statement, parser->statement_list);
+                if(i2d_rbt_insert(parser->statement_index, statement->name, statement))
+                    status = i2d_panic("failed to index statement object");
             }
         }
     }
