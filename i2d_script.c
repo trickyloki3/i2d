@@ -607,6 +607,7 @@ void i2d_node_print(i2d_node * node, int level) {
 }
 
 const char * i2d_statement_string[] = {
+    "start",
     "bonus",
     "bonus2",
     "bonus3",
@@ -670,7 +671,8 @@ const char * i2d_statement_string[] = {
     "for",
     "getmapxy",
     "specialeffect",
-    "showscript"
+    "showscript",
+    "end"
 };
 
 int i2d_statement_init(i2d_statement ** result, enum i2d_statement_type type) {
@@ -708,6 +710,22 @@ void i2d_statement_deit(i2d_statement ** result) {
     object = *result;
     i2d_deit(object->name, i2d_str_deit);
     i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_statement_list_deit(i2d_statement ** result) {
+    i2d_statement * object;
+    i2d_statement * statement;
+
+    object = *result;
+    if(object) {
+        while(object != object->next) {
+            statement = object->next;
+            i2d_statement_remove(statement);
+            i2d_statement_deit(&statement);
+        }
+    }
+    i2d_deit(object, i2d_statement_deit);
     *result = NULL;
 }
 
@@ -879,6 +897,9 @@ int i2d_parser_init(i2d_parser ** result) {
             } else {
                 object->node_cache->left = object->node_cache;
                 object->node_cache->right = object->node_cache;
+
+                if(i2d_parser_load_statement(object))
+                    status = i2d_panic("failed to load statement objects");
             }
 
             if(status)
@@ -895,11 +916,33 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_parser * object;
 
     object = *result;
+    i2d_deit(object->statement_list, i2d_statement_list_deit);
     i2d_deit(object->node_cache, i2d_node_list_deit);
     i2d_deit(object->block_cache, i2d_block_list_deit);
     i2d_deit(object->block_list, i2d_block_list_deit);
     i2d_free(object);
     *result = NULL;
+}
+
+int i2d_parser_load_statement(i2d_parser * parser) {
+    int status = I2D_OK;
+    size_t i;
+    i2d_statement * statement;
+
+    if(i2d_statement_init(&parser->statement_list, I2D_STATEMENT_START)) {
+        status = i2d_panic("failed to create statement object");
+    } else {
+        for(i = I2D_STATEMENT_START + 1; i < I2D_STATEMENT_END && !status; i++) {
+            statement = NULL;
+            if(i2d_statement_init(&statement, i)) {
+                status = i2d_panic("failed to create statement object");
+            } else {
+                i2d_statement_append(statement, parser->statement_list);
+            }
+        }
+    }
+
+    return status;
 }
 
 void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** result) {
