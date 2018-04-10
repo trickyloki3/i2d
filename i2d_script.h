@@ -112,6 +112,82 @@ struct i2d_node {
 
 typedef struct i2d_node i2d_node;
 
+enum i2d_statement_type {
+    I2D_BONUS,
+    I2D_BONUS2,
+    I2D_BONUS3,
+    I2D_BONUS4,
+    I2D_BONUS5,
+    I2D_AUTOBONUS,
+    I2D_AUTOBONUS2,
+    I2D_AUTOBONUS3,
+    I2D_HEAL,
+    I2D_PERCENTHEAL,
+    I2D_ITEMHEAL,
+    I2D_SKILL,
+    I2D_ITEMSKILL,
+    I2D_UNITSKILLUSEID,
+    I2D_SC_START,
+    I2D_SC_START4,
+    I2D_SC_END,
+    I2D_GETITEM,
+    I2D_RENTITEM,
+    I2D_DELITEM,
+    I2D_GETRANDGROUPITEM,
+    I2D_SKILLEFFECT,
+    I2D_SPECIALEFFECT2,
+    I2D_SETFONT,
+    I2D_BUYINGSTORE,
+    I2D_SEARCHSTORES,
+    I2D_SET,
+    I2D_INPUT,
+    I2D_ANNOUNCE,
+    I2D_CALLFUNC,
+    I2D_END,
+    I2D_WARP,
+    I2D_PET,
+    I2D_BPET,
+    I2D_MERCENARY_CREATE,
+    I2D_MERCENARY_HEAL,
+    I2D_MERCENARY_SC_START,
+    I2D_PRODUCE,
+    I2D_COOKING,
+    I2D_MAKERUNE,
+    I2D_GUILDGETEXP,
+    I2D_GETEXP,
+    I2D_MONSTER,
+    I2D_HOMEVOLUTION,
+    I2D_SETOPTION,
+    I2D_SETMOUNTING,
+    I2D_SETFALCON,
+    I2D_GETGROUPITEM,
+    I2D_RESETSTATUS,
+    I2D_BONUS_SCRIPT,
+    I2D_PLAYBGM,
+    I2D_TRANSFORM,
+    I2D_SC_START2,
+    I2D_PETLOOT,
+    I2D_PETRECOVERY,
+    I2D_PETSKILLBONUS,
+    I2D_PETSKILLATTACK,
+    I2D_PETSKILLATTACK2,
+    I2D_PETSKILLSUPPORT,
+    I2D_PETHEAL,
+    I2D_FOR,
+    I2D_GETMAPXY,
+    I2D_SPECIALEFFECT,
+    I2D_SHOWSCRIPT
+};
+
+struct i2d_statement {
+    enum i2d_statement_type type;
+    i2d_str * name;
+    struct i2d_statement * next;
+    struct i2d_statement * prev;
+};
+
+typedef struct i2d_statement i2d_statement;
+
 enum i2d_block_type {
     I2D_BLOCK,
     I2D_EXPRESSION,
@@ -148,6 +224,11 @@ void i2d_node_append(i2d_node *, i2d_node *);
 void i2d_node_remove(i2d_node *);
 void i2d_node_print(i2d_node *, int);
 
+int i2d_statement_init(i2d_statement **, enum i2d_statement_type);
+void i2d_statement_deit(i2d_statement **);
+void i2d_statement_append(i2d_statement *, i2d_statement *);
+void i2d_statement_remove(i2d_statement *);
+
 int i2d_block_init(i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 void i2d_block_deit(i2d_block **);
 void i2d_block_list_deit(i2d_block **);
@@ -169,78 +250,8 @@ int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_json *, i2d_blo
 int i2d_parser_statement_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 
-enum i2d_translate_type {
-    I2D_BLOCK_TRANSLATE,
-    I2D_BLOCK_BONUS,
-    I2D_BLOCK_BONUS2,
-    I2D_BLOCK_BONUS3,
-    I2D_BLOCK_BONUS4,
-    I2D_BLOCK_BONUS5,
-    I2D_BLOCK_AUTOBONUS,
-    I2D_BLOCK_AUTOBONUS2,
-    I2D_BLOCK_AUTOBONUS3,
-    I2D_BLOCK_HEAL,
-    I2D_BLOCK_PERCENTHEAL,
-    I2D_BLOCK_ITEMHEAL,
-    I2D_BLOCK_SKILL,
-    I2D_BLOCK_ITEMSKILL,
-    I2D_BLOCK_UNITSKILLUSEID,
-    I2D_BLOCK_SC_START,
-    I2D_BLOCK_SC_START4,
-    I2D_BLOCK_SC_END,
-    I2D_BLOCK_GETITEM,
-    I2D_BLOCK_RENTITEM,
-    I2D_BLOCK_DELITEM,
-    I2D_BLOCK_GETRANDGROUPITEM,
-    I2D_BLOCK_SKILLEFFECT,
-    I2D_BLOCK_SPECIALEFFECT2,
-    I2D_BLOCK_SETFONT,
-    I2D_BLOCK_BUYINGSTORE,
-    I2D_BLOCK_SEARCHSTORES,
-    I2D_BLOCK_SET,
-    I2D_BLOCK_INPUT,
-    I2D_BLOCK_ANNOUNCE,
-    I2D_BLOCK_CALLFUNC,
-    I2D_BLOCK_END,
-    I2D_BLOCK_WARP,
-    I2D_BLOCK_PET,
-    I2D_BLOCK_BPET,
-    I2D_BLOCK_MERCENARY_CREATE,
-    I2D_BLOCK_MERCENARY_HEAL,
-    I2D_BLOCK_MERCENARY_SC_START,
-    I2D_BLOCK_PRODUCE,
-    I2D_BLOCK_COOKING,
-    I2D_BLOCK_MAKERUNE,
-    I2D_BLOCK_GUILDGETEXP,
-    I2D_BLOCK_GETEXP,
-    I2D_BLOCK_MONSTER,
-    I2D_BLOCK_HOMEVOLUTION,
-    I2D_BLOCK_SETOPTION,
-    I2D_BLOCK_SETMOUNTING,
-    I2D_BLOCK_SETFALCON,
-    I2D_BLOCK_GETGROUPITEM,
-    I2D_BLOCK_RESETSTATUS,
-    I2D_BLOCK_BONUS_SCRIPT,
-    I2D_BLOCK_PLAYBGM,
-    I2D_BLOCK_TRANSFORM,
-    I2D_BLOCK_SC_START2,
-    I2D_BLOCK_PETLOOT,
-    I2D_BLOCK_PETRECOVERY,
-    I2D_BLOCK_PETSKILLBONUS,
-    I2D_BLOCK_PETSKILLATTACK,
-    I2D_BLOCK_PETSKILLATTACK2,
-    I2D_BLOCK_PETSKILLSUPPORT,
-    I2D_BLOCK_PETHEAL,
-    I2D_BLOCK_FOR,
-    I2D_BLOCK_GETMAPXY,
-    I2D_BLOCK_SPECIALEFFECT,
-    I2D_BLOCK_SHOWSCRIPT
-};
-
 struct i2d_translator {
-    size_t block_size;
-    i2d_str ** block_name;
-    i2d_rbt * block_index;
+
 };
 
 typedef struct i2d_translator i2d_translator;

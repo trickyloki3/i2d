@@ -606,6 +606,125 @@ void i2d_node_print(i2d_node * node, int level) {
         i2d_node_print(node->right, level + 1);
 }
 
+const char * i2d_statement_string[] = {
+    "bonus",
+    "bonus2",
+    "bonus3",
+    "bonus4",
+    "bonus5",
+    "autobonus",
+    "autobonus2",
+    "autobonus3",
+    "heal",
+    "percentheal",
+    "itemheal",
+    "skill",
+    "itemskill",
+    "unitskilluseid",
+    "sc_start",
+    "sc_start4",
+    "sc_end",
+    "getitem",
+    "rentitem",
+    "delitem",
+    "getrandgroupitem",
+    "skilleffect",
+    "specialeffect2",
+    "setfont",
+    "buyingstore",
+    "searchstores",
+    "set",
+    "input",
+    "announce",
+    "callfunc",
+    "end",
+    "warp",
+    "pet",
+    "bpet",
+    "mercenary_create",
+    "mercenary_heal",
+    "mercenary_sc_start",
+    "produce",
+    "cooking",
+    "makerune",
+    "guildgetexp",
+    "getexp",
+    "monster",
+    "homevolution",
+    "setoption",
+    "setmounting",
+    "setfalcon",
+    "getgroupitem",
+    "resetstatus",
+    "bonus_script",
+    "playbgm",
+    "transform",
+    "sc_start2",
+    "petloot",
+    "petrecovery",
+    "petskillbonus",
+    "petskillattack",
+    "petskillattack2",
+    "petskillsupport",
+    "petheal",
+    "for",
+    "getmapxy",
+    "specialeffect",
+    "showscript"
+};
+
+int i2d_statement_init(i2d_statement ** result, enum i2d_statement_type type) {
+    int status = I2D_OK;
+    i2d_statement * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->type = type;
+            if(i2d_str_init(&object->name, i2d_statement_string[type], strlen(i2d_statement_string[type]))) {
+                status = i2d_panic("failed to create string object");
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status)
+                i2d_statement_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_statement_deit(i2d_statement ** result) {
+    i2d_statement * object;
+
+    object = *result;
+    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_statement_append(i2d_statement * x, i2d_statement * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_statement_remove(i2d_statement * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
 const char * i2d_block_string[] = {
     "block",
     "expression",
@@ -1324,74 +1443,6 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-const char * i2d_translate_string[] = {
-    "translate",
-    "bonus",
-    "bonus2",
-    "bonus3",
-    "bonus4",
-    "bonus5",
-    "autobonus",
-    "autobonus2",
-    "autobonus3",
-    "heal",
-    "percentheal",
-    "itemheal",
-    "skill",
-    "itemskill",
-    "unitskilluseid",
-    "sc_start",
-    "sc_start4",
-    "sc_end",
-    "getitem",
-    "rentitem",
-    "delitem",
-    "getrandgroupitem",
-    "skilleffect",
-    "specialeffect2",
-    "setfont",
-    "buyingstore",
-    "searchstores",
-    "set",
-    "input",
-    "announce",
-    "callfunc",
-    "end",
-    "warp",
-    "pet",
-    "bpet",
-    "mercenary_create",
-    "mercenary_heal",
-    "mercenary_sc_start",
-    "produce",
-    "cooking",
-    "makerune",
-    "guildgetexp",
-    "getexp",
-    "monster",
-    "homevolution",
-    "setoption",
-    "setmounting",
-    "setfalcon",
-    "getgroupitem",
-    "resetstatus",
-    "bonus_script",
-    "playbgm",
-    "transform",
-    "sc_start2",
-    "petloot",
-    "petrecovery",
-    "petskillbonus",
-    "petskillattack",
-    "petskillattack2",
-    "petskillsupport",
-    "petheal",
-    "for",
-    "getmapxy",
-    "specialeffect",
-    "showscript"
-};
-
 int i2d_translator_init(i2d_translator ** result) {
     int status = I2D_OK;
     i2d_translator * object;
@@ -1404,23 +1455,6 @@ int i2d_translator_init(i2d_translator ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            object->block_size = i2d_size(i2d_translate_string);
-            object->block_name = calloc(object->block_size, sizeof(*object->block_name));
-            if(!object->block_name) {
-                status = i2d_panic("out of memory");
-            } else {
-                for(i = 0; i < object->block_size && !status; i++)
-                    status = i2d_str_init(&object->block_name[i], i2d_translate_string[i], strlen(i2d_translate_string[i]));
-
-                if(status) {
-                    status = i2d_panic("failed to create string object");
-                } else if(i2d_rbt_init(&object->block_index, i2d_rbt_cmp_str)) {
-                    status = i2d_panic("failed to create red black tree object");
-                } else {
-                    for(i = 0; i < object->block_size && !status; i++)
-                        status = i2d_rbt_insert(object->block_index, object->block_name[i], (void *) i);
-                }
-            }
 
             if(status)
                 i2d_translator_deit(&object);
@@ -1437,11 +1471,6 @@ void i2d_translator_deit(i2d_translator ** result) {
     size_t i;
 
     object = *result;
-    if(object->block_name)
-        for(i = 0; i < object->block_size; i++)
-            i2d_deit(object->block_name[i], i2d_str_deit);
-    i2d_free(object->block_name);
-    i2d_deit(object->block_index, i2d_rbt_deit);
     i2d_free(object);
     *result = NULL;
 }
@@ -1480,84 +1509,6 @@ int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
 
 int i2d_translator_statement(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
-    uintptr_t type = 0;
-
-    if(!block->block_data) {
-        /* skip unsupported blocks */
-    } else if(i2d_rbt_search(translator->block_index, block->block_data->name, (void **) &type)) {
-        status = i2d_panic("failed to map block %s", block->block_data->name->string);
-    } else {
-        switch(type) {
-            case I2D_BLOCK_BONUS:
-            case I2D_BLOCK_BONUS2:
-            case I2D_BLOCK_BONUS3:
-            case I2D_BLOCK_BONUS4:
-            case I2D_BLOCK_BONUS5:
-            case I2D_BLOCK_AUTOBONUS:
-            case I2D_BLOCK_AUTOBONUS2:
-            case I2D_BLOCK_AUTOBONUS3:
-            case I2D_BLOCK_HEAL:
-            case I2D_BLOCK_PERCENTHEAL:
-            case I2D_BLOCK_ITEMHEAL:
-            case I2D_BLOCK_SKILL:
-            case I2D_BLOCK_ITEMSKILL:
-            case I2D_BLOCK_UNITSKILLUSEID:
-            case I2D_BLOCK_SC_START:
-            case I2D_BLOCK_SC_START4:
-            case I2D_BLOCK_SC_END:
-            case I2D_BLOCK_GETITEM:
-            case I2D_BLOCK_RENTITEM:
-            case I2D_BLOCK_DELITEM:
-            case I2D_BLOCK_GETRANDGROUPITEM:
-            case I2D_BLOCK_SKILLEFFECT:
-            case I2D_BLOCK_SPECIALEFFECT2:
-            case I2D_BLOCK_SETFONT:
-            case I2D_BLOCK_BUYINGSTORE:
-            case I2D_BLOCK_SEARCHSTORES:
-            case I2D_BLOCK_SET:
-            case I2D_BLOCK_INPUT:
-            case I2D_BLOCK_ANNOUNCE:
-            case I2D_BLOCK_CALLFUNC:
-            case I2D_BLOCK_END:
-            case I2D_BLOCK_WARP:
-            case I2D_BLOCK_PET:
-            case I2D_BLOCK_BPET:
-            case I2D_BLOCK_MERCENARY_CREATE:
-            case I2D_BLOCK_MERCENARY_HEAL:
-            case I2D_BLOCK_MERCENARY_SC_START:
-            case I2D_BLOCK_PRODUCE:
-            case I2D_BLOCK_COOKING:
-            case I2D_BLOCK_MAKERUNE:
-            case I2D_BLOCK_GUILDGETEXP:
-            case I2D_BLOCK_GETEXP:
-            case I2D_BLOCK_MONSTER:
-            case I2D_BLOCK_HOMEVOLUTION:
-            case I2D_BLOCK_SETOPTION:
-            case I2D_BLOCK_SETMOUNTING:
-            case I2D_BLOCK_SETFALCON:
-            case I2D_BLOCK_GETGROUPITEM:
-            case I2D_BLOCK_RESETSTATUS:
-            case I2D_BLOCK_BONUS_SCRIPT:
-            case I2D_BLOCK_PLAYBGM:
-            case I2D_BLOCK_TRANSFORM:
-            case I2D_BLOCK_SC_START2:
-            case I2D_BLOCK_PETLOOT:
-            case I2D_BLOCK_PETRECOVERY:
-            case I2D_BLOCK_PETSKILLBONUS:
-            case I2D_BLOCK_PETSKILLATTACK:
-            case I2D_BLOCK_PETSKILLATTACK2:
-            case I2D_BLOCK_PETSKILLSUPPORT:
-            case I2D_BLOCK_PETHEAL:
-            case I2D_BLOCK_FOR:
-            case I2D_BLOCK_GETMAPXY:
-            case I2D_BLOCK_SPECIALEFFECT:
-            case I2D_BLOCK_SHOWSCRIPT:
-                break;
-            default:
-                status = i2d_panic("invalid translate type -- %zu", type);
-                break;
-        }
-    }
 
     return status;
 }
