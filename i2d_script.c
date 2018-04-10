@@ -645,7 +645,6 @@ void i2d_block_deit(i2d_block ** result) {
 
     object = *result;
     i2d_deit(object->child, i2d_block_list_deit);
-    i2d_deit(object->expression, i2d_block_list_deit);
     i2d_deit(object->nodes, i2d_node_deit);
     i2d_deit(object->tokens, i2d_token_list_deit);
     i2d_free(object);
@@ -695,8 +694,6 @@ void i2d_block_print(i2d_block * block, int level) {
 
     if(block->nodes)
         i2d_node_print(block->nodes, level + 1);
-    if(block->expression)
-        i2d_block_list_print(block->expression, level + 1);
     if(block->child)
         i2d_block_list_print(block->child, level + 1);
 }
@@ -795,8 +792,6 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
         if(block->child)
             i2d_parser_reset(parser, lexer, &block->child);
         block->parent = NULL;
-        if(block->expression)
-            i2d_parser_reset(parser, lexer, &block->expression);
         block->block_data = NULL;
         if(block->nodes)
             i2d_parser_node_reset(parser, lexer, &block->nodes);
@@ -889,6 +884,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_js
     i2d_block * root;
     i2d_block * block;
     i2d_token * anchor;
+    i2d_token * token = NULL;
     i2d_str literal;
     int parenthesis;
 
@@ -931,11 +927,11 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_js
             if(i2d_token_get_literal(tokens, &literal)) {
                 status = i2d_panic("failed to get literal");
             } else if(!strcmp("if", literal.string)) {
-                if(i2d_parser_block_init(parser, &block, I2D_IF, tokens, parent)) {
+                if(i2d_parser_block_init(parser, &block, I2D_IF, anchor, parent)) {
                     status = i2d_panic("failed to create block object");
                 } else {
                     tokens = tokens->next;
-                    i2d_token_remove(block->tokens);
+                    i2d_token_remove(anchor);
                     anchor = tokens;
 
                     if(I2D_PARENTHESIS_OPEN != tokens->type) {
@@ -952,41 +948,32 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_js
                         }
                         if(I2D_PARENTHESIS_CLOSE != tokens->type) {
                             status = i2d_panic("missing ) after (");
-                        } else if(i2d_parser_block_init(parser, &block->expression, I2D_EXPRESSION, anchor, block)) {
-                            status = i2d_panic("failed to create block object");
+                        } else if(anchor->next == tokens) {
+                            status = i2d_panic("empty if expression");
                         } else {
-                            tokens = tokens->next;
-                            i2d_token_append(anchor->prev, tokens);
-                            tokens = tokens->prev;
-
-                            if(i2d_block_token_augment(block->expression, lexer)) {
+                            if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
                                 status = i2d_panic("failed to create token object");
-                            } else if(i2d_parser_analysis_recursive(parser, lexer, json, block, &block->child, tokens->next)) {
-                                status = i2d_panic("failed to parse script");
                             } else {
                                 tokens = tokens->next;
+                                i2d_token_append(anchor->prev, tokens);
+                                i2d_token_append(token, anchor);
                                 anchor = tokens;
 
-                                if(i2d_parser_expression_recursive(parser, lexer, block->expression->tokens->next, &block->nodes))
+                                if(i2d_parser_expression_recursive(parser, lexer, token->next, &block->nodes))
                                     status = i2d_panic("failed to parse expression");
+
+                                i2d_lexer_reset(lexer, &token);
                             }
                         }
                     }
                 }
             } else if(!strcmp("else", literal.string)) {
-                if(i2d_parser_block_init(parser, &block, I2D_ELSE, tokens, parent)) {
+                if(i2d_parser_block_init(parser, &block, I2D_ELSE, anchor, parent)) {
                     status = i2d_panic("failed to create block object");
                 } else {
                     tokens = tokens->next;
-                    i2d_token_remove(block->tokens);
-                    tokens = tokens->prev;
-
-                    if(i2d_parser_analysis_recursive(parser, lexer, json, block, &block->child, tokens->next)) {
-                        status = i2d_panic("failed to parse script");
-                    } else {
-                        tokens = tokens->next;
-                        anchor = tokens;
-                    }
+                    i2d_token_remove(anchor);
+                    anchor = tokens;
                 }
             } else {
                 tokens = tokens->next;
@@ -1477,11 +1464,8 @@ int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
                     status = i2d_translator_statement(translator, block);
                     break;
                 case I2D_IF:
-                    status = i2d_translator_expression(translator, block->expression) ||
-                             i2d_translator_statement(translator, block->child);
                     break;
                 case I2D_ELSE:
-                    status = i2d_translator_statement(translator, block->child);
                     break;
                 default:
                     status = i2d_panic("invalid block type -- %d", block->type);
