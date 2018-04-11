@@ -596,7 +596,7 @@ void i2d_node_print(i2d_node * node, int level) {
     int i;
 
     for(i = 0; i < level; i++)
-        putc('\t', stdout);
+        fprintf(stdout, "    ");
 
     i2d_token_print(node->tokens);
 
@@ -822,7 +822,7 @@ void i2d_block_print(i2d_block * block, int level) {
     int i;
 
     for(i = 0; i < level; i++)
-        putc('\t', stdout);
+        fprintf(stdout, "    ");
 
     if(block->statement)
         fprintf(stdout, "%s [%p]\n", block->statement->name->string, block);
@@ -1617,6 +1617,10 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to parse -- %s", source->string);
     } else if(i2d_translator_translate(script->translator, script->parser->block_list)) {
         status = i2d_panic("failed to translate -- %s", source->string);
+    } else {
+#if i2d_debug
+        i2d_block_print(script->parser->block_list, 0);
+#endif
     }
 
     return status;
