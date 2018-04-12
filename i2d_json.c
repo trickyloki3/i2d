@@ -43,7 +43,7 @@ int i2d_json_block_map(i2d_json * json, const char * key, json_t ** result) {
     json_t * blocks;
     json_t * statement;
 
-    blocks = json_object_get(json->object, key);
+    blocks = json_object_get(json->object, "blocks");
     if(!blocks) {
         status = i2d_panic("failed to get blocks key value");
     } else {
