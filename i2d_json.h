@@ -13,6 +13,7 @@ typedef struct i2d_json i2d_json;
 
 int i2d_json_init(i2d_json **, i2d_str *);
 void i2d_json_deit(i2d_json **);
+int i2d_json_block_map(i2d_json *, const char *, json_t **);
 
 #if i2d_debug
 int i2d_json_test();

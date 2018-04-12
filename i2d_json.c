@@ -38,6 +38,26 @@ void i2d_json_deit(i2d_json ** result) {
     *result = NULL;
 }
 
+int i2d_json_block_map(i2d_json * json, const char * key, json_t ** result) {
+    int status = I2D_OK;
+    json_t * blocks;
+    json_t * statement;
+
+    blocks = json_object_get(json->object, key);
+    if(!blocks) {
+        status = i2d_panic("failed to get blocks key value");
+    } else {
+        statement = json_object_get(blocks, key);
+        if(!statement) {
+            status = i2d_panic("failed to get %s key value", key);
+        } else {
+            *result = statement;
+        }
+    }
+
+    return status;
+}
+
 #if i2d_debug
 int i2d_json_test() {
     int status = I2D_OK;
