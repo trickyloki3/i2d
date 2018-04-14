@@ -1572,6 +1572,23 @@ int i2d_translator_node_variable(i2d_translator * translator, i2d_json * json, i
 int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
 
+    i2d_node * arguments;
+    i2d_node * bonus_type;
+    i2d_node * bonus_value;
+
+    arguments = block->nodes->left;
+    if(!arguments || arguments->tokens->type != I2D_COMMA) {
+        status = i2d_panic("missing bonus arguments");
+    } else {
+        bonus_type  = arguments->left;
+        bonus_value = arguments->right;
+        if(!bonus_type) {
+            status = i2d_panic("missing bonus type arugment");
+        } else if(!bonus_value) {
+            status = i2d_panic("missing bonus value argument");
+        }
+    }
+
     return status;
 }
 
