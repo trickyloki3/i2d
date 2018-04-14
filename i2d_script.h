@@ -4,6 +4,7 @@
 #include "i2d_util.h"
 #include "i2d_json.h"
 #include "i2d_item.h"
+#include "i2d_range.h"
 
 enum i2d_token_type {
     I2D_TOKEN,
@@ -105,6 +106,7 @@ enum i2d_node_type {
 
 struct i2d_node {
     enum i2d_node_type type;
+    i2d_range_list * range;
     i2d_token * tokens;
     struct i2d_node * left;
     struct i2d_node * right;
