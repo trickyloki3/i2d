@@ -1508,7 +1508,10 @@ int i2d_translator_expression(i2d_translator * translator, i2d_json * json, i2d_
     } else {
         switch(node->type) {
             case I2D_NODE:
+                break;
             case I2D_VARIABLE:
+                status = i2d_translator_node_variable(translator, json, node);
+                break;
             case I2D_FUNCTION:
             case I2D_UNARY:
             case I2D_BINARY:
@@ -1516,6 +1519,52 @@ int i2d_translator_expression(i2d_translator * translator, i2d_json * json, i2d_
             default:
                 status = i2d_panic("invalid node type -- %d", node->type);
                 break;
+        }
+    }
+
+    return status;
+}
+
+int i2d_translator_node_variable(i2d_translator * translator, i2d_json * json, i2d_node * node) {
+    int status = I2D_OK;
+    long number;
+    i2d_str literal;
+    i2d_zero(literal);
+
+    if(I2D_LITERAL != node->tokens->type) {
+        status = i2d_panic("invalid token type -- %d", node->tokens->type);
+    } else if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else {
+        if(!strncmp(literal.string, "0x", 2) && literal.length > 2) {
+            /* hexadecimal */
+            if(i2d_strtol(&number, literal.string, literal.length, 16)) {
+                status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
+            } else if(i2d_range_list_init(&node->range)) {
+                status = i2d_panic("failed to create range list object");
+            } else if(i2d_range_list_add(node->range, number, number)) {
+                status = i2d_panic("failed to add range to range list");
+            }
+        } else if(literal.string[0] == '0' && literal.length > 1) {
+            /* octal */
+            if(i2d_strtol(&number, literal.string, literal.length, 8)) {
+                status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
+            } else if(i2d_range_list_init(&node->range)) {
+                status = i2d_panic("failed to create range list object");
+            } else if(i2d_range_list_add(node->range, number, number)) {
+                status = i2d_panic("failed to add range to range list");
+            }
+        } else if(isdigit(literal.string[0])) {
+            /* decimal */
+            if(i2d_strtol(&number, literal.string, literal.length, 10)) {
+                status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
+            } else if(i2d_range_list_init(&node->range)) {
+                status = i2d_panic("failed to create range list object");
+            } else if(i2d_range_list_add(node->range, number, number)) {
+                status = i2d_panic("failed to add range to range list");
+            }
+        } else {
+            /* variable */
         }
     }
 
