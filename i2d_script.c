@@ -1479,7 +1479,7 @@ int i2d_translator_statement(i2d_translator * translator, i2d_json * json, i2d_b
     int status = I2D_OK;
     json_t * block_data = NULL;
 
-    if(i2d_translator_expression(translator, block->nodes)) {
+    if(i2d_translator_expression(translator, json, block->nodes)) {
         status = i2d_panic("failed to evaluate expression");
     } else if(block->statement) {
         if(i2d_json_block_map(json, block->statement->name->string, &block_data)) {
@@ -1496,8 +1496,26 @@ int i2d_translator_statement(i2d_translator * translator, i2d_json * json, i2d_b
     return status;
 }
 
-int i2d_translator_expression(i2d_translator * translator, i2d_node * node) {
+int i2d_translator_expression(i2d_translator * translator, i2d_json * json, i2d_node * node) {
     int status = I2D_OK;
+
+    if(node->left && i2d_translator_expression(translator, json, node->left)) {
+        status = i2d_panic("failed to evaluate left expression");
+    } else if(node->right && i2d_translator_expression(translator, json, node->right)) {
+        status = i2d_panic("failed to evaluate right expression");
+    } else {
+        switch(node->type) {
+            case I2D_NODE:
+            case I2D_VARIABLE:
+            case I2D_FUNCTION:
+            case I2D_UNARY:
+            case I2D_BINARY:
+                break;
+            default:
+                status = i2d_panic("invalid node type -- %d", node->type);
+                break;
+        }
+    }
 
     return status;
 }
