@@ -1448,7 +1448,7 @@ void i2d_translator_deit(i2d_translator ** result) {
     *result = NULL;
 }
 
-int i2d_translator_translate(i2d_translator * translator, i2d_json * json, i2d_block * list) {
+int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
     int status = I2D_OK;
     i2d_block * block;
 
@@ -1457,10 +1457,10 @@ int i2d_translator_translate(i2d_translator * translator, i2d_json * json, i2d_b
         do {
             switch(block->type) {
                 case I2D_BLOCK:
-                    status = i2d_translator_translate(translator, json, block->child);
+                    status = i2d_translator_translate(translator, block->child);
                     break;
                 case I2D_STATEMENT:
-                    status = i2d_translator_statement(translator, json, block);
+                    status = i2d_translator_statement(translator, block);
                     break;
                 case I2D_IF:
                     break;
@@ -1477,38 +1477,34 @@ int i2d_translator_translate(i2d_translator * translator, i2d_json * json, i2d_b
     return status;
 }
 
-int i2d_translator_statement(i2d_translator * translator, i2d_json * json, i2d_block * block) {
+int i2d_translator_statement(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
     json_t * block_data = NULL;
 
     if(block->statement) {
-        if(i2d_json_block_map(json, block->statement->name->string, &block_data)) {
-            status = i2d_panic("failed get %s block data", block->statement->name->string);
-        } else {
-            switch(block->statement->type) {
-                case I2D_BONUS:
-                    status = i2d_translator_bonus(translator, block);
-                    break;
-            }
+        switch(block->statement->type) {
+            case I2D_BONUS:
+                status = i2d_translator_bonus(translator, block);
+                break;
         }
     }
 
     return status;
 }
 
-int i2d_translator_expression(i2d_translator * translator, i2d_json * json, i2d_node * node) {
+int i2d_translator_expression(i2d_translator * translator, i2d_node * node) {
     int status = I2D_OK;
 
-    if(node->left && i2d_translator_expression(translator, json, node->left)) {
+    if(node->left && i2d_translator_expression(translator, node->left)) {
         status = i2d_panic("failed to evaluate left expression");
-    } else if(node->right && i2d_translator_expression(translator, json, node->right)) {
+    } else if(node->right && i2d_translator_expression(translator, node->right)) {
         status = i2d_panic("failed to evaluate right expression");
     } else {
         switch(node->type) {
             case I2D_NODE:
                 break;
             case I2D_VARIABLE:
-                status = i2d_translator_node_variable(translator, json, node);
+                status = i2d_translator_node_variable(translator, node);
                 break;
             case I2D_FUNCTION:
             case I2D_UNARY:
@@ -1523,7 +1519,7 @@ int i2d_translator_expression(i2d_translator * translator, i2d_json * json, i2d_
     return status;
 }
 
-int i2d_translator_node_variable(i2d_translator * translator, i2d_json * json, i2d_node * node) {
+int i2d_translator_node_variable(i2d_translator * translator, i2d_node * node) {
     int status = I2D_OK;
     long number;
     i2d_str literal;
@@ -1644,7 +1640,7 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer, script->json)) {
         status = i2d_panic("failed to parse -- %s", source->string);
-    } else if(i2d_translator_translate(script->translator, script->json, script->parser->block_list)) {
+    } else if(i2d_translator_translate(script->translator, script->parser->block_list)) {
         status = i2d_panic("failed to translate -- %s", source->string);
     }
 
