@@ -270,6 +270,7 @@ void i2d_bonus_type_append(i2d_bonus_type *, i2d_bonus_type *);
 void i2d_bonus_type_remove(i2d_bonus_type *);
 
 struct i2d_translator {
+    i2d_rbt * bonus_type_map;
     i2d_bonus_type * bonus_type_list;
 };
 
