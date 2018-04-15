@@ -2,7 +2,8 @@
     "blocks" : {
         "bonus" : {
             "bDefEle" : {
-                "description" : "{0} elemental property"
+                "description" : "{0} elemental property",
+                "argument_type" : ["elemental"]
             },
             "bAtkEle" : {},
             "bNoMiscDamage" : {},

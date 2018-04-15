@@ -1470,7 +1470,37 @@ int i2d_bonus_type_description_load(i2d_bonus_type * bonus_type, json_t * json) 
 
             if(!bonus_type->tokens)
                 status = i2d_panic("failed to tokenize description string");
-            i2d_token_print(bonus_type->tokens);
+        }
+    }
+
+    return status;
+}
+
+int i2d_bonus_type_argument_type_load(i2d_bonus_type * bonus_type, json_t * json) {
+    int status = I2D_OK;
+    size_t i;
+    size_t size;
+    json_t * type;
+    const char * argument_type;
+
+    size = json_array_size(json);
+    if(!size) {
+        status = i2d_panic("empty argument type array");
+    } else if(size > i2d_size(bonus_type->type)) {
+        status = i2d_panic("argument type array size exceed %d", i2d_size(bonus_type->type));
+    } else {
+        for(i = 0; i < size && !status; i++) {
+            type = json_array_get(json, i);
+            if(!type) {
+                status = i2d_panic("invalid argument type");
+            } else {
+                argument_type = json_string_value(type);
+                if(!strcmp(argument_type, "elemental")) {
+                    bonus_type->type[i] = I2D_ELEMENTAL;
+                } else {
+                    status = i2d_panic("unsupported argument type -- %s", argument_type);
+                }
+            }
         }
     }
 
@@ -1481,6 +1511,7 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * js
     int status = I2D_OK;
     i2d_bonus_type * object;
     json_t * description;
+    json_t * argument_type;
 
     if(i2d_is_invalid(result) || !name) {
         status = i2d_panic("invalid paramaters");
@@ -1497,6 +1528,13 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * js
                     status = i2d_panic("failed to get description key value");
                 } else if(i2d_bonus_type_description_load(object, description)) {
                     status = i2d_panic("failed to load bonus type description");
+                } else {
+                    argument_type = json_object_get(json, "argument_type");
+                    if(!argument_type) {
+                        status = i2d_panic("failed to get argument type key value");
+                    } else if(i2d_bonus_type_argument_type_load(object, argument_type)) {
+                        status = i2d_panic("failed to load argument type");
+                    }
                 }
                 object->next = object;
                 object->prev = object;
