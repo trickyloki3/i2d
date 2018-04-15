@@ -291,9 +291,9 @@ int i2d_translator_init(i2d_translator **, i2d_json *);
 void i2d_translator_deit(i2d_translator **);
 int i2d_translator_translate(i2d_translator *, i2d_block *);
 int i2d_translator_statement(i2d_translator *, i2d_block *);
+int i2d_translator_statement_bonus(i2d_translator *, i2d_block *);
 int i2d_translator_expression(i2d_translator *, i2d_node *);
-int i2d_translator_node_variable(i2d_translator *, i2d_node *);
-int i2d_translator_bonus(i2d_translator *, i2d_block *);
+int i2d_translator_expression_variable(i2d_translator *, i2d_node *);
 
 struct i2d_script {
     i2d_json * json;
