@@ -271,6 +271,7 @@ typedef struct i2d_bonus_type i2d_bonus_type;
 
 int i2d_bonus_type_description_tokenize(i2d_bonus_type *, const char *, size_t);
 int i2d_bonus_type_description_load(i2d_bonus_type *, json_t *);
+int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type *, json_t *);
 int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
 int i2d_bonus_type_init(i2d_bonus_type **, const char *, json_t *);
 void i2d_bonus_type_deit(i2d_bonus_type **);

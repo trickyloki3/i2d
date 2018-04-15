@@ -1485,29 +1485,53 @@ int i2d_bonus_type_description_load(i2d_bonus_type * bonus_type, json_t * json) 
     return status;
 }
 
+int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type * type, json_t * json) {
+    int status = I2D_OK;
+    const char * string;
+    size_t length;
+
+    string = json_string_value(json);
+    if(!string) {
+        status = i2d_panic("failed to get argument type string");
+    } else {
+        length = json_string_length(json);
+        if(!length) {
+            status = i2d_panic("failed on empty argument type string");
+        } else {
+            if(!strcmp(string, "elemental")) {
+                *type = I2D_ELEMENTAL;
+            } else {
+                status = i2d_panic("unsupported argument type -- %s", string);
+            }
+        }
+    }
+
+    return status;
+}
+
 int i2d_bonus_type_argument_type_load(i2d_bonus_type * bonus_type, json_t * json) {
     int status = I2D_OK;
     size_t i;
     size_t size;
-    json_t * object;
-    const char * argument_type;
+    json_t * argument_type_array;
+    json_t * argument_type;
 
-    size = json_array_size(json);
-    if(!size) {
-        status = i2d_panic("empty argument type array");
-    } else if(size > i2d_size(bonus_type->type)) {
-        status = i2d_panic("invalid argument type array size");
+    argument_type_array = json_object_get(json, "argument_type");
+    if(!argument_type_array) {
+        status = i2d_panic("failed to get argument type key value");
     } else {
-        for(i = 0; i < size && !status; i++) {
-            object = json_array_get(json, i);
-            if(!object) {
-                status = i2d_panic("invalid argument type");
-            } else {
-                argument_type = json_string_value(object);
-                if(!strcmp(argument_type, "elemental")) {
-                    bonus_type->type[i] = I2D_ELEMENTAL;
-                } else {
-                    status = i2d_panic("unsupported argument type -- %s", argument_type);
+        size = json_array_size(argument_type_array);
+        if(!size) {
+            status = i2d_panic("failed on empty argument type array");
+        } else if(size > i2d_size(bonus_type->type)) {
+            status = i2d_panic("failed on insufficient bonus type array");
+        } else {
+            for(i = 0; i < size && !status; i++) {
+                argument_type = json_array_get(argument_type_array, i);
+                if(!argument_type) {
+                    status = i2d_panic("failed to get argument type string");
+                } else if(i2d_bonus_type_argument_type_map(&bonus_type->type[i], argument_type)) {
+                    status = i2d_panic("failed to map argument type");
                 }
             }
         }
@@ -1530,17 +1554,11 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * js
         } else {
             if(i2d_str_init(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
+            } else if(i2d_bonus_type_description_load(object, json)) {
+                status = i2d_panic("failed to load bonus type description");
+            } else if(i2d_bonus_type_argument_type_load(object, json)) {
+                status = i2d_panic("failed to load argument type");
             } else {
-                if(i2d_bonus_type_description_load(object, json)) {
-                    status = i2d_panic("failed to load bonus type description");
-                } else {
-                    argument_type = json_object_get(json, "argument_type");
-                    if(!argument_type) {
-                        status = i2d_panic("failed to get argument type key value");
-                    } else if(i2d_bonus_type_argument_type_load(object, argument_type)) {
-                        status = i2d_panic("failed to load argument type");
-                    }
-                }
                 object->next = object;
                 object->prev = object;
             }
