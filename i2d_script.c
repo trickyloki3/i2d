@@ -847,20 +847,6 @@ void i2d_block_list_print(i2d_block * block, int level) {
     } while(iterator != block);
 }
 
-int i2d_block_token_augment(i2d_block * block, i2d_lexer * lexer) {
-    int status = I2D_OK;
-    i2d_token * token = NULL;
-
-    if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
-        status = i2d_panic("failed to create token object");
-    } else {
-        i2d_token_append(token, block->tokens);
-        block->tokens = token;
-    }
-
-    return status;
-}
-
 int i2d_parser_init(i2d_parser ** result) {
     int status = I2D_OK;
     i2d_parser * object;
@@ -1085,14 +1071,19 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_js
                 i2d_token_remove(token);
                 i2d_lexer_reset(lexer, &token);
 
-                if(i2d_block_token_augment(block, lexer)) {
+                if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
                     status = i2d_panic("failed to create token object");
-                } else if(i2d_parser_statement_map(parser, lexer, block)) {
-                    status = i2d_panic("failed to lookup block data object");
-                } else if(block->statement && block->tokens->next->type == I2D_SEMICOLON) {
-                    /* support statements without arguments */
-                } else if(i2d_parser_expression_recursive(parser, lexer, block->tokens->next, &block->nodes)) {
-                    status = i2d_panic("failed to parse expression");
+                } else {
+                    i2d_token_append(token, block->tokens);
+                    block->tokens = token;
+                    token = NULL;
+                    if(i2d_parser_statement_map(parser, lexer, block)) {
+                        status = i2d_panic("failed to lookup block data object");
+                    } else if(block->statement && block->tokens->next->type == I2D_SEMICOLON) {
+                        /* support statements without arguments */
+                    } else if(i2d_parser_expression_recursive(parser, lexer, block->tokens->next, &block->nodes)) {
+                        status = i2d_panic("failed to parse expression");
+                    }
                 }
             }
         } else if(I2D_LITERAL == tokens->type) {
