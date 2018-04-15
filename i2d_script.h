@@ -255,8 +255,22 @@ int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_json *);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_json *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 
-struct i2d_translator {
+struct i2d_bonus_type {
+    i2d_str * name;
+    struct i2d_bonus_type * next;
+    struct i2d_bonus_type * prev;
+};
 
+typedef struct i2d_bonus_type i2d_bonus_type;
+
+int i2d_bonus_type_init(i2d_bonus_type **, i2d_str *);
+void i2d_bonus_type_deit(i2d_bonus_type **);
+void i2d_bonus_type_list_deit(i2d_bonus_type **);
+void i2d_bonus_type_append(i2d_bonus_type *, i2d_bonus_type *);
+void i2d_bonus_type_remove(i2d_bonus_type *);
+
+struct i2d_translator {
+    i2d_bonus_type * bonus_type_list;
 };
 
 typedef struct i2d_translator i2d_translator;

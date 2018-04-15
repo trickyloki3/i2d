@@ -1416,6 +1416,68 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
+int i2d_bonus_type_init(i2d_bonus_type ** result, i2d_str * name) {
+    int status = I2D_OK;
+    i2d_bonus_type * object;
+
+    if(i2d_is_invalid(result) || !name) {
+        status = i2d_panic("invalid paramaters");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_str_init(&object->name, name->string, name->length))
+                status = i2d_panic("failed to create string object");
+
+            if(status)
+                i2d_bonus_type_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_bonus_type_deit(i2d_bonus_type ** result) {
+    i2d_bonus_type * object;
+
+    object = *result;
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_bonus_type_list_deit(i2d_bonus_type ** result) {
+    i2d_bonus_type * object;
+    i2d_bonus_type * bonus_type;
+
+    object = *result;
+    if(object) {
+        while(object != object->next) {
+            bonus_type = object->next;
+            i2d_bonus_type_remove(bonus_type);
+            i2d_bonus_type_deit(&bonus_type);
+        }
+        i2d_bonus_type_deit(&object);
+    }
+    *result = NULL;
+}
+
+void i2d_bonus_type_append(i2d_bonus_type * x, i2d_bonus_type * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_bonus_type_remove(i2d_bonus_type * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
@@ -1444,6 +1506,7 @@ void i2d_translator_deit(i2d_translator ** result) {
     size_t i;
 
     object = *result;
+    i2d_deit(object->bonus_type_list, i2d_bonus_type_list_deit);
     i2d_free(object);
     *result = NULL;
 }
