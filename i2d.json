@@ -1,7 +1,9 @@
 {
     "blocks" : {
         "bonus" : {
-            "bDefEle" : {},
+            "bDefEle" : {
+                "description" : "{0} elemental property"
+            },
             "bAtkEle" : {},
             "bNoMiscDamage" : {},
             "bNoWeaponDamage" : {},

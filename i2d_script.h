@@ -61,7 +61,8 @@ enum i2d_token_type {
     I2D_ASSIGN,
     I2D_LINE_COMMENT,
     I2D_BLOCK_COMMENT,
-    I2D_QUOTE
+    I2D_QUOTE,
+    I2D_POSITION
 };
 
 struct i2d_token {
@@ -257,13 +258,15 @@ int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_
 
 struct i2d_bonus_type {
     i2d_str * name;
+    i2d_token * tokens;
     struct i2d_bonus_type * next;
     struct i2d_bonus_type * prev;
 };
 
 typedef struct i2d_bonus_type i2d_bonus_type;
 
-int i2d_bonus_type_init(i2d_bonus_type **, const char *);
+int i2d_bonus_type_description_load(i2d_bonus_type *, json_t *);
+int i2d_bonus_type_init(i2d_bonus_type **, const char *, json_t *);
 void i2d_bonus_type_deit(i2d_bonus_type **);
 void i2d_bonus_type_list_deit(i2d_bonus_type **);
 void i2d_bonus_type_append(i2d_bonus_type *, i2d_bonus_type *);

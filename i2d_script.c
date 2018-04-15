@@ -53,9 +53,10 @@ const char * i2d_token_string[] = {
     ":",
     "::",
     "=",
-    "//"
+    "//",
     "/**/",
-    "\"\""
+    "\"\"",
+    "pos"
 };
 
 int i2d_token_precedence[] = {
@@ -187,8 +188,8 @@ int i2d_token_write(i2d_token * token, void * data, size_t size) {
 int i2d_token_get_literal(i2d_token * token, i2d_str * result) {
     int status = I2D_OK;
 
-    if(I2D_LITERAL != token->type) {
-        status = i2d_panic("invalid token type");
+    if(I2D_LITERAL != token->type && I2D_POSITION != token->type) {
+        status = I2D_FAIL;
     } else if(i2d_buf_add_null(token->buffer)) {
         status = i2d_panic("failed to write buffer object");
     } else {
@@ -226,7 +227,7 @@ void i2d_token_print(i2d_token * token) {
     iterator = token;
     do {
         space = iterator->next == token ? '\n' : ' ';
-        if(I2D_LITERAL == iterator->type && !i2d_token_get_literal(iterator, &literal)) {
+        if(!i2d_token_get_literal(iterator, &literal)) {
             fprintf(stdout, "%s(%s)%c", i2d_token_string[iterator->type], literal.string, space);
         } else {
             fprintf(stdout, "%s%c", i2d_token_string[iterator->type], space);
@@ -1416,9 +1417,70 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name) {
+int i2d_bonus_type_description_load(i2d_bonus_type * bonus_type, json_t * json) {
+    int status = I2D_OK;
+    size_t i;
+    size_t length;
+    const char * description;
+    char symbol;
+    i2d_token * token = NULL;
+    i2d_token * state = NULL;
+
+    description = json_string_value(json);
+    if(!description) {
+        status = i2d_panic("invalid description string");
+    } else {
+        length = json_string_length(json);
+        if(!length) {
+            status = i2d_panic("empty description string");
+        } else {
+            for(i = 0; i < length && !status; i++) {
+                symbol = description[i];
+                switch(symbol) {
+                    case '{':
+                        state = NULL;
+                        break;
+                    case '}':
+                        if(!state) {
+                            status = i2d_panic("invalid position token");
+                        } else {
+                            state->type = I2D_POSITION;
+                            state = NULL;
+                        }
+                        break;
+                    default:
+                        if(state) {
+                            status = i2d_token_write(state, &symbol, sizeof(symbol));
+                        } else {
+                            status = i2d_token_init(&token, I2D_LITERAL) ||
+                                     i2d_token_write(token, &symbol, sizeof(symbol));
+                        }
+                        break;
+                }
+                if(token) {
+                    if(!bonus_type->tokens) {
+                        bonus_type->tokens = token;
+                    } else {
+                        i2d_token_append(token, bonus_type->tokens);
+                    }
+                    state = token;
+                    token = NULL;
+                }
+            }
+
+            if(!bonus_type->tokens)
+                status = i2d_panic("failed to tokenize description string");
+            i2d_token_print(bonus_type->tokens);
+        }
+    }
+
+    return status;
+}
+
+int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * json) {
     int status = I2D_OK;
     i2d_bonus_type * object;
+    json_t * description;
 
     if(i2d_is_invalid(result) || !name) {
         status = i2d_panic("invalid paramaters");
@@ -1430,6 +1492,12 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name) {
             if(i2d_str_init(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
             } else {
+                description = json_object_get(json, "description");
+                if(!description) {
+                    status = i2d_panic("failed to get description key value");
+                } else if(i2d_bonus_type_description_load(object, description)) {
+                    status = i2d_panic("failed to load bonus type description");
+                }
                 object->next = object;
                 object->prev = object;
             }
@@ -1448,6 +1516,7 @@ void i2d_bonus_type_deit(i2d_bonus_type ** result) {
     i2d_bonus_type * object;
 
     object = *result;
+    i2d_deit(object->tokens, i2d_token_list_deit);
     i2d_deit(object->name, i2d_str_deit);
     i2d_free(object);
     *result = NULL;
@@ -1499,7 +1568,7 @@ int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json)
             json_object_foreach(bonus, key, value) {
                 bonus_type = NULL;
 
-                if(i2d_bonus_type_init(&bonus_type, key)) {
+                if(i2d_bonus_type_init(&bonus_type, key, value)) {
                     status = i2d_panic("failed to create bonus type object");
                 } else {
                     if(!translator->bonus_type_list) {
