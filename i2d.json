@@ -75,7 +75,7 @@
         "showscript" : {}
     },
     "consts" : {
-        "INT_MIN" : 18446744071562067968,
+        "INT_MIN" : -2147483648,
         "INT_MAX" : 2147483647,
         "PACKETVER" : 20151104,
         "MAX_LEVEL" : 175,
@@ -706,7 +706,7 @@
         "bIgnoreDefClassRate" : 2088,
         "bRegenPercentHP" : 2089,
         "bRegenPercentSP" : 2090,
-        "EQI_COMPOUND_ON" : 18446744073709551615,
+        "EQI_COMPOUND_ON" : -1,
         "EQI_HEAD_TOP" : 6,
         "EQI_ARMOR" : 7,
         "EQI_HAND_L" : 8,
@@ -788,8 +788,8 @@
         "Eff_Fear" : 309,
         "Eff_Burning" : 310,
         "Eff_Crystalize" : 388,
-        "SC_ALL" : 18446744073709551615,
-        "SC_NONE" : 18446744073709551615,
+        "SC_ALL" : -1,
+        "SC_NONE" : -1,
         "SC_STONE" : 0,
         "SC_FREEZE" : 1,
         "SC_STUN" : 2,
@@ -1458,7 +1458,7 @@
         "SC_CHEERUP" : 685,
         "SC_DRESSUP" : 686,
         "SC_EXTREMITYFIST2" : 687,
-        "SI_BLANK" : 18446744073709551615,
+        "SI_BLANK" : -1,
         "SI_PROVOKE" : 0,
         "SI_ENDURE" : 1,
         "SI_TWOHANDQUICKEN" : 2,
@@ -4520,7 +4520,7 @@
         "4_TEDDY_BEAR_W" : 10292,
         "4_TEDDY_BEAR_B" : 10293,
         "4_TEDDY_BEAR_B_L" : 10294,
-        "EF_NONE" : 18446744073709551615,
+        "EF_NONE" : -1,
         "EF_HIT1" : 0,
         "EF_HIT2" : 1,
         "EF_HIT3" : 2,
@@ -5726,6 +5726,6 @@
         "MD_FIXED_ITEMDROP" : 16777216,
         "MD_DETECTOR" : 33554432,
         "MD_STATUS_IMMUNE" : 67108864,
-        "MD_SKILL_IMMUNE" : 134217728,
+        "MD_SKILL_IMMUNE" : 134217728
     }
 }
