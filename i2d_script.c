@@ -1416,7 +1416,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-int i2d_translator_init(i2d_translator ** result) {
+int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
     size_t i;
@@ -1568,20 +1568,22 @@ int i2d_translator_node_variable(i2d_translator * translator, i2d_node * node) {
 int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
 
-    i2d_node * arguments;
+    i2d_node * argument_list;
     i2d_node * bonus_type;
     i2d_node * bonus_value;
 
-    arguments = block->nodes->left;
-    if(!arguments || arguments->tokens->type != I2D_COMMA) {
+    argument_list = block->nodes->left;
+    if(!argument_list || argument_list->tokens->type != I2D_COMMA) {
         status = i2d_panic("missing bonus arguments");
     } else {
-        bonus_type  = arguments->left;
-        bonus_value = arguments->right;
+        bonus_type  = argument_list->left;
         if(!bonus_type) {
             status = i2d_panic("missing bonus type arugment");
-        } else if(!bonus_value) {
-            status = i2d_panic("missing bonus value argument");
+        } else {
+            bonus_value = argument_list->right;
+            if(!bonus_value) {
+                status = i2d_panic("missing bonus value argument");
+            }
         }
     }
 
@@ -1605,7 +1607,7 @@ int i2d_script_init(i2d_script ** result, i2d_str * path) {
                 status = i2d_panic("failed to create lexer object");
             } else if(i2d_parser_init(&object->parser)) {
                 status = i2d_panic("failed to create parser object");
-            } else if(i2d_translator_init(&object->translator)) {
+            } else if(i2d_translator_init(&object->translator, object->json)) {
                 status = i2d_panic("failed to create translator object");
             }
 
