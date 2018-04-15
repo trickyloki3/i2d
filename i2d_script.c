@@ -1480,21 +1480,21 @@ int i2d_bonus_type_argument_type_load(i2d_bonus_type * bonus_type, json_t * json
     int status = I2D_OK;
     size_t i;
     size_t size;
-    json_t * type;
+    json_t * object;
     const char * argument_type;
 
     size = json_array_size(json);
     if(!size) {
         status = i2d_panic("empty argument type array");
     } else if(size > i2d_size(bonus_type->type)) {
-        status = i2d_panic("argument type array size exceed %d", i2d_size(bonus_type->type));
+        status = i2d_panic("invalid argument type array size");
     } else {
         for(i = 0; i < size && !status; i++) {
-            type = json_array_get(json, i);
-            if(!type) {
+            object = json_array_get(json, i);
+            if(!object) {
                 status = i2d_panic("invalid argument type");
             } else {
-                argument_type = json_string_value(type);
+                argument_type = json_string_value(object);
                 if(!strcmp(argument_type, "elemental")) {
                     bonus_type->type[i] = I2D_ELEMENTAL;
                 } else {
