@@ -1620,27 +1620,35 @@ int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json)
     json_t * value;
     i2d_bonus_type * bonus_type;
 
-    if(i2d_rbt_init(&translator->bonus_type_map, i2d_rbt_cmp_str)) {
-        status = i2d_panic("failed to create red black tree object");
+    if(i2d_json_block_map(json, "bonus", &bonus)) {
+        status = i2d_panic("failed to get bonus block key value");
     } else {
-        if(i2d_json_block_map(json, "bonus", &bonus)) {
-            status = i2d_panic("failed to get bonus block key value");
+        json_object_foreach(bonus, key, value) {
+            bonus_type = NULL;
+
+            if(i2d_bonus_type_init(&bonus_type, key, value)) {
+                status = i2d_panic("failed to create bonus type object");
+            } else if(!translator->bonus_type_list) {
+                translator->bonus_type_list = bonus_type;
+            } else {
+                i2d_bonus_type_append(bonus_type, translator->bonus_type_list);
+            }
+        }
+    }
+
+    if(!status) {
+        bonus_type = translator->bonus_type_list;
+        if(!bonus_type) {
+            status = i2d_panic("failed on empty bonus type list");
         } else {
-            json_object_foreach(bonus, key, value) {
-                bonus_type = NULL;
-
-                if(i2d_bonus_type_init(&bonus_type, key, value)) {
-                    status = i2d_panic("failed to create bonus type object");
-                } else {
-                    if(!translator->bonus_type_list) {
-                        translator->bonus_type_list = bonus_type;
-                    } else {
-                        i2d_bonus_type_append(bonus_type, translator->bonus_type_list);
-                    }
-
+            if(i2d_rbt_init(&translator->bonus_type_map, i2d_rbt_cmp_str)) {
+                status = i2d_panic("failed to create red black tree object");
+            } else {
+                do {
                     if(i2d_rbt_insert(translator->bonus_type_map, bonus_type->name, bonus_type))
                         status = i2d_panic("failed to index bonus type object");
-                }
+                    bonus_type = bonus_type->next;
+                } while(bonus_type != translator->bonus_type_list);
             }
         }
     }
