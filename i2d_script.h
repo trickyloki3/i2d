@@ -263,7 +263,7 @@ struct i2d_bonus_type {
 
 typedef struct i2d_bonus_type i2d_bonus_type;
 
-int i2d_bonus_type_init(i2d_bonus_type **, i2d_str *);
+int i2d_bonus_type_init(i2d_bonus_type **, const char *);
 void i2d_bonus_type_deit(i2d_bonus_type **);
 void i2d_bonus_type_list_deit(i2d_bonus_type **);
 void i2d_bonus_type_append(i2d_bonus_type *, i2d_bonus_type *);
@@ -275,6 +275,7 @@ struct i2d_translator {
 
 typedef struct i2d_translator i2d_translator;
 
+int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 int i2d_translator_init(i2d_translator **, i2d_json *);
 void i2d_translator_deit(i2d_translator **);
 int i2d_translator_translate(i2d_translator *, i2d_block *);

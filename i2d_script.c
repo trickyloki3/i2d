@@ -1416,7 +1416,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-int i2d_bonus_type_init(i2d_bonus_type ** result, i2d_str * name) {
+int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name) {
     int status = I2D_OK;
     i2d_bonus_type * object;
 
@@ -1427,8 +1427,12 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, i2d_str * name) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_str_init(&object->name, name->string, name->length))
+            if(i2d_str_init(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
 
             if(status)
                 i2d_bonus_type_deit(&object);
@@ -1478,6 +1482,34 @@ void i2d_bonus_type_remove(i2d_bonus_type * x) {
     x->prev = x;
 }
 
+int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json) {
+    int status = I2D_OK;
+    json_t * bonus = NULL;
+    const char * key;
+    json_t * value;
+    i2d_bonus_type * bonus_type;
+
+    if(i2d_json_block_map(json, "bonus", &bonus)) {
+        status = i2d_panic("failed to get bonus block key value");
+    } else {
+        json_object_foreach(bonus, key, value) {
+            bonus_type = NULL;
+
+            if(i2d_bonus_type_init(&bonus_type, key)) {
+                status = i2d_panic("failed to create bonus type object");
+            } else {
+                if(!translator->bonus_type_list) {
+                    translator->bonus_type_list = bonus_type;
+                } else {
+                    i2d_bonus_type_append(bonus_type, translator->bonus_type_list);
+                }
+            }
+        }
+    }
+
+    return status;
+}
+
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
@@ -1490,6 +1522,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
+            if(i2d_translator_bonus_type_load(object, json))
+                status = i2d_panic("failed to load bonus type");
 
             if(status)
                 i2d_translator_deit(&object);
