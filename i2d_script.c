@@ -1558,9 +1558,6 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * js
                 status = i2d_panic("failed to load bonus type description");
             } else if(i2d_bonus_type_argument_type_load(object, json)) {
                 status = i2d_panic("failed to load argument type");
-            } else {
-                object->next = object;
-                object->prev = object;
             }
 
             if(status)
@@ -1583,73 +1580,42 @@ void i2d_bonus_type_deit(i2d_bonus_type ** result) {
     *result = NULL;
 }
 
-void i2d_bonus_type_list_deit(i2d_bonus_type ** result) {
-    i2d_bonus_type * object;
-    i2d_bonus_type * bonus_type;
-
-    object = *result;
-    if(object) {
-        while(object != object->next) {
-            bonus_type = object->next;
-            i2d_bonus_type_remove(bonus_type);
-            i2d_bonus_type_deit(&bonus_type);
-        }
-        i2d_bonus_type_deit(&object);
-    }
-    *result = NULL;
-}
-
-void i2d_bonus_type_append(i2d_bonus_type * x, i2d_bonus_type * y) {
-    x->next->prev = y->prev;
-    y->prev->next = x->next;
-    x->next = y;
-    y->prev = x;
-}
-
-void i2d_bonus_type_remove(i2d_bonus_type * x) {
-    x->prev->next = x->next;
-    x->next->prev = x->prev;
-    x->next = x;
-    x->prev = x;
-}
-
 int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json) {
     int status = I2D_OK;
     json_t * bonus = NULL;
+    size_t i = 0;
     const char * key;
     json_t * value;
-    i2d_bonus_type * bonus_type;
 
     if(i2d_json_block_map(json, "bonus", &bonus)) {
         status = i2d_panic("failed to get bonus block key value");
     } else {
-        json_object_foreach(bonus, key, value) {
-            bonus_type = NULL;
-
-            if(i2d_bonus_type_init(&bonus_type, key, value)) {
-                status = i2d_panic("failed to create bonus type object");
-            } else if(!translator->bonus_type_list) {
-                translator->bonus_type_list = bonus_type;
+        translator->bonus_size = json_object_size(bonus);
+        if(!translator->bonus_size) {
+            status = i2d_panic("failed on empty bonus type array");
+        } else {
+            translator->bonus_list = calloc(translator->bonus_size, sizeof(*translator->bonus_list));
+            if(!translator->bonus_list) {
+                status = i2d_panic("out of memory");
             } else {
-                i2d_bonus_type_append(bonus_type, translator->bonus_type_list);
+                json_object_foreach(bonus, key, value) {
+                    if(i2d_bonus_type_init(&translator->bonus_list[i], key, value)) {
+                        status = i2d_panic("failed to create bonus type object");
+                    } else {
+                        i++;
+                    }
+                }
             }
         }
     }
 
     if(!status) {
-        bonus_type = translator->bonus_type_list;
-        if(!bonus_type) {
-            status = i2d_panic("failed on empty bonus type list");
+        if(i2d_rbt_init(&translator->bonus_map, i2d_rbt_cmp_str)) {
+            status = i2d_panic("failed to create red black tree object");
         } else {
-            if(i2d_rbt_init(&translator->bonus_type_map, i2d_rbt_cmp_str)) {
-                status = i2d_panic("failed to create red black tree object");
-            } else {
-                do {
-                    if(i2d_rbt_insert(translator->bonus_type_map, bonus_type->name, bonus_type))
-                        status = i2d_panic("failed to index bonus type object");
-                    bonus_type = bonus_type->next;
-                } while(bonus_type != translator->bonus_type_list);
-            }
+            for(i = 0; i < translator->bonus_size; i++)
+                if(i2d_rbt_insert(translator->bonus_map, translator->bonus_list[i]->name, translator->bonus_list[i]))
+                    status = i2d_panic("failed to index bonus type object");
         }
     }
 
@@ -1686,8 +1652,12 @@ void i2d_translator_deit(i2d_translator ** result) {
     size_t i;
 
     object = *result;
-    i2d_deit(object->bonus_type_list, i2d_bonus_type_list_deit);
-    i2d_deit(object->bonus_type_map, i2d_rbt_deit);
+    if(object->bonus_list) {
+        for(i = 0; i < object->bonus_size; i++)
+            i2d_deit(object->bonus_list[i], i2d_bonus_type_deit);
+        i2d_free(object->bonus_list);
+    }
+    i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_free(object);
     *result = NULL;
 }

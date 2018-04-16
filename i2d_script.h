@@ -263,8 +263,6 @@ struct i2d_bonus_type {
     i2d_str * name;
     i2d_token * tokens;
     enum i2d_bonus_argument_type type[5];
-    struct i2d_bonus_type * next;
-    struct i2d_bonus_type * prev;
 };
 
 typedef struct i2d_bonus_type i2d_bonus_type;
@@ -275,13 +273,11 @@ int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type *, json_t *);
 int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
 int i2d_bonus_type_init(i2d_bonus_type **, const char *, json_t *);
 void i2d_bonus_type_deit(i2d_bonus_type **);
-void i2d_bonus_type_list_deit(i2d_bonus_type **);
-void i2d_bonus_type_append(i2d_bonus_type *, i2d_bonus_type *);
-void i2d_bonus_type_remove(i2d_bonus_type *);
 
 struct i2d_translator {
-    i2d_rbt * bonus_type_map;
-    i2d_bonus_type * bonus_type_list;
+    i2d_rbt * bonus_map;
+    i2d_bonus_type ** bonus_list;
+    size_t bonus_size;
 };
 
 typedef struct i2d_translator i2d_translator;
