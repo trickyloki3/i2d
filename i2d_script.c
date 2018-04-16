@@ -602,6 +602,13 @@ void i2d_node_print(i2d_node * node, int level) {
 
     i2d_token_print(node->tokens);
 
+    if(node->range) {
+        for(i = 0; i < level; i++)
+            fprintf(stdout, "    ");
+
+        i2d_range_list_print(node->range, "range");
+    }
+
     if(node->left)
         i2d_node_print(node->left, level + 1);
     if(node->right)
@@ -1839,23 +1846,8 @@ int i2d_translator_statement(i2d_translator * translator, i2d_block * block) {
 int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
 
-    i2d_node * argument_list;
-    i2d_node * bonus_type;
-    i2d_node * bonus_value;
-
-    argument_list = block->nodes->left;
-    if(!argument_list || argument_list->tokens->type != I2D_COMMA) {
-        status = i2d_panic("missing bonus arguments");
-    } else {
-        bonus_type  = argument_list->left;
-        if(!bonus_type) {
-            status = i2d_panic("missing bonus type arugment");
-        } else {
-            bonus_value = argument_list->right;
-            if(!bonus_value) {
-                status = i2d_panic("missing bonus value argument");
-            }
-        }
+    if(i2d_translator_expression(translator, block->nodes)) {
+        status = i2d_panic("failed to translate expression");
     }
 
     return status;
@@ -1907,21 +1899,18 @@ int i2d_translator_expression_variable(i2d_translator * translator, i2d_node * n
                 base = 10;
             }
 
-            if(i2d_strtol(&number, literal.string, literal.length, base)) {
+            if(i2d_strtol(&number, literal.string, literal.length, base))
                 status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
-            } else if(i2d_range_list_init(&node->range)) {
-                status = i2d_panic("failed to create range list object");
-            } else if(i2d_range_list_add(node->range, number, number)) {
-                status = i2d_panic("failed to add range to range list");
-            }
-        } else if(!i2d_translator_const_map(translator, &literal, &number)) {
-            if(i2d_range_list_init(&node->range)) {
-                status = i2d_panic("failed to create range list object");
-            } else if(i2d_range_list_add(node->range, number, number)) {
-                status = i2d_panic("failed to add range to range list");
-            }
-        } else {
-            /* variable */
+        } else if(i2d_translator_const_map(translator, &literal, &number)) {
+            /* to-do:
+             * implement local variable list
+             */
+            number = 0;
+        }
+        if(i2d_range_list_init(&node->range)) {
+            status = i2d_panic("failed to create range list object");
+        } else if(i2d_range_list_add(node->range, number, number)) {
+            status = i2d_panic("failed to add range to range list");
         }
     }
 
