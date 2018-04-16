@@ -289,6 +289,7 @@ struct i2d_translator {
     i2d_bonus_type ** bonus_list;
     size_t bonus_size;
 
+    i2d_rbt * const_map;
     i2d_const ** const_list;
     size_t const_size;
 };

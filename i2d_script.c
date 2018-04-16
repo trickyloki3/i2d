@@ -1687,6 +1687,16 @@ int i2d_translator_const_load(i2d_translator * translator, i2d_json * json) {
         }
     }
 
+    if(!status) {
+        if(i2d_rbt_init(&translator->const_map, i2d_rbt_cmp_str)) {
+            status = i2d_panic("failed to create red black tree object");
+        } else {
+            for(i = 0; i < translator->const_size; i++)
+                if(i2d_rbt_insert(translator->const_map, translator->const_list[i]->name, translator->const_list[i]))
+                    status = i2d_panic("failed to index const object");
+        }
+    }
+
     return status;
 }
 
@@ -1728,6 +1738,7 @@ void i2d_translator_deit(i2d_translator ** result) {
             i2d_deit(object->const_list[i], i2d_const_deit);
         i2d_free(object->const_list);
     }
+    i2d_deit(object->const_map, i2d_rbt_deit);
     if(object->bonus_list) {
         for(i = 0; i < object->bonus_size; i++)
             i2d_deit(object->bonus_list[i], i2d_bonus_type_deit);
