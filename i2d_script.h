@@ -260,6 +260,7 @@ enum i2d_bonus_argument_type {
 };
 
 struct i2d_bonus_type {
+    long value;
     i2d_str * name;
     i2d_token * tokens;
     enum i2d_bonus_argument_type type[5];
@@ -298,6 +299,7 @@ typedef struct i2d_translator i2d_translator;
 
 int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 int i2d_translator_const_load(i2d_translator *, i2d_json *);
+int i2d_translator_bonus_type_remap(i2d_translator *);
 int i2d_translator_init(i2d_translator **, i2d_json *);
 void i2d_translator_deit(i2d_translator **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
