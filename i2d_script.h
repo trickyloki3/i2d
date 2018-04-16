@@ -274,15 +274,29 @@ int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
 int i2d_bonus_type_init(i2d_bonus_type **, const char *, json_t *);
 void i2d_bonus_type_deit(i2d_bonus_type **);
 
+struct i2d_const {
+    i2d_str * name;
+    json_int_t value;
+};
+
+typedef struct i2d_const i2d_const;
+
+int i2d_const_init(i2d_const **, const char *, json_t *);
+void i2d_const_deit(i2d_const **);
+
 struct i2d_translator {
     i2d_rbt * bonus_map;
     i2d_bonus_type ** bonus_list;
     size_t bonus_size;
+
+    i2d_const ** const_list;
+    size_t const_size;
 };
 
 typedef struct i2d_translator i2d_translator;
 
 int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
+int i2d_translator_const_load(i2d_translator *, i2d_json *);
 int i2d_translator_init(i2d_translator **, i2d_json *);
 void i2d_translator_deit(i2d_translator **);
 int i2d_translator_translate(i2d_translator *, i2d_block *);

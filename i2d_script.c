@@ -1580,6 +1580,41 @@ void i2d_bonus_type_deit(i2d_bonus_type ** result) {
     *result = NULL;
 }
 
+int i2d_const_init(i2d_const ** result, const char * name, json_t * json) {
+    int status = I2D_OK;
+    i2d_const * object;
+
+    if(i2d_is_invalid(result) || !name || !json) {
+        status = i2d_panic("invalid paramaters");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_str_init(&object->name, name, strlen(name))) {
+                status = i2d_panic("failed to create string object");
+            } else {
+                object->value = json_integer_value(json);
+            }
+            if(status)
+                i2d_const_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_const_deit(i2d_const ** result) {
+    i2d_const * object;
+
+    object = *result;
+    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json) {
     int status = I2D_OK;
     json_t * bonus = NULL;
@@ -1622,6 +1657,39 @@ int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json)
     return status;
 }
 
+int i2d_translator_const_load(i2d_translator * translator, i2d_json * json) {
+    int status = I2D_OK;
+    json_t * consts;
+    size_t i = 0;
+    const char * key;
+    json_t * value;
+
+    consts = json_object_get(json->object, "consts");
+    if(!consts) {
+        status = i2d_panic("failed to get consts key value");
+    } else {
+        translator->const_size = json_object_size(consts);
+        if(!translator->const_size) {
+            status = i2d_panic("failed on empty const array");
+        } else {
+            translator->const_list = calloc(translator->const_size, sizeof(*translator->const_list));
+            if(!translator->const_list) {
+                status = i2d_panic("out of memory");
+            } else {
+                json_object_foreach(consts, key, value) {
+                    if(i2d_const_init(&translator->const_list[i], key, value)) {
+                        status = i2d_panic("failed to create const object");
+                    } else {
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    return status;
+}
+
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
@@ -1634,8 +1702,11 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_translator_bonus_type_load(object, json))
+            if(i2d_translator_bonus_type_load(object, json)) {
                 status = i2d_panic("failed to load bonus type");
+            } else if(i2d_translator_const_load(object, json)) {
+                status = i2d_panic("failed to load consts");
+            }
 
             if(status)
                 i2d_translator_deit(&object);
@@ -1652,6 +1723,11 @@ void i2d_translator_deit(i2d_translator ** result) {
     size_t i;
 
     object = *result;
+    if(object->const_list) {
+        for(i = 0; i < object->const_size; i++)
+            i2d_deit(object->const_list[i], i2d_const_deit);
+        i2d_free(object->const_list);
+    }
     if(object->bonus_list) {
         for(i = 0; i < object->bonus_size; i++)
             i2d_deit(object->bonus_list[i], i2d_bonus_type_deit);
