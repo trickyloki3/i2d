@@ -300,6 +300,7 @@ int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 int i2d_translator_const_load(i2d_translator *, i2d_json *);
 int i2d_translator_init(i2d_translator **, i2d_json *);
 void i2d_translator_deit(i2d_translator **);
+int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
 int i2d_translator_translate(i2d_translator *, i2d_block *);
 int i2d_translator_statement(i2d_translator *, i2d_block *);
 int i2d_translator_statement_bonus(i2d_translator *, i2d_block *);

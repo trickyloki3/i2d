@@ -1749,6 +1749,19 @@ void i2d_translator_deit(i2d_translator ** result) {
     *result = NULL;
 }
 
+int i2d_translator_const_map(i2d_translator * translator, i2d_str * key, long * result) {
+    int status = I2D_OK;
+    i2d_const * constant;
+
+    if(i2d_rbt_search(translator->const_map, key, (void **) &constant)) {
+        status = I2D_FAIL;
+    } else {
+        *result = constant->value;
+    }
+
+    return status;
+}
+
 int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
     int status = I2D_OK;
     i2d_block * block;
@@ -1867,6 +1880,12 @@ int i2d_translator_expression_variable(i2d_translator * translator, i2d_node * n
             if(i2d_strtol(&number, literal.string, literal.length, base)) {
                 status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
             } else if(i2d_range_list_init(&node->range)) {
+                status = i2d_panic("failed to create range list object");
+            } else if(i2d_range_list_add(node->range, number, number)) {
+                status = i2d_panic("failed to add range to range list");
+            }
+        } else if(!i2d_translator_const_map(translator, &literal, &number)) {
+            if(i2d_range_list_init(&node->range)) {
                 status = i2d_panic("failed to create range list object");
             } else if(i2d_range_list_add(node->range, number, number)) {
                 status = i2d_panic("failed to add range to range list");
