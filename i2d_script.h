@@ -310,6 +310,7 @@ int i2d_translator_expression(i2d_translator *, i2d_node *);
 int i2d_translator_expression_variable(i2d_translator *, i2d_node *);
 
 int i2d_block_get_arguments(i2d_block *, i2d_node **, size_t);
+int i2d_node_get_constant(i2d_node *, long *);
 
 struct i2d_script {
     i2d_json * json;

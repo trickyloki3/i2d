@@ -1848,11 +1848,14 @@ int i2d_translator_statement(i2d_translator * translator, i2d_block * block) {
 int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
     i2d_node * arguments[2];
+    long bonus_type_value;
 
     if(i2d_translator_expression(translator, block->nodes)) {
         status = i2d_panic("failed to translate expression");
     } else if(i2d_block_get_arguments(block, arguments, i2d_size(arguments))) {
         status = i2d_panic("failed to get arguments");
+    } else if(i2d_node_get_constant(arguments[0], &bonus_type_value)) {
+        status = i2d_panic("failed to get bonus type value");
     } else {
 
     }
@@ -1947,6 +1950,22 @@ int i2d_block_get_arguments(i2d_block * block, i2d_node ** nodes, size_t size) {
         } else {
             nodes[0] = node;
         }
+    }
+
+    return status;
+}
+
+int i2d_node_get_constant(i2d_node * node, long * result) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_list_get_range(node->range, &min, &max);
+
+    if(min != max) {
+        status = i2d_panic("failed on invalid range");
+    } else {
+        *result = min;
     }
 
     return status;
