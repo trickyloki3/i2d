@@ -1845,9 +1845,14 @@ int i2d_translator_statement(i2d_translator * translator, i2d_block * block) {
 
 int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
+    i2d_node * arguments[2];
 
     if(i2d_translator_expression(translator, block->nodes)) {
         status = i2d_panic("failed to translate expression");
+    } else if(i2d_block_get_arguments(block, arguments, i2d_size(arguments))) {
+        status = i2d_panic("failed to get arguments");
+    } else {
+
     }
 
     return status;
@@ -1911,6 +1916,34 @@ int i2d_translator_expression_variable(i2d_translator * translator, i2d_node * n
             status = i2d_panic("failed to create range list object");
         } else if(i2d_range_list_add(node->range, number, number)) {
             status = i2d_panic("failed to add range to range list");
+        }
+    }
+
+    return status;
+}
+
+int i2d_block_get_arguments(i2d_block * block, i2d_node ** nodes, size_t size) {
+    int status = I2D_OK;
+    size_t i;
+    i2d_node * node;
+
+    if(!block->nodes->left) {
+        status = i2d_panic("failed on empty argument list");
+    } else {
+        i = size - 1;
+        node = block->nodes->left;
+        while(i > 0 && I2D_COMMA == node->tokens->type) {
+            nodes[i] = node->right;
+            node = node->left;
+            i--;
+        }
+
+        if(i || !node) {
+            status = i2d_panic("failed on insufficient argument list");
+        } else if(I2D_COMMA == node->tokens->type) {
+            status = i2d_panic("failed on excessive argument list");
+        } else {
+            nodes[0] = node;
         }
     }
 
