@@ -1390,7 +1390,9 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
         }
 
         if(!status) {
-            if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
+            if(root && I2D_BINARY == root->type && !root->right) {
+                status = i2d_panic("binary operator missing right operand");
+            } else if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
                 status = i2d_panic("failed to create token object");
             } else {
                 if(i2d_node_init(&node, I2D_NODE, token)) {
