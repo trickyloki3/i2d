@@ -1788,6 +1788,10 @@ void i2d_translator_deit(i2d_translator ** result) {
     *result = NULL;
 }
 
+int i2d_translator_bonus_map(i2d_translator * translator, long * key, i2d_bonus_type ** result) {
+    return i2d_rbt_search(translator->bonus_map, key, (void **) result);
+}
+
 int i2d_translator_const_map(i2d_translator * translator, i2d_str * key, long * result) {
     int status = I2D_OK;
     i2d_const * constant;
@@ -1848,14 +1852,17 @@ int i2d_translator_statement(i2d_translator * translator, i2d_block * block) {
 int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     int status = I2D_OK;
     i2d_node * arguments[2];
-    long bonus_type_value;
+    long bonus_id;
+    i2d_bonus_type * bonus_type;
 
     if(i2d_translator_expression(translator, block->nodes)) {
         status = i2d_panic("failed to translate expression");
     } else if(i2d_block_get_arguments(block, arguments, i2d_size(arguments))) {
         status = i2d_panic("failed to get arguments");
-    } else if(i2d_node_get_constant(arguments[0], &bonus_type_value)) {
+    } else if(i2d_node_get_constant(arguments[0], &bonus_id)) {
         status = i2d_panic("failed to get bonus type value");
+    } else if(i2d_translator_bonus_map(translator, &bonus_id, &bonus_type)) {
+        status = i2d_panic("failed to map bonus type value");
     } else {
 
     }
