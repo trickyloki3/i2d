@@ -1707,6 +1707,10 @@ void i2d_str_map_deit(i2d_str_map ** result) {
     *result = NULL;
 }
 
+int i2d_str_map_map(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
+    return i2d_rbt_search(str_map->map, key, (void **) result);
+}
+
 int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json) {
     int status = I2D_OK;
     json_t * bonus = NULL;
@@ -2059,6 +2063,18 @@ int i2d_node_get_constant(i2d_node * node, long * result) {
         status = i2d_panic("failed on invalid range");
     } else {
         *result = min;
+    }
+
+    return status;
+}
+
+int i2d_node_get_string(i2d_node * node, i2d_str * result) {
+    int status = I2D_OK;
+
+    if(I2D_VARIABLE != node->type) {
+        status = i2d_panic("failed on invalid node type -- %d", node->type);
+    } else if(i2d_token_get_literal(node->tokens, result)) {
+        status = i2d_panic("failed to get literal");
     }
 
     return status;

@@ -295,6 +295,7 @@ typedef struct i2d_str_map i2d_str_map;
 
 int i2d_str_map_init(i2d_str_map **, const char *, json_t *);
 void i2d_str_map_deit(i2d_str_map **);
+int i2d_str_map_map(i2d_str_map *, i2d_str *, i2d_str **);
 
 struct i2d_translator {
     i2d_rbt * bonus_map;
@@ -325,6 +326,7 @@ int i2d_translator_expression_variable(i2d_translator *, i2d_node *);
 
 int i2d_block_get_arguments(i2d_block *, i2d_node **, size_t);
 int i2d_node_get_constant(i2d_node *, long *);
+int i2d_node_get_string(i2d_node *, i2d_str *);
 
 struct i2d_script {
     i2d_json * json;
