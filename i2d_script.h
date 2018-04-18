@@ -285,6 +285,17 @@ typedef struct i2d_const i2d_const;
 int i2d_const_init(i2d_const **, const char *, json_t *);
 void i2d_const_deit(i2d_const **);
 
+struct i2d_str_map {
+    i2d_rbt * map;
+    i2d_str ** list;
+    size_t size;
+};
+
+typedef struct i2d_str_map i2d_str_map;
+
+int i2d_str_map_init(i2d_str_map **, const char *, json_t *);
+void i2d_str_map_deit(i2d_str_map **);
+
 struct i2d_translator {
     i2d_rbt * bonus_map;
     i2d_bonus_type ** bonus_list;
@@ -293,6 +304,8 @@ struct i2d_translator {
     i2d_rbt * const_map;
     i2d_const ** const_list;
     size_t const_size;
+
+    i2d_str_map * elements;
 };
 
 typedef struct i2d_translator i2d_translator;
