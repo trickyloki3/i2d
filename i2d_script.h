@@ -205,6 +205,7 @@ struct i2d_block {
     i2d_token * tokens;
     i2d_node * nodes;
     i2d_statement * statement;
+    i2d_buf * buffer;
     struct i2d_block * parent;
     struct i2d_block * child;
     struct i2d_block * next;

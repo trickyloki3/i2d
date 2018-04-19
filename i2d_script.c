@@ -780,11 +780,15 @@ int i2d_block_init(i2d_block ** result, enum i2d_block_type type, i2d_token * to
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            object->type = type;
-            object->tokens = tokens;
-            object->parent = parent;
-            object->next = object;
-            object->prev = object;
+            if(i2d_buf_init(&object->buffer, 4096)) {
+                status = i2d_panic("failed to create buffer object");
+            } else {
+                object->type = type;
+                object->tokens = tokens;
+                object->parent = parent;
+                object->next = object;
+                object->prev = object;
+            }
             if(status)
                 i2d_block_deit(&object);
             else
@@ -799,6 +803,7 @@ void i2d_block_deit(i2d_block ** result) {
     i2d_block * object;
 
     object = *result;
+    i2d_deit(object->buffer, i2d_buf_deit);
     i2d_deit(object->child, i2d_block_list_deit);
     i2d_deit(object->nodes, i2d_node_deit);
     i2d_deit(object->tokens, i2d_token_list_deit);
