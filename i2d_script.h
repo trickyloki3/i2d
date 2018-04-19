@@ -271,6 +271,7 @@ typedef struct i2d_bonus_type i2d_bonus_type;
 
 int i2d_bonus_type_init(i2d_bonus_type **, const char *, json_t *);
 void i2d_bonus_type_deit(i2d_bonus_type **);
+int i2d_bonus_type_format(i2d_bonus_type *, i2d_str **, size_t, i2d_buf *);
 
 struct i2d_const {
     i2d_str * name;
