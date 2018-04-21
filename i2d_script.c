@@ -2135,7 +2135,15 @@ int i2d_context_insert_variable(i2d_context * context, i2d_node * node) {
 }
 
 int i2d_context_search_variable(i2d_context * context, i2d_node * node, i2d_node ** result) {
-    return i2d_rbt_search(context->variables, node->tokens, (void **) result);
+    int status = I2D_OK;
+
+    if(I2D_VARIABLE != node->type) {
+        status = i2d_panic("invalid node type -- %d", node->type);
+    } else {
+        status = i2d_rbt_search(context->variables, node->tokens, (void **) result);
+    }
+
+    return status;
 }
 
 int i2d_script_init(i2d_script ** result, i2d_str * path) {
