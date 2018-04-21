@@ -2124,11 +2124,14 @@ int i2d_context_insert_variable(i2d_context * context, i2d_node * node) {
 
     if(I2D_VARIABLE != node->type) {
         status = i2d_panic("invalid node type -- %d", node->type);
-    } else if( i2d_rbt_search(context->variables, node->tokens, (void **) &last) &&
-        i2d_rbt_delete(context->variables, last) ) {
-        status = i2d_panic("failed to replace existing variable");
-    } else if(i2d_rbt_insert(context->variables, node->tokens, node)) {
-        status = i2d_panic("failed to map variable");
+    } else {
+
+        if( !i2d_rbt_search(context->variables, node->tokens, (void **) &last) &&
+            i2d_rbt_delete(context->variables, last) ) {
+            status = i2d_panic("failed to replace existing variable");
+        } else if(i2d_rbt_insert(context->variables, node->tokens, node)) {
+            status = i2d_panic("failed to map variable");
+        }
     }
 
     return status;
@@ -2452,6 +2455,19 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                     status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|' + '|');
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_ASSIGN:
+                if(i2d_range_list_copy(&node->range, node->right->range)) {
+                    status = i2d_panic("failed to copy range list object");
+                } else {
+                    i2d_deit(node->left->range, i2d_range_list_deit);
+
+                    if(i2d_range_list_copy(&node->left->range, node->range)) {
+                        status = i2d_panic("failed to copy range list object");
+                    } else if(i2d_context_insert_variable(script->context, node->left)) {
+                        status = i2d_panic("failed to map variable");
+                    }
                 }
                 break;
             default:
