@@ -341,6 +341,7 @@ struct i2d_script {
     i2d_lexer * lexer;
     i2d_parser * parser;
     i2d_translator * translator;
+    i2d_context * context;
 };
 
 typedef struct i2d_script i2d_script;

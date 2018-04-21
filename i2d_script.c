@@ -2360,6 +2360,8 @@ int i2d_script_init(i2d_script ** result, i2d_str * path) {
                 status = i2d_panic("failed to create parser object");
             } else if(i2d_translator_init(&object->translator, object->json)) {
                 status = i2d_panic("failed to create translator object");
+            } else if(i2d_context_init(&object->context)) {
+                status = i2d_panic("failed to create context object");
             }
 
             if(status)
@@ -2376,6 +2378,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->context, i2d_context_list_deit);
     i2d_deit(object->translator, i2d_translator_deit);
     i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);
