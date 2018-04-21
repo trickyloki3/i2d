@@ -227,6 +227,7 @@ void i2d_node_deit(i2d_node **);
 void i2d_node_append(i2d_node *, i2d_node *);
 void i2d_node_remove(i2d_node *);
 void i2d_node_print(i2d_node *, int);
+int i2d_node_cmp_literal(void *, void *);
 
 int i2d_statement_init(i2d_statement **, enum i2d_statement_type);
 void i2d_statement_deit(i2d_statement **);
@@ -318,6 +319,7 @@ int i2d_node_get_constant(i2d_node *, long *);
 int i2d_node_get_string(i2d_node *, i2d_str *);
 
 struct i2d_context {
+    i2d_rbt * variables;
     struct i2d_context * next;
     struct i2d_context * prev;
 };

@@ -626,6 +626,21 @@ void i2d_node_print(i2d_node * node, int level) {
         i2d_node_print(node->right, level + 1);
 }
 
+int i2d_node_cmp_literal(void * left, void * right) {
+    int status;
+    i2d_str literal_left;
+    i2d_str literal_right;
+
+    if( i2d_token_get_literal(left, &literal_left) ||
+        i2d_token_get_literal(right, &literal_right) ) {
+        status = i2d_panic("failed to get literal");
+    } else {
+        status = strcmp(literal_left.string, literal_right.string);
+    }
+
+    return status;
+}
+
 const char * i2d_statement_string[] = {
     "start",
     "bonus",
@@ -2046,8 +2061,12 @@ int i2d_context_init(i2d_context ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            object->next = object;
-            object->prev = object;
+            if(i2d_rbt_init(&object->variables, i2d_node_cmp_literal)) {
+                status = i2d_panic("failed to create red black tree object");
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
 
             if(status)
                 i2d_context_deit(&object);
@@ -2063,6 +2082,7 @@ void i2d_context_deit(i2d_context ** result) {
     i2d_context * object;
 
     object = *result;
+    i2d_deit(object->variables, i2d_rbt_deit);
     i2d_free(object);
     *result = NULL;
 }
