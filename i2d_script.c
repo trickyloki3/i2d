@@ -2067,7 +2067,9 @@ int i2d_translator_expression(i2d_translator * translator, i2d_node * node) {
                 break;
             case I2D_FUNCTION:
             case I2D_UNARY:
+                break;
             case I2D_BINARY:
+                status = i2d_translator_expression_binary(translator, node);
                 break;
             default:
                 status = i2d_panic("invalid node type -- %d", node->type);
@@ -2109,6 +2111,57 @@ int i2d_translator_expression_variable(i2d_translator * translator, i2d_node * n
             status = i2d_panic("failed to create range list object");
         } else if(i2d_range_list_add(node->range, number, number)) {
             status = i2d_panic("failed to add range to range list");
+        }
+    }
+
+    return status;
+}
+
+int i2d_translator_expression_binary(i2d_translator * translator, i2d_node * node) {
+    int status = I2D_OK;
+
+    if(!node->left && !node->left->range) {
+        status = i2d_panic("binary operator missing left operand");
+    } else if(!node->right && !node->right->range) {
+        status = i2d_panic("binary operator missing right operand");
+    } else {
+        switch(node->tokens->type) {
+            case I2D_ADD:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '+');
+                break;
+            case I2D_SUBTRACT:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '-');
+                break;
+            case I2D_MULTIPLY:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '*');
+                break;
+            case I2D_DIVIDE:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '/');
+                break;
+            case I2D_MODULUS:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '%');
+                break;
+            case I2D_COMMA:
+                status = i2d_range_list_copy(&node->range, node->right->range);
+                break;
+            case I2D_RIGHT_SHIFT:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '>' + 'b');
+                break;
+            case I2D_LEFT_SHIFT:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '<' + 'b');
+                break;
+            case I2D_BIT_AND:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&');
+                break;
+            case I2D_BIT_OR:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|');
+                break;
+            case I2D_BIT_XOR:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '^' + 'b');
+                break;
+            default:
+                i2d_panic("invalid token type -- %d", node->tokens->type);
+                break;
         }
     }
 
