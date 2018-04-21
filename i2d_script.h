@@ -312,12 +312,6 @@ void i2d_translator_deit(i2d_translator **);
 int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
 int i2d_translator_bonus_type(i2d_translator *, enum i2d_bonus_argument_type, i2d_node *, i2d_str **);
-int i2d_translator_translate(i2d_translator *, i2d_block *);
-int i2d_translator_statement(i2d_translator *, i2d_block *);
-int i2d_translator_statement_bonus(i2d_translator *, i2d_block *);
-int i2d_translator_expression(i2d_translator *, i2d_node *, int);
-int i2d_translator_expression_variable(i2d_translator *, i2d_node *);
-int i2d_translator_expression_binary(i2d_translator *, i2d_node *, int);
 
 int i2d_block_get_arguments(i2d_block *, i2d_node **, size_t);
 int i2d_node_get_constant(i2d_node *, long *);
@@ -349,6 +343,12 @@ typedef struct i2d_script i2d_script;
 int i2d_script_init(i2d_script **, i2d_str *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_compile(i2d_script *, i2d_str *, i2d_str **);
+int i2d_script_translate(i2d_script *, i2d_block *);
+int i2d_script_statement(i2d_script *, i2d_block *);
+int i2d_script_bonus(i2d_script *, i2d_block *);
+int i2d_script_expression(i2d_script *, i2d_node *, int);
+int i2d_script_expression_variable(i2d_script *, i2d_node *);
+int i2d_script_expression_binary(i2d_script *, i2d_node *, int);
 
 #if i2d_debug
 int i2d_script_test(i2d_script *, i2d_item *);

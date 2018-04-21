@@ -1979,249 +1979,6 @@ int i2d_translator_bonus_type(i2d_translator * translator, enum i2d_bonus_argume
     return status;
 }
 
-int i2d_translator_translate(i2d_translator * translator, i2d_block * list) {
-    int status = I2D_OK;
-    i2d_block * block;
-
-    if(list) {
-        block = list;
-        do {
-            switch(block->type) {
-                case I2D_BLOCK:
-                    status = i2d_translator_translate(translator, block->child);
-                    break;
-                case I2D_STATEMENT:
-                    status = i2d_translator_statement(translator, block);
-                    break;
-                case I2D_IF:
-                    break;
-                case I2D_ELSE:
-                    break;
-                default:
-                    status = i2d_panic("invalid block type -- %d", block->type);
-                    break;
-            }
-            block = block->next;
-        } while(block != list && !status);
-    }
-
-    return status;
-}
-
-int i2d_translator_statement(i2d_translator * translator, i2d_block * block) {
-    int status = I2D_OK;
-    json_t * block_data = NULL;
-
-    if(block->statement) {
-        switch(block->statement->type) {
-            case I2D_BONUS:
-                status = i2d_translator_bonus(translator, block);
-                break;
-        }
-    }
-
-    return status;
-}
-
-int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
-    int status = I2D_OK;
-    i2d_node * arguments[2];
-    long bonus_id;
-    i2d_bonus_type * bonus_type;
-    i2d_str * string = NULL;
-
-    if(i2d_translator_expression(translator, block->nodes, 0)) {
-        status = i2d_panic("failed to translate expression");
-    } else if(i2d_block_get_arguments(block, arguments, i2d_size(arguments))) {
-        status = i2d_panic("failed to get arguments");
-    } else if(i2d_node_get_constant(arguments[0], &bonus_id)) {
-        status = i2d_panic("failed to get bonus type value");
-    } else if(i2d_translator_bonus_map(translator, &bonus_id, &bonus_type)) {
-        status = i2d_panic("failed to map bonus type value");
-    } else if(i2d_translator_bonus_type(translator, bonus_type->type[0], arguments[1], &string)) {
-        status = i2d_panic("failed to translate bonus arguments");
-    } else {
-        if(i2d_bonus_type_format(bonus_type, &string, 1, block->buffer))
-            status = i2d_panic("failed to format bonus type");
-        i2d_str_deit(&string);
-    }
-
-    return status;
-}
-
-int i2d_translator_expression(i2d_translator * translator, i2d_node * node, int is_conditional) {
-    int status = I2D_OK;
-
-    if(node->left && i2d_translator_expression(translator, node->left, is_conditional)) {
-        status = i2d_panic("failed to evaluate left expression");
-    } else if(node->right && i2d_translator_expression(translator, node->right, is_conditional)) {
-        status = i2d_panic("failed to evaluate right expression");
-    } else {
-        switch(node->type) {
-            case I2D_NODE:
-                break;
-            case I2D_VARIABLE:
-                status = i2d_translator_expression_variable(translator, node);
-                break;
-            case I2D_FUNCTION:
-            case I2D_UNARY:
-                break;
-            case I2D_BINARY:
-                status = i2d_translator_expression_binary(translator, node, is_conditional);
-                break;
-            default:
-                status = i2d_panic("invalid node type -- %d", node->type);
-                break;
-        }
-    }
-
-    return status;
-}
-
-int i2d_translator_expression_variable(i2d_translator * translator, i2d_node * node) {
-    int status = I2D_OK;
-    int base;
-    long number;
-    i2d_str literal;
-    i2d_zero(literal);
-
-    if(i2d_token_get_literal(node->tokens, &literal)) {
-        status = i2d_panic("failed to get literal");
-    } else {
-        if(isdigit(literal.string[0])) {
-            if(!strncmp(literal.string, "0x", 2) && literal.length > 2) {
-                base = 16;
-            } else if(literal.string[0] == '0' && literal.length > 1) {
-                base = 8;
-            } else {
-                base = 10;
-            }
-
-            if(i2d_strtol(&number, literal.string, literal.length, base))
-                status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
-        } else if(i2d_translator_const_map(translator, &literal, &number)) {
-            /* to-do:
-             * implement local variable list
-             */
-            number = 0;
-        }
-        if(i2d_range_list_init(&node->range)) {
-            status = i2d_panic("failed to create range list object");
-        } else if(i2d_range_list_add(node->range, number, number)) {
-            status = i2d_panic("failed to add range to range list");
-        }
-    }
-
-    return status;
-}
-
-int i2d_translator_expression_binary(i2d_translator * translator, i2d_node * node, int is_conditional) {
-    int status = I2D_OK;
-
-    if(!node->left || !node->left->range) {
-        status = i2d_panic("binary operator missing left operand");
-    } else if(!node->right || !node->right->range) {
-        status = i2d_panic("binary operator missing right operand");
-    } else {
-        switch(node->tokens->type) {
-            case I2D_ADD:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '+');
-                break;
-            case I2D_SUBTRACT:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '-');
-                break;
-            case I2D_MULTIPLY:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '*');
-                break;
-            case I2D_DIVIDE:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '/');
-                break;
-            case I2D_MODULUS:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '%');
-                break;
-            case I2D_COMMA:
-                status = i2d_range_list_copy(&node->range, node->right->range);
-                break;
-            case I2D_RIGHT_SHIFT:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '>' + 'b');
-                break;
-            case I2D_LEFT_SHIFT:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '<' + 'b');
-                break;
-            case I2D_BIT_AND:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&');
-                break;
-            case I2D_BIT_OR:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|');
-                break;
-            case I2D_BIT_XOR:
-                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '^' + 'b');
-                break;
-            case I2D_GREATER:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            case I2D_GREATER_EQUAL:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '=');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            case I2D_LESS:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            case I2D_LESS_EQUAL:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '=');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            case I2D_EQUAL:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '=' + '=');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            case I2D_NOT_EQUAL:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '!' + '=');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            case I2D_AND:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&' + '&');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            case I2D_OR:
-                if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|' + '|');
-                } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
-                }
-                break;
-            default:
-                i2d_panic("invalid token type -- %d", node->tokens->type);
-                break;
-        }
-    }
-
-    return status;
-}
-
 int i2d_block_get_arguments(i2d_block * block, i2d_node ** nodes, size_t size) {
     int status = I2D_OK;
     size_t i;
@@ -2398,7 +2155,7 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
         status = i2d_panic("failed to parse -- %s", source->string);
-    } else if(i2d_translator_translate(script->translator, blocks)) {
+    } else if(i2d_script_translate(script, blocks)) {
         status = i2d_panic("failed to translate -- %s", source->string);
     }
 
@@ -2407,6 +2164,249 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
 
     if(blocks)
         i2d_parser_reset(script->parser, script->lexer, &blocks);
+
+    return status;
+}
+
+int i2d_script_translate(i2d_script * script, i2d_block * list) {
+    int status = I2D_OK;
+    i2d_block * block;
+
+    if(list) {
+        block = list;
+        do {
+            switch(block->type) {
+                case I2D_BLOCK:
+                    status = i2d_script_translate(script, block->child);
+                    break;
+                case I2D_STATEMENT:
+                    status = i2d_script_statement(script, block);
+                    break;
+                case I2D_IF:
+                    break;
+                case I2D_ELSE:
+                    break;
+                default:
+                    status = i2d_panic("invalid block type -- %d", block->type);
+                    break;
+            }
+            block = block->next;
+        } while(block != list && !status);
+    }
+
+    return status;
+}
+
+int i2d_script_statement(i2d_script * script, i2d_block * block) {
+    int status = I2D_OK;
+    json_t * block_data = NULL;
+
+    if(block->statement) {
+        switch(block->statement->type) {
+            case I2D_BONUS:
+                status = i2d_script_bonus(script, block);
+                break;
+        }
+    }
+
+    return status;
+}
+
+int i2d_script_bonus(i2d_script * script, i2d_block * block) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    long bonus_id;
+    i2d_bonus_type * bonus_type;
+    i2d_str * string = NULL;
+
+    if(i2d_script_expression(script, block->nodes, 0)) {
+        status = i2d_panic("failed to translate expression");
+    } else if(i2d_block_get_arguments(block, arguments, i2d_size(arguments))) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_node_get_constant(arguments[0], &bonus_id)) {
+        status = i2d_panic("failed to get bonus type value");
+    } else if(i2d_translator_bonus_map(script->translator, &bonus_id, &bonus_type)) {
+        status = i2d_panic("failed to map bonus type value");
+    } else if(i2d_translator_bonus_type(script->translator, bonus_type->type[0], arguments[1], &string)) {
+        status = i2d_panic("failed to translate bonus arguments");
+    } else {
+        if(i2d_bonus_type_format(bonus_type, &string, 1, block->buffer))
+            status = i2d_panic("failed to format bonus type");
+        i2d_str_deit(&string);
+    }
+
+    return status;
+}
+
+int i2d_script_expression(i2d_script * script, i2d_node * node, int is_conditional) {
+    int status = I2D_OK;
+
+    if(node->left && i2d_script_expression(script, node->left, is_conditional)) {
+        status = i2d_panic("failed to evaluate left expression");
+    } else if(node->right && i2d_script_expression(script, node->right, is_conditional)) {
+        status = i2d_panic("failed to evaluate right expression");
+    } else {
+        switch(node->type) {
+            case I2D_NODE:
+                break;
+            case I2D_VARIABLE:
+                status = i2d_script_expression_variable(script, node);
+                break;
+            case I2D_FUNCTION:
+            case I2D_UNARY:
+                break;
+            case I2D_BINARY:
+                status = i2d_script_expression_binary(script, node, is_conditional);
+                break;
+            default:
+                status = i2d_panic("invalid node type -- %d", node->type);
+                break;
+        }
+    }
+
+    return status;
+}
+
+int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    int base;
+    long number;
+    i2d_str literal;
+    i2d_zero(literal);
+
+    if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else {
+        if(isdigit(literal.string[0])) {
+            if(!strncmp(literal.string, "0x", 2) && literal.length > 2) {
+                base = 16;
+            } else if(literal.string[0] == '0' && literal.length > 1) {
+                base = 8;
+            } else {
+                base = 10;
+            }
+
+            if(i2d_strtol(&number, literal.string, literal.length, base))
+                status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
+        } else if(i2d_translator_const_map(script->translator, &literal, &number)) {
+            /* to-do:
+             * implement local variable list
+             */
+            number = 0;
+        }
+        if(i2d_range_list_init(&node->range)) {
+            status = i2d_panic("failed to create range list object");
+        } else if(i2d_range_list_add(node->range, number, number)) {
+            status = i2d_panic("failed to add range to range list");
+        }
+    }
+
+    return status;
+}
+
+int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional) {
+    int status = I2D_OK;
+
+    if(!node->left || !node->left->range) {
+        status = i2d_panic("binary operator missing left operand");
+    } else if(!node->right || !node->right->range) {
+        status = i2d_panic("binary operator missing right operand");
+    } else {
+        switch(node->tokens->type) {
+            case I2D_ADD:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '+');
+                break;
+            case I2D_SUBTRACT:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '-');
+                break;
+            case I2D_MULTIPLY:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '*');
+                break;
+            case I2D_DIVIDE:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '/');
+                break;
+            case I2D_MODULUS:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '%');
+                break;
+            case I2D_COMMA:
+                status = i2d_range_list_copy(&node->range, node->right->range);
+                break;
+            case I2D_RIGHT_SHIFT:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '>' + 'b');
+                break;
+            case I2D_LEFT_SHIFT:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '<' + 'b');
+                break;
+            case I2D_BIT_AND:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&');
+                break;
+            case I2D_BIT_OR:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|');
+                break;
+            case I2D_BIT_XOR:
+                status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '^' + 'b');
+                break;
+            case I2D_GREATER:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_GREATER_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_LESS:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_LESS_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '=' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_NOT_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '!' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_AND:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&' + '&');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_OR:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|' + '|');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            default:
+                i2d_panic("invalid token type -- %d", node->tokens->type);
+                break;
+        }
+    }
 
     return status;
 }
