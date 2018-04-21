@@ -2278,6 +2278,69 @@ int i2d_node_get_string(i2d_node * node, i2d_str * result) {
     return status;
 }
 
+int i2d_context_init(i2d_context ** result) {
+    int status = I2D_OK;
+    i2d_context * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->next = object;
+            object->prev = object;
+
+            if(status)
+                i2d_context_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_context_deit(i2d_context ** result) {
+    i2d_context * object;
+
+    object = *result;
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_context_list_deit(i2d_context ** result) {
+    i2d_context * object;
+    i2d_context * context;
+
+    object = *result;
+    if(object) {
+        while(object != object->next) {
+            context = object->next;
+            i2d_context_remove(context);
+            i2d_context_deit(&context);
+        }
+        i2d_context_deit(&object);
+    }
+
+    *result = NULL;
+}
+
+void i2d_context_append(i2d_context * x, i2d_context * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_context_remove(i2d_context * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
 int i2d_script_init(i2d_script ** result, i2d_str * path) {
     int status = I2D_OK;
     i2d_script * object;

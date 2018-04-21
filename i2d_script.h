@@ -323,6 +323,19 @@ int i2d_block_get_arguments(i2d_block *, i2d_node **, size_t);
 int i2d_node_get_constant(i2d_node *, long *);
 int i2d_node_get_string(i2d_node *, i2d_str *);
 
+struct i2d_context {
+    struct i2d_context * next;
+    struct i2d_context * prev;
+};
+
+typedef struct i2d_context i2d_context;
+
+int i2d_context_init(i2d_context **);
+void i2d_context_deit(i2d_context **);
+void i2d_context_list_deit(i2d_context **);
+void i2d_context_append(i2d_context *, i2d_context *);
+void i2d_context_remove(i2d_context *);
+
 struct i2d_script {
     i2d_json * json;
     i2d_lexer * lexer;
