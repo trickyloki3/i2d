@@ -2159,6 +2159,62 @@ int i2d_translator_expression_binary(i2d_translator * translator, i2d_node * nod
             case I2D_BIT_XOR:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '^' + 'b');
                 break;
+            case I2D_GREATER:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_GREATER_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_LESS:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_LESS_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '=' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_NOT_EQUAL:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '!' + '=');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_AND:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&' + '&');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
+            case I2D_OR:
+                if(is_conditional) {
+                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|' + '|');
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
             default:
                 i2d_panic("invalid token type -- %d", node->tokens->type);
                 break;
