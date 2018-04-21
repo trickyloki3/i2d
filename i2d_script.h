@@ -331,6 +331,8 @@ void i2d_context_deit(i2d_context **);
 void i2d_context_list_deit(i2d_context **);
 void i2d_context_append(i2d_context *, i2d_context *);
 void i2d_context_remove(i2d_context *);
+int i2d_context_insert_variable(i2d_context *, i2d_node *);
+int i2d_context_search_variable(i2d_context *, i2d_node *, i2d_node **);
 
 struct i2d_script {
     i2d_json * json;
