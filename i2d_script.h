@@ -75,7 +75,6 @@ struct i2d_token {
 typedef struct i2d_token i2d_token;
 
 struct i2d_lexer {
-    i2d_token * list;
     i2d_token * cache;
 };
 
@@ -95,7 +94,7 @@ int i2d_lexer_init(i2d_lexer **);
 void i2d_lexer_deit(i2d_lexer **);
 void i2d_lexer_reset(i2d_lexer *, i2d_token **);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
-int i2d_lexer_tokenize(i2d_lexer *, i2d_str *);
+int i2d_lexer_tokenize(i2d_lexer *, i2d_str *, i2d_token **);
 
 enum i2d_node_type {
     I2D_NODE,
@@ -251,7 +250,7 @@ void i2d_parser_reset(i2d_parser *, i2d_lexer *, i2d_block **);
 void i2d_parser_node_reset(i2d_parser *, i2d_lexer *, i2d_node **);
 int i2d_parser_block_init(i2d_parser *, i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 int i2d_parser_node_init(i2d_parser *, i2d_node **, enum i2d_node_type, i2d_token *);
-int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_block **);
+int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_token *, i2d_block **);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 

@@ -274,7 +274,6 @@ void i2d_lexer_deit(i2d_lexer ** result) {
 
     object = *result;
     i2d_deit(object->cache, i2d_token_list_deit);
-    i2d_deit(object->list, i2d_token_list_deit);
     i2d_free(object);
     *result = NULL;
 }
@@ -308,17 +307,15 @@ int i2d_lexer_token_init(i2d_lexer * lexer, i2d_token ** result, enum i2d_token_
     return status;
 }
 
-int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
+int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script, i2d_token ** result) {
     int status = I2D_OK;
     size_t i;
     char symbol;
+    i2d_token * root = NULL;
     i2d_token * token = NULL;
     i2d_token * state = NULL;
 
-    if(lexer->list)
-        i2d_lexer_reset(lexer, &lexer->list);
-
-    if(i2d_lexer_token_init(lexer, &lexer->list, I2D_TOKEN)) {
+    if(i2d_lexer_token_init(lexer, &root, I2D_TOKEN)) {
         status = i2d_panic("failed to create token object");
     } else {
         for(i = 0; i < script->length && !status; i++) {
@@ -528,11 +525,16 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_str * script) {
             }
 
             if(token) {
-                i2d_token_append(token, lexer->list);
+                i2d_token_append(token, root);
                 state = token;
             }
         }
     }
+
+    if(status)
+        i2d_lexer_reset(lexer, &root);
+    else
+        *result = root;
 
     return status;
 }
@@ -1035,14 +1037,14 @@ int i2d_parser_node_init(i2d_parser * parser, i2d_node ** result, enum i2d_node_
     return status;
 }
 
-int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** result) {
+int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_token * tokens, i2d_block ** result) {
     int status = I2D_OK;
 
-    if(I2D_CURLY_OPEN != lexer->list->next->type) {
+    if(I2D_CURLY_OPEN != tokens->next->type) {
         status = i2d_panic("script must start with a {");
-    } else if(I2D_CURLY_CLOSE != lexer->list->prev->type) {
+    } else if(I2D_CURLY_CLOSE != tokens->prev->type) {
         status = i2d_panic("script must end with a {");
-    } else if(i2d_parser_analysis_recursive(parser, lexer, NULL, result, lexer->list->next)) {
+    } else if(i2d_parser_analysis_recursive(parser, lexer, NULL, result, tokens->next)) {
         status = i2d_panic("failed to parse script");
     }
 
@@ -2321,17 +2323,21 @@ void i2d_script_deit(i2d_script ** result) {
 
 int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target) {
     int status = I2D_OK;
+    i2d_token * tokens = NULL;
     i2d_block * blocks = NULL;
 
     if(!strcmp("{}", source->string)) {
         status = i2d_str_init(target, "", 0);
-    } else if(i2d_lexer_tokenize(script->lexer, source)) {
+    } else if(i2d_lexer_tokenize(script->lexer, source, &tokens)) {
         status = i2d_panic("failed to lex -- %s", source->string);
-    } else if(i2d_parser_analysis(script->parser, script->lexer, &blocks)) {
+    } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
         status = i2d_panic("failed to parse -- %s", source->string);
     } else if(i2d_translator_translate(script->translator, blocks)) {
         status = i2d_panic("failed to translate -- %s", source->string);
     }
+
+    if(tokens)
+        i2d_lexer_reset(script->lexer, &tokens);
 
     if(blocks)
         i2d_parser_reset(script->parser, script->lexer, &blocks);
@@ -2370,6 +2376,7 @@ int i2d_lexer_test(void) {
     i2d_lexer * lexer = NULL;
     i2d_str * script = NULL;
     i2d_token * token = NULL;
+    i2d_token * tokens = NULL;
 
     int i;
     int j;
@@ -2378,25 +2385,27 @@ int i2d_lexer_test(void) {
     assert(!i2d_lexer_init(&lexer));
     assert(!i2d_str_init(&script, "//\n\"QUOTE\"/*123*/{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 147));
     for(j = 0; j < 2; j++) {
-        assert(!i2d_lexer_tokenize(lexer, script));
+        assert(!i2d_lexer_tokenize(lexer, script, &tokens));
         i = 0;
-        token = lexer->list->next;
-        while(token != lexer->list) {
+        token = tokens->next;
+        while(token != tokens) {
             assert(token->type == sequence[i++]);
             token = token->next;
         }
+        i2d_lexer_reset(lexer, &tokens);
     }
     i2d_str_deit(&script);
     i2d_lexer_deit(&lexer);
 
     assert(!i2d_lexer_init(&lexer));
     assert(!i2d_str_init(&script, "@var $var $@var .var .@var 'var #var ##var @var$ $var$ $@var$ .var$ .@var$ 'var$ #var$ ##var$", 93));
-    assert(!i2d_lexer_tokenize(lexer, script));
-    token = lexer->list->next;
-    while(token != lexer->list) {
+    assert(!i2d_lexer_tokenize(lexer, script, &tokens));
+    token = tokens->next;
+    while(token != tokens) {
         assert(token->type == I2D_LITERAL);
         token = token->next;
     }
+    i2d_lexer_reset(lexer, &tokens);
     i2d_str_deit(&script);
     i2d_lexer_deit(&lexer);
 
