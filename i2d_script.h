@@ -317,9 +317,9 @@ int i2d_translator_bonus_type(i2d_translator *, enum i2d_bonus_argument_type, i2
 int i2d_translator_translate(i2d_translator *, i2d_block *);
 int i2d_translator_statement(i2d_translator *, i2d_block *);
 int i2d_translator_statement_bonus(i2d_translator *, i2d_block *);
-int i2d_translator_expression(i2d_translator *, i2d_node *);
+int i2d_translator_expression(i2d_translator *, i2d_node *, int);
 int i2d_translator_expression_variable(i2d_translator *, i2d_node *);
-int i2d_translator_expression_binary(i2d_translator *, i2d_node *);
+int i2d_translator_expression_binary(i2d_translator *, i2d_node *, int);
 
 int i2d_block_get_arguments(i2d_block *, i2d_node **, size_t);
 int i2d_node_get_constant(i2d_node *, long *);

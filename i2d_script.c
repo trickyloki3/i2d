@@ -2032,7 +2032,7 @@ int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     i2d_bonus_type * bonus_type;
     i2d_str * string = NULL;
 
-    if(i2d_translator_expression(translator, block->nodes)) {
+    if(i2d_translator_expression(translator, block->nodes, 0)) {
         status = i2d_panic("failed to translate expression");
     } else if(i2d_block_get_arguments(block, arguments, i2d_size(arguments))) {
         status = i2d_panic("failed to get arguments");
@@ -2051,12 +2051,12 @@ int i2d_translator_bonus(i2d_translator * translator, i2d_block * block) {
     return status;
 }
 
-int i2d_translator_expression(i2d_translator * translator, i2d_node * node) {
+int i2d_translator_expression(i2d_translator * translator, i2d_node * node, int is_conditional) {
     int status = I2D_OK;
 
-    if(node->left && i2d_translator_expression(translator, node->left)) {
+    if(node->left && i2d_translator_expression(translator, node->left, is_conditional)) {
         status = i2d_panic("failed to evaluate left expression");
-    } else if(node->right && i2d_translator_expression(translator, node->right)) {
+    } else if(node->right && i2d_translator_expression(translator, node->right, is_conditional)) {
         status = i2d_panic("failed to evaluate right expression");
     } else {
         switch(node->type) {
@@ -2069,7 +2069,7 @@ int i2d_translator_expression(i2d_translator * translator, i2d_node * node) {
             case I2D_UNARY:
                 break;
             case I2D_BINARY:
-                status = i2d_translator_expression_binary(translator, node);
+                status = i2d_translator_expression_binary(translator, node, is_conditional);
                 break;
             default:
                 status = i2d_panic("invalid node type -- %d", node->type);
@@ -2117,7 +2117,7 @@ int i2d_translator_expression_variable(i2d_translator * translator, i2d_node * n
     return status;
 }
 
-int i2d_translator_expression_binary(i2d_translator * translator, i2d_node * node) {
+int i2d_translator_expression_binary(i2d_translator * translator, i2d_node * node, int is_conditional) {
     int status = I2D_OK;
 
     if(!node->left && !node->left->range) {
