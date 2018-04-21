@@ -2125,7 +2125,6 @@ int i2d_context_insert_variable(i2d_context * context, i2d_node * node) {
     if(I2D_VARIABLE != node->type) {
         status = i2d_panic("invalid node type -- %d", node->type);
     } else {
-
         if( !i2d_rbt_search(context->variables, node->tokens, (void **) &last) &&
             i2d_rbt_delete(context->variables, last) ) {
             status = i2d_panic("failed to replace existing variable");
@@ -2369,36 +2368,46 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
     } else {
         switch(node->tokens->type) {
             case I2D_ADD:
+            case I2D_ADD_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '+');
                 break;
             case I2D_SUBTRACT:
+            case I2D_SUBTRACT_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '-');
                 break;
             case I2D_MULTIPLY:
+            case I2D_MULTIPLY_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '*');
                 break;
             case I2D_DIVIDE:
+            case I2D_DIVIDE_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '/');
                 break;
             case I2D_MODULUS:
+            case I2D_MODULUS_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '%');
                 break;
             case I2D_COMMA:
                 status = i2d_range_list_copy(&node->range, node->right->range);
                 break;
             case I2D_RIGHT_SHIFT:
+            case I2D_RIGHT_SHIFT_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '>' + 'b');
                 break;
             case I2D_LEFT_SHIFT:
+            case I2D_LEFT_SHIFT_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '<' + 'b');
                 break;
             case I2D_BIT_AND:
+            case I2D_BIT_AND_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&');
                 break;
             case I2D_BIT_OR:
+            case I2D_BIT_OR_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|');
                 break;
             case I2D_BIT_XOR:
+            case I2D_BIT_XOR_ASSIGN:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '^' + 'b');
                 break;
             case I2D_GREATER:
@@ -2458,9 +2467,26 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                 }
                 break;
             case I2D_ASSIGN:
-                if(i2d_range_list_copy(&node->range, node->right->range)) {
-                    status = i2d_panic("failed to copy range list object");
-                } else {
+                status = i2d_range_list_copy(&node->range, node->right->range);
+                break;
+            default:
+                status = i2d_panic("invalid token type -- %d", node->tokens->type);
+                break;
+        }
+
+        if(!status) {
+            switch(node->tokens->type) {
+                case I2D_ADD_ASSIGN:
+                case I2D_SUBTRACT_ASSIGN:
+                case I2D_MULTIPLY_ASSIGN:
+                case I2D_DIVIDE_ASSIGN:
+                case I2D_MODULUS_ASSIGN:
+                case I2D_RIGHT_SHIFT_ASSIGN:
+                case I2D_LEFT_SHIFT_ASSIGN:
+                case I2D_BIT_AND_ASSIGN:
+                case I2D_BIT_OR_ASSIGN:
+                case I2D_BIT_XOR_ASSIGN:
+                case I2D_ASSIGN:
                     i2d_deit(node->left->range, i2d_range_list_deit);
 
                     if(i2d_range_list_copy(&node->left->range, node->range)) {
@@ -2468,11 +2494,8 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                     } else if(i2d_context_insert_variable(script->context, node->left)) {
                         status = i2d_panic("failed to map variable");
                     }
-                }
-                break;
-            default:
-                i2d_panic("invalid token type -- %d", node->tokens->type);
-                break;
+                    break;
+            }
         }
     }
 
