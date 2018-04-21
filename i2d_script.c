@@ -2118,6 +2118,15 @@ void i2d_context_remove(i2d_context * x) {
     x->prev = x;
 }
 
+int i2d_context_reset(i2d_context * context) {
+    int status = I2D_OK;
+
+    if(i2d_rbt_clear(context->variables))
+        status = i2d_panic("failed to clear variable map");
+
+    return status;
+}
+
 int i2d_context_insert_variable(i2d_context * context, i2d_node * node) {
     int status = I2D_OK;
     i2d_node * last;
@@ -2201,6 +2210,8 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
 
     if(!strcmp("{}", source->string)) {
         status = i2d_str_init(target, "", 0);
+    } else if(i2d_context_reset(script->context)) {
+        status = i2d_panic("failed to reset context object");
     } else if(i2d_lexer_tokenize(script->lexer, source, &tokens)) {
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
