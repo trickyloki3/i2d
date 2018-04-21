@@ -1035,21 +1035,21 @@ int i2d_parser_node_init(i2d_parser * parser, i2d_node ** result, enum i2d_node_
     return status;
 }
 
-int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_json * json, i2d_block ** result) {
+int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** result) {
     int status = I2D_OK;
 
     if(I2D_CURLY_OPEN != lexer->list->next->type) {
         status = i2d_panic("script must start with a {");
     } else if(I2D_CURLY_CLOSE != lexer->list->prev->type) {
         status = i2d_panic("script must end with a {");
-    } else if(i2d_parser_analysis_recursive(parser, lexer, json, NULL, result, lexer->list->next)) {
+    } else if(i2d_parser_analysis_recursive(parser, lexer, NULL, result, lexer->list->next)) {
         status = i2d_panic("failed to parse script");
     }
 
     return status;
 }
 
-int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_json * json, i2d_block * parent, i2d_block ** result, i2d_token * tokens) {
+int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_block * parent, i2d_block ** result, i2d_token * tokens) {
     int status = I2D_OK;
     i2d_block * root;
     i2d_block * block;
@@ -1065,7 +1065,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_js
         if(I2D_CURLY_OPEN == tokens->type) {
             if(i2d_parser_block_init(parser, &block, I2D_BLOCK, NULL, parent)) {
                 status = i2d_panic("failed to create block object");
-            } else if(i2d_parser_analysis_recursive(parser, lexer, json, block, &block->child, tokens->next)) {
+            } else if(i2d_parser_analysis_recursive(parser, lexer, block, &block->child, tokens->next)) {
                 status = i2d_panic("failed to parse script");
             } else if(I2D_CURLY_CLOSE != tokens->next->type) {
                 status = i2d_panic("missing } after {");
@@ -2327,7 +2327,7 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
         status = i2d_str_init(target, "", 0);
     } else if(i2d_lexer_tokenize(script->lexer, source)) {
         status = i2d_panic("failed to lex -- %s", source->string);
-    } else if(i2d_parser_analysis(script->parser, script->lexer, script->json, &blocks)) {
+    } else if(i2d_parser_analysis(script->parser, script->lexer, &blocks)) {
         status = i2d_panic("failed to parse -- %s", source->string);
     } else if(i2d_translator_translate(script->translator, blocks)) {
         status = i2d_panic("failed to translate -- %s", source->string);
