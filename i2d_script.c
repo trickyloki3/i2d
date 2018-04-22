@@ -605,6 +605,18 @@ void i2d_node_remove(i2d_node * x) {
     x->right = x;
 }
 
+int i2d_node_copy(i2d_node * source, i2d_node * target) {
+    int status = I2D_OK;
+
+    i2d_deit(source->range, i2d_range_list_deit);
+
+    if(i2d_range_list_copy(&source->range, target->range)) {
+        status = i2d_panic("failed to copy range list object");
+    }
+
+    return status;
+}
+
 void i2d_node_print(i2d_node * node, int level) {
     int i;
 
@@ -2342,8 +2354,8 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
         status = i2d_panic("failed to get literal");
     } else {
         if(!i2d_context_search_variable(script->context, node, &variable)) {
-            if(i2d_range_list_copy(&node->range, variable->range))
-                status = i2d_panic("failed to copy range list object");
+            if(i2d_node_copy(node, variable))
+                status = i2d_panic("failed to copy node object");
         } else {
             if(isdigit(literal.string[0])) {
                 if(!strncmp(literal.string, "0x", 2) && literal.length > 2) {
@@ -2389,7 +2401,7 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
                 status = i2d_range_list_bitnot(&node->range, node->right->range);
                 break;
             case I2D_ADD_UNARY:
-                status = i2d_range_list_copy(&node->range, node->right->range);
+                status = i2d_node_copy(node, node->right);
                 break;
             case I2D_SUBTRACT_UNARY:
                 status = i2d_range_list_negate(&node->range, node->right->range);
@@ -2432,7 +2444,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '%');
                 break;
             case I2D_COMMA:
-                status = i2d_range_list_copy(&node->range, node->right->range);
+                status = i2d_node_copy(node, node->right);
                 break;
             case I2D_RIGHT_SHIFT:
             case I2D_RIGHT_SHIFT_ASSIGN:
@@ -2511,7 +2523,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                 }
                 break;
             case I2D_ASSIGN:
-                status = i2d_range_list_copy(&node->range, node->right->range);
+                status = i2d_node_copy(node, node->right);
                 break;
             default:
                 status = i2d_panic("invalid token type -- %d", node->tokens->type);
@@ -2531,9 +2543,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                 case I2D_BIT_OR_ASSIGN:
                 case I2D_BIT_XOR_ASSIGN:
                 case I2D_ASSIGN:
-                    i2d_deit(node->left->range, i2d_range_list_deit);
-
-                    if(i2d_range_list_copy(&node->left->range, node->range)) {
+                    if(i2d_node_copy(node->left, node)) {
                         status = i2d_panic("failed to copy range list object");
                     } else if(i2d_context_insert_variable(script->context, node->left)) {
                         status = i2d_panic("failed to map variable");

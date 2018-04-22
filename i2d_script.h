@@ -226,6 +226,7 @@ int i2d_node_init(i2d_node **, enum i2d_node_type, i2d_token *);
 void i2d_node_deit(i2d_node **);
 void i2d_node_append(i2d_node *, i2d_node *);
 void i2d_node_remove(i2d_node *);
+int i2d_node_copy(i2d_node *, i2d_node *);
 void i2d_node_print(i2d_node *, int);
 int i2d_node_cmp_literal(void *, void *);
 

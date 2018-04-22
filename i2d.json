@@ -2,11 +2,11 @@
     "blocks" : {
         "bonus" : {
             "bDefEle" : {
-                "description" : "{0} elemental property",
+                "description" : "Enchant with {0} property.",
                 "argument_type" : ["elemental"]
             },
             "bAtkEle" : {
-                "description" : "{0} elemental property",
+                "description" : "Enchant with {0} property.",
                 "argument_type" : ["elemental"]
             }
         },
