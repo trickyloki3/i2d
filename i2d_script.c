@@ -2321,7 +2321,11 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
     } else {
         switch(node->type) {
             case I2D_NODE:
-                status = i2d_node_copy(node, node->left);
+                if(node->left) {
+                    status = i2d_node_copy(node, node->left);
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 0);
+                }
                 break;
             case I2D_VARIABLE:
                 status = i2d_script_expression_variable(script, node);
