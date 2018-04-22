@@ -2114,16 +2114,14 @@ int i2d_translator_bonus_type(i2d_translator * translator, enum i2d_bonus_argume
     return status;
 }
 
-int i2d_block_get_arguments(i2d_block * block, i2d_node ** nodes, size_t size) {
+int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t size) {
     int status = I2D_OK;
     size_t i;
-    i2d_node * node;
 
-    if(!block->nodes->left) {
+    if(!node) {
         status = i2d_panic("failed on empty argument list");
-    } else {
+    } else if(size > 0) {
         i = size - 1;
-        node = block->nodes->left;
         while(i > 0 && I2D_COMMA == node->tokens->type) {
             nodes[i] = node->right;
             node = node->left;
@@ -2137,6 +2135,8 @@ int i2d_block_get_arguments(i2d_block * block, i2d_node ** nodes, size_t size) {
         } else {
             nodes[0] = node;
         }
+    } else if(I2D_NODE != node->type || node->left || node->right) {
+        status = i2d_panic("failed on excessive argument list");
     }
 
     return status;
@@ -2402,7 +2402,7 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
 
     if(i2d_script_expression(script, block->nodes, 0)) {
         status = i2d_panic("failed to translate expression");
-    } else if(i2d_block_get_arguments(block, arguments, i2d_size(arguments))) {
+    } else if(i2d_node_get_arguments(block->nodes->left, arguments, i2d_size(arguments))) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(arguments[0], &bonus_id)) {
         status = i2d_panic("failed to get bonus type value");
