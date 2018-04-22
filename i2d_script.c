@@ -2499,6 +2499,63 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
 
 int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
+    i2d_str literal;
+
+    if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else if(!strcmp(literal.string, "getrefine")) {
+        status = i2d_script_expression_function_getrefine(script, node);
+    } else if(!strcmp(literal.string, "readparam")) {
+        status = i2d_script_expression_function_readparam(script, node);
+    } else {
+        status = i2d_panic("unsupported function -- %s", literal.string);
+    }
+
+
+    return status;
+}
+
+int i2d_script_expression_function_getrefine(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_str literal;
+    i2d_config * config;
+
+    if(i2d_node_get_arguments(node->left, NULL, 0)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
+        status = i2d_panic("failed to get config -- %s", literal.string);
+    } else {
+        /*
+         * to-do:
+         * translate getrefine to Refine Count
+         */
+        status = i2d_range_list_copy(&node->range, config->range);
+    }
+
+    return status;
+}
+
+int i2d_script_expression_function_readparam(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_node * paramater;
+    i2d_str literal;
+    i2d_config * config;
+
+    if(i2d_node_get_arguments(node->left, &paramater, 1)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
+        status = i2d_panic("failed to get config -- %s", literal.string);
+    } else {
+        /*
+         * to-do:
+         * translate paramater (i.e. bDex) to Dexerity
+         */
+        status = i2d_range_list_copy(&node->range, config->range);
+    }
 
     return status;
 }
