@@ -2314,7 +2314,9 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
                 status = i2d_script_expression_variable(script, node);
                 break;
             case I2D_FUNCTION:
+                break;
             case I2D_UNARY:
+                status = i2d_script_expression_unary(script, node, is_conditional);
                 break;
             case I2D_BINARY:
                 status = i2d_script_expression_binary(script, node, is_conditional);
@@ -2363,6 +2365,27 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
             } else if(i2d_range_list_add(node->range, number, number)) {
                 status = i2d_panic("failed to add range to range list");
             }
+        }
+    }
+
+    return status;
+}
+
+int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_conditional) {
+    int status = I2D_OK;
+
+    if(!node->right || !node->right->range) {
+        status = i2d_panic("unary operator missing operand");
+    } else {
+        switch(node->tokens->type) {
+            case I2D_ADD_UNARY:
+                status = i2d_range_list_copy(&node->range, node->right->range);
+                break;
+            case I2D_SUBTRACT_UNARY:
+                status = i2d_range_list_negate(&node->range, node->right->range);
+                break;
+            default:
+                status = i2d_panic("invalid node type -- %d", node->tokens->type);
         }
     }
 

@@ -353,6 +353,7 @@ int i2d_script_statement(i2d_script *, i2d_block *);
 int i2d_script_bonus(i2d_script *, i2d_block *);
 int i2d_script_expression(i2d_script *, i2d_node *, int);
 int i2d_script_expression_variable(i2d_script *, i2d_node *);
+int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
 int i2d_script_expression_binary(i2d_script *, i2d_node *, int);
 
 #if i2d_debug
