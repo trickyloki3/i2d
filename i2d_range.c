@@ -246,6 +246,8 @@ int i2d_range_list_bitnot(i2d_range_list ** result, i2d_range_list * list) {
             }
         }
     }
+
+    return status;
 }
 
 int i2d_range_list_merge(i2d_range_list * list, i2d_range * left_root, i2d_range * right_root, i2d_range_merge_cb merge_cb) {
