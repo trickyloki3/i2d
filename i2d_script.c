@@ -2378,6 +2378,13 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
         status = i2d_panic("unary operator missing operand");
     } else {
         switch(node->tokens->type) {
+            case I2D_NOT:
+                if(is_conditional) {
+                    status = i2d_range_list_not(&node->range, node->right->range);
+                } else {
+                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                }
+                break;
             case I2D_ADD_UNARY:
                 status = i2d_range_list_copy(&node->range, node->right->range);
                 break;
