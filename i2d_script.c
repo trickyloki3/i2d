@@ -235,11 +235,10 @@ void i2d_token_print(i2d_token * token) {
 
     iterator = token;
     do {
-        space = iterator->next == token ? '\n' : ' ';
         if(!i2d_token_get_literal(iterator, &literal)) {
-            fprintf(stdout, "%s(%s)%c", i2d_token_string[iterator->type], literal.string, space);
+            fprintf(stdout, "%s(%s) ", i2d_token_string[iterator->type], literal.string);
         } else {
-            fprintf(stdout, "%s%c", i2d_token_string[iterator->type], space);
+            fprintf(stdout, "%s ", i2d_token_string[iterator->type]);
         }
         iterator = iterator->next;
     } while(iterator != token);
@@ -626,10 +625,9 @@ void i2d_node_print(i2d_node * node, int level) {
     i2d_token_print(node->tokens);
 
     if(node->range) {
-        for(i = 0; i < level; i++)
-            fprintf(stdout, "    ");
-
-        i2d_range_list_print(node->range, "range");
+        i2d_range_list_print(node->range, NULL);
+    } else {
+        fprintf(stdout, "\n");
     }
 
     if(node->left)
