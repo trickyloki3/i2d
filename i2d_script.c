@@ -8,6 +8,7 @@ static int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
 static int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 static int i2d_translator_const_load(i2d_translator *, i2d_json *);
 static int i2d_translator_bonus_type_remap(i2d_translator *);
+static int i2d_translator_config_load(i2d_translator *, i2d_json *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1798,6 +1799,59 @@ int i2d_str_map_map(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
     return status;
 }
 
+int i2d_config_init(i2d_config ** result, const char * name, json_t * json) {
+    int status = I2D_OK;
+    i2d_config * object;
+    json_t * min;
+    json_t * max;
+
+    if(i2d_is_invalid(result) || !name || !json) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_str_init(&object->name, name, strlen(name))) {
+                status = i2d_panic("failed to create string object");
+            } else {
+                min = json_object_get(json, "min");
+                if(!min) {
+                    status = i2d_panic("failed to get min key value");
+                } else {
+                    max = json_object_get(json, "max");
+                    if(!max) {
+                        status = i2d_panic("failed to get max key value");
+                    } else {
+                        if(i2d_range_list_init(&object->range)) {
+                            status = i2d_panic("failed to create range list object");
+                        } else if(i2d_range_list_add(object->range, json_integer_value(min), json_integer_value(max))) {
+                            status = i2d_panic("failed to add range list object");
+                        }
+                    }
+                }
+            }
+
+            if(status)
+                i2d_config_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_config_deit(i2d_config ** result) {
+    i2d_config * object;
+
+    object = *result;
+    i2d_deit(object->range, i2d_range_list_deit);
+    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 static int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json) {
     int status = I2D_OK;
     json_t * bonus = NULL;
@@ -1911,6 +1965,50 @@ static int i2d_translator_bonus_type_remap(i2d_translator * translator) {
     return status;
 }
 
+static int i2d_translator_config_load(i2d_translator * translator, i2d_json * json) {
+    int status = I2D_OK;
+    json_t * config;
+    size_t i = 0;
+    const char * key;
+    json_t * value;
+
+    config = json_object_get(json->object, "config");
+    if(!config) {
+        status = i2d_panic("failed to get config key value");
+    } else {
+        translator->config_size = json_object_size(config);
+        if(!translator->config_size) {
+            status = i2d_panic("failed on empty config object");
+        } else {
+            translator->config_list = calloc(translator->config_size, sizeof(*translator->config_list));
+            if(!translator->config_list) {
+                status = i2d_panic("out of memory");
+            } else {
+                json_object_foreach(config, key, value) {
+                    if(i2d_config_init(&translator->config_list[i], key, value)) {
+                        status = i2d_panic("failed to create config object");
+                    } else {
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    if(!status) {
+        if(i2d_rbt_init(&translator->config_map, i2d_rbt_cmp_str)) {
+            status = i2d_panic("failed to create red black tree object");
+        } else {
+            for(i = 0; i < translator->config_size; i++)
+                if(i2d_rbt_insert(translator->config_map, translator->config_list[i]->name, translator->config_list[i]))
+                    status = i2d_panic("failed to index config object");
+        }
+    }
+
+
+    return status;
+}
+
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
@@ -1929,6 +2027,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to load consts");
             } else if(i2d_translator_bonus_type_remap(object)) {
                 status = i2d_panic("failed to remap bonus type");
+            } else if(i2d_translator_config_load(object, json)) {
+                status = i2d_panic("failed to load config");
             } else if(i2d_str_map_init(&object->elements, "elements", json->object)) {
                 status = i2d_panic("failed to load element map object");
             }
@@ -1949,6 +2049,12 @@ void i2d_translator_deit(i2d_translator ** result) {
 
     object = *result;
     i2d_deit(object->elements, i2d_str_map_deit);
+    if(object->config_list) {
+        for(i = 0; i < object->config_size; i++)
+            i2d_deit(object->config_list[i], i2d_config_deit);
+        i2d_free(object->config_list);
+    }
+    i2d_deit(object->config_map, i2d_rbt_deit);
     if(object->const_list) {
         for(i = 0; i < object->const_size; i++)
             i2d_deit(object->const_list[i], i2d_const_deit);
@@ -2329,6 +2435,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
                 status = i2d_script_expression_variable(script, node);
                 break;
             case I2D_FUNCTION:
+                status = i2d_script_expression_function(script, node);
                 break;
             case I2D_UNARY:
                 status = i2d_script_expression_unary(script, node, is_conditional);
@@ -2382,6 +2489,12 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
             }
         }
     }
+
+    return status;
+}
+
+int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
 
     return status;
 }
