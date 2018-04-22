@@ -23,6 +23,7 @@ struct i2d_item {
     unsigned long location;
     long weapon_level;
     long base_level;
+    long max_level;
     long refineable;
     long view;
     i2d_str * script;

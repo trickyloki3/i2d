@@ -2,12 +2,35 @@
 
 #define READ_SIZE 65536
 
+static int i2d_item_parse_optional(long *, long *, char *, size_t);
 static int i2d_item_parse(i2d_item *, char *, size_t);
 static void i2d_item_append(i2d_item *, i2d_item *);
 static void i2d_item_remove(i2d_item *);
 static int i2d_item_db_load(i2d_item_db *, i2d_str *);
 static int i2d_item_db_parse(char *, size_t, void *);
 static int i2d_item_db_index(i2d_item_db *);
+
+static int i2d_item_parse_optional(long * left, long * right, char * string, size_t length) {
+    int status = I2D_OK;
+    char * anchor;
+
+    if(!length) {
+        *left = 0;
+        *right = 0;
+    } else {
+        anchor = strchr(string, ':');
+        if(anchor) {
+            *anchor = 0, anchor++;
+
+            status = i2d_strtol(left, string, strlen(string), 10) ||
+                     i2d_strtol(right, anchor, strlen(anchor), 10);
+        } else {
+            status = i2d_strtol(left, string, length, 10);
+        }
+    }
+
+    return status;
+}
 
 int i2d_item_init(i2d_item ** result, char * string, size_t length) {
     int status = I2D_OK;
@@ -87,7 +110,7 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                     case 4: status = i2d_strtol(&item->buy, anchor, extent, 10); break;
                     case 5: status = i2d_strtol(&item->sell, anchor, extent, 10); break;
                     case 6: status = i2d_strtol(&item->weight, anchor, extent, 10); break;
-                    case 7: status = i2d_strtol(&item->atk, anchor, extent, 10); break;
+                    case 7: status = i2d_item_parse_optional(&item->atk, &item->matk, anchor, extent); break;
                     case 8: status = i2d_strtol(&item->def, anchor, extent, 10); break;
                     case 9: status = i2d_strtol(&item->range, anchor, extent, 10); break;
                     case 10: status = i2d_strtol(&item->slots, anchor, extent, 10); break;
@@ -96,7 +119,7 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                     case 13: status = i2d_strtol(&item->gender, anchor, extent, 10); break;
                     case 14: status = i2d_strtoul(&item->location, anchor, extent, 10); break;
                     case 15: status = i2d_strtol(&item->weapon_level, anchor, extent, 10); break;
-                    case 16: status = i2d_strtol(&item->base_level, anchor, extent, 10); break;
+                    case 16: status = i2d_item_parse_optional(&item->base_level, &item->max_level, anchor, extent); break;
                     case 17: status = i2d_strtol(&item->refineable, anchor, extent, 10); break;
                     case 18: status = i2d_strtol(&item->view, anchor, extent, 10); break;
                     case 19: status = i2d_str_init(&item->script, anchor, extent); break;
