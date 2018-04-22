@@ -2321,6 +2321,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
     } else {
         switch(node->type) {
             case I2D_NODE:
+                status = i2d_node_copy(node, node->left);
                 break;
             case I2D_VARIABLE:
                 status = i2d_script_expression_variable(script, node);
