@@ -327,6 +327,7 @@ int i2d_translator_init(i2d_translator **, i2d_json *);
 void i2d_translator_deit(i2d_translator **);
 int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
+int i2d_translator_config_map(i2d_translator *, i2d_str *, i2d_config **);
 int i2d_translator_bonus_type(i2d_translator *, enum i2d_bonus_argument_type, i2d_node *, i2d_str **);
 
 int i2d_block_get_arguments(i2d_block *, i2d_node **, size_t);

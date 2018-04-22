@@ -2088,6 +2088,10 @@ int i2d_translator_const_map(i2d_translator * translator, i2d_str * key, long * 
     return status;
 }
 
+int i2d_translator_config_map(i2d_translator * translator, i2d_str * key, i2d_config ** result) {
+    return i2d_rbt_search(translator->config_map, key, (void **) result);
+}
+
 int i2d_translator_bonus_type(i2d_translator * translator, enum i2d_bonus_argument_type type, i2d_node * node, i2d_str ** result) {
     int status = I2D_OK;
     i2d_str literal;
