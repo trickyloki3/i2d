@@ -3,8 +3,9 @@
 
 #include "i2d_util.h"
 #include "i2d_json.h"
-#include "i2d_item.h"
 #include "i2d_range.h"
+#include "i2d_opt.h"
+#include "i2d_db.h"
 
 enum i2d_token_type {
     I2D_TOKEN,
@@ -352,6 +353,7 @@ int i2d_context_insert_variable(i2d_context *, i2d_node *);
 int i2d_context_search_variable(i2d_context *, i2d_node *, i2d_node **);
 
 struct i2d_script {
+    i2d_db * db;
     i2d_json * json;
     i2d_lexer * lexer;
     i2d_parser * parser;
@@ -361,7 +363,7 @@ struct i2d_script {
 
 typedef struct i2d_script i2d_script;
 
-int i2d_script_init(i2d_script **, i2d_str *);
+int i2d_script_init(i2d_script **, i2d_option *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_compile(i2d_script *, i2d_str *, i2d_str **);
 int i2d_script_translate(i2d_script *, i2d_block *);
