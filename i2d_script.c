@@ -2512,6 +2512,8 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
         status = i2d_script_expression_function_readparam(script, node);
     } else if(!strcmp(literal.string, "getequiprefinerycnt")) {
         status = i2d_script_expression_function_getequiprefinerycnt(script, node);
+    } else if(!strcmp(literal.string, "getskilllv")) {
+        status = i2d_script_expression_function_getskilllv(script, node);
     } else {
         status = i2d_panic("unsupported function -- %s", literal.string);
     }
@@ -2584,6 +2586,32 @@ int i2d_script_expression_function_getequiprefinerycnt(i2d_script * script, i2d_
          */
         status = i2d_range_list_copy(&node->range, config->range);
     }
+
+    return status;
+}
+
+int i2d_script_expression_function_getskilllv(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_node * skill_node;
+    long skill_id;
+    i2d_skill * skill;
+
+    if(i2d_node_get_arguments(node->left, &skill_node, 1)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_node_get_constant(skill_node, &skill_id)) {
+        status = i2d_panic("failed to get constant");
+    } else if(i2d_skill_db_search_by_id(script->db->skill_db, skill_id, &skill)) {
+        status = i2d_panic("failed to map skill id -- %ld", skill_id);
+    } else {
+        /*
+         * to-do:
+         * translate skill to skill name
+         */
+        status = i2d_range_list_init(&node->range) ||
+                 i2d_range_list_add(node->range, 0, skill->maxlv);
+    }
+
+    return status;
 }
 
 int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_conditional) {
