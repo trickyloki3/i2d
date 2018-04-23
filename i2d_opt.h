@@ -4,7 +4,7 @@
 #include "i2d_util.h"
 
 struct i2d_option {
-    i2d_str * item_db_path;
+    i2d_str * source_path;
     i2d_str * json_path;
     long item_id;
 };
