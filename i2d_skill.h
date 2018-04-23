@@ -2,6 +2,7 @@
 #define i2d_skill_h
 
 #include "i2d_util.h"
+#include "i2d_rbt.h"
 
 struct i2d_skill {
     long id;
@@ -42,6 +43,7 @@ void i2d_skill_remove(i2d_skill *);
 struct i2d_skill_db {
     i2d_skill * list;
     size_t size;
+    i2d_rbt * index_by_id;
 };
 
 typedef struct i2d_skill_db i2d_skill_db;

@@ -6,6 +6,7 @@ static int i2d_skill_parse_list(long **, size_t *, char *, size_t);
 static int i2d_skill_parse(i2d_skill *, char *, size_t);
 static int i2d_skill_db_load(i2d_skill_db *, i2d_str *);
 static int i2d_skill_db_parse(char *, size_t, void *);
+static int i2d_skill_db_index(i2d_skill_db *);
 
 int i2d_skill_init(i2d_skill ** result, char * string, size_t length) {
     int status = I2D_OK;
@@ -200,8 +201,11 @@ int i2d_skill_db_init(i2d_skill_db ** result, i2d_str * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_skill_db_load(object, path))
+            if(i2d_skill_db_load(object, path)) {
                 status = i2d_panic("failed to load skill db");
+            } else if(i2d_skill_db_index(object)) {
+                status = i2d_panic("failed to index skill db");
+            }
 
             if(status)
                 i2d_skill_db_deit(&object);
@@ -218,6 +222,7 @@ void i2d_skill_db_deit(i2d_skill_db ** result) {
     i2d_skill * skill;
 
     object = *result;
+    i2d_deit(object->index_by_id, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
             skill = object->list->next;
@@ -275,6 +280,24 @@ static int i2d_skill_db_parse(char * string, size_t length, void * data) {
         }
 
         skill_db->size++;
+    }
+
+    return status;
+}
+
+static int i2d_skill_db_index(i2d_skill_db * skill_db) {
+    int status = I2D_OK;
+    i2d_skill * skill = NULL;
+
+    if(i2d_rbt_init(&skill_db->index_by_id, i2d_rbt_cmp_long)) {
+        status = i2d_panic("failed to create red black tree objects");
+    } else {
+        skill = skill_db->list;
+        do {
+            if(i2d_rbt_insert(skill_db->index_by_id, &skill->id, skill))
+                status = i2d_panic("failed to index skill by id -- %ld", skill->id);
+            skill = skill->next;
+        } while(skill != skill_db->list && !status);
     }
 
     return status;
