@@ -42,10 +42,10 @@ void i2d_item_remove(i2d_item *);
 
 struct i2d_item_db {
     i2d_item * list;
+    size_t size;
     i2d_rbt * index_by_id;
     i2d_rbt * index_by_aegis;
     i2d_rbt * index_by_name;
-    size_t size;
 };
 
 typedef struct i2d_item_db i2d_item_db;
