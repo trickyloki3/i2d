@@ -44,6 +44,7 @@ struct i2d_skill_db {
     i2d_skill * list;
     size_t size;
     i2d_rbt * index_by_id;
+    i2d_rbt * index_by_macro;
 };
 
 typedef struct i2d_skill_db i2d_skill_db;
@@ -51,5 +52,6 @@ typedef struct i2d_skill_db i2d_skill_db;
 int i2d_skill_db_init(i2d_skill_db **, i2d_str *);
 void i2d_skill_db_deit(i2d_skill_db **);
 int i2d_skill_db_search_by_id(i2d_skill_db *, long, i2d_skill **);
+int i2d_skill_db_search_by_macro(i2d_skill_db *, i2d_str *, i2d_skill **);
 
 #endif

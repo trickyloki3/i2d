@@ -135,6 +135,12 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
                 status = i2d_panic("line overflow");
             } else {
                 extent = (size_t) (string + i) - (size_t) anchor;
+
+                while(extent && isspace(*anchor)) {
+                    anchor++;
+                    extent--;
+                }
+
                 switch(field) {
                     case 0: status = i2d_strtol(&skill->id, anchor, extent, 10); break;
                     case 1: status = i2d_skill_parse_list(&skill->range, &skill->range_size, anchor, extent); break;
@@ -222,6 +228,7 @@ void i2d_skill_db_deit(i2d_skill_db ** result) {
     i2d_skill * skill;
 
     object = *result;
+    i2d_deit(object->index_by_macro, i2d_rbt_deit);
     i2d_deit(object->index_by_id, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
@@ -289,12 +296,14 @@ static int i2d_skill_db_index(i2d_skill_db * skill_db) {
     int status = I2D_OK;
     i2d_skill * skill = NULL;
 
-    if(i2d_rbt_init(&skill_db->index_by_id, i2d_rbt_cmp_long)) {
+    if( i2d_rbt_init(&skill_db->index_by_id, i2d_rbt_cmp_long) ||
+        i2d_rbt_init(&skill_db->index_by_macro, i2d_rbt_cmp_str) ) {
         status = i2d_panic("failed to create red black tree objects");
     } else {
         skill = skill_db->list;
         do {
-            if(i2d_rbt_insert(skill_db->index_by_id, &skill->id, skill))
+            if( i2d_rbt_insert(skill_db->index_by_id, &skill->id, skill) ||
+                i2d_rbt_insert(skill_db->index_by_macro, skill->macro, skill) )
                 status = i2d_panic("failed to index skill by id -- %ld", skill->id);
             skill = skill->next;
         } while(skill != skill_db->list && !status);
@@ -305,4 +314,8 @@ static int i2d_skill_db_index(i2d_skill_db * skill_db) {
 
 int i2d_skill_db_search_by_id(i2d_skill_db * skill_db, long skill_id, i2d_skill ** skill) {
     return i2d_rbt_search(skill_db->index_by_id, &skill_id, (void **) skill);
+}
+
+int i2d_skill_db_search_by_macro(i2d_skill_db * skill_db, i2d_str * skill_macro, i2d_skill ** skill) {
+    return i2d_rbt_search(skill_db->index_by_macro, skill_macro, (void **) skill);
 }
