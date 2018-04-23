@@ -57,6 +57,7 @@ int i2d_buf_binary(i2d_buf *, void *, size_t);
 int i2d_buf_object(i2d_buf *, size_t, void **);
 void i2d_buf_zero(i2d_buf *);
 int i2d_buf_add_null(i2d_buf *);
+void i2d_buf_get_str(i2d_buf *, i2d_str *);
 void i2d_buf_dump(i2d_buf *, const char *);
 
 typedef int (* i2d_by_line_cb) (char *, size_t, void *);

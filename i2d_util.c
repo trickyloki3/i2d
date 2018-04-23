@@ -230,6 +230,11 @@ int i2d_buf_add_null(i2d_buf * buffer) {
     return status;
 }
 
+void i2d_buf_get_str(i2d_buf * buffer, i2d_str * string) {
+    string->string = buffer->buffer;
+    string->length = buffer->length;
+}
+
 void i2d_buf_dump(i2d_buf * buffer, const char * tag) {
     size_t i;
 
