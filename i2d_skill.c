@@ -302,3 +302,7 @@ static int i2d_skill_db_index(i2d_skill_db * skill_db) {
 
     return status;
 }
+
+int i2d_skill_db_search_by_id(i2d_skill_db * skill_db, long skill_id, i2d_skill ** skill) {
+    return i2d_rbt_search(skill_db->index_by_id, &skill_id, (void **) skill);
+}

@@ -50,5 +50,6 @@ typedef struct i2d_skill_db i2d_skill_db;
 
 int i2d_skill_db_init(i2d_skill_db **, i2d_str *);
 void i2d_skill_db_deit(i2d_skill_db **);
+int i2d_skill_db_search_by_id(i2d_skill_db *, long, i2d_skill **);
 
 #endif
