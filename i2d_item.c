@@ -286,3 +286,11 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
 int i2d_item_db_search_by_id(i2d_item_db * item_db, long item_id, i2d_item ** item) {
     return i2d_rbt_search(item_db->index_by_id, &item_id, (void **) item);
 }
+
+int i2d_item_db_search_by_aegis(i2d_item_db * item_db, i2d_str * aegis, i2d_item ** item) {
+    return i2d_rbt_search(item_db->index_by_aegis, aegis, (void **) item);
+}
+
+int i2d_item_db_search_by_name(i2d_item_db * item_db, i2d_str * name, i2d_item ** item) {
+    return i2d_rbt_search(item_db->index_by_name, name, (void **) item);
+}
