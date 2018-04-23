@@ -2,7 +2,7 @@
 
 #include "getopt.h"
 
-static const char * i2d_short_options = "i:j:d:";
+static const char * i2d_short_options = "s:j:i:";
 
 static struct option i2d_long_options[] = {
     { "source_path", required_argument, NULL, 's' },
