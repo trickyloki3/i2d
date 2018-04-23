@@ -26,13 +26,13 @@ int main(int argc, char * argv[]) {
 #endif
                 }
             } else {
-                item = script->db->item_db->list->next;
-                while(item != script->db->item_db->list) {
+                item = script->db->item_db->list;
+                do {
 #if i2d_debug
                     i2d_script_test(script, item);
 #endif
                     item = item->next;
-                }
+                } while(item != script->db->item_db->list);
             }
             i2d_script_deit(&script);
         }
