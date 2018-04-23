@@ -10,28 +10,6 @@ static int i2d_item_db_load(i2d_item_db *, i2d_str *);
 static int i2d_item_db_parse(char *, size_t, void *);
 static int i2d_item_db_index(i2d_item_db *);
 
-static int i2d_item_parse_optional(long * left, long * right, char * string, size_t length) {
-    int status = I2D_OK;
-    char * anchor;
-
-    if(!length) {
-        *left = 0;
-        *right = 0;
-    } else {
-        anchor = strchr(string, ':');
-        if(anchor) {
-            *anchor = 0, anchor++;
-
-            status = i2d_strtol(left, string, strlen(string), 10) ||
-                     i2d_strtol(right, anchor, strlen(anchor), 10);
-        } else {
-            status = i2d_strtol(left, string, length, 10);
-        }
-    }
-
-    return status;
-}
-
 int i2d_item_init(i2d_item ** result, char * string, size_t length) {
     int status = I2D_OK;
     i2d_item * object;
@@ -73,6 +51,28 @@ void i2d_item_deit(i2d_item ** result) {
     i2d_deit(object->onunequip_script, i2d_str_deit);
     i2d_free(object);
     *result = NULL;
+}
+
+static int i2d_item_parse_optional(long * left, long * right, char * string, size_t length) {
+    int status = I2D_OK;
+    char * anchor;
+
+    if(!length) {
+        *left = 0;
+        *right = 0;
+    } else {
+        anchor = strchr(string, ':');
+        if(anchor) {
+            *anchor = 0, anchor++;
+
+            status = i2d_strtol(left, string, strlen(string), 10) ||
+                     i2d_strtol(right, anchor, strlen(anchor), 10);
+        } else {
+            status = i2d_strtol(left, string, length, 10);
+        }
+    }
+
+    return status;
 }
 
 static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
