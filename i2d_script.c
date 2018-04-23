@@ -652,6 +652,62 @@ int i2d_node_cmp_literal(void * left, void * right) {
     return status;
 }
 
+int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t size) {
+    int status = I2D_OK;
+    size_t i;
+
+    if(!node) {
+        status = i2d_panic("failed on empty argument list");
+    } else if(size > 0) {
+        i = size - 1;
+        while(i > 0 && I2D_COMMA == node->tokens->type) {
+            nodes[i] = node->right;
+            node = node->left;
+            i--;
+        }
+
+        if(i || !node) {
+            status = i2d_panic("failed on insufficient argument list");
+        } else if(I2D_COMMA == node->tokens->type) {
+            status = i2d_panic("failed on excessive argument list");
+        } else {
+            nodes[0] = node;
+        }
+    } else if(I2D_NODE != node->type || node->left || node->right) {
+        status = i2d_panic("failed on excessive argument list");
+    }
+
+    return status;
+}
+
+int i2d_node_get_constant(i2d_node * node, long * result) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_list_get_range(node->range, &min, &max);
+
+    if(min != max) {
+        status = i2d_panic("failed on invalid range");
+    } else {
+        *result = min;
+    }
+
+    return status;
+}
+
+int i2d_node_get_string(i2d_node * node, i2d_str * result) {
+    int status = I2D_OK;
+
+    if(I2D_VARIABLE != node->type) {
+        status = i2d_panic("failed on invalid node type -- %d", node->type);
+    } else if(i2d_token_get_literal(node->tokens, result)) {
+        status = i2d_panic("failed to get literal");
+    }
+
+    return status;
+}
+
 const char * i2d_statement_string[] = {
     "start",
     "bonus",
@@ -2114,62 +2170,6 @@ int i2d_translator_bonus_type(i2d_translator * translator, enum i2d_bonus_argume
     return status;
 }
 
-int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t size) {
-    int status = I2D_OK;
-    size_t i;
-
-    if(!node) {
-        status = i2d_panic("failed on empty argument list");
-    } else if(size > 0) {
-        i = size - 1;
-        while(i > 0 && I2D_COMMA == node->tokens->type) {
-            nodes[i] = node->right;
-            node = node->left;
-            i--;
-        }
-
-        if(i || !node) {
-            status = i2d_panic("failed on insufficient argument list");
-        } else if(I2D_COMMA == node->tokens->type) {
-            status = i2d_panic("failed on excessive argument list");
-        } else {
-            nodes[0] = node;
-        }
-    } else if(I2D_NODE != node->type || node->left || node->right) {
-        status = i2d_panic("failed on excessive argument list");
-    }
-
-    return status;
-}
-
-int i2d_node_get_constant(i2d_node * node, long * result) {
-    int status = I2D_OK;
-    long min;
-    long max;
-
-    i2d_range_list_get_range(node->range, &min, &max);
-
-    if(min != max) {
-        status = i2d_panic("failed on invalid range");
-    } else {
-        *result = min;
-    }
-
-    return status;
-}
-
-int i2d_node_get_string(i2d_node * node, i2d_str * result) {
-    int status = I2D_OK;
-
-    if(I2D_VARIABLE != node->type) {
-        status = i2d_panic("failed on invalid node type -- %d", node->type);
-    } else if(i2d_token_get_literal(node->tokens, result)) {
-        status = i2d_panic("failed to get literal");
-    }
-
-    return status;
-}
-
 int i2d_context_init(i2d_context ** result) {
     int status = I2D_OK;
     i2d_context * object;
@@ -2593,16 +2593,23 @@ int i2d_script_expression_function_getequiprefinerycnt(i2d_script * script, i2d_
 int i2d_script_expression_function_getskilllv(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_node * skill_node;
+    i2d_str literal;
     long skill_id;
-    i2d_skill * skill;
+    i2d_skill * skill = NULL;
 
     if(i2d_node_get_arguments(node->left, &skill_node, 1)) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(skill_node, &skill_id)) {
         status = i2d_panic("failed to get constant");
     } else if(i2d_skill_db_search_by_id(script->db->skill_db, skill_id, &skill)) {
-        status = i2d_panic("failed to map skill id -- %ld", skill_id);
-    } else {
+        if(i2d_token_get_literal(skill_node->left->tokens, &literal)) {
+            status = i2d_panic("failed to get literal");
+        } else if(i2d_skill_db_search_by_macro(script->db->skill_db, &literal, &skill)) {
+            status = i2d_panic("failed to map skill id and macro -- %ld, %s", skill_id, literal.string);
+        }
+    }
+
+    if(skill) {
         /*
          * to-do:
          * translate skill to skill name

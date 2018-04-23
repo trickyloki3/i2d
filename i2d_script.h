@@ -230,6 +230,9 @@ void i2d_node_remove(i2d_node *);
 int i2d_node_copy(i2d_node *, i2d_node *);
 void i2d_node_print(i2d_node *, int);
 int i2d_node_cmp_literal(void *, void *);
+int i2d_node_get_arguments(i2d_node *, i2d_node **, size_t);
+int i2d_node_get_constant(i2d_node *, long *);
+int i2d_node_get_string(i2d_node *, i2d_str *);
 
 int i2d_statement_init(i2d_statement **, enum i2d_statement_type);
 void i2d_statement_deit(i2d_statement **);
@@ -330,10 +333,6 @@ int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
 int i2d_translator_config_map(i2d_translator *, i2d_str *, i2d_config **);
 int i2d_translator_bonus_type(i2d_translator *, enum i2d_bonus_argument_type, i2d_node *, i2d_str **);
-
-int i2d_node_get_arguments(i2d_node *, i2d_node **, size_t);
-int i2d_node_get_constant(i2d_node *, long *);
-int i2d_node_get_string(i2d_node *, i2d_str *);
 
 struct i2d_context {
     i2d_rbt * variables;
