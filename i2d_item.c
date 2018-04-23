@@ -164,7 +164,6 @@ static void i2d_item_remove(i2d_item * x) {
 int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
     int status = I2D_OK;
     i2d_item_db * object;
-    i2d_str * item = NULL;
 
     if(i2d_is_invalid(result) || !path) {
         status = i2d_panic("invalid paramater");
@@ -173,17 +172,10 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_str_init(&item, "0,head,node,,,,,,,,,,,,,,,,,{},{},{}", 36)) {
-                status = i2d_panic("failed to create string object");
-            } else {
-                if(i2d_item_init(&object->list, item->string, item->length)) {
-                    status = i2d_panic("failed to create item object");
-                } else if(i2d_item_db_load(object, path)) {
-                    status = i2d_panic("failed to load item db");
-                } else if(i2d_item_db_index(object)) {
-                    status = i2d_panic("failed to index item db");
-                }
-                i2d_str_deit(&item);
+            if(i2d_item_db_load(object, path)) {
+                status = i2d_panic("failed to load item db");
+            } else if(i2d_item_db_index(object)) {
+                status = i2d_panic("failed to index item db");
             }
 
             if(status)
@@ -254,7 +246,12 @@ static int i2d_item_db_parse(char * string, size_t length, void * data) {
     if(i2d_item_init(&item, string, length)) {
         status = i2d_panic("failed to create item object");
     } else {
-        i2d_item_append(item, item_db->list);
+        if(!item_db->list) {
+            item_db->list = item;
+        } else {
+            i2d_item_append(item, item_db->list);
+        }
+
         item_db->size++;
     }
 
