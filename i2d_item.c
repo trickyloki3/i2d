@@ -40,8 +40,6 @@ void i2d_item_deit(i2d_item ** result) {
     i2d_item * object;
 
     object = *result;
-    object->next = NULL;
-    object->prev = NULL;
     i2d_deit(object->aegis_name, i2d_str_deit);
     i2d_deit(object->name, i2d_str_deit);
     i2d_deit(object->script, i2d_str_deit);
