@@ -18,19 +18,26 @@ struct i2d_skill {
     long * hit_amount;
     size_t hit_amount_size;
     i2d_str * cast_cancel;
-    int cast_def_reduce_rate;
+    long cast_def_reduce_rate;
     long inf2;
-    long * maxcount;
-    size_t maxcount_size;
+    long * max_count;
+    size_t max_count_size;
     i2d_str * type;
     long * blow_count;
     size_t blow_count_size;
     long inf3;
     i2d_str * macro;
     i2d_str * name;
+    struct i2d_skill * next;
+    struct i2d_skill * prev;
 };
 
 typedef struct i2d_skill i2d_skill;
+
+int i2d_skill_init(i2d_skill **, char *, size_t);
+void i2d_skill_deit(i2d_skill **);
+void i2d_skill_append(i2d_skill *, i2d_skill *);
+void i2d_skill_remove(i2d_skill *);
 
 struct i2d_skill_db {
     i2d_skill * list;

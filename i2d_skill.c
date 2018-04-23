@@ -2,8 +2,192 @@
 
 #define READ_SIZE 65536
 
+static int i2d_skill_parse_list(long **, size_t *, char *, size_t);
+static int i2d_skill_parse(i2d_skill *, char *, size_t);
 static int i2d_skill_db_load(i2d_skill_db *, i2d_str *);
 static int i2d_skill_db_parse(char *, size_t, void *);
+
+int i2d_skill_init(i2d_skill ** result, char * string, size_t length) {
+    int status = I2D_OK;
+    i2d_skill * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_skill_parse(object, string, length)) {
+                status = i2d_panic("failed to load skill -- %s", string);
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status)
+                i2d_skill_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_skill_deit(i2d_skill ** result) {
+    i2d_skill * object;
+
+    object = *result;
+    i2d_deit(object->name, i2d_str_deit);
+    i2d_deit(object->macro, i2d_str_deit);
+    i2d_free(object->blow_count);
+    i2d_deit(object->type, i2d_str_deit);
+    i2d_free(object->max_count);
+    i2d_deit(object->cast_cancel, i2d_str_deit);
+    i2d_free(object->hit_amount);
+    i2d_free(object->splash);
+    i2d_free(object->element);
+    i2d_free(object->range);
+    i2d_free(object);
+    *result = NULL;
+}
+
+static int i2d_skill_parse_list(long ** result_list, size_t * result_size, char * string, size_t length) {
+    int status = I2D_OK;
+    size_t i;
+    size_t size = 1;
+    size_t index = 0;
+    long * list = NULL;
+
+    char * anchor;
+    size_t extent;
+
+    for(i = 0; i < length; i++)
+        if(':' == string[i])
+            size++;
+
+    list = calloc(size, sizeof(*list));
+    if(!list) {
+        status = i2d_panic("out of memory");
+    } else {
+        anchor = string;
+        for(i = 0; i < length && !status; i++) {
+            if(':' == string[i]) {
+                string[i] = 0;
+
+                if((string + i) < anchor) {
+                    status = i2d_panic("line overflow");
+                } else {
+                    extent = (size_t) (string + i) - (size_t) anchor;
+                    if(i2d_strtol(&list[index], anchor, extent, 10)) {
+                        status = i2d_panic("failed to convert %s to number", anchor);
+                    } else {
+                        index++;
+                    }
+                }
+
+                anchor = (string + i + 1);
+            }
+        }
+
+        if(!status) {
+            if(index + 1 != size) {
+                status = i2d_panic("list is missing values");
+            } else if(&string[i] < anchor) {
+                status = i2d_panic("line overflow");
+            } else {
+                extent = (size_t) &string[i] - (size_t) anchor;
+                if(i2d_strtol(&list[index], anchor, extent, 10))
+                    status = i2d_panic("failed to convert %s to number", anchor);
+            }
+        }
+
+        if(status) {
+            free(list);
+        } else {
+            *result_size = size;
+            *result_list = list;
+        }
+    }
+
+
+    return status;
+}
+
+static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
+    int status = I2D_OK;
+
+    size_t i;
+
+    char * anchor;
+    size_t extent;
+
+    int field = 0;
+
+    anchor = string;
+    for(i = 0; i < length && !status; i++) {
+        if(',' == string[i]) {
+            string[i] = 0;
+
+            if((string + i) < anchor) {
+                status = i2d_panic("line overflow");
+            } else {
+                extent = (size_t) (string + i) - (size_t) anchor;
+                switch(field) {
+                    case 0: status = i2d_strtol(&skill->id, anchor, extent, 10); break;
+                    case 1: status = i2d_skill_parse_list(&skill->range, &skill->range_size, anchor, extent); break;
+                    case 2: status = i2d_strtol(&skill->hit, anchor, extent, 10); break;
+                    case 3: status = i2d_strtol(&skill->inf, anchor, extent, 10); break;
+                    case 4: status = i2d_skill_parse_list(&skill->element, &skill->element_size, anchor, extent); break;
+                    case 5: status = i2d_strtol(&skill->nk, anchor, extent, 16); break;
+                    case 6: status = i2d_skill_parse_list(&skill->splash, &skill->splash_size, anchor, extent); break;
+                    case 7: status = i2d_strtol(&skill->maxlv, anchor, extent, 10); break;
+                    case 8: status = i2d_skill_parse_list(&skill->hit_amount, &skill->hit_amount_size, anchor, extent); break;
+                    case 9: status = i2d_str_init(&skill->cast_cancel, anchor, extent); break;
+                    case 10: status = i2d_strtol(&skill->cast_def_reduce_rate, anchor, extent, 10); break;
+                    case 11: status = i2d_strtol(&skill->inf2, anchor, extent, 16); break;
+                    case 12: status = i2d_skill_parse_list(&skill->max_count, &skill->max_count_size, anchor, extent); break;
+                    case 13: status = i2d_str_init(&skill->type, anchor, extent); break;
+                    case 14: status = i2d_skill_parse_list(&skill->blow_count, &skill->blow_count_size, anchor, extent); break;
+                    case 15: status = i2d_strtol(&skill->inf3, anchor, extent, 16); break;
+                    case 16: status = i2d_str_init(&skill->macro, anchor, extent); break;
+                    default: status = i2d_panic("skill has too many columns"); break;
+                }
+                field++;
+            }
+
+            anchor = (string + i + 1);
+        }
+    }
+
+    if(!status) {
+        if(17 != field) {
+            status = i2d_panic("skill is missing columns");
+        } else if(&string[i] < anchor) {
+            status = i2d_panic("line overflow");
+        } else {
+            extent = (size_t) &string[i] - (size_t) anchor;
+            status = i2d_str_init(&skill->name, anchor, extent);
+        }
+    }
+
+    return status;
+}
+
+void i2d_skill_append(i2d_skill * x, i2d_skill * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_skill_remove(i2d_skill * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
 
 int i2d_skill_db_init(i2d_skill_db ** result, i2d_str * path) {
     int status = I2D_OK;
@@ -31,8 +215,17 @@ int i2d_skill_db_init(i2d_skill_db ** result, i2d_str * path) {
 
 void i2d_skill_db_deit(i2d_skill_db ** result) {
     i2d_skill_db * object;
+    i2d_skill * skill;
 
     object = *result;
+    if(object->list) {
+        while(object->list != object->list->next) {
+            skill = object->list->next;
+            i2d_skill_remove(skill);
+            i2d_skill_deit(&skill);
+        }
+        i2d_skill_deit(&object->list);
+    }
     i2d_free(object);
     *result = NULL;
 }
@@ -69,6 +262,20 @@ static int i2d_skill_db_load(i2d_skill_db * skill_db, i2d_str * path) {
 
 static int i2d_skill_db_parse(char * string, size_t length, void * data) {
     int status = I2D_OK;
+    i2d_skill_db * skill_db = data;
+    i2d_skill * skill = NULL;
+
+    if(i2d_skill_init(&skill, string, length)) {
+        status = i2d_panic("failed to create skill object");
+    } else {
+        if(!skill_db->list) {
+            skill_db->list = skill;
+        } else {
+            i2d_skill_append(skill, skill_db->list);
+        }
+
+        skill_db->size++;
+    }
 
     return status;
 }
