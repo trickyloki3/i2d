@@ -37,6 +37,8 @@ typedef struct i2d_item i2d_item;
 
 int i2d_item_init(i2d_item **, char *, size_t);
 void i2d_item_deit(i2d_item **);
+void i2d_item_append(i2d_item *, i2d_item *);
+void i2d_item_remove(i2d_item *);
 
 struct i2d_item_db {
     i2d_item * list;

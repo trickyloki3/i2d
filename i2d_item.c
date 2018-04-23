@@ -4,8 +4,6 @@
 
 static int i2d_item_parse_optional(long *, long *, char *, size_t);
 static int i2d_item_parse(i2d_item *, char *, size_t);
-static void i2d_item_append(i2d_item *, i2d_item *);
-static void i2d_item_remove(i2d_item *);
 static int i2d_item_db_load(i2d_item_db *, i2d_str *);
 static int i2d_item_db_parse(char *, size_t, void *);
 static int i2d_item_db_index(i2d_item_db *);
@@ -147,14 +145,14 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
     return status;
 }
 
-static void i2d_item_append(i2d_item * x, i2d_item * y) {
+void i2d_item_append(i2d_item * x, i2d_item * y) {
     x->next->prev = y->prev;
     y->prev->next = x->next;
     x->next = y;
     y->prev = x;
 }
 
-static void i2d_item_remove(i2d_item * x) {
+void i2d_item_remove(i2d_item * x) {
     x->prev->next = x->next;
     x->next->prev = x->prev;
     x->next = x;
