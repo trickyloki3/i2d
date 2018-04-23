@@ -263,8 +263,8 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
         i2d_rbt_init(&item_db->index_by_name, i2d_rbt_cmp_str) ) {
         status = i2d_panic("failed to create red black tree objects");
     } else {
-        item = item_db->list->next;
-        while(item != item_db->list && !status) {
+        item = item_db->list;
+        do {
             if(i2d_rbt_insert(item_db->index_by_id, &item->id, item)) {
                 status = i2d_panic("failed to index item by id -- %ld", item->id);
             } else if(i2d_rbt_insert(item_db->index_by_aegis, item->aegis_name, item)) {
@@ -273,7 +273,7 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
                 status = i2d_panic("failed to index item by name -- %s", item->name->string);
             }
             item = item->next;
-        }
+        } while(item != item_db->list && !status);
     }
 
     return status;
