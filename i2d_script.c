@@ -578,6 +578,7 @@ void i2d_node_deit(i2d_node ** result) {
     i2d_node * object;
 
     object = *result;
+    i2d_deit(object->logic, i2d_logic_deit);
     i2d_deit(object->range, i2d_range_list_deit);
     i2d_deit(object->tokens, i2d_token_list_deit);
     i2d_deit(object->right, i2d_node_deit);
@@ -1096,6 +1097,7 @@ void i2d_parser_node_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_node ** r
     i2d_node * node;
 
     node = *result;
+    i2d_deit(node->logic, i2d_logic_deit);
     i2d_deit(node->range, i2d_range_list_deit);
     if(node->left)
         i2d_parser_node_reset(parser, lexer, &node->left);
