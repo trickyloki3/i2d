@@ -643,6 +643,9 @@ void i2d_node_print(i2d_node * node, int level) {
         fprintf(stdout, "\n");
     }
 
+    if(node->logic)
+        i2d_logic_print(node->logic, level);
+
     if(node->left)
         i2d_node_print(node->left, level + 1);
     if(node->right)
