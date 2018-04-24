@@ -2563,6 +2563,8 @@ int i2d_script_expression_function_readparam(i2d_script * script, i2d_node * nod
     i2d_node * paramater;
     i2d_str literal;
     i2d_config * config;
+    size_t i;
+    char symbol;
 
     if(i2d_node_get_arguments(node->left, &paramater, 1)) {
         status = i2d_panic("failed to get arguments");
@@ -2571,11 +2573,24 @@ int i2d_script_expression_function_readparam(i2d_script * script, i2d_node * nod
     } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
         status = i2d_panic("failed to get config -- %s", literal.string);
     } else {
-        /*
-         * to-do:
-         * translate paramater (i.e. bDex) to Dex
-         */
-        status = i2d_range_list_copy(&node->range, config->range);
+        if(i2d_token_get_literal(paramater->left->tokens, &literal)) {
+            status = i2d_panic("failed to get literal");
+        } else {
+            i2d_buf_zero(node->tokens->buffer);
+            i = ('b' == literal.string[0]) ? 1 : 0;
+            for(; i < literal.length && !status; i++) {
+                symbol = ' ';
+                if(isupper(literal.string[i]) && i > 1)
+                    if(i2d_token_write(node->tokens, &symbol, sizeof(symbol)))
+                        status = i2d_panic("failed to write token object");
+                symbol = literal.string[i];
+                if(i2d_token_write(node->tokens, &symbol, sizeof(symbol)))
+                    status = i2d_panic("failed to write token object");
+            }
+
+            if(!status)
+                status = i2d_range_list_copy(&node->range, config->range);
+        }
     }
 
     return status;
