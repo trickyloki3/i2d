@@ -210,6 +210,17 @@ int i2d_token_get_literal(i2d_token * token, i2d_str * result) {
     return status;
 }
 
+int i2d_token_assign_literal(i2d_token * token, i2d_str * result) {
+    int status = I2D_OK;
+
+    i2d_buf_zero(token->buffer);
+
+    if(i2d_buf_format(token->buffer, "%s", result->string))
+        status = i2d_panic("failed to format buffer object");
+
+    return status;
+}
+
 char i2d_token_get_last_symbol(i2d_token * token) {
     i2d_buf * buffer = token->buffer;
     return (buffer->offset > 0) ? buffer->buffer[buffer->offset - 1] : 0;
@@ -2534,11 +2545,14 @@ int i2d_script_expression_function_getrefine(i2d_script * script, i2d_node * nod
     } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
         status = i2d_panic("failed to get config -- %s", literal.string);
     } else {
-        /*
-         * to-do:
-         * translate getrefine to Refine Count
-         */
-        status = i2d_range_list_copy(&node->range, config->range);
+        literal.string = "Refine Count";
+        literal.length = 12;
+
+        if(i2d_token_assign_literal(node->tokens, &literal)) {
+            status = i2d_panic("failed to reassign literal for token object");
+        } else {
+            status = i2d_range_list_copy(&node->range, config->range);
+        }
     }
 
     return status;
@@ -2580,11 +2594,14 @@ int i2d_script_expression_function_getequiprefinerycnt(i2d_script * script, i2d_
     } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
         status = i2d_panic("failed to get config -- %s", literal.string);
     } else {
-        /*
-         * to-do:
-         * translate position to Refine Count Of <position>
-         */
-        status = i2d_range_list_copy(&node->range, config->range);
+        literal.string = "Refine Count";
+        literal.length = 12;
+
+        if(i2d_token_assign_literal(node->tokens, &literal)) {
+            status = i2d_panic("failed to reassign literal for token object");
+        } else {
+            status = i2d_range_list_copy(&node->range, config->range);
+        }
     }
 
     return status;
@@ -2610,12 +2627,12 @@ int i2d_script_expression_function_getskilllv(i2d_script * script, i2d_node * no
     }
 
     if(skill) {
-        /*
-         * to-do:
-         * translate skill to skill name
-         */
-        status = i2d_range_list_init(&node->range) ||
-                 i2d_range_list_add(node->range, 0, skill->maxlv);
+        if(i2d_token_assign_literal(node->tokens, skill->name)) {
+            status = i2d_panic("failed to reassign literal for token object");
+        } else {
+            status = i2d_range_list_init(&node->range) ||
+                     i2d_range_list_add(node->range, 0, skill->maxlv);
+        }
     }
 
     return status;
