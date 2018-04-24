@@ -2681,7 +2681,13 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
         switch(node->tokens->type) {
             case I2D_NOT:
                 if(is_conditional) {
-                    status = i2d_range_list_not(&node->range, node->right->range);
+                    if(i2d_range_list_not(&node->range, node->right->range)) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(node->right->logic) {
+                        if(i2d_logic_not(&node->logic, node->right->logic))
+                            status = i2d_panic("failed to create logic object");
+                    }
+
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
@@ -2705,6 +2711,8 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
 
 int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional) {
     int status = I2D_OK;
+    i2d_str predicate;
+    i2d_zero(predicate);
 
     if(!node->left || !node->left->range) {
         status = i2d_panic("binary operator missing left operand");
@@ -2757,56 +2765,96 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                 break;
             case I2D_GREATER:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(!i2d_node_get_predicate(node, &predicate)) {
+                        if(i2d_logic_init(&node->logic, &predicate, node->range))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
                 break;
             case I2D_GREATER_EQUAL:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '=');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '=')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(!i2d_node_get_predicate(node, &predicate)) {
+                        if(i2d_logic_init(&node->logic, &predicate, node->range))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
                 break;
             case I2D_LESS:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(!i2d_node_get_predicate(node, &predicate)) {
+                        if(i2d_logic_init(&node->logic, &predicate, node->range))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
                 break;
             case I2D_LESS_EQUAL:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '=');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '=')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(!i2d_node_get_predicate(node, &predicate)) {
+                        if(i2d_logic_init(&node->logic, &predicate, node->range))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
                 break;
             case I2D_EQUAL:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '=' + '=');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '=' + '=')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(!i2d_node_get_predicate(node, &predicate)) {
+                        if(i2d_logic_init(&node->logic, &predicate, node->range))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
                 break;
             case I2D_NOT_EQUAL:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '!' + '=');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '!' + '=')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(!i2d_node_get_predicate(node, &predicate)) {
+                        if(i2d_logic_init(&node->logic, &predicate, node->range))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
                 break;
             case I2D_AND:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&' + '&');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&' + '&')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(node->left->logic && node->right->logic) {
+                        if(i2d_logic_and(&node->logic, node->left->logic, node->right->logic))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
                 break;
             case I2D_OR:
                 if(is_conditional) {
-                    status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|' + '|');
+                    if(i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|' + '|')) {
+                        status = i2d_panic("failed to compute range object");
+                    } else if(node->left->logic && node->right->logic) {
+                        if(i2d_logic_and(&node->logic, node->left->logic, node->right->logic))
+                            status = i2d_panic("failed to create logic object");
+                    }
                 } else {
                     status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
                 }
