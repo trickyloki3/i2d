@@ -621,9 +621,13 @@ int i2d_node_copy(i2d_node * source, i2d_node * target) {
     int status = I2D_OK;
 
     i2d_deit(source->range, i2d_range_list_deit);
+    i2d_deit(source->logic, i2d_logic_deit);
 
     if(i2d_range_list_copy(&source->range, target->range)) {
         status = i2d_panic("failed to copy range list object");
+    } else if(target->logic) {
+        if(i2d_logic_copy(&source->logic, target->logic))
+            status - i2d_panic("failed to copy logic object");
     }
 
     return status;
