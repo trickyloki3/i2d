@@ -101,8 +101,8 @@ void i2d_range_list_print(i2d_range_list * list, const char * tag) {
             fprintf(stdout, "[%ld,%ld]", walk->min, walk->max);
             walk = walk->next;
         } while(walk != list->list);
-        fprintf(stdout, "\n");
     }
+    fprintf(stdout, "\n");
 }
 
 int i2d_range_list_add(i2d_range_list * list, long x, long y) {

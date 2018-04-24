@@ -648,7 +648,7 @@ void i2d_node_print(i2d_node * node, int level) {
     }
 
     if(node->logic)
-        i2d_logic_print(node->logic, level);
+        i2d_logic_print(node->logic, level + 1);
 
     if(node->left)
         i2d_node_print(node->left, level + 1);
@@ -2404,6 +2404,7 @@ int i2d_script_translate(i2d_script * script, i2d_block * list) {
                     status = i2d_script_statement(script, block);
                     break;
                 case I2D_IF:
+                    status = i2d_script_expression(script, block->nodes, 1);
                     break;
                 case I2D_ELSE:
                     break;

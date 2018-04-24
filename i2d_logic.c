@@ -45,8 +45,8 @@ void i2d_logic_print(i2d_logic * logic, int level) {
     int i;
 
     if(logic) {
-        for(i = 0; i < level; i++)
-            putc('\t', stdout);
+        for(i = 0; i < level * 4; i++)
+            putc('-', stdout);
         switch(logic->type) {
             case var: fprintf(stdout, "[%s] ", logic->name->string); break;
             case and: fprintf(stdout, "[and] "); break;
