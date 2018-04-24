@@ -234,6 +234,7 @@ int i2d_node_cmp_literal(void *, void *);
 int i2d_node_get_arguments(i2d_node *, i2d_node **, size_t);
 int i2d_node_get_constant(i2d_node *, long *);
 int i2d_node_get_string(i2d_node *, i2d_str *);
+int i2d_node_get_predicate(i2d_node *, i2d_str *);
 
 int i2d_statement_init(i2d_statement **, enum i2d_statement_type);
 void i2d_statement_deit(i2d_statement **);

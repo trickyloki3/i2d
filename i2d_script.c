@@ -719,6 +719,23 @@ int i2d_node_get_string(i2d_node * node, i2d_str * result) {
     return status;
 }
 
+int i2d_node_get_predicate(i2d_node * node, i2d_str * result) {
+    int status = I2D_FAIL;
+
+    if(I2D_VARIABLE == node->type) {
+        status = i2d_token_get_literal(node->tokens, result);
+    } else if(I2D_FUNCTION == node->type) {
+        status = i2d_token_get_literal(node->tokens, result);
+    } else {
+        if(node->left)
+            status = i2d_node_get_predicate(node->left, result);
+        if(node->right && status)
+            status = i2d_node_get_predicate(node->right, result);
+    }
+
+    return status;
+}
+
 const char * i2d_statement_string[] = {
     "start",
     "bonus",
