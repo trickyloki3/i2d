@@ -376,11 +376,10 @@ int i2d_script_bonus(i2d_script *, i2d_block *);
 int i2d_script_expression(i2d_script *, i2d_node *, int);
 int i2d_script_expression_variable(i2d_script *, i2d_node *);
 int i2d_script_expression_function(i2d_script *, i2d_node *);
-int i2d_script_expression_function_getrefine(i2d_script *, i2d_node *);
+int i2d_script_expression_function_config(i2d_script *, i2d_node *);
 int i2d_script_expression_function_readparam(i2d_script *, i2d_node *);
 int i2d_script_expression_function_getequiprefinerycnt(i2d_script *, i2d_node *);
 int i2d_script_expression_function_getskilllv(i2d_script *, i2d_node *);
-int i2d_script_expression_function_getpartnerid(i2d_script *, i2d_node *);
 int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
 int i2d_script_expression_binary(i2d_script *, i2d_node *, int);
 

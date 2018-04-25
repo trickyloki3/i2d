@@ -91,7 +91,9 @@
         "getrefine" : { "min": 0, "max" : 15, "description" : "Refine Count"},
         "getequiprefinerycnt" : { "min": 0, "max" : 15, "description" : "Refine Count"},
         "readparam" : { "min": 0, "max" : 99 },
-        "getpartnerid" : {"min": 0, "max" : 1, "description" : "Married"}
+        "getpartnerid" : {"min": 0, "max" : 1, "description" : "Married"},
+        "eaclass" : {"min": -2147483648, "max" : 2147483647, "description" : "Class"},
+        "checkmadogear" : {"min": 0, "max" : 1, "description" : "Madogear"}
     },
     "consts" : {
         "INT_MIN" : -2147483648,

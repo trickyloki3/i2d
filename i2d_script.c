@@ -2553,7 +2553,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     if(i2d_token_get_literal(node->tokens, &literal)) {
         status = i2d_panic("failed to get literal");
     } else if(!strcmp(literal.string, "getrefine")) {
-        status = i2d_script_expression_function_getrefine(script, node);
+        status = i2d_script_expression_function_config(script, node);
     } else if(!strcmp(literal.string, "readparam")) {
         status = i2d_script_expression_function_readparam(script, node);
     } else if(!strcmp(literal.string, "getequiprefinerycnt")) {
@@ -2561,16 +2561,19 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     } else if(!strcmp(literal.string, "getskilllv")) {
         status = i2d_script_expression_function_getskilllv(script, node);
     } else if(!strcmp(literal.string, "getpartnerid")) {
-        status = i2d_script_expression_function_getpartnerid(script, node);
+        status = i2d_script_expression_function_config(script, node);
+    } else if(!strcmp(literal.string, "eaclass")) {
+        status = i2d_script_expression_function_config(script, node);
+    } else if(!strcmp(literal.string, "checkmadogear")) {
+        status = i2d_script_expression_function_config(script, node);
     } else {
         status = i2d_panic("unsupported function -- %s", literal.string);
     }
 
-
     return status;
 }
 
-int i2d_script_expression_function_getrefine(i2d_script * script, i2d_node * node) {
+int i2d_script_expression_function_config(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_str literal;
     i2d_config * config;
@@ -2675,26 +2678,6 @@ int i2d_script_expression_function_getskilllv(i2d_script * script, i2d_node * no
             status = i2d_range_list_init(&node->range) ||
                      i2d_range_list_add(node->range, 0, skill->maxlv);
         }
-    }
-
-    return status;
-}
-
-int i2d_script_expression_function_getpartnerid(i2d_script * script, i2d_node * node) {
-    int status = I2D_OK;
-    i2d_str literal;
-    i2d_config * config;
-
-    if(i2d_node_get_arguments(node->left, NULL, 0)) {
-        status = i2d_panic("failed to get arguments");
-    } else if(i2d_token_get_literal(node->tokens, &literal)) {
-        status = i2d_panic("failed to get literal");
-    } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
-        status = i2d_panic("failed to get config -- %s", literal.string);
-    } else if(i2d_token_assign_literal(node->tokens, config->description)) {
-        status = i2d_panic("failed to reassign literal for token object");
-    } else {
-        status = i2d_range_list_copy(&node->range, config->range);
     }
 
     return status;
