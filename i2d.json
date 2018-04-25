@@ -88,10 +88,10 @@
         "Ele_All" : "dark, earth, fire, ghost, holy, neutral, poison, undead, water, wind"
     },
     "config" : {
-        "getrefine" : { "min": 0, "max" : 15 },
-        "getequiprefinerycnt" : { "min": 0, "max" : 15 },
+        "getrefine" : { "min": 0, "max" : 15, "description" : "Refine Count"},
+        "getequiprefinerycnt" : { "min": 0, "max" : 15, "description" : "Refine Count"},
         "readparam" : { "min": 0, "max" : 99 },
-        "getpartnerid" : {"min": 0, "max" : 1}
+        "getpartnerid" : {"min": 0, "max" : 1, "description" : "Married"}
     },
     "consts" : {
         "INT_MIN" : -2147483648,

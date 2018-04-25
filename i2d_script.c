@@ -2581,15 +2581,10 @@ int i2d_script_expression_function_getrefine(i2d_script * script, i2d_node * nod
         status = i2d_panic("failed to get literal");
     } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
         status = i2d_panic("failed to get config -- %s", literal.string);
+    } else if(i2d_token_assign_literal(node->tokens, config->description)) {
+        status = i2d_panic("failed to reassign literal for token object");
     } else {
-        literal.string = "Refine Count";
-        literal.length = 12;
-
-        if(i2d_token_assign_literal(node->tokens, &literal)) {
-            status = i2d_panic("failed to reassign literal for token object");
-        } else {
-            status = i2d_range_list_copy(&node->range, config->range);
-        }
+        status = i2d_range_list_copy(&node->range, config->range);
     }
 
     return status;
@@ -2645,15 +2640,10 @@ int i2d_script_expression_function_getequiprefinerycnt(i2d_script * script, i2d_
         status = i2d_panic("failed to get literal");
     } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
         status = i2d_panic("failed to get config -- %s", literal.string);
+    } else if(i2d_token_assign_literal(node->tokens, config->description)) {
+        status = i2d_panic("failed to reassign literal for token object");
     } else {
-        literal.string = "Refine Count";
-        literal.length = 12;
-
-        if(i2d_token_assign_literal(node->tokens, &literal)) {
-            status = i2d_panic("failed to reassign literal for token object");
-        } else {
-            status = i2d_range_list_copy(&node->range, config->range);
-        }
+        status = i2d_range_list_copy(&node->range, config->range);
     }
 
     return status;
@@ -2701,15 +2691,10 @@ int i2d_script_expression_function_getpartnerid(i2d_script * script, i2d_node * 
         status = i2d_panic("failed to get literal");
     } else if(i2d_translator_config_map(script->translator, &literal, &config)) {
         status = i2d_panic("failed to get config -- %s", literal.string);
+    } else if(i2d_token_assign_literal(node->tokens, config->description)) {
+        status = i2d_panic("failed to reassign literal for token object");
     } else {
-        literal.string = "Married";
-        literal.length = 7;
-
-        if(i2d_token_assign_literal(node->tokens, &literal)) {
-            status = i2d_panic("failed to reassign literal for token object");
-        } else {
-            status = i2d_range_list_copy(&node->range, config->range);
-        }
+        status = i2d_range_list_copy(&node->range, config->range);
     }
 
     return status;
