@@ -305,6 +305,7 @@ int i2d_str_map_map(i2d_str_map *, i2d_str *, i2d_str **);
 
 struct i2d_config {
     i2d_str * name;
+    i2d_str * description;
     i2d_range_list * range;
 };
 

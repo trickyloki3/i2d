@@ -1897,6 +1897,7 @@ int i2d_config_init(i2d_config ** result, const char * name, json_t * json) {
     i2d_config * object;
     json_t * min;
     json_t * max;
+    json_t * description;
 
     if(i2d_is_invalid(result) || !name || !json) {
         status = i2d_panic("invalid paramater");
@@ -1916,7 +1917,13 @@ int i2d_config_init(i2d_config ** result, const char * name, json_t * json) {
                     if(!max) {
                         status = i2d_panic("failed to get max key value");
                     } else {
-                        if(i2d_range_list_init(&object->range)) {
+                        description = json_object_get(json, "description");
+                        if(description)
+                            status = i2d_str_init(&object->description, json_string_value(description), json_string_length(description));
+
+                        if(status) {
+                            status = i2d_panic("failed to create string object");
+                        } else if(i2d_range_list_init(&object->range)) {
                             status = i2d_panic("failed to create range list object");
                         } else if(i2d_range_list_add(object->range, json_integer_value(min), json_integer_value(max))) {
                             status = i2d_panic("failed to add range list object");
@@ -1940,6 +1947,7 @@ void i2d_config_deit(i2d_config ** result) {
 
     object = *result;
     i2d_deit(object->range, i2d_range_list_deit);
+    i2d_deit(object->description, i2d_str_deit);
     i2d_deit(object->name, i2d_str_deit);
     i2d_free(object);
     *result = NULL;
