@@ -90,7 +90,8 @@
     "config" : {
         "getrefine" : { "min": 0, "max" : 15 },
         "getequiprefinerycnt" : { "min": 0, "max" : 15 },
-        "readparam" : { "min": 0, "max" : 99 }
+        "readparam" : { "min": 0, "max" : 99 },
+        "getpartnerid" : {"min": 0, "max" : 1}
     },
     "consts" : {
         "INT_MIN" : -2147483648,
