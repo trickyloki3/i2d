@@ -311,7 +311,7 @@ typedef struct i2d_str_map i2d_str_map;
 
 int i2d_str_map_init(i2d_str_map **, const char *, json_t *);
 void i2d_str_map_deit(i2d_str_map **);
-int i2d_str_map_map(i2d_str_map *, i2d_str *, i2d_str **);
+int i2d_str_map_get(i2d_str_map *, i2d_str *, i2d_str **);
 
 struct i2d_function {
     i2d_str * name;

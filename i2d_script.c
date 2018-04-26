@@ -1886,17 +1886,8 @@ void i2d_str_map_deit(i2d_str_map ** result) {
     *result = NULL;
 }
 
-int i2d_str_map_map(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
-    int status = I2D_OK;
-    i2d_str * value;
-
-    if(i2d_rbt_search(str_map->map, key, (void **) &value)) {
-        status = I2D_FAIL;
-    } else if(i2d_str_init(result, value->string, value->length)) {
-        status = i2d_panic("failed to create string object");
-    }
-
-    return status;
+int i2d_str_map_get(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
+    return i2d_rbt_search(str_map->map, key, (void **) result);
 }
 
 int i2d_function_init(i2d_function ** result, const char * name, json_t * json) {
@@ -2166,15 +2157,16 @@ int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_
 int i2d_translator_bonus_type(i2d_translator * translator, enum i2d_bonus_argument_type type, i2d_node * node, i2d_str ** result) {
     int status = I2D_OK;
     i2d_str literal;
+    i2d_str * element;
 
     switch(type) {
         case I2D_ELEMENTS:
-            if(I2D_VARIABLE != node->type) {
-                status = i2d_panic("invalid node type -- %d", node->type);
-            } else if(i2d_token_get_literal(node->tokens, &literal)) {
-                status = i2d_panic("failed to get literal");
-            } else if(i2d_str_map_map(translator->elements, &literal, result)) {
+            if(i2d_node_get_string(node, &literal)) {
+                status = i2d_panic("failed to get node string");
+            } else if(i2d_str_map_get(translator->elements, &literal, &element)) {
                 status = i2d_panic("failed to map element -- %s", literal.string);
+            } else if(i2d_str_init(result, element->string, element->length)) {
+                status = i2d_panic("failed to create string object");
             }
             break;
         default:
