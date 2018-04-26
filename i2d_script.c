@@ -1,8 +1,5 @@
 #include "i2d_script.h"
 
-static int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type *, json_t *);
-static int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
-
 static int i2d_translator_const_load(i2d_translator *, i2d_json *);
 static int i2d_translator_function_load(i2d_translator *, i2d_json *);
 static int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
@@ -1669,61 +1666,6 @@ int i2d_description_format(i2d_description * description, i2d_str ** list, size_
     return status;
 }
 
-static int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type * type, json_t * json) {
-    int status = I2D_OK;
-    const char * string;
-    size_t length;
-
-    string = json_string_value(json);
-    if(!string) {
-        status = i2d_panic("failed to get argument type string");
-    } else {
-        length = json_string_length(json);
-        if(!length) {
-            status = i2d_panic("failed on empty argument type string");
-        } else {
-            if(!strcmp(string, "elements")) {
-                *type = I2D_ELEMENTS;
-            } else {
-                status = i2d_panic("unsupported argument type -- %s", string);
-            }
-        }
-    }
-
-    return status;
-}
-
-static int i2d_bonus_type_argument_type_load(i2d_bonus_type * bonus_type, json_t * json) {
-    int status = I2D_OK;
-    size_t i;
-    size_t size;
-    json_t * argument_type_array;
-    json_t * argument_type;
-
-    argument_type_array = json_object_get(json, "argument_type");
-    if(!argument_type_array) {
-        status = i2d_panic("failed to get argument type key value");
-    } else {
-        size = json_array_size(argument_type_array);
-        if(!size) {
-            status = i2d_panic("failed on empty argument type array");
-        } else if(size > i2d_size(bonus_type->type)) {
-            status = i2d_panic("failed on insufficient bonus type array");
-        } else {
-            for(i = 0; i < size && !status; i++) {
-                argument_type = json_array_get(argument_type_array, i);
-                if(!argument_type) {
-                    status = i2d_panic("failed to get argument type string");
-                } else if(i2d_bonus_type_argument_type_map(&bonus_type->type[i], argument_type)) {
-                    status = i2d_panic("failed to map argument type");
-                }
-            }
-        }
-    }
-
-    return status;
-}
-
 int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * json) {
     int status = I2D_OK;
     i2d_bonus_type * object;
@@ -1744,8 +1686,8 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * js
                 status = i2d_panic("failed to get description string");
             } else if(i2d_description_init(&object->description, &description)) {
                 status = i2d_panic("failed to create description object");
-            } else if(i2d_bonus_type_argument_type_load(object, json)) {
-                status = i2d_panic("failed to load argument type");
+            } else if(i2d_str_list_init(&object->argument_type, "argument_type", json)) {
+                status = i2d_panic("failed to create string list object");
             }
 
             if(status)
@@ -1762,6 +1704,7 @@ void i2d_bonus_type_deit(i2d_bonus_type ** result) {
     i2d_bonus_type * object;
 
     object = *result;
+    i2d_deit(object->argument_type, i2d_str_list_deit);
     i2d_deit(object->description, i2d_description_deit);
     i2d_deit(object->name, i2d_str_deit);
     i2d_free(object);
@@ -2154,29 +2097,6 @@ int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_
     return i2d_rbt_search(translator->function_map, key, (void **) result);
 }
 
-int i2d_translator_bonus_type(i2d_translator * translator, enum i2d_bonus_argument_type type, i2d_node * node, i2d_str ** result) {
-    int status = I2D_OK;
-    i2d_str literal;
-    i2d_str * element;
-
-    switch(type) {
-        case I2D_ELEMENTS:
-            if(i2d_node_get_string(node, &literal)) {
-                status = i2d_panic("failed to get node string");
-            } else if(i2d_str_map_get(translator->elements, &literal, &element)) {
-                status = i2d_panic("failed to map element -- %s", literal.string);
-            } else if(i2d_str_init(result, element->string, element->length)) {
-                status = i2d_panic("failed to create string object");
-            }
-            break;
-        default:
-            status = i2d_panic("invalid block argument type -- %d", type);
-            break;
-    }
-
-    return status;
-}
-
 int i2d_context_init(i2d_context ** result) {
     int status = I2D_OK;
     i2d_context * object;
@@ -2419,13 +2339,6 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
         status = i2d_panic("failed to get bonus type value");
     } else if(i2d_translator_bonus_map(script->translator, &bonus_id, &bonus_type)) {
         status = i2d_panic("failed to map bonus type value");
-    } else if(i2d_translator_bonus_type(script->translator, bonus_type->type[0], arguments[1], &string)) {
-        status = i2d_panic("failed to translate bonus arguments");
-    } else {
-        if(i2d_description_format(bonus_type->description, &string, 1, block->buffer))
-            status = i2d_panic("failed to format bonus type");
-
-        i2d_str_deit(&string);
     }
 
     return status;

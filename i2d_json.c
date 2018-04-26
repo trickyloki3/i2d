@@ -99,6 +99,75 @@ int i2d_json_get_int(json_t * json, const char * key, json_int_t * result) {
     return status;
 }
 
+int i2d_str_list_init(i2d_str_list ** result, const char * key, json_t * json) {
+    int status = I2D_OK;
+    i2d_str_list * object;
+    json_t * array;
+    size_t index;
+    json_t *value;
+    const char * string;
+    size_t length;
+
+    if(i2d_is_invalid(result) || !key || !json) {
+        status = i2d_panic("invalid paramaters");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            array = json_object_get(json, key);
+            if(!array) {
+                status = i2d_panic("failed to get %s key value", key);
+            } else {
+                object->size = json_array_size(array);
+                if(!object->size) {
+                    status = i2d_panic("empty array on %s key value", key);
+                } else {
+                    object->list = calloc(object->size, sizeof(*object->list));
+                    if(!object->list) {
+                        status = i2d_panic("out of memory");
+                    } else {
+                        json_array_foreach(array, index, value) {
+                            string = json_string_value(value);
+                            if(!string) {
+                                status = i2d_panic("failed on invalid string");
+                            } else {
+                                length = json_string_length(value);
+                                if(!length) {
+                                    status = i2d_panic("failed on empty string");
+                                } else if(i2d_str_init(&object->list[index], string, length)) {
+                                    status = i2d_panic("failed to create string object");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(status)
+                i2d_str_list_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_str_list_deit(i2d_str_list ** result) {
+    i2d_str_list * object;
+    size_t i;
+
+    object = *result;
+    if(object->list) {
+        for(i = 0; i < object->size; i++)
+            i2d_deit(object->list[i], i2d_str_deit);
+        i2d_free(object->list);
+    }
+    i2d_free(object);
+    *result = NULL;
+}
+
 #if i2d_debug
 int i2d_json_test() {
     int status = I2D_OK;

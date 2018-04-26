@@ -17,6 +17,17 @@ int i2d_json_block_map(i2d_json *, const char *, json_t **);
 
 int i2d_json_get_str(json_t *, const char *, i2d_str_const *);
 int i2d_json_get_int(json_t *, const char *, json_int_t *);
+
+struct i2d_str_list {
+    i2d_str ** list;
+    size_t size;
+};
+
+typedef struct i2d_str_list i2d_str_list;
+
+int i2d_str_list_init(i2d_str_list **, const char *, json_t *);
+void i2d_str_list_deit(i2d_str_list **);
+
 #if i2d_debug
 int i2d_json_test();
 #endif

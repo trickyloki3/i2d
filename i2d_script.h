@@ -275,15 +275,11 @@ int i2d_description_deit(i2d_description **);
 int i2d_description_tokenize(i2d_description *, const char *, size_t);
 int i2d_description_format(i2d_description *, i2d_str **, size_t, i2d_buf *);
 
-enum i2d_bonus_argument_type {
-    I2D_ELEMENTS
-};
-
 struct i2d_bonus_type {
     long value;
     i2d_str * name;
     i2d_description * description;
-    enum i2d_bonus_argument_type type[5];
+    i2d_str_list * argument_type;
 };
 
 typedef struct i2d_bonus_type i2d_bonus_type;
@@ -347,7 +343,6 @@ void i2d_translator_deit(i2d_translator **);
 int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
 int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
-int i2d_translator_bonus_type(i2d_translator *, enum i2d_bonus_argument_type, i2d_node *, i2d_str **);
 
 struct i2d_context {
     i2d_rbt * variables;
