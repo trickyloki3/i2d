@@ -2452,7 +2452,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
                 if(node->left) {
                     status = i2d_node_copy(node, node->left);
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 0);
+                    status = i2d_range_list_init2(&node->range, 0, 0);
                 }
                 break;
             case I2D_VARIABLE:
@@ -2506,11 +2506,8 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
                 number = 0;
             }
 
-            if(i2d_range_list_init(&node->range)) {
+            if(i2d_range_list_init2(&node->range, number, number))
                 status = i2d_panic("failed to create range list object");
-            } else if(i2d_range_list_add(node->range, number, number)) {
-                status = i2d_panic("failed to add range to range list");
-            }
         }
     }
 
@@ -2547,7 +2544,7 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
                     }
 
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_BIT_NOT:
@@ -2630,7 +2627,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_GREATER_EQUAL:
@@ -2642,7 +2639,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_LESS:
@@ -2654,7 +2651,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_LESS_EQUAL:
@@ -2666,7 +2663,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_EQUAL:
@@ -2678,7 +2675,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_NOT_EQUAL:
@@ -2690,7 +2687,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_AND:
@@ -2702,7 +2699,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_OR:
@@ -2714,7 +2711,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                             status = i2d_panic("failed to create logic object");
                     }
                 } else {
-                    status = i2d_range_list_init(&node->range) || i2d_range_list_add(node->range, 0, 1);
+                    status = i2d_range_list_init2(&node->range, 0, 1);
                 }
                 break;
             case I2D_ASSIGN:
