@@ -334,6 +334,7 @@ typedef struct i2d_bonus_handler i2d_bonus_handler;
 
 int i2d_bonus_handler_init(i2d_bonus_handler **, const char *, i2d_bonus_argument_type_handler);
 void i2d_bonus_handle_deit(i2d_bonus_handler **);
+int i2d_bonus_argument_type_elements(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_translator {
     i2d_rbt * const_map;

@@ -2052,6 +2052,22 @@ void i2d_bonus_handle_deit(i2d_bonus_handler ** result) {
     *result = NULL;
 }
 
+int i2d_bonus_argument_type_elements(i2d_translator * translator, i2d_node * node, i2d_str ** result) {
+    int status = I2D_OK;
+    i2d_str literal;
+    i2d_str * element;
+
+    if(i2d_node_get_string(node, &literal)) {
+        status = i2d_panic("failed to get node string");
+    } else if(i2d_str_map_get(translator->elements, &literal, &element)) {
+        status = i2d_panic("failed to map element -- %s", literal.string);
+    } else if(i2d_str_init(result, element->string, element->length)) {
+        status = i2d_panic("failed to create string object");
+    }
+
+    return status;
+}
+
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
