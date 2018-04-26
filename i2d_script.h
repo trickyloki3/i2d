@@ -333,8 +333,8 @@ struct i2d_bonus_handler {
 typedef struct i2d_bonus_handler i2d_bonus_handler;
 
 int i2d_bonus_handler_init(i2d_bonus_handler **, const char *, i2d_bonus_argument_handler);
-void i2d_bonus_handle_deit(i2d_bonus_handler **);
-int i2d_bonus_argument_elements(i2d_translator *, i2d_node *, i2d_str **);
+void i2d_bonus_handler_deit(i2d_bonus_handler **);
+int i2d_bonus_handler_elements(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_translator {
     i2d_rbt * const_map;
@@ -348,6 +348,10 @@ struct i2d_translator {
     i2d_rbt * bonus_map;
     i2d_bonus_type ** bonus_list;
     size_t bonus_size;
+
+    i2d_rbt * bonus_handler_map;
+    i2d_bonus_handler ** bonus_handler_list;
+    size_t bonus_handler_size;
 
     i2d_str_map * elements;
 };
