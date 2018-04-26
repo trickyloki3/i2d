@@ -2197,6 +2197,19 @@ int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_
     return i2d_rbt_search(translator->function_map, key, (void **) result);
 }
 
+int i2d_translator_bonus_handler(i2d_translator * translator, i2d_str * argument_type, i2d_node * node, i2d_str ** result) {
+    int status = I2D_OK;
+    i2d_bonus_handler * handler;
+
+    if(i2d_rbt_search(translator->bonus_handler_map, argument_type, (void **) &handler)) {
+        status = i2d_panic("failed to search to bonus handler -- %s", argument_type->string);
+    } else {
+        status = handler->handler(translator, node, result);
+    }
+
+    return status;
+}
+
 int i2d_context_init(i2d_context ** result) {
     int status = I2D_OK;
     i2d_context * object;
@@ -2439,6 +2452,15 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
         status = i2d_panic("failed to get bonus type value");
     } else if(i2d_translator_bonus_map(script->translator, &bonus_id, &bonus_type)) {
         status = i2d_panic("failed to map bonus type value");
+    } else {
+        if(i2d_translator_bonus_handler(script->translator, bonus_type->argument_type->list[0], arguments[1], &string)) {
+            status = i2d_panic("failed to translate bonus arguments");
+        } else {
+            if(i2d_description_format(bonus_type->description, &string, 1, block->buffer))
+                status = i2d_panic("failed to format bonus type");
+
+            i2d_str_deit(&string);
+        }
     }
 
     return status;
