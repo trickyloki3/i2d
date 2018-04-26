@@ -323,18 +323,18 @@ typedef struct i2d_function i2d_function;
 int i2d_function_init(i2d_function **, const char *, json_t *);
 void i2d_function_deit(i2d_function **);
 
-typedef int (*i2d_bonus_argument_type_handler)(i2d_translator *, i2d_node *, i2d_str **);
+typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_bonus_handler {
     i2d_str * name;
-    i2d_bonus_argument_type_handler handler;
+    i2d_bonus_argument_handler handler;
 };
 
 typedef struct i2d_bonus_handler i2d_bonus_handler;
 
-int i2d_bonus_handler_init(i2d_bonus_handler **, const char *, i2d_bonus_argument_type_handler);
+int i2d_bonus_handler_init(i2d_bonus_handler **, const char *, i2d_bonus_argument_handler);
 void i2d_bonus_handle_deit(i2d_bonus_handler **);
-int i2d_bonus_argument_type_elements(i2d_translator *, i2d_node *, i2d_str **);
+int i2d_bonus_argument_elements(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_translator {
     i2d_rbt * const_map;
