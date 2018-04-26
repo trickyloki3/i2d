@@ -1,6 +1,5 @@
 #include "i2d_script.h"
 
-static int i2d_bonus_type_description_load(i2d_bonus_type *, json_t *);
 static int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type *, json_t *);
 static int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
 
@@ -1547,11 +1546,11 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-int i2d_description_init(i2d_description ** result, const char * string, size_t length) {
+int i2d_description_init(i2d_description ** result, i2d_str_const * description) {
     int status = I2D_OK;
     i2d_description * object;
 
-    if(i2d_is_invalid(result) || !string || !length) {
+    if(i2d_is_invalid(result) || !description) {
         status = i2d_panic("invalid paramaters");
     } else {
         object = calloc(1, sizeof(*object));
@@ -1560,7 +1559,7 @@ int i2d_description_init(i2d_description ** result, const char * string, size_t 
         } else {
             if(i2d_token_init(&object->tokens, I2D_TOKEN)) {
                 status = i2d_panic("failed to create token object");
-            } else if(i2d_description_tokenize(object, string, length)) {
+            } else if(i2d_description_tokenize(object, description->string, description->length)) {
                 status = i2d_panic("failed to tokenize description");
             }
 
@@ -1670,32 +1669,6 @@ int i2d_description_format(i2d_description * description, i2d_str ** list, size_
     return status;
 }
 
-static int i2d_bonus_type_description_load(i2d_bonus_type * bonus_type, json_t * json) {
-    int status = I2D_OK;
-    json_t * description;
-    const char * string;
-    size_t length;
-
-    description = json_object_get(json, "description");
-    if(!description) {
-        status = i2d_panic("failed to get description key value");
-    } else {
-        string = json_string_value(description);
-        if(!string) {
-            status = i2d_panic("failed to get description string");
-        } else {
-            length = json_string_length(description);
-            if(!length) {
-                status = i2d_panic("failed on empty description string");
-            } else if(i2d_description_init(&bonus_type->description, string, length)) {
-                status = i2d_panic("failed to create description object");
-            }
-        }
-    }
-
-    return status;
-}
-
 static int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type * type, json_t * json) {
     int status = I2D_OK;
     const char * string;
@@ -1755,6 +1728,8 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * js
     int status = I2D_OK;
     i2d_bonus_type * object;
     json_t * argument_type;
+    i2d_str_const description;
+    i2d_zero(description);
 
     if(i2d_is_invalid(result) || !name) {
         status = i2d_panic("invalid paramaters");
@@ -1765,8 +1740,10 @@ int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * js
         } else {
             if(i2d_str_init(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
-            } else if(i2d_bonus_type_description_load(object, json)) {
-                status = i2d_panic("failed to load bonus type description");
+            } else if(i2d_json_get_str(json, "description", &description)) {
+                status = i2d_panic("failed to get description string");
+            } else if(i2d_description_init(&object->description, &description)) {
+                status = i2d_panic("failed to create description object");
             } else if(i2d_bonus_type_argument_type_load(object, json)) {
                 status = i2d_panic("failed to load argument type");
             }
@@ -1925,9 +1902,10 @@ int i2d_str_map_map(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
 int i2d_function_init(i2d_function ** result, const char * name, json_t * json) {
     int status = I2D_OK;
     i2d_function * object;
-    json_t * min;
-    json_t * max;
-    json_t * description;
+    json_int_t min;
+    json_int_t max;
+    i2d_str_const description;
+    i2d_zero(description);
 
     if(i2d_is_invalid(result) || !name || !json) {
         status = i2d_panic("invalid paramater");
@@ -1938,28 +1916,14 @@ int i2d_function_init(i2d_function ** result, const char * name, json_t * json) 
         } else {
             if(i2d_str_init(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
-            } else {
-                min = json_object_get(json, "min");
-                if(!min) {
-                    status = i2d_panic("failed to get min key value");
-                } else {
-                    max = json_object_get(json, "max");
-                    if(!max) {
-                        status = i2d_panic("failed to get max key value");
-                    } else {
-                        description = json_object_get(json, "description");
-                        if(description)
-                            status = i2d_description_init(&object->description, json_string_value(description), json_string_length(description));
-
-                        if(status) {
-                            status = i2d_panic("failed to create string object");
-                        } else if(i2d_range_list_init(&object->range)) {
-                            status = i2d_panic("failed to create range list object");
-                        } else if(i2d_range_list_add(object->range, json_integer_value(min), json_integer_value(max))) {
-                            status = i2d_panic("failed to add range list object");
-                        }
-                    }
-                }
+            } else if(i2d_json_get_int(json, "min", &min) || i2d_json_get_int(json, "max", &max)) {
+                status = i2d_panic("failed to get min and max value");
+            } else if(i2d_range_list_init2(&object->range, min, max)) {
+                status = i2d_panic("failed to create range list object");
+            } else if(i2d_json_get_str(json, "description", &description)) {
+                status = i2d_panic("failed to get description string");
+            } else if(i2d_description_init(&object->description, &description)) {
+                status = i2d_panic("failed to create description object");
             }
 
             if(status)

@@ -270,7 +270,7 @@ struct i2d_description {
 
 typedef struct i2d_description i2d_description;
 
-int i2d_description_init(i2d_description **, const char *, size_t);
+int i2d_description_init(i2d_description **, i2d_str_const *);
 int i2d_description_deit(i2d_description **);
 int i2d_description_tokenize(i2d_description *, const char *, size_t);
 int i2d_description_format(i2d_description *, i2d_str **, size_t, i2d_buf *);
