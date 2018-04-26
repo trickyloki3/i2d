@@ -4,10 +4,9 @@ static int i2d_bonus_type_description_load(i2d_bonus_type *, json_t *);
 static int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type *, json_t *);
 static int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
 
-static int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 static int i2d_translator_const_load(i2d_translator *, i2d_json *);
-static int i2d_translator_bonus_type_remap(i2d_translator *);
 static int i2d_translator_function_load(i2d_translator *, i2d_json *);
+static int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1984,48 +1983,6 @@ void i2d_function_deit(i2d_function ** result) {
     *result = NULL;
 }
 
-static int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json) {
-    int status = I2D_OK;
-    json_t * bonus = NULL;
-    size_t i = 0;
-    const char * key;
-    json_t * value;
-
-    if(i2d_json_block_map(json, "bonus", &bonus)) {
-        status = i2d_panic("failed to get bonus block key value");
-    } else {
-        translator->bonus_size = json_object_size(bonus);
-        if(!translator->bonus_size) {
-            status = i2d_panic("failed on empty bonus type array");
-        } else {
-            translator->bonus_list = calloc(translator->bonus_size, sizeof(*translator->bonus_list));
-            if(!translator->bonus_list) {
-                status = i2d_panic("out of memory");
-            } else {
-                json_object_foreach(bonus, key, value) {
-                    if(i2d_bonus_type_init(&translator->bonus_list[i], key, value)) {
-                        status = i2d_panic("failed to create bonus type object");
-                    } else {
-                        i++;
-                    }
-                }
-            }
-        }
-    }
-
-    if(!status) {
-        if(i2d_rbt_init(&translator->bonus_map, i2d_rbt_cmp_str)) {
-            status = i2d_panic("failed to create red black tree object");
-        } else {
-            for(i = 0; i < translator->bonus_size; i++)
-                if(i2d_rbt_insert(translator->bonus_map, translator->bonus_list[i]->name, translator->bonus_list[i]))
-                    status = i2d_panic("failed to index bonus type object");
-        }
-    }
-
-    return status;
-}
-
 static int i2d_translator_const_load(i2d_translator * translator, i2d_json * json) {
     int status = I2D_OK;
     json_t * consts;
@@ -2063,34 +2020,6 @@ static int i2d_translator_const_load(i2d_translator * translator, i2d_json * jso
             for(i = 0; i < translator->const_size; i++)
                 if(i2d_rbt_insert(translator->const_map, translator->const_list[i]->name, translator->const_list[i]))
                     status = i2d_panic("failed to index const object");
-        }
-    }
-
-    return status;
-}
-
-static int i2d_translator_bonus_type_remap(i2d_translator * translator) {
-    int status = I2D_OK;
-    size_t i;
-    i2d_rbt * bonus_map = NULL;
-
-    if(i2d_rbt_init(&bonus_map, i2d_rbt_cmp_long)) {
-        status = i2d_panic("failed to create red black tree object");
-    } else {
-        for(i = 0; i < translator->bonus_size; i++) {
-            if(i2d_translator_const_map(translator, translator->bonus_list[i]->name, &translator->bonus_list[i]->value)) {
-                status = i2d_panic("failed to remap bonus type -- %s", translator->bonus_list[i]->name->string);
-            } else {
-                if(i2d_rbt_insert(bonus_map, &translator->bonus_list[i]->value, translator->bonus_list[i]))
-                    status = i2d_panic("failed to index bonus type object");
-            }
-        }
-
-        if(status) {
-            i2d_rbt_deit(&bonus_map);
-        } else {
-            i2d_rbt_deit(&translator->bonus_map);
-            translator->bonus_map = bonus_map;
         }
     }
 
@@ -2141,6 +2070,54 @@ static int i2d_translator_function_load(i2d_translator * translator, i2d_json * 
     return status;
 }
 
+static int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json * json) {
+    int status = I2D_OK;
+    json_t * bonus = NULL;
+    size_t i = 0;
+    const char * key;
+    json_t * value;
+    i2d_bonus_type * bonus_type;
+
+    if(i2d_json_block_map(json, "bonus", &bonus)) {
+        status = i2d_panic("failed to get bonus block key value");
+    } else {
+        translator->bonus_size = json_object_size(bonus);
+        if(!translator->bonus_size) {
+            status = i2d_panic("failed on empty bonus type array");
+        } else {
+            translator->bonus_list = calloc(translator->bonus_size, sizeof(*translator->bonus_list));
+            if(!translator->bonus_list) {
+                status = i2d_panic("out of memory");
+            } else {
+                json_object_foreach(bonus, key, value) {
+                    if(i2d_bonus_type_init(&translator->bonus_list[i], key, value)) {
+                        status = i2d_panic("failed to create bonus type object");
+                    } else {
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    if(!status) {
+        if(i2d_rbt_init(&translator->bonus_map, i2d_rbt_cmp_long)) {
+            status = i2d_panic("failed to create red black tree object");
+        } else {
+            for(i = 0; i < translator->bonus_size; i++) {
+                bonus_type = translator->bonus_list[i];
+                if(i2d_translator_const_map(translator, bonus_type->name, &bonus_type->value)) {
+                    status = i2d_panic("failed to remap bonus type -- %s", bonus_type->name->string);
+                } else if(i2d_rbt_insert(translator->bonus_map, &bonus_type->value, bonus_type)) {
+                    status = i2d_panic("failed to index bonus type object");
+                }
+            }
+        }
+    }
+
+    return status;
+}
+
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
@@ -2153,14 +2130,12 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_translator_bonus_type_load(object, json)) {
-                status = i2d_panic("failed to load bonus type");
-            } else if(i2d_translator_const_load(object, json)) {
+            if(i2d_translator_const_load(object, json)) {
                 status = i2d_panic("failed to load consts");
-            } else if(i2d_translator_bonus_type_remap(object)) {
-                status = i2d_panic("failed to remap bonus type");
             } else if(i2d_translator_function_load(object, json)) {
                 status = i2d_panic("failed to load config");
+            } else if(i2d_translator_bonus_type_load(object, json)) {
+                status = i2d_panic("failed to load bonus type");
             } else if(i2d_str_map_init(&object->elements, "elements", json->object)) {
                 status = i2d_panic("failed to load element map object");
             }

@@ -325,10 +325,6 @@ int i2d_function_init(i2d_function **, const char *, json_t *);
 void i2d_function_deit(i2d_function **);
 
 struct i2d_translator {
-    i2d_rbt * bonus_map;
-    i2d_bonus_type ** bonus_list;
-    size_t bonus_size;
-
     i2d_rbt * const_map;
     i2d_const ** const_list;
     size_t const_size;
@@ -336,6 +332,10 @@ struct i2d_translator {
     i2d_rbt * function_map;
     i2d_function ** function_list;
     size_t function_size;
+
+    i2d_rbt * bonus_map;
+    i2d_bonus_type ** bonus_list;
+    size_t bonus_size;
 
     i2d_str_map * elements;
 };
