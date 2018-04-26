@@ -2016,6 +2016,42 @@ static int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json 
     return status;
 }
 
+int i2d_bonus_handler_init(i2d_bonus_handler ** result, const char * key, i2d_bonus_argument_type_handler handler) {
+    int status = I2D_OK;
+    i2d_bonus_handler * object;
+
+    if(i2d_is_invalid(result) || !key || !handler) {
+        status = i2d_panic("invalid paramaters");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_str_init(&object->name, key, strlen(key))) {
+                status = i2d_panic("failed to create string object");
+            } else {
+                object->handler = handler;
+            }
+
+            if(status)
+                i2d_bonus_handle_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_bonus_handle_deit(i2d_bonus_handler ** result) {
+    i2d_bonus_handler * object;
+
+    object = *result;
+    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
