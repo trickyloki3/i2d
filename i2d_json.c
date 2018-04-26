@@ -58,6 +58,33 @@ int i2d_json_block_map(i2d_json * json, const char * key, json_t ** result) {
     return status;
 }
 
+int i2d_json_get_str(json_t * json, const char * key, i2d_str_const * result) {
+    int status = I2D_OK;
+    json_t * object;
+    const char * string;
+    size_t length;
+
+    object = json_object_get(json, key);
+    if(!object) {
+        status = i2d_panic("failed to get %s key value", key);
+    } else {
+        string = json_string_value(object);
+        if(!string) {
+            status = i2d_panic("invalid string on %s key value", key);
+        } else {
+            length = json_string_length(object);
+            if(!length) {
+                status = i2d_panic("empty string on %s key value", key);
+            } else {
+                result->string = string;
+                result->length = length;
+            }
+        }
+    }
+
+    return status;
+}
+
 #if i2d_debug
 int i2d_json_test() {
     int status = I2D_OK;

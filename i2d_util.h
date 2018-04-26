@@ -37,6 +37,13 @@ struct i2d_str {
 
 typedef struct i2d_str i2d_str;
 
+struct i2d_str_const {
+    const char * string;
+    size_t length;
+};
+
+typedef struct i2d_str_const i2d_str_const;
+
 int i2d_str_init(i2d_str **, const char *, size_t);
 void i2d_str_deit(i2d_str **);
 int i2d_str_copy(i2d_str *, const char *, size_t);
