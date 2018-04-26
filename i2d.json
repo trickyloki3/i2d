@@ -74,6 +74,40 @@
         "specialeffect" : {},
         "showscript" : {}
     },
+    "functions" : {
+        "getrefine" : {
+            "min": 0,
+            "max" : 15,
+            "description" : "Refine Count"
+        },
+        "getequiprefinerycnt" : {
+            "min": 0,
+            "max" : 15,
+            "description" : "Refine Count Of {0}",
+            "argument_type" : ["equip_slot"]
+        },
+        "readparam" : {
+            "min": 0,
+            "max" : 99,
+            "description" : "{0}",
+            "argument_type" : ["paramater"]
+        },
+        "getpartnerid" : {
+            "min": 0,
+            "max" : 1,
+            "description" : "Married"
+        },
+        "eaclass" : {
+            "min": -2147483648,
+            "max" : 2147483647,
+            "description" : "Class"
+        },
+        "checkmadogear" : {
+            "min": 0,
+            "max" : 1,
+            "description" : "Madogear Equipped"
+        }
+    },
     "elements" : {
         "Ele_Dark" : "dark",
         "Ele_Earth" : "earth",
@@ -86,14 +120,6 @@
         "Ele_Water" : "water",
         "Ele_Wind" : "wind",
         "Ele_All" : "dark, earth, fire, ghost, holy, neutral, poison, undead, water, wind"
-    },
-    "config" : {
-        "getrefine" : { "min": 0, "max" : 15, "description" : "Refine Count"},
-        "getequiprefinerycnt" : { "min": 0, "max" : 15, "description" : "Refine Count"},
-        "readparam" : { "min": 0, "max" : 99 },
-        "getpartnerid" : {"min": 0, "max" : 1, "description" : "Married"},
-        "eaclass" : {"min": -2147483648, "max" : 2147483647, "description" : "Class"},
-        "checkmadogear" : {"min": 0, "max" : 1, "description" : "Madogear"}
     },
     "consts" : {
         "INT_MIN" : -2147483648,
