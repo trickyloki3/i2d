@@ -3,11 +3,11 @@
         "bonus" : {
             "bDefEle" : {
                 "description" : "Enchanted with {0} property.",
-                "argument_type" : ["elemental"]
+                "argument_type" : ["elements"]
             },
             "bAtkEle" : {
                 "description" : "Enchanted with {0} property.",
-                "argument_type" : ["elemental"]
+                "argument_type" : ["elements"]
             }
         },
         "bonus2" : {},

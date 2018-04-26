@@ -1710,8 +1710,8 @@ static int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type * type,
         if(!length) {
             status = i2d_panic("failed on empty argument type string");
         } else {
-            if(!strcmp(string, "elemental")) {
-                *type = I2D_ELEMENTAL;
+            if(!strcmp(string, "elements")) {
+                *type = I2D_ELEMENTS;
             } else {
                 status = i2d_panic("unsupported argument type -- %s", string);
             }
@@ -2229,7 +2229,7 @@ int i2d_translator_bonus_type(i2d_translator * translator, enum i2d_bonus_argume
     i2d_str literal;
 
     switch(type) {
-        case I2D_ELEMENTAL:
+        case I2D_ELEMENTS:
             if(I2D_VARIABLE != node->type) {
                 status = i2d_panic("invalid node type -- %d", node->type);
             } else if(i2d_token_get_literal(node->tokens, &literal)) {

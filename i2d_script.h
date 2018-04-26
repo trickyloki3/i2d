@@ -276,7 +276,7 @@ int i2d_description_tokenize(i2d_description *, const char *, size_t);
 int i2d_description_format(i2d_description *, i2d_str **, size_t, i2d_buf *);
 
 enum i2d_bonus_argument_type {
-    I2D_ELEMENTAL
+    I2D_ELEMENTS
 };
 
 struct i2d_bonus_type {
