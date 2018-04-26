@@ -7,7 +7,7 @@ static int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
 static int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 static int i2d_translator_const_load(i2d_translator *, i2d_json *);
 static int i2d_translator_bonus_type_remap(i2d_translator *);
-static int i2d_translator_config_load(i2d_translator *, i2d_json *);
+static int i2d_translator_function_load(i2d_translator *, i2d_json *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -2097,7 +2097,7 @@ static int i2d_translator_bonus_type_remap(i2d_translator * translator) {
     return status;
 }
 
-static int i2d_translator_config_load(i2d_translator * translator, i2d_json * json) {
+static int i2d_translator_function_load(i2d_translator * translator, i2d_json * json) {
     int status = I2D_OK;
     json_t * function;
     size_t i = 0;
@@ -2159,7 +2159,7 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to load consts");
             } else if(i2d_translator_bonus_type_remap(object)) {
                 status = i2d_panic("failed to remap bonus type");
-            } else if(i2d_translator_config_load(object, json)) {
+            } else if(i2d_translator_function_load(object, json)) {
                 status = i2d_panic("failed to load config");
             } else if(i2d_str_map_init(&object->elements, "elements", json->object)) {
                 status = i2d_panic("failed to load element map object");
