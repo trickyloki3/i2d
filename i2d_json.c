@@ -85,6 +85,20 @@ int i2d_json_get_str(json_t * json, const char * key, i2d_str_const * result) {
     return status;
 }
 
+int i2d_json_get_int(json_t * json, const char * key, json_int_t * result) {
+    int status = I2D_OK;
+    json_t * object;
+
+    object =  json_object_get(json, key);
+    if(!object) {
+        status = i2d_panic("failed to get %s key value", key);
+    } else {
+        *result = json_integer_value(object);
+    }
+
+    return status;
+}
+
 #if i2d_debug
 int i2d_json_test() {
     int status = I2D_OK;
