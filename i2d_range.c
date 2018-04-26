@@ -73,6 +73,10 @@ int i2d_range_list_init(i2d_range_list ** result) {
     return status;
 }
 
+int i2d_range_list_init2(i2d_range_list ** result, long min, long max) {
+    return i2d_range_list_init(result) || i2d_range_list_add(*result, min, max);
+}
+
 void i2d_range_list_deit(i2d_range_list ** result) {
     i2d_range_list * object;
     i2d_range * range;
