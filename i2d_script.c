@@ -1,6 +1,5 @@
 #include "i2d_script.h"
 
-static int i2d_bonus_type_description_tokenize(i2d_bonus_type *, const char *, size_t);
 static int i2d_bonus_type_description_load(i2d_bonus_type *, json_t *);
 static int i2d_bonus_type_argument_type_map(enum i2d_bonus_argument_type *, json_t *);
 static int i2d_bonus_type_argument_type_load(i2d_bonus_type *, json_t *);
@@ -1549,8 +1548,44 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-static int i2d_bonus_type_description_tokenize(i2d_bonus_type * bonus_type, const char * string, size_t length) {
+int i2d_description_init(i2d_description ** result, const char * string, size_t length) {
     int status = I2D_OK;
+    i2d_description * object;
+
+    if(i2d_is_invalid(result) || !string || !length) {
+        status = i2d_panic("invalid paramaters");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_token_init(&object->tokens, I2D_TOKEN)) {
+                status = i2d_panic("failed to create token object");
+            } else if(i2d_description_tokenize(object, string, length)) {
+                status = i2d_panic("failed to tokenize description");
+            }
+
+            if(status)
+                i2d_description_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+int i2d_description_deit(i2d_description ** result) {
+    i2d_description * object;
+
+    object = *result;
+    i2d_deit(object->tokens, i2d_token_list_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
+int i2d_description_tokenize(i2d_description * description, const char * string, size_t length) {
+    int status = I2D_OK;
+
     size_t i;
     char symbol;
     i2d_token * token = NULL;
@@ -1587,9 +1622,49 @@ static int i2d_bonus_type_description_tokenize(i2d_bonus_type * bonus_type, cons
         }
 
         if(token) {
-            i2d_token_append(token, bonus_type->tokens);
+            i2d_token_append(token, description->tokens);
             state = token;
             token = NULL;
+        }
+    }
+
+    return status;
+}
+
+int i2d_description_format(i2d_description * description, i2d_str ** list, size_t size, i2d_buf * buffer) {
+    int status = I2D_OK;
+    i2d_token * token;
+    i2d_str literal;
+    long index;
+
+    if(!description->tokens) {
+        status = i2d_panic("failed on empty bonus type description");
+    } else {
+        token = description->tokens->next;
+        while(token->type != I2D_TOKEN && !status) {
+            switch(token->type) {
+                case I2D_LITERAL:
+                    if(i2d_token_get_literal(token, &literal)) {
+                        status = i2d_panic("failed to get literal");
+                    } else if(i2d_buf_format(buffer, "%s", literal.string)) {
+                        status = i2d_panic("failed to format buffer");
+                    }
+                    break;
+                case I2D_POSITION:
+                    if(i2d_token_get_literal(token, &literal)) {
+                        status = i2d_panic("failed to get literal");
+                    } else if(i2d_strtol(&index, literal.string, literal.length, 10)) {
+                        status = i2d_panic("failed to convert literal to number");
+                    } else if(index >= size) {
+                        status = i2d_panic("failed on insufficient string list");
+                    } else if(i2d_buf_format(buffer, "%s", list[index]->string)) {
+                        status = i2d_panic("failed to format buffer");
+                    }
+                    break;
+                default:
+                    status = i2d_panic("invalid token type -- %d", token->type);
+            }
+            token = token->next;
         }
     }
 
@@ -1613,12 +1688,8 @@ static int i2d_bonus_type_description_load(i2d_bonus_type * bonus_type, json_t *
             length = json_string_length(description);
             if(!length) {
                 status = i2d_panic("failed on empty description string");
-            } else {
-                if(i2d_token_init(&bonus_type->tokens, I2D_TOKEN)) {
-                    status = i2d_panic("failed to create token object");
-                } else if(i2d_bonus_type_description_tokenize(bonus_type, string, length)) {
-                    status = i2d_panic("failed to tokenize description string");
-                }
+            } else if(i2d_description_init(&bonus_type->description, string, length)) {
+                status = i2d_panic("failed to create description object");
             }
         }
     }
@@ -1715,50 +1786,10 @@ void i2d_bonus_type_deit(i2d_bonus_type ** result) {
     i2d_bonus_type * object;
 
     object = *result;
-    i2d_deit(object->tokens, i2d_token_list_deit);
+    i2d_deit(object->description, i2d_description_deit);
     i2d_deit(object->name, i2d_str_deit);
     i2d_free(object);
     *result = NULL;
-}
-
-int i2d_bonus_type_format(i2d_bonus_type * bonus_type, i2d_str ** list, size_t size, i2d_buf * buffer) {
-    int status = I2D_OK;
-    i2d_token * token;
-    i2d_str literal;
-    long index;
-
-    if(!bonus_type->tokens) {
-        status = i2d_panic("failed on empty bonus type description");
-    } else {
-        token = bonus_type->tokens->next;
-        while(token->type != I2D_TOKEN && !status) {
-            switch(token->type) {
-                case I2D_LITERAL:
-                    if(i2d_token_get_literal(token, &literal)) {
-                        status = i2d_panic("failed to get literal");
-                    } else if(i2d_buf_format(buffer, "%s", literal.string)) {
-                        status = i2d_panic("failed to format buffer");
-                    }
-                    break;
-                case I2D_POSITION:
-                    if(i2d_token_get_literal(token, &literal)) {
-                        status = i2d_panic("failed to get literal");
-                    } else if(i2d_strtol(&index, literal.string, literal.length, 10)) {
-                        status = i2d_panic("failed to convert literal to number");
-                    } else if(index >= size) {
-                        status = i2d_panic("failed on insufficient string list");
-                    } else if(i2d_buf_format(buffer, "%s", list[index]->string)) {
-                        status = i2d_panic("failed to format buffer");
-                    }
-                    break;
-                default:
-                    status = i2d_panic("invalid token type -- %d", token->type);
-            }
-            token = token->next;
-        }
-    }
-
-    return status;
 }
 
 int i2d_const_init(i2d_const ** result, const char * name, json_t * json) {
@@ -2460,8 +2491,9 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
     } else if(i2d_translator_bonus_type(script->translator, bonus_type->type[0], arguments[1], &string)) {
         status = i2d_panic("failed to translate bonus arguments");
     } else {
-        if(i2d_bonus_type_format(bonus_type, &string, 1, block->buffer))
+        if(i2d_description_format(bonus_type->description, &string, 1, block->buffer))
             status = i2d_panic("failed to format bonus type");
+
         i2d_str_deit(&string);
     }
 

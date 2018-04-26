@@ -264,6 +264,17 @@ int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_token *, i2d_block **);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 
+struct i2d_description {
+    i2d_token * tokens;
+};
+
+typedef struct i2d_description i2d_description;
+
+int i2d_description_init(i2d_description **, const char *, size_t);
+int i2d_description_deit(i2d_description **);
+int i2d_description_tokenize(i2d_description *, const char *, size_t);
+int i2d_description_format(i2d_description *, i2d_str **, size_t, i2d_buf *);
+
 enum i2d_bonus_argument_type {
     I2D_ELEMENTAL
 };
@@ -271,7 +282,7 @@ enum i2d_bonus_argument_type {
 struct i2d_bonus_type {
     long value;
     i2d_str * name;
-    i2d_token * tokens;
+    i2d_description * description;
     enum i2d_bonus_argument_type type[5];
 };
 
@@ -279,7 +290,6 @@ typedef struct i2d_bonus_type i2d_bonus_type;
 
 int i2d_bonus_type_init(i2d_bonus_type **, const char *, json_t *);
 void i2d_bonus_type_deit(i2d_bonus_type **);
-int i2d_bonus_type_format(i2d_bonus_type *, i2d_str **, size_t, i2d_buf *);
 
 struct i2d_const {
     i2d_str * name;
