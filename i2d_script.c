@@ -1,6 +1,5 @@
 #include "i2d_script.h"
 
-static int i2d_translator_function_load(i2d_translator *, i2d_json *);
 static int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 static int i2d_translator_bonus_handler_load(i2d_translator *);
 
@@ -1703,6 +1702,56 @@ int i2d_description_format(i2d_description * description, i2d_str ** list, size_
     return status;
 }
 
+int i2d_function_init(void ** result, const char * name, json_t * json, i2d_rbt * rbt) {
+    int status = I2D_OK;
+    i2d_function * object;
+    json_int_t min;
+    json_int_t max;
+    i2d_str_const description;
+    i2d_zero(description);
+
+    if(i2d_is_invalid(result) || !name || !json) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_str_init(&object->name, name, strlen(name))) {
+                status = i2d_panic("failed to create string object");
+            } else if(i2d_json_get_int(json, "min", &min) || i2d_json_get_int(json, "max", &max)) {
+                status = i2d_panic("failed to get min and max value");
+            } else if(i2d_range_list_init2(&object->range, min, max)) {
+                status = i2d_panic("failed to create range list object");
+            } else if(i2d_json_get_str(json, "description", &description)) {
+                status = i2d_panic("failed to get description string");
+            } else if(i2d_description_init(&object->description, &description)) {
+                status = i2d_panic("failed to create description object");
+            } else if(i2d_rbt_insert(rbt, object->name, object)) {
+                status = i2d_panic("failed to map function object");
+            }
+
+            if(status)
+                i2d_function_deit((void **) &object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_function_deit(void ** result) {
+    i2d_function * object;
+
+    object = *result;
+    i2d_deit(object->range, i2d_range_list_deit);
+    i2d_deit(object->description, i2d_description_deit);
+    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 int i2d_bonus_type_init(i2d_bonus_type ** result, const char * name, json_t * json) {
     int status = I2D_OK;
     i2d_bonus_type * object;
@@ -1835,54 +1884,6 @@ int i2d_str_map_get(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
     return i2d_rbt_search(str_map->map, key, (void **) result);
 }
 
-int i2d_function_init(i2d_function ** result, const char * name, json_t * json) {
-    int status = I2D_OK;
-    i2d_function * object;
-    json_int_t min;
-    json_int_t max;
-    i2d_str_const description;
-    i2d_zero(description);
-
-    if(i2d_is_invalid(result) || !name || !json) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            if(i2d_str_init(&object->name, name, strlen(name))) {
-                status = i2d_panic("failed to create string object");
-            } else if(i2d_json_get_int(json, "min", &min) || i2d_json_get_int(json, "max", &max)) {
-                status = i2d_panic("failed to get min and max value");
-            } else if(i2d_range_list_init2(&object->range, min, max)) {
-                status = i2d_panic("failed to create range list object");
-            } else if(i2d_json_get_str(json, "description", &description)) {
-                status = i2d_panic("failed to get description string");
-            } else if(i2d_description_init(&object->description, &description)) {
-                status = i2d_panic("failed to create description object");
-            }
-
-            if(status)
-                i2d_function_deit(&object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-void i2d_function_deit(i2d_function ** result) {
-    i2d_function * object;
-
-    object = *result;
-    i2d_deit(object->range, i2d_range_list_deit);
-    i2d_deit(object->description, i2d_description_deit);
-    i2d_deit(object->name, i2d_str_deit);
-    i2d_free(object);
-    *result = NULL;
-}
-
 int i2d_bonus_handler_init(i2d_bonus_handler ** result, const char * key, i2d_bonus_argument_handler handler) {
     int status = I2D_OK;
     i2d_bonus_handler * object;
@@ -1931,50 +1932,6 @@ int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * node, i2d
     } else if(i2d_str_init(result, element->string, element->length)) {
         status = i2d_panic("failed to create string object");
     }
-
-    return status;
-}
-
-static int i2d_translator_function_load(i2d_translator * translator, i2d_json * json) {
-    int status = I2D_OK;
-    json_t * function;
-    size_t i = 0;
-    const char * key;
-    json_t * value;
-
-    function = json_object_get(json->object, "functions");
-    if(!function) {
-        status = i2d_panic("failed to get function key value");
-    } else {
-        translator->function_size = json_object_size(function);
-        if(!translator->function_size) {
-            status = i2d_panic("failed on empty function object");
-        } else {
-            translator->function_list = calloc(translator->function_size, sizeof(*translator->function_list));
-            if(!translator->function_list) {
-                status = i2d_panic("out of memory");
-            } else {
-                json_object_foreach(function, key, value) {
-                    if(i2d_function_init(&translator->function_list[i], key, value)) {
-                        status = i2d_panic("failed to create function object");
-                    } else {
-                        i++;
-                    }
-                }
-            }
-        }
-    }
-
-    if(!status) {
-        if(i2d_rbt_init(&translator->function_map, i2d_rbt_cmp_str)) {
-            status = i2d_panic("failed to create red black tree object");
-        } else {
-            for(i = 0; i < translator->function_size; i++)
-                if(i2d_rbt_insert(translator->function_map, translator->function_list[i]->name, translator->function_list[i]))
-                    status = i2d_panic("failed to index function object");
-        }
-    }
-
 
     return status;
 }
@@ -2086,8 +2043,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
         } else {
             if(i2d_object_init(&object->consts, json->object, "consts", i2d_const_init, i2d_const_deit, i2d_rbt_cmp_str)) {
                 status = i2d_panic("failed to create consts object");
-            } else if(i2d_translator_function_load(object, json)) {
-                status = i2d_panic("failed to load config");
+            } else if(i2d_object_init(&object->functions, json->object, "functions", i2d_function_init, i2d_function_deit, i2d_rbt_cmp_str)) {
+                status = i2d_panic("failed to create functions object");
             } else if(i2d_translator_bonus_type_load(object, json)) {
                 status = i2d_panic("failed to load bonus type");
             } else if(i2d_translator_bonus_handler_load(object)) {
@@ -2120,19 +2077,13 @@ void i2d_translator_deit(i2d_translator ** result) {
     }
     i2d_deit(object->bonus_handler_map, i2d_rbt_deit);
 
-    if(object->function_list) {
-        for(i = 0; i < object->function_size; i++)
-            i2d_deit(object->function_list[i], i2d_function_deit);
-        i2d_free(object->function_list);
-    }
-    i2d_deit(object->function_map, i2d_rbt_deit);
-
     if(object->bonus_list) {
         for(i = 0; i < object->bonus_size; i++)
             i2d_deit(object->bonus_list[i], i2d_bonus_type_deit);
         i2d_free(object->bonus_list);
     }
     i2d_deit(object->bonus_map, i2d_rbt_deit);
+    i2d_deit(object->functions, i2d_object_deit);
     i2d_deit(object->consts, i2d_object_deit);
     i2d_free(object);
     *result = NULL;
@@ -2156,7 +2107,7 @@ int i2d_translator_bonus_map(i2d_translator * translator, long * key, i2d_bonus_
 }
 
 int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_function ** result) {
-    return i2d_rbt_search(translator->function_map, key, (void **) result);
+    return i2d_object_map(translator->functions, key, (void **) result);
 }
 
 int i2d_translator_bonus_handler(i2d_translator * translator, i2d_str * argument_type, i2d_node * node, i2d_str ** result) {

@@ -288,6 +288,17 @@ int i2d_description_deit(i2d_description **);
 int i2d_description_tokenize(i2d_description *, const char *, size_t);
 int i2d_description_format(i2d_description *, i2d_str **, size_t, i2d_buf *);
 
+struct i2d_function {
+    i2d_str * name;
+    i2d_description * description;
+    i2d_range_list * range;
+};
+
+typedef struct i2d_function i2d_function;
+
+int i2d_function_init(void **, const char *, json_t *, i2d_rbt *);
+void i2d_function_deit(void **);
+
 struct i2d_bonus_type {
     long value;
     i2d_str * name;
@@ -312,17 +323,6 @@ int i2d_str_map_init(i2d_str_map **, const char *, json_t *);
 void i2d_str_map_deit(i2d_str_map **);
 int i2d_str_map_get(i2d_str_map *, i2d_str *, i2d_str **);
 
-struct i2d_function {
-    i2d_str * name;
-    i2d_description * description;
-    i2d_range_list * range;
-};
-
-typedef struct i2d_function i2d_function;
-
-int i2d_function_init(i2d_function **, const char *, json_t *);
-void i2d_function_deit(i2d_function **);
-
 typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_bonus_handler {
@@ -338,10 +338,7 @@ int i2d_bonus_handler_elements(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_translator {
     i2d_object * consts;
-
-    i2d_rbt * function_map;
-    i2d_function ** function_list;
-    size_t function_size;
+    i2d_object * functions;
 
     i2d_rbt * bonus_map;
     i2d_bonus_type ** bonus_list;
