@@ -5,7 +5,7 @@
 #include "i2d_rbt.h"
 #include "jansson.h"
 
-typedef int (*i2d_object_create) (void **, const char *, json_t *, i2d_rbt *);
+typedef int (*i2d_object_create) (void **, const char *, json_t *, i2d_rbt *, void *);
 typedef void (*i2d_object_delete) (void **);
 
 struct i2d_object {
@@ -18,7 +18,7 @@ struct i2d_object {
 
 typedef struct i2d_object i2d_object;
 
-int i2d_object_init(i2d_object **, json_t *, const char *, i2d_object_create, i2d_object_delete, i2d_rbt_cmp);
+int i2d_object_init(i2d_object **, json_t *, const char *, i2d_object_create, i2d_object_delete, i2d_rbt_cmp, void *);
 void i2d_object_deit(i2d_object **);
 int i2d_object_map(i2d_object *, void *, void **);
 

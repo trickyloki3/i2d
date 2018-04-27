@@ -274,7 +274,7 @@ struct i2d_const {
 
 typedef struct i2d_const i2d_const;
 
-int i2d_const_init(void **, const char *, json_t *, i2d_rbt * rbt);
+int i2d_const_init(void **, const char *, json_t *, i2d_rbt *, void *);
 void i2d_const_deit(void **);
 
 struct i2d_description {
@@ -296,7 +296,7 @@ struct i2d_function {
 
 typedef struct i2d_function i2d_function;
 
-int i2d_function_init(void **, const char *, json_t *, i2d_rbt *);
+int i2d_function_init(void **, const char *, json_t *, i2d_rbt *, void *);
 void i2d_function_deit(void **);
 
 struct i2d_bonus_type {

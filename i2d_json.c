@@ -1,6 +1,6 @@
 #include "i2d_json.h"
 
-int i2d_object_init(i2d_object ** result, json_t * json, const char * object_key, i2d_object_create create, i2d_object_delete delete, i2d_rbt_cmp cmp) {
+int i2d_object_init(i2d_object ** result, json_t * json, const char * object_key, i2d_object_create create, i2d_object_delete delete, i2d_rbt_cmp cmp, void * context) {
     int status = I2D_OK;
     i2d_object * object;
 
@@ -26,7 +26,7 @@ int i2d_object_init(i2d_object ** result, json_t * json, const char * object_key
                     object->create = create;
                     object->delete = delete;
                     json_object_foreach(json, key, value) {
-                        if(object->create(&object->list[i], key, value, object->map)) {
+                        if(object->create(&object->list[i], key, value, object->map, context)) {
                             status = i2d_panic("failed to create object");
                         } else {
                             i++;
