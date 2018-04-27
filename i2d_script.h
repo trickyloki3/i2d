@@ -326,7 +326,7 @@ int i2d_str_map_get(i2d_str_map *, i2d_str *, i2d_str **);
 typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_bonus_handler {
-    i2d_str * name;
+    i2d_str name;
     i2d_bonus_argument_handler handler;
 };
 
@@ -340,11 +340,7 @@ struct i2d_translator {
     i2d_object * consts;
     i2d_object * functions;
     i2d_object * bonus_types;
-
-    i2d_rbt * bonus_handler_map;
-    i2d_bonus_handler ** bonus_handler_list;
-    size_t bonus_handler_size;
-
+    i2d_rbt * bonus_handlers;
     i2d_str_map * elements;
 };
 
