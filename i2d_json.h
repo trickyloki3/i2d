@@ -5,22 +5,51 @@
 #include "i2d_rbt.h"
 #include "jansson.h"
 
+typedef int (*i2d_object_create) (void **, const char *, json_t *, i2d_rbt *);
+typedef void (*i2d_object_delete) (void **);
+
+struct i2d_object {
+    i2d_rbt * map;
+    void ** list;
+    size_t size;
+    i2d_object_create create;
+    i2d_object_delete delete;
+};
+
+typedef struct i2d_object i2d_object;
+
+int i2d_object_init(i2d_object **, json_t *, const char *, i2d_object_create, i2d_object_delete, i2d_rbt_cmp);
+void i2d_object_deit(i2d_object **);
+int i2d_object_map(i2d_object *, void *, void **);
+
 struct i2d_json {
     json_t * object;
     json_t * blocks;
     json_t * functions;
     json_t * elements;
-    json_t * consts;
+    i2d_object * consts;
 };
 
 typedef struct i2d_json i2d_json;
 
 int i2d_json_init(i2d_json **, i2d_str *);
 void i2d_json_deit(i2d_json **);
+int i2d_json_const_map(i2d_json *, i2d_str *, long *);
 
+int i2d_json_object_list(json_t *, void ***, size_t *);
 int i2d_json_get_object(json_t *, const char *, json_t **);
 int i2d_json_get_str(json_t *, const char *, i2d_str_const *);
 int i2d_json_get_int(json_t *, const char *, json_int_t *);
+
+struct i2d_const {
+    i2d_str * name;
+    json_int_t value;
+};
+
+typedef struct i2d_const i2d_const;
+
+int i2d_const_init(void **, const char *, json_t *, i2d_rbt * rbt);
+void i2d_const_deit(void **);
 
 struct i2d_str_list {
     i2d_str ** list;

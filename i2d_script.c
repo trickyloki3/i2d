@@ -1,6 +1,5 @@
 #include "i2d_script.h"
 
-static int i2d_translator_const_load(i2d_translator *, i2d_json *);
 static int i2d_translator_function_load(i2d_translator *, i2d_json *);
 static int i2d_translator_bonus_type_load(i2d_translator *, i2d_json *);
 static int i2d_translator_bonus_handler_load(i2d_translator *);
@@ -1712,41 +1711,6 @@ void i2d_bonus_type_deit(i2d_bonus_type ** result) {
     *result = NULL;
 }
 
-int i2d_const_init(i2d_const ** result, const char * name, json_t * json) {
-    int status = I2D_OK;
-    i2d_const * object;
-
-    if(i2d_is_invalid(result) || !name || !json) {
-        status = i2d_panic("invalid paramaters");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            if(i2d_str_init(&object->name, name, strlen(name))) {
-                status = i2d_panic("failed to create string object");
-            } else {
-                object->value = json_integer_value(json);
-            }
-            if(status)
-                i2d_const_deit(&object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-void i2d_const_deit(i2d_const ** result) {
-    i2d_const * object;
-
-    object = *result;
-    i2d_deit(object->name, i2d_str_deit);
-    i2d_free(object);
-    *result = NULL;
-}
-
 int i2d_str_map_load(i2d_str_map * str_map, json_t * json) {
     int status = I2D_OK;
     size_t i = 0;
@@ -1934,49 +1898,6 @@ int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * node, i2d
     return status;
 }
 
-static int i2d_translator_const_load(i2d_translator * translator, i2d_json * json) {
-    int status = I2D_OK;
-    json_t * consts;
-    size_t i = 0;
-    const char * key;
-    json_t * value;
-
-    consts = json_object_get(json->object, "consts");
-    if(!consts) {
-        status = i2d_panic("failed to get consts key value");
-    } else {
-        translator->const_size = json_object_size(consts);
-        if(!translator->const_size) {
-            status = i2d_panic("failed on empty const array");
-        } else {
-            translator->const_list = calloc(translator->const_size, sizeof(*translator->const_list));
-            if(!translator->const_list) {
-                status = i2d_panic("out of memory");
-            } else {
-                json_object_foreach(consts, key, value) {
-                    if(i2d_const_init(&translator->const_list[i], key, value)) {
-                        status = i2d_panic("failed to create const object");
-                    } else {
-                        i++;
-                    }
-                }
-            }
-        }
-    }
-
-    if(!status) {
-        if(i2d_rbt_init(&translator->const_map, i2d_rbt_cmp_str)) {
-            status = i2d_panic("failed to create red black tree object");
-        } else {
-            for(i = 0; i < translator->const_size; i++)
-                if(i2d_rbt_insert(translator->const_map, translator->const_list[i]->name, translator->const_list[i]))
-                    status = i2d_panic("failed to index const object");
-        }
-    }
-
-    return status;
-}
-
 static int i2d_translator_function_load(i2d_translator * translator, i2d_json * json) {
     int status = I2D_OK;
     json_t * function;
@@ -2057,7 +1978,7 @@ static int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json 
         } else {
             for(i = 0; i < translator->bonus_size; i++) {
                 bonus_type = translator->bonus_list[i];
-                if(i2d_translator_const_map(translator, bonus_type->name, &bonus_type->value)) {
+                if(i2d_json_const_map(json, bonus_type->name, &bonus_type->value)) {
                     status = i2d_panic("failed to remap bonus type -- %s", bonus_type->name->string);
                 } else if(i2d_rbt_insert(translator->bonus_map, &bonus_type->value, bonus_type)) {
                     status = i2d_panic("failed to index bonus type object");
@@ -2126,9 +2047,7 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_translator_const_load(object, json)) {
-                status = i2d_panic("failed to load consts");
-            } else if(i2d_translator_function_load(object, json)) {
+            if(i2d_translator_function_load(object, json)) {
                 status = i2d_panic("failed to load config");
             } else if(i2d_translator_bonus_type_load(object, json)) {
                 status = i2d_panic("failed to load bonus type");
@@ -2168,12 +2087,7 @@ void i2d_translator_deit(i2d_translator ** result) {
         i2d_free(object->function_list);
     }
     i2d_deit(object->function_map, i2d_rbt_deit);
-    if(object->const_list) {
-        for(i = 0; i < object->const_size; i++)
-            i2d_deit(object->const_list[i], i2d_const_deit);
-        i2d_free(object->const_list);
-    }
-    i2d_deit(object->const_map, i2d_rbt_deit);
+
     if(object->bonus_list) {
         for(i = 0; i < object->bonus_size; i++)
             i2d_deit(object->bonus_list[i], i2d_bonus_type_deit);
@@ -2186,19 +2100,6 @@ void i2d_translator_deit(i2d_translator ** result) {
 
 int i2d_translator_bonus_map(i2d_translator * translator, long * key, i2d_bonus_type ** result) {
     return i2d_rbt_search(translator->bonus_map, key, (void **) result);
-}
-
-int i2d_translator_const_map(i2d_translator * translator, i2d_str * key, long * result) {
-    int status = I2D_OK;
-    i2d_const * constant;
-
-    if(i2d_rbt_search(translator->const_map, key, (void **) &constant)) {
-        status = I2D_FAIL;
-    } else {
-        *result = constant->value;
-    }
-
-    return status;
 }
 
 int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_function ** result) {
@@ -2537,7 +2438,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
 
                 if(i2d_strtol(&number, literal.string, literal.length, base))
                     status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
-            } else if(i2d_translator_const_map(script->translator, &literal, &number)) {
+            } else if(i2d_json_const_map(script->json, &literal, &number)) {
                 number = 0;
             }
 
