@@ -15,8 +15,17 @@ int i2d_json_init(i2d_json ** result, i2d_str * path) {
             status = i2d_panic("out of memory");
         } else {
             object->object = json_load_file(path->string, JSON_DISABLE_EOF_CHECK, &error);
-            if(!object->object)
+            if(!object->object) {
                 status = i2d_panic("%s (line %d column %d)", error.text, error.line, error.column);
+            } else {
+                if( i2d_json_get_object(object->object, "blocks", &object->blocks) ||
+                    i2d_json_get_object(object->object, "functions", &object->functions) ||
+                    i2d_json_get_object(object->object, "elements", &object->elements) ||
+                    i2d_json_get_object(object->object, "consts", &object->consts) ||
+                    i2d_json_get_object(object->object, "blocks", &object->blocks) ) {
+                    status = i2d_panic("failed to get objects");
+                }
+            }
 
             if(status)
                 i2d_json_deit(&object);
@@ -38,21 +47,15 @@ void i2d_json_deit(i2d_json ** result) {
     *result = NULL;
 }
 
-int i2d_json_block_map(i2d_json * json, const char * key, json_t ** result) {
+int i2d_json_get_object(json_t * json, const char * key, json_t ** result) {
     int status = I2D_OK;
-    json_t * blocks;
-    json_t * statement;
+    json_t * object;
 
-    blocks = json_object_get(json->object, "blocks");
-    if(!blocks) {
-        status = i2d_panic("failed to get blocks key value");
+    object = json_object_get(json, key);
+    if(!object) {
+        status = i2d_panic("failed to get %s key value", key);
     } else {
-        statement = json_object_get(blocks, key);
-        if(!statement) {
-            status = i2d_panic("failed to get %s key value", key);
-        } else {
-            *result = statement;
-        }
+         *result = object;
     }
 
     return status;
@@ -64,9 +67,8 @@ int i2d_json_get_str(json_t * json, const char * key, i2d_str_const * result) {
     const char * string;
     size_t length;
 
-    object = json_object_get(json, key);
-    if(!object) {
-        status = i2d_panic("failed to get %s key value", key);
+    if(i2d_json_get_object(json, key, &object)) {
+        status = i2d_panic("failed to get object");
     } else {
         string = json_string_value(object);
         if(!string) {
@@ -89,9 +91,8 @@ int i2d_json_get_int(json_t * json, const char * key, json_int_t * result) {
     int status = I2D_OK;
     json_t * object;
 
-    object =  json_object_get(json, key);
-    if(!object) {
-        status = i2d_panic("failed to get %s key value", key);
+    if(i2d_json_get_object(json, key, &object)) {
+        status = i2d_panic("failed to get object");
     } else {
         *result = json_integer_value(object);
     }

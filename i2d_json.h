@@ -7,14 +7,18 @@
 
 struct i2d_json {
     json_t * object;
+    json_t * blocks;
+    json_t * functions;
+    json_t * elements;
+    json_t * consts;
 };
 
 typedef struct i2d_json i2d_json;
 
 int i2d_json_init(i2d_json **, i2d_str *);
 void i2d_json_deit(i2d_json **);
-int i2d_json_block_map(i2d_json *, const char *, json_t **);
 
+int i2d_json_get_object(json_t *, const char *, json_t **);
 int i2d_json_get_str(json_t *, const char *, i2d_str_const *);
 int i2d_json_get_int(json_t *, const char *, json_int_t *);
 

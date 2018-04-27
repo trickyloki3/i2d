@@ -2029,8 +2029,8 @@ static int i2d_translator_bonus_type_load(i2d_translator * translator, i2d_json 
     json_t * value;
     i2d_bonus_type * bonus_type;
 
-    if(i2d_json_block_map(json, "bonus", &bonus)) {
-        status = i2d_panic("failed to get bonus block key value");
+    if(i2d_json_get_object(json->blocks, "bonus", &bonus)) {
+        status = i2d_panic("failed to get object");
     } else {
         translator->bonus_size = json_object_size(bonus);
         if(!translator->bonus_size) {
