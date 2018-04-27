@@ -309,23 +309,21 @@ int i2d_bonus_type_init(void **, const char *, json_t *, i2d_rbt *, void *);
 void i2d_bonus_type_deit(void **);
 
 struct i2d_str_map {
-    i2d_rbt * map;
-    i2d_str ** list;
-    size_t size;
+    i2d_str * key;
+    i2d_str * value;
 };
 
 typedef struct i2d_str_map i2d_str_map;
 
-int i2d_str_map_init(i2d_str_map **, const char *, json_t *);
-void i2d_str_map_deit(i2d_str_map **);
-int i2d_str_map_get(i2d_str_map *, i2d_str *, i2d_str **);
+int i2d_str_map_init(void **, const char *, json_t *, i2d_rbt *, void *);
+void i2d_str_map_deit(void **);
 
 struct i2d_translator {
     i2d_object * consts;
     i2d_object * functions;
     i2d_object * bonus_types;
+    i2d_object * elements;
     i2d_rbt * bonus_handlers;
-    i2d_str_map * elements;
 };
 
 typedef struct i2d_translator i2d_translator;
@@ -335,6 +333,7 @@ void i2d_translator_deit(i2d_translator **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
 int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
 int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
+int i2d_translator_elements_map(i2d_translator *, i2d_str *, i2d_str **);
 int i2d_translator_bonus_handler(i2d_translator *, i2d_str *, i2d_node *, i2d_str **);
 
 struct i2d_context {

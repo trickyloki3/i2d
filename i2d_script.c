@@ -1800,46 +1800,11 @@ void i2d_bonus_type_deit(void ** result) {
     *result = NULL;
 }
 
-int i2d_str_map_load(i2d_str_map * str_map, json_t * json) {
-    int status = I2D_OK;
-    size_t i = 0;
-    const char * key;
-    json_t * value;
-
-    const char * name;
-    size_t length;
-
-    str_map->size = json_object_size(json) * 2;
-    if(!str_map->size) {
-        status = i2d_panic("failed on empty map object");
-    } else {
-        str_map->list = calloc(str_map->size, sizeof(*str_map->list));
-        if(!str_map->list) {
-            status = i2d_panic("out of memory");
-        } else {
-            json_object_foreach(json, key, value) {
-                if(i2d_str_init(&str_map->list[i], key, strlen(key))) {
-                    status = i2d_panic("failed to create string object");
-                } else if(!json_string_value(value) || !json_string_length(value)) {
-                    status = i2d_panic("failed on invalid string object");
-                } else if(i2d_str_init(&str_map->list[i + 1], json_string_value(value), json_string_length(value))) {
-                    status = i2d_panic("failed to create string object");
-                } else if(i2d_rbt_insert(str_map->map, str_map->list[i], str_map->list[i + 1])) {
-                    status = i2d_panic("failed to map string object");
-                } else {
-                    i += 2;
-                }
-            }
-        }
-    }
-
-    return status;
-}
-
-int i2d_str_map_init(i2d_str_map ** result, const char * key, json_t * json) {
+int i2d_str_map_init(void ** result, const char * key, json_t * json, i2d_rbt * rbt, void * context) {
     int status = I2D_OK;
     i2d_str_map * object;
-    json_t * map;
+    const char * string;
+    size_t length;
 
     if(i2d_is_invalid(result) || !key || !json) {
         status = i2d_panic("invalid paramaters");
@@ -1848,18 +1813,24 @@ int i2d_str_map_init(i2d_str_map ** result, const char * key, json_t * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_rbt_init(&object->map, i2d_rbt_cmp_str)) {
-                status = i2d_panic("failed to create red black tree object");
+            string = json_string_value(json);
+            if(!string) {
+                status = i2d_panic("invalid string on %s key value", key);
             } else {
-                map = json_object_get(json, key);
-                if(!map) {
-                    status = i2d_panic("failed to get %s key value", key);
-                } else if(i2d_str_map_load(object, map)) {
-                    status = i2d_panic("failed to load string map object");
+                length = json_string_length(json);
+                if(!length) {
+                    status = i2d_panic("empty string on %s key value", key);
+                } else if(i2d_str_init(&object->key, key, strlen(key))) {
+                    status = i2d_panic("failed to create string object");
+                } else if(i2d_str_init(&object->value, string, length)) {
+                    status = i2d_panic("failed to create string object");
+                } else if(i2d_rbt_insert(rbt, object->key, object)) {
+                    status = i2d_panic("failed to map string object");
                 }
             }
+
             if(status)
-                i2d_str_map_deit(&object);
+                i2d_str_map_deit((void **) &object);
             else
                 *result = object;
         }
@@ -1868,23 +1839,14 @@ int i2d_str_map_init(i2d_str_map ** result, const char * key, json_t * json) {
     return status;
 }
 
-void i2d_str_map_deit(i2d_str_map ** result) {
+void i2d_str_map_deit(void ** result) {
     i2d_str_map * object;
-    size_t i;
 
     object = *result;
-    if(object->list) {
-        for(i = 0; i < object->size; i++)
-            i2d_deit(object->list[i], i2d_str_deit);
-        i2d_free(object->list);
-    }
-    i2d_deit(object->map, i2d_rbt_deit);
+    i2d_deit(object->value, i2d_str_deit);
+    i2d_deit(object->key, i2d_str_deit);
     i2d_free(object);
     *result = NULL;
-}
-
-int i2d_str_map_get(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
-    return i2d_rbt_search(str_map->map, key, (void **) result);
 }
 
 typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
@@ -1905,7 +1867,7 @@ static int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * no
 
     if(i2d_node_get_string(node, &literal)) {
         status = i2d_panic("failed to get node string");
-    } else if(i2d_str_map_get(translator->elements, &literal, &element)) {
+    } else if(i2d_translator_elements_map(translator, &literal, &element)) {
         status = i2d_panic("failed to map element -- %s", literal.string);
     } else if(i2d_str_init(result, element->string, element->length)) {
         status = i2d_panic("failed to create string object");
@@ -1933,8 +1895,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create functions object");
             } else if(i2d_object_init(&object->bonus_types, json->blocks, "bonus", i2d_bonus_type_init, i2d_bonus_type_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create bonus types object");
-            } else if(i2d_str_map_init(&object->elements, "elements", json->object)) {
-                status = i2d_panic("failed to load element map object");
+            } else if(i2d_object_init(&object->elements, json->object, "elements", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_str, object)) {
+                status = i2d_panic("failed to create elements object");
             } else {
                 if(i2d_rbt_init(&object->bonus_handlers, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create red black tree object");
@@ -1961,8 +1923,8 @@ void i2d_translator_deit(i2d_translator ** result) {
     size_t i;
 
     object = *result;
-    i2d_deit(object->elements, i2d_str_map_deit);
     i2d_deit(object->bonus_handlers, i2d_rbt_deit);
+    i2d_deit(object->elements, i2d_object_deit);
     i2d_deit(object->bonus_types, i2d_object_deit);
     i2d_deit(object->functions, i2d_object_deit);
     i2d_deit(object->consts, i2d_object_deit);
@@ -1989,6 +1951,19 @@ int i2d_translator_bonus_map(i2d_translator * translator, long * key, i2d_bonus_
 
 int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_function ** result) {
     return i2d_object_map(translator->functions, key, (void **) result);
+}
+
+int i2d_translator_elements_map(i2d_translator * translator, i2d_str * key, i2d_str ** result) {
+    int status = I2D_OK;
+    i2d_str_map * str_map;
+
+    if(i2d_object_map(translator->elements, key, (void **) &str_map)) {
+        status = I2D_FAIL;
+    } else {
+        *result = str_map->value;
+    }
+
+    return status;
 }
 
 int i2d_translator_bonus_handler(i2d_translator * translator, i2d_str * argument_type, i2d_node * node, i2d_str ** result) {
