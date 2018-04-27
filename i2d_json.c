@@ -80,15 +80,8 @@ int i2d_json_init(i2d_json ** result, i2d_str * path) {
             object->object = json_load_file(path->string, JSON_DISABLE_EOF_CHECK, &error);
             if(!object->object) {
                 status = i2d_panic("%s (line %d column %d)", error.text, error.line, error.column);
-            } else {
-                if( i2d_json_get_object(object->object, "blocks", &object->blocks) ||
-                    i2d_json_get_object(object->object, "functions", &object->functions) ||
-                    i2d_json_get_object(object->object, "elements", &object->elements) ||
-                    i2d_json_get_object(object->object, "blocks", &object->blocks) ) {
-                    status = i2d_panic("failed to get objects");
-                } else if(i2d_object_init(&object->consts, object->object, "consts", i2d_const_init, i2d_const_deit, i2d_rbt_cmp_str)) {
-                    status = i2d_panic("failed to create consts object");
-                }
+            } else if(i2d_json_get_object(object->object, "blocks", &object->blocks)) {
+                status = i2d_panic("failed to get object");
             }
 
             if(status)
@@ -105,24 +98,10 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json * object;
 
     object = *result;
-    i2d_deit(object->consts, i2d_object_deit);
     if(object->object)
         json_decref(object->object);
     i2d_free(object);
     *result = NULL;
-}
-
-int i2d_json_const_map(i2d_json * json, i2d_str * key, long * value) {
-    int status = I2D_OK;
-    i2d_const * constant;
-
-    if(i2d_object_map(json->consts, key, (void **) &constant)) {
-        status = I2D_FAIL;
-    } else {
-        *value = constant->value;
-    }
-
-    return status;
 }
 
 int i2d_json_object_list(json_t * json, void *** _list, size_t * _size) {
@@ -197,43 +176,6 @@ int i2d_json_get_int(json_t * json, const char * key, json_int_t * result) {
     }
 
     return status;
-}
-
-int i2d_const_init(void ** result, const char * name, json_t * json, i2d_rbt * rbt) {
-    int status = I2D_OK;
-    i2d_const * object;
-
-    if(i2d_is_invalid(result) || !name || !json) {
-        status = i2d_panic("invalid paramaters");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            if(i2d_str_init(&object->name, name, strlen(name))) {
-                status = i2d_panic("failed to create string object");
-            } else {
-                object->value = json_integer_value(json);
-                if(i2d_rbt_insert(rbt, object->name, object))
-                    status = i2d_panic("failed to map const object");
-            }
-            if(status)
-                i2d_const_deit((void **) &object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-void i2d_const_deit(void ** result) {
-    i2d_const * object;
-
-    object = *result;
-    i2d_deit(object->name, i2d_str_deit);
-    i2d_free(object);
-    *result = NULL;
 }
 
 int i2d_str_list_init(i2d_str_list ** result, const char * key, json_t * json) {
