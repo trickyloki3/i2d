@@ -2080,6 +2080,7 @@ static int i2d_translator_bonus_handler_load(i2d_translator * translator) {
     };
 
     size_t i;
+    size_t j;
     size_t size;
     i2d_bonus_handler ** list;
 
@@ -2098,11 +2099,18 @@ static int i2d_translator_bonus_handler_load(i2d_translator * translator) {
                     status = i2d_panic("failed to map bonus handler object");
                 }
             }
+
+            if(status) {
+                for(i = 0; i < size; i++)
+                    i2d_deit(list[i], i2d_bonus_handler_deit);
+                i2d_free(list);
+            } else {
+                translator->bonus_handler_list = list;
+                translator->bonus_handler_size = size;
+            }
         }
     }
 
-    translator->bonus_handler_list = list;
-    translator->bonus_handler_size = size;
     return status;
 };
 
