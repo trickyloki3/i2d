@@ -2593,6 +2593,7 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
 
 int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional) {
     int status = I2D_OK;
+    int is_assign = 0;
     i2d_str predicate;
     i2d_zero(predicate);
 
@@ -2602,47 +2603,57 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
         status = i2d_panic("binary operator missing right operand");
     } else {
         switch(node->tokens->type) {
-            case I2D_ADD:
             case I2D_ADD_ASSIGN:
+                is_assign = 1;
+            case I2D_ADD:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '+');
                 break;
-            case I2D_SUBTRACT:
             case I2D_SUBTRACT_ASSIGN:
+                is_assign = 1;
+            case I2D_SUBTRACT:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '-');
                 break;
-            case I2D_MULTIPLY:
             case I2D_MULTIPLY_ASSIGN:
+                is_assign = 1;
+            case I2D_MULTIPLY:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '*');
                 break;
-            case I2D_DIVIDE:
             case I2D_DIVIDE_ASSIGN:
+                is_assign = 1;
+            case I2D_DIVIDE:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '/');
                 break;
-            case I2D_MODULUS:
             case I2D_MODULUS_ASSIGN:
+                is_assign = 1;
+            case I2D_MODULUS:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '%');
                 break;
             case I2D_COMMA:
                 status = i2d_node_copy(node, node->right);
                 break;
-            case I2D_RIGHT_SHIFT:
             case I2D_RIGHT_SHIFT_ASSIGN:
+                is_assign = 1;
+            case I2D_RIGHT_SHIFT:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '>' + '>' + 'b');
                 break;
-            case I2D_LEFT_SHIFT:
             case I2D_LEFT_SHIFT_ASSIGN:
+                is_assign = 1;
+            case I2D_LEFT_SHIFT:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '<' + '<' + 'b');
                 break;
-            case I2D_BIT_AND:
             case I2D_BIT_AND_ASSIGN:
+                is_assign = 1;
+            case I2D_BIT_AND:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '&');
                 break;
-            case I2D_BIT_OR:
             case I2D_BIT_OR_ASSIGN:
+                is_assign = 1;
+            case I2D_BIT_OR:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '|');
                 break;
-            case I2D_BIT_XOR:
             case I2D_BIT_XOR_ASSIGN:
+                is_assign = 1;
+            case I2D_BIT_XOR:
                 status = i2d_range_list_compute(&node->range, node->left->range, node->right->range, '^' + 'b');
                 break;
             case I2D_GREATER:
@@ -2742,6 +2753,8 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                 }
                 break;
             case I2D_ASSIGN:
+                is_assign = 1;
+
                 status = i2d_node_copy(node, node->right);
                 break;
             default:
@@ -2749,25 +2762,11 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                 break;
         }
 
-        if(!status) {
-            switch(node->tokens->type) {
-                case I2D_ADD_ASSIGN:
-                case I2D_SUBTRACT_ASSIGN:
-                case I2D_MULTIPLY_ASSIGN:
-                case I2D_DIVIDE_ASSIGN:
-                case I2D_MODULUS_ASSIGN:
-                case I2D_RIGHT_SHIFT_ASSIGN:
-                case I2D_LEFT_SHIFT_ASSIGN:
-                case I2D_BIT_AND_ASSIGN:
-                case I2D_BIT_OR_ASSIGN:
-                case I2D_BIT_XOR_ASSIGN:
-                case I2D_ASSIGN:
-                    if(i2d_node_copy(node->left, node)) {
-                        status = i2d_panic("failed to copy range list object");
-                    } else if(i2d_context_insert_variable(script->context, node->left)) {
-                        status = i2d_panic("failed to map variable");
-                    }
-                    break;
+        if(!status && is_assign) {
+            if(i2d_node_copy(node->left, node)) {
+                status = i2d_panic("failed to copy range list object");
+            } else if(i2d_context_insert_variable(script->context, node->left)) {
+                status = i2d_panic("failed to map variable");
             }
         }
     }
