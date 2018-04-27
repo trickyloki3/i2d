@@ -308,8 +308,8 @@ struct i2d_bonus_type {
 
 typedef struct i2d_bonus_type i2d_bonus_type;
 
-int i2d_bonus_type_init(i2d_bonus_type **, const char *, json_t *);
-void i2d_bonus_type_deit(i2d_bonus_type **);
+int i2d_bonus_type_init(void **, const char *, json_t *, i2d_rbt *, void *);
+void i2d_bonus_type_deit(void **);
 
 struct i2d_str_map {
     i2d_rbt * map;
@@ -339,10 +339,7 @@ int i2d_bonus_handler_elements(i2d_translator *, i2d_node *, i2d_str **);
 struct i2d_translator {
     i2d_object * consts;
     i2d_object * functions;
-
-    i2d_rbt * bonus_map;
-    i2d_bonus_type ** bonus_list;
-    size_t bonus_size;
+    i2d_object * bonus_types;
 
     i2d_rbt * bonus_handler_map;
     i2d_bonus_handler ** bonus_handler_list;
