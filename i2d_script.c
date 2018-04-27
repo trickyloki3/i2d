@@ -1,6 +1,6 @@
 #include "i2d_script.h"
 
-static int i2d_translator_bonus_handler_load(i2d_translator *);
+static int i2d_bonus_handler_elements(i2d_translator *, i2d_node *, i2d_str **);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1887,7 +1887,18 @@ int i2d_str_map_get(i2d_str_map * str_map, i2d_str * key, i2d_str ** result) {
     return i2d_rbt_search(str_map->map, key, (void **) result);
 }
 
-int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * node, i2d_str ** result) {
+typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
+
+struct i2d_bonus_handler {
+    i2d_str name;
+    i2d_bonus_argument_handler handler;
+} bonus_handlers[] = {
+    { {"elements", 8}, i2d_bonus_handler_elements }
+};
+
+typedef struct i2d_bonus_handler i2d_bonus_handler;
+
+static int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * node, i2d_str ** result) {
     int status = I2D_OK;
     i2d_str literal;
     i2d_str * element;
@@ -1903,31 +1914,11 @@ int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * node, i2d
     return status;
 }
 
-i2d_bonus_handler bonus_handlers[] = {
-    { {"elements", 8}, i2d_bonus_handler_elements }
-};
-
-static int i2d_translator_bonus_handler_load(i2d_translator * translator) {
-    int status = I2D_OK;
-    size_t i;
-    size_t size;
-
-    if(i2d_rbt_init(&translator->bonus_handlers, i2d_rbt_cmp_str)) {
-        status = i2d_panic("failed to create red black tree object");
-    } else {
-        size = i2d_size(bonus_handlers);
-        for(i = 0; i < size && !status; i++)
-            if(i2d_rbt_insert(translator->bonus_handlers, &bonus_handlers[i].name, &bonus_handlers[i]))
-                status = i2d_panic("failed to map bonus handler object");
-    }
-
-    return status;
-};
-
 int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_translator * object;
     size_t i;
+    size_t size;
 
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
@@ -1942,10 +1933,17 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create functions object");
             } else if(i2d_object_init(&object->bonus_types, json->blocks, "bonus", i2d_bonus_type_init, i2d_bonus_type_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create bonus types object");
-            } else if(i2d_translator_bonus_handler_load(object)) {
-                status = i2d_panic("failed to load bonus handler");
             } else if(i2d_str_map_init(&object->elements, "elements", json->object)) {
                 status = i2d_panic("failed to load element map object");
+            } else {
+                if(i2d_rbt_init(&object->bonus_handlers, i2d_rbt_cmp_str)) {
+                    status = i2d_panic("failed to create red black tree object");
+                } else {
+                    size = i2d_size(bonus_handlers);
+                    for(i = 0; i < size && !status; i++)
+                        if(i2d_rbt_insert(object->bonus_handlers, &bonus_handlers[i].name, &bonus_handlers[i]))
+                            status = i2d_panic("failed to map bonus handler object");
+                }
             }
 
             if(status)

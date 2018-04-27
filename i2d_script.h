@@ -8,9 +8,6 @@
 #include "i2d_opt.h"
 #include "i2d_db.h"
 
-struct i2d_translator;
-typedef struct i2d_translator i2d_translator;
-
 enum i2d_token_type {
     I2D_TOKEN,
     I2D_CURLY_OPEN,
@@ -322,19 +319,6 @@ typedef struct i2d_str_map i2d_str_map;
 int i2d_str_map_init(i2d_str_map **, const char *, json_t *);
 void i2d_str_map_deit(i2d_str_map **);
 int i2d_str_map_get(i2d_str_map *, i2d_str *, i2d_str **);
-
-typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
-
-struct i2d_bonus_handler {
-    i2d_str name;
-    i2d_bonus_argument_handler handler;
-};
-
-typedef struct i2d_bonus_handler i2d_bonus_handler;
-
-int i2d_bonus_handler_init(i2d_bonus_handler **, const char *, i2d_bonus_argument_handler);
-void i2d_bonus_handler_deit(i2d_bonus_handler **);
-int i2d_bonus_handler_elements(i2d_translator *, i2d_node *, i2d_str **);
 
 struct i2d_translator {
     i2d_object * consts;
