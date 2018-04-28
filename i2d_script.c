@@ -2293,8 +2293,11 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
                     base = 10;
                 }
 
-                if(i2d_strtol(&number, literal.string, literal.length, base))
+                if(i2d_strtol(&number, literal.string, literal.length, base)) {
                     status = i2d_panic("failed to parse hexadecimal number -- %s", literal.string);
+                } else {
+                    node->type = I2D_NUMBER;
+                }
             } else if(i2d_translator_const_map(script->translator, &literal, &number)) {
                 number = 0;
             }

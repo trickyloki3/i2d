@@ -101,6 +101,7 @@ int i2d_lexer_tokenize(i2d_lexer *, i2d_str *, i2d_token **);
 
 enum i2d_node_type {
     I2D_NODE,
+    I2D_NUMBER,
     I2D_VARIABLE,
     I2D_FUNCTION,
     I2D_UNARY,
