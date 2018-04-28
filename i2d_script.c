@@ -1,6 +1,6 @@
 #include "i2d_script.h"
 
-static int i2d_bonus_handler_elements(i2d_translator *, i2d_node *, i2d_str **);
+static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str **);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1803,7 +1803,7 @@ void i2d_str_map_deit(void ** result) {
     *result = NULL;
 }
 
-typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
+typedef int (*i2d_bonus_argument_handler)(i2d_script *, i2d_node *, i2d_str **);
 
 static struct i2d_bonus_handler {
     i2d_str name;
@@ -1814,14 +1814,14 @@ static struct i2d_bonus_handler {
 
 typedef struct i2d_bonus_handler i2d_bonus_handler;
 
-static int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * node, i2d_str ** result) {
+static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_str ** result) {
     int status = I2D_OK;
     i2d_str literal;
     i2d_str element;
 
     if(i2d_node_get_string(node, &literal)) {
         status = i2d_panic("failed to get node string");
-    } else if(i2d_translator_elements_map(translator, &literal, &element)) {
+    } else if(i2d_translator_elements_map(script->translator, &literal, &element)) {
         status = i2d_panic("failed to map element -- %s", literal.string);
     } else if(i2d_str_init(result, element.string, element.length)) {
         status = i2d_panic("failed to create string object");
@@ -1915,19 +1915,6 @@ int i2d_translator_elements_map(i2d_translator * translator, i2d_str * key, i2d_
         status = I2D_FAIL;
     } else {
         *result = str_map->value;
-    }
-
-    return status;
-}
-
-int i2d_translator_bonus_handler(i2d_translator * translator, i2d_str * argument_type, i2d_node * node, i2d_str ** result) {
-    int status = I2D_OK;
-    i2d_bonus_handler * handler;
-
-    if(i2d_rbt_search(translator->bonus_handlers, argument_type, (void **) &handler)) {
-        status = i2d_panic("failed to search to bonus handler -- %s", argument_type->string);
-    } else {
-        status = handler->handler(translator, node, result);
     }
 
     return status;
@@ -2160,6 +2147,19 @@ int i2d_script_statement(i2d_script * script, i2d_block * block) {
     return status;
 }
 
+int i2d_script_bonus_handler(i2d_script * script, i2d_str * argument_type, i2d_node * node, i2d_str ** result) {
+    int status = I2D_OK;
+    i2d_bonus_handler * handler;
+
+    if(i2d_rbt_search(script->translator->bonus_handlers, argument_type, (void **) &handler)) {
+        status = i2d_panic("failed to search to bonus handler -- %s", argument_type->string);
+    } else {
+        status = handler->handler(script, node, result);
+    }
+
+    return status;
+}
+
 int i2d_script_bonus(i2d_script * script, i2d_block * block) {
     int status = I2D_OK;
     i2d_node * arguments[2];
@@ -2176,7 +2176,7 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
     } else if(i2d_translator_bonus_map(script->translator, &bonus_id, &bonus_type)) {
         status = i2d_panic("failed to map bonus type value");
     } else {
-        if(i2d_translator_bonus_handler(script->translator, bonus_type->argument_type->list[0], arguments[1], &string)) {
+        if(i2d_script_bonus_handler(script, bonus_type->argument_type->list[0], arguments[1], &string)) {
             status = i2d_panic("failed to translate bonus arguments");
         } else {
             if(i2d_description_format(bonus_type->description, &string, 1, block->buffer))
