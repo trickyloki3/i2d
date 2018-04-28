@@ -1935,8 +1935,13 @@ int i2d_context_init(i2d_context ** result) {
             if(i2d_rbt_init(&object->variables, i2d_node_cmp_literal)) {
                 status = i2d_panic("failed to create red black tree object");
             } else {
-                object->next = object;
-                object->prev = object;
+                if( i2d_buf_init(&object->predicates, 4096) ||
+                    i2d_buf_init(&object->expression, 4096) ) {
+                    status = i2d_panic("failed to create buffer objects");
+                } else {
+                    object->next = object;
+                    object->prev = object;
+                }
             }
 
             if(status)
@@ -1953,6 +1958,8 @@ void i2d_context_deit(i2d_context ** result) {
     i2d_context * object;
 
     object = *result;
+    i2d_deit(object->expression, i2d_buf_deit);
+    i2d_deit(object->predicates, i2d_buf_deit);
     i2d_deit(object->variables, i2d_rbt_deit);
     i2d_free(object);
     *result = NULL;

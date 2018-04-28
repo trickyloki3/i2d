@@ -328,6 +328,8 @@ int i2d_translator_elements_map(i2d_translator *, i2d_str *, i2d_str *);
 
 struct i2d_context {
     i2d_rbt * variables;
+    i2d_buf * predicates;
+    i2d_buf * expression;
     struct i2d_context * next;
     struct i2d_context * prev;
 };
