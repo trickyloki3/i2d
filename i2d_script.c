@@ -736,8 +736,7 @@ int i2d_node_get_predicate(i2d_node * node, i2d_str * result) {
     return status;
 }
 
-i2d_statement statements[] = {
-    {I2D_STATEMENT_START, {"start", 5}},
+static i2d_statement statements[] = {
     {I2D_BONUS, {"bonus", 5}},
     {I2D_BONUS2, {"bonus2", 6}},
     {I2D_BONUS3, {"bonus3", 6}},
@@ -801,8 +800,7 @@ i2d_statement statements[] = {
     {I2D_FOR, {"for", 3}},
     {I2D_GETMAPXY, {"getmapxy", 8}},
     {I2D_SPECIALEFFECT, {"specialeffect", 13}},
-    {I2D_SHOWSCRIPT, {"showscript", 10}},
-    {I2D_STATEMENT_END, {"end", 3}}
+    {I2D_SHOWSCRIPT, {"showscript", 10}}
 };
 
 const char * i2d_block_string[] = {
@@ -934,10 +932,14 @@ int i2d_parser_init(i2d_parser ** result) {
                 object->node_cache->left = object->node_cache;
                 object->node_cache->right = object->node_cache;
 
-                size = i2d_size(statements);
-                for(i = 0; i < size; i++)
-                    if(i2d_rbt_insert(object->statement_map, &statements[i].name, &statements[i]))
-                        status = i2d_panic("failed to index statement object");
+                if(i2d_rbt_init(&object->statement_map, i2d_rbt_cmp_str)) {
+                    status = i2d_panic("failed to create red black tree object");
+                } else {
+                    size = i2d_size(statements);
+                    for(i = 0; i < size; i++)
+                        if(i2d_rbt_insert(object->statement_map, &statements[i].name, &statements[i]))
+                            status = i2d_panic("failed to index statement object");
+                }
             }
 
             if(status)
@@ -1762,7 +1764,7 @@ void i2d_str_map_deit(void ** result) {
 
 typedef int (*i2d_bonus_argument_handler)(i2d_translator *, i2d_node *, i2d_str **);
 
-struct i2d_bonus_handler {
+static struct i2d_bonus_handler {
     i2d_str name;
     i2d_bonus_argument_handler handler;
 } bonus_handlers[] = {
