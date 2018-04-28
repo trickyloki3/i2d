@@ -1,7 +1,7 @@
 #include "i2d_db.h"
 
-static i2d_db_load_item_db(i2d_db *, i2d_str *, const char *, i2d_buf *);
-static i2d_db_load_skill_db(i2d_db *, i2d_str *, const char *, i2d_buf *);
+static int i2d_db_load_item_db(i2d_db *, i2d_str *, const char *, i2d_buf *);
+static int i2d_db_load_skill_db(i2d_db *, i2d_str *, const char *, i2d_buf *);
 
 int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_str * source_path) {
     int status = I2D_OK;
@@ -64,7 +64,7 @@ void i2d_db_deit(i2d_db ** result) {
     *result = NULL;
 }
 
-static i2d_db_load_item_db(i2d_db * db, i2d_str * source_path, const char * directory, i2d_buf * buffer) {
+static int i2d_db_load_item_db(i2d_db * db, i2d_str * source_path, const char * directory, i2d_buf * buffer) {
     int status = I2D_OK;
     i2d_str path;
 
@@ -82,7 +82,7 @@ static i2d_db_load_item_db(i2d_db * db, i2d_str * source_path, const char * dire
     return status;
 }
 
-static i2d_db_load_skill_db(i2d_db * db, i2d_str * source_path, const char * directory, i2d_buf * buffer) {
+static int i2d_db_load_skill_db(i2d_db * db, i2d_str * source_path, const char * directory, i2d_buf * buffer) {
     int status = I2D_OK;
     i2d_str path;
 

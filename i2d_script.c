@@ -619,7 +619,7 @@ int i2d_node_copy(i2d_node * source, i2d_node * target) {
         status = i2d_panic("failed to copy range list object");
     } else if(target->logic) {
         if(i2d_logic_copy(&source->logic, target->logic))
-            status - i2d_panic("failed to copy logic object");
+            status = i2d_panic("failed to copy logic object");
     }
 
     return status;
@@ -1558,7 +1558,8 @@ int i2d_description_init(i2d_description ** result, i2d_str_const * description)
 
     return status;
 }
-int i2d_description_deit(i2d_description ** result) {
+
+void i2d_description_deit(i2d_description ** result) {
     i2d_description * object;
 
     object = *result;
@@ -1991,8 +1992,7 @@ void i2d_context_remove(i2d_context * x) {
 int i2d_context_reset(i2d_context * context) {
     int status = I2D_OK;
 
-    if(i2d_rbt_clear(context->variables))
-        status = i2d_panic("failed to clear variable map");
+    i2d_rbt_clear(context->variables);
 
     return status;
 }
@@ -2140,6 +2140,8 @@ int i2d_script_statement(i2d_script * script, i2d_block * block) {
         switch(block->statement->type) {
             case I2D_BONUS:
                 status = i2d_script_bonus(script, block);
+                break;
+            default:
                 break;
         }
     }
