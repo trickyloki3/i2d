@@ -33,6 +33,7 @@ int i2d_json_init(i2d_json **, i2d_str *);
 void i2d_json_deit(i2d_json **);
 
 int i2d_json_object_list(json_t *, void ***, size_t *);
+int i2d_json_array_list(json_t *, void ***, size_t *);
 int i2d_json_get_object(json_t *, const char *, json_t **);
 int i2d_json_get_str(json_t *, const char *, i2d_str_const *);
 int i2d_json_get_int(json_t *, const char *, json_int_t *);

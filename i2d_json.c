@@ -125,6 +125,27 @@ int i2d_json_object_list(json_t * json, void *** _list, size_t * _size) {
     return status;
 }
 
+int i2d_json_array_list(json_t * json, void *** _list, size_t * _size) {
+    int status = I2D_OK;
+    void ** list;
+    size_t size;
+
+    size = json_array_size(json);
+    if(!size) {
+        status = i2d_panic("empty object");
+    } else {
+        list = calloc(size, sizeof(*list));
+        if(!list) {
+            status = i2d_panic("out of memory");
+        } else {
+            *_list = list;
+            *_size = size;
+        }
+    }
+
+    return status;
+}
+
 int i2d_json_get_object(json_t * json, const char * key, json_t ** result) {
     int status = I2D_OK;
     json_t * object;
@@ -182,8 +203,9 @@ int i2d_str_list_init(i2d_str_list ** result, const char * key, json_t * json) {
     int status = I2D_OK;
     i2d_str_list * object;
     json_t * array;
+
     size_t index;
-    json_t *value;
+    json_t * value;
     const char * string;
     size_t length;
 
@@ -194,30 +216,21 @@ int i2d_str_list_init(i2d_str_list ** result, const char * key, json_t * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            array = json_object_get(json, key);
-            if(!array) {
-                status = i2d_panic("failed to get %s key value", key);
+            if(i2d_json_get_object(json, key, &array)) {
+                status = i2d_panic("failed to get object");
+            } else if(i2d_json_array_list(array, (void ***) &object->list, &object->size)) {
+                status = i2d_panic("failed to create array list");
             } else {
-                object->size = json_array_size(array);
-                if(!object->size) {
-                    status = i2d_panic("empty array on %s key value", key);
-                } else {
-                    object->list = calloc(object->size, sizeof(*object->list));
-                    if(!object->list) {
-                        status = i2d_panic("out of memory");
+                json_array_foreach(array, index, value) {
+                    string = json_string_value(value);
+                    if(!string) {
+                        status = i2d_panic("failed on invalid string");
                     } else {
-                        json_array_foreach(array, index, value) {
-                            string = json_string_value(value);
-                            if(!string) {
-                                status = i2d_panic("failed on invalid string");
-                            } else {
-                                length = json_string_length(value);
-                                if(!length) {
-                                    status = i2d_panic("failed on empty string");
-                                } else if(i2d_str_init(&object->list[index], string, length)) {
-                                    status = i2d_panic("failed to create string object");
-                                }
-                            }
+                        length = json_string_length(value);
+                        if(!length) {
+                            status = i2d_panic("failed on empty string");
+                        } else if(i2d_str_init(&object->list[index], string, length)) {
+                            status = i2d_panic("failed to create string object");
                         }
                     }
                 }
