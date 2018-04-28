@@ -40,12 +40,12 @@ void i2d_skill_deit(i2d_skill ** result) {
     i2d_skill * object;
 
     object = *result;
-    i2d_deit(object->name, i2d_str_deit);
-    i2d_deit(object->macro, i2d_str_deit);
+    i2d_free(object->name.string);
+    i2d_free(object->macro.string);
     i2d_free(object->blow_count);
-    i2d_deit(object->type, i2d_str_deit);
+    i2d_free(object->type.string);
     i2d_free(object->max_count);
-    i2d_deit(object->cast_cancel, i2d_str_deit);
+    i2d_free(object->cast_cancel.string);
     i2d_free(object->hit_amount);
     i2d_free(object->splash);
     i2d_free(object->element);
@@ -151,14 +151,14 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
                     case 6: status = i2d_skill_parse_list(&skill->splash, &skill->splash_size, anchor, extent); break;
                     case 7: status = i2d_strtol(&skill->maxlv, anchor, extent, 10); break;
                     case 8: status = i2d_skill_parse_list(&skill->hit_amount, &skill->hit_amount_size, anchor, extent); break;
-                    case 9: status = i2d_str_init(&skill->cast_cancel, anchor, extent); break;
+                    case 9: status = i2d_str_copy(&skill->cast_cancel, anchor, extent); break;
                     case 10: status = i2d_strtol(&skill->cast_def_reduce_rate, anchor, extent, 10); break;
                     case 11: status = i2d_strtol(&skill->inf2, anchor, extent, 16); break;
                     case 12: status = i2d_skill_parse_list(&skill->max_count, &skill->max_count_size, anchor, extent); break;
-                    case 13: status = i2d_str_init(&skill->type, anchor, extent); break;
+                    case 13: status = i2d_str_copy(&skill->type, anchor, extent); break;
                     case 14: status = i2d_skill_parse_list(&skill->blow_count, &skill->blow_count_size, anchor, extent); break;
                     case 15: status = i2d_strtol(&skill->inf3, anchor, extent, 16); break;
-                    case 16: status = i2d_str_init(&skill->macro, anchor, extent); break;
+                    case 16: status = i2d_str_copy(&skill->macro, anchor, extent); break;
                     default: status = i2d_panic("skill has too many columns"); break;
                 }
                 field++;
@@ -175,7 +175,7 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
             status = i2d_panic("line overflow");
         } else {
             extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_str_init(&skill->name, anchor, extent);
+            status = i2d_str_copy(&skill->name, anchor, extent);
         }
     }
 
@@ -303,7 +303,7 @@ static int i2d_skill_db_index(i2d_skill_db * skill_db) {
         skill = skill_db->list;
         do {
             if( i2d_rbt_insert(skill_db->index_by_id, &skill->id, skill) ||
-                i2d_rbt_insert(skill_db->index_by_macro, skill->macro, skill) )
+                i2d_rbt_insert(skill_db->index_by_macro, &skill->macro, skill) )
                 status = i2d_panic("failed to index skill by id -- %ld", skill->id);
             skill = skill->next;
         } while(skill != skill_db->list && !status);
