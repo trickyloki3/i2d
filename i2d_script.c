@@ -2461,19 +2461,19 @@ int i2d_script_test(i2d_script * script, i2d_item * item) {
     int status = I2D_OK;
     i2d_str * description = NULL;
 
-    if(i2d_script_compile(script, item->script, &description)) {
+    if(i2d_script_compile(script, &item->script, &description)) {
         status = i2d_panic("failed to translate script for item %ld", item->id);
     } else {
         i2d_deit(description, i2d_str_deit);
     }
 
-    if(i2d_script_compile(script, item->onequip_script, &description)) {
+    if(i2d_script_compile(script, &item->onequip_script, &description)) {
         status = i2d_panic("failed to translate script for item %ld", item->id);
     } else {
         i2d_deit(description, i2d_str_deit);
     }
 
-    if(i2d_script_compile(script, item->onunequip_script, &description)) {
+    if(i2d_script_compile(script, &item->onunequip_script, &description)) {
         status = i2d_panic("failed to translate script for item %ld", item->id);
     } else {
         i2d_deit(description, i2d_str_deit);

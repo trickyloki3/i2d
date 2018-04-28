@@ -40,11 +40,11 @@ void i2d_item_deit(i2d_item ** result) {
     i2d_item * object;
 
     object = *result;
-    i2d_deit(object->aegis_name, i2d_str_deit);
-    i2d_deit(object->name, i2d_str_deit);
-    i2d_deit(object->script, i2d_str_deit);
-    i2d_deit(object->onequip_script, i2d_str_deit);
-    i2d_deit(object->onunequip_script, i2d_str_deit);
+    i2d_free(object->aegis_name.string);
+    i2d_free(object->name.string);
+    i2d_free(object->script.string);
+    i2d_free(object->onequip_script.string);
+    i2d_free(object->onunequip_script.string);
     i2d_free(object);
     *result = NULL;
 }
@@ -100,8 +100,8 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                 extent = (size_t) (string + i) - (size_t) anchor;
                 switch(field) {
                     case 0: status = i2d_strtol(&item->id, anchor, extent, 10); break;
-                    case 1: status = i2d_str_init(&item->aegis_name, anchor, extent); break;
-                    case 2: status = i2d_str_init(&item->name, anchor, extent); break;
+                    case 1: status = i2d_str_copy(&item->aegis_name, anchor, extent); break;
+                    case 2: status = i2d_str_copy(&item->name, anchor, extent); break;
                     case 3: status = i2d_strtol(&item->type, anchor, extent, 10); break;
                     case 4: status = i2d_strtol(&item->buy, anchor, extent, 10); break;
                     case 5: status = i2d_strtol(&item->sell, anchor, extent, 10); break;
@@ -118,8 +118,8 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                     case 16: status = i2d_item_parse_optional(&item->base_level, &item->max_level, anchor, extent); break;
                     case 17: status = i2d_strtol(&item->refineable, anchor, extent, 10); break;
                     case 18: status = i2d_strtol(&item->view, anchor, extent, 10); break;
-                    case 19: status = i2d_str_init(&item->script, anchor, extent); break;
-                    case 20: status = i2d_str_init(&item->onequip_script, anchor, extent); break;
+                    case 19: status = i2d_str_copy(&item->script, anchor, extent); break;
+                    case 20: status = i2d_str_copy(&item->onequip_script, anchor, extent); break;
                     default: status = i2d_panic("item has too many columns"); break;
                 }
                 field++;
@@ -136,7 +136,7 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
             status = i2d_panic("line overflow");
         } else {
             extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_str_init(&item->onunequip_script, anchor, extent);
+            status = i2d_str_copy(&item->onunequip_script, anchor, extent);
         }
     }
 
@@ -267,10 +267,10 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
         do {
             if(i2d_rbt_insert(item_db->index_by_id, &item->id, item)) {
                 status = i2d_panic("failed to index item by id -- %ld", item->id);
-            } else if(i2d_rbt_insert(item_db->index_by_aegis, item->aegis_name, item)) {
-                status = i2d_panic("failed to index item by aegis name -- %s", item->aegis_name->string);
-            } else if(i2d_rbt_insert(item_db->index_by_name, item->name, item)) {
-                status = i2d_panic("failed to index item by name -- %s", item->name->string);
+            } else if(i2d_rbt_insert(item_db->index_by_aegis, &item->aegis_name, item)) {
+                status = i2d_panic("failed to index item by aegis name -- %s", item->aegis_name.string);
+            } else if(i2d_rbt_insert(item_db->index_by_name, &item->name, item)) {
+                status = i2d_panic("failed to index item by name -- %s", item->name.string);
             }
             item = item->next;
         } while(item != item_db->list && !status);
