@@ -751,6 +751,29 @@ int i2d_node_get_predicate(i2d_node * node, i2d_str * result) {
     return status;
 }
 
+int i2d_node_get_all_predicate(i2d_node * node, i2d_buf * buffer) {
+    int status = I2D_OK;
+    i2d_str literal;
+
+    if( I2D_VARIABLE == node->type ||
+        I2D_FUNCTION == node->type ) {
+        if(i2d_token_get_literal(node->tokens, &literal)) {
+            status = i2d_panic("failed to get literal");
+        } else {
+            status = buffer->offset ?
+                i2d_buf_format(buffer, ", %s", literal.string) :
+                i2d_buf_format(buffer, "%s", literal.string);
+        }
+    } else {
+        if(node->left)
+            status = i2d_node_get_all_predicate(node->left, buffer);
+        if(node->right)
+            status = i2d_node_get_all_predicate(node->right, buffer);
+    }
+
+    return status;
+}
+
 static i2d_statement statements[] = {
     {I2D_BONUS, {"bonus", 5}},
     {I2D_BONUS2, {"bonus2", 6}},
