@@ -175,7 +175,7 @@ void i2d_rbt_deit(i2d_rbt ** result) {
     *result = NULL;
 }
 
-int i2d_rbt_clear(i2d_rbt * tree) {
+void i2d_rbt_clear(i2d_rbt * tree) {
     i2d_rbt_node * node;
 
     while(tree->root) {
