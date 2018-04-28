@@ -663,26 +663,41 @@ int i2d_node_cmp_literal(void * left, void * right) {
     return status;
 }
 
-int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t size) {
+int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t required, size_t optional) {
     int status = I2D_OK;
     size_t i;
+    size_t size;
+    i2d_node * iter;
 
     if(!node) {
         status = i2d_panic("failed on empty argument list");
-    } else if(size > 0) {
-        i = size - 1;
-        while(i > 0 && I2D_COMMA == node->tokens->type) {
-            nodes[i] = node->right;
-            node = node->left;
-            i--;
+    } else if(required > 0) {
+        size = 1;
+        iter = node;
+        while(I2D_COMMA == iter->tokens->type) {
+            iter = iter->left;
+            size++;
         }
 
-        if(i || !node) {
+        if(size < required) {
             status = i2d_panic("failed on insufficient argument list");
-        } else if(I2D_COMMA == node->tokens->type) {
+        } else if(required + optional < size) {
             status = i2d_panic("failed on excessive argument list");
         } else {
-            nodes[0] = node;
+            i = size - 1;
+            while(i > 0 && I2D_COMMA == node->tokens->type) {
+                nodes[i] = node->right;
+                node = node->left;
+                i--;
+            }
+
+            if(i || !node) {
+                status = i2d_panic("failed on insufficient argument list");
+            } else if(I2D_COMMA == node->tokens->type) {
+                status = i2d_panic("failed on excessive argument list");
+            } else {
+                nodes[0] = node;
+            }
         }
     } else if(I2D_NODE != node->type || node->left || node->right) {
         status = i2d_panic("failed on excessive argument list");
@@ -2131,7 +2146,7 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
 
     if(i2d_script_expression(script, block->nodes, 0)) {
         status = i2d_panic("failed to translate expression");
-    } else if(i2d_node_get_arguments(block->nodes->left, arguments, i2d_size(arguments))) {
+    } else if(i2d_node_get_arguments(block->nodes->left, arguments, 2, 0)) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(arguments[0], &bonus_id)) {
         status = i2d_panic("failed to get bonus type value");
