@@ -1079,6 +1079,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
     int status = I2D_OK;
     i2d_block * root;
     i2d_block * block;
+    i2d_block * state;
     i2d_token * anchor;
     i2d_token * token = NULL;
     i2d_str literal;
@@ -1193,12 +1194,14 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
             if(!root) {
                 root = block;
             } else {
-                i2d_block_append(block, root);
+                if((I2D_IF == state->type || I2D_ELSE == state->type) && !state->child) {
+                    state->child = block;
+                } else {
+                    i2d_block_append(block, root);
+                }
             }
+            state = block;
             block = NULL;
-
-            if(parent && (I2D_IF == parent->type))
-                break;
         }
     }
 
