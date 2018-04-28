@@ -12,7 +12,7 @@ enum {
 
 struct i2d_logic {
     int type;
-    i2d_str * name;
+    i2d_str name;
     i2d_range_list * range;
     struct i2d_logic * parent;
     struct i2d_logic * left;
