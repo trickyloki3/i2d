@@ -1629,7 +1629,7 @@ int i2d_function_init(void ** result, const char * name, json_t * json, i2d_rbt 
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_str_init(&object->name, name, strlen(name))) {
+            if(i2d_str_copy(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
             } else if(i2d_json_get_int(json, "min", &min) || i2d_json_get_int(json, "max", &max)) {
                 status = i2d_panic("failed to get min and max value");
@@ -1639,7 +1639,7 @@ int i2d_function_init(void ** result, const char * name, json_t * json, i2d_rbt 
                 status = i2d_panic("failed to get description string");
             } else if(i2d_description_init(&object->description, &description)) {
                 status = i2d_panic("failed to create description object");
-            } else if(i2d_rbt_insert(rbt, object->name, object)) {
+            } else if(i2d_rbt_insert(rbt, &object->name, object)) {
                 status = i2d_panic("failed to map function object");
             }
 
@@ -1659,7 +1659,7 @@ void i2d_function_deit(void ** result) {
     object = *result;
     i2d_deit(object->range, i2d_range_list_deit);
     i2d_deit(object->description, i2d_description_deit);
-    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object->name.string);
     i2d_free(object);
     *result = NULL;
 }
@@ -1678,7 +1678,7 @@ int i2d_bonus_type_init(void ** result, const char * name, json_t * json, i2d_rb
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_str_init(&object->name, name, strlen(name))) {
+            if(i2d_str_copy(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
             } else if(i2d_json_get_str(json, "description", &description)) {
                 status = i2d_panic("failed to get description string");
@@ -1686,8 +1686,8 @@ int i2d_bonus_type_init(void ** result, const char * name, json_t * json, i2d_rb
                 status = i2d_panic("failed to create description object");
             } else if(i2d_str_list_init(&object->argument_type, "argument_type", json)) {
                 status = i2d_panic("failed to create string list object");
-            } else if(i2d_translator_const_map(context, object->name, &object->value)) {
-                status = i2d_panic("failed to get bonus type value -- %s", object->name->string);
+            } else if(i2d_translator_const_map(context, &object->name, &object->value)) {
+                status = i2d_panic("failed to get bonus type value -- %s", object->name.string);
             } else if(i2d_rbt_insert(rbt, &object->value, object)) {
                 status = i2d_panic("failed to map bonus type object");
             }
@@ -1708,7 +1708,7 @@ void i2d_bonus_type_deit(void ** result) {
     object = *result;
     i2d_deit(object->argument_type, i2d_str_list_deit);
     i2d_deit(object->description, i2d_description_deit);
-    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object->name.string);
     i2d_free(object);
     *result = NULL;
 }
@@ -1733,11 +1733,11 @@ int i2d_str_map_init(void ** result, const char * key, json_t * json, i2d_rbt * 
                 length = json_string_length(json);
                 if(!length) {
                     status = i2d_panic("empty string on %s key value", key);
-                } else if(i2d_str_init(&object->key, key, strlen(key))) {
+                } else if(i2d_str_copy(&object->key, key, strlen(key))) {
                     status = i2d_panic("failed to create string object");
-                } else if(i2d_str_init(&object->value, string, length)) {
+                } else if(i2d_str_copy(&object->value, string, length)) {
                     status = i2d_panic("failed to create string object");
-                } else if(i2d_rbt_insert(rbt, object->key, object)) {
+                } else if(i2d_rbt_insert(rbt, &object->key, object)) {
                     status = i2d_panic("failed to map string object");
                 }
             }
@@ -1756,8 +1756,8 @@ void i2d_str_map_deit(void ** result) {
     i2d_str_map * object;
 
     object = *result;
-    i2d_deit(object->value, i2d_str_deit);
-    i2d_deit(object->key, i2d_str_deit);
+    i2d_free(object->value.string);
+    i2d_free(object->key.string);
     i2d_free(object);
     *result = NULL;
 }
@@ -1776,13 +1776,13 @@ typedef struct i2d_bonus_handler i2d_bonus_handler;
 static int i2d_bonus_handler_elements(i2d_translator * translator, i2d_node * node, i2d_str ** result) {
     int status = I2D_OK;
     i2d_str literal;
-    i2d_str * element;
+    i2d_str element;
 
     if(i2d_node_get_string(node, &literal)) {
         status = i2d_panic("failed to get node string");
     } else if(i2d_translator_elements_map(translator, &literal, &element)) {
         status = i2d_panic("failed to map element -- %s", literal.string);
-    } else if(i2d_str_init(result, element->string, element->length)) {
+    } else if(i2d_str_init(result, element.string, element.length)) {
         status = i2d_panic("failed to create string object");
     }
 
@@ -1866,7 +1866,7 @@ int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_
     return i2d_object_map(translator->functions, key, (void **) result);
 }
 
-int i2d_translator_elements_map(i2d_translator * translator, i2d_str * key, i2d_str ** result) {
+int i2d_translator_elements_map(i2d_translator * translator, i2d_str * key, i2d_str * result) {
     int status = I2D_OK;
     i2d_str_map * str_map;
 
