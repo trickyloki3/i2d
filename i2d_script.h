@@ -255,7 +255,7 @@ int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_bl
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 
 struct i2d_const {
-    i2d_str * name;
+    i2d_str name;
     json_int_t value;
 };
 

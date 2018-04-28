@@ -1465,11 +1465,11 @@ int i2d_const_init(void ** result, const char * name, json_t * json, i2d_rbt * r
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_str_init(&object->name, name, strlen(name))) {
+            if(i2d_str_copy(&object->name, name, strlen(name))) {
                 status = i2d_panic("failed to create string object");
             } else {
                 object->value = json_integer_value(json);
-                if(i2d_rbt_insert(rbt, object->name, object))
+                if(i2d_rbt_insert(rbt, &object->name, object))
                     status = i2d_panic("failed to map const object");
             }
             if(status)
@@ -1486,7 +1486,7 @@ void i2d_const_deit(void ** result) {
     i2d_const * object;
 
     object = *result;
-    i2d_deit(object->name, i2d_str_deit);
+    i2d_free(object->name.string);
     i2d_free(object);
     *result = NULL;
 }
