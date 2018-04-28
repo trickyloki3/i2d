@@ -736,142 +736,74 @@ int i2d_node_get_predicate(i2d_node * node, i2d_str * result) {
     return status;
 }
 
-const char * i2d_statement_string[] = {
-    "start",
-    "bonus",
-    "bonus2",
-    "bonus3",
-    "bonus4",
-    "bonus5",
-    "autobonus",
-    "autobonus2",
-    "autobonus3",
-    "heal",
-    "percentheal",
-    "itemheal",
-    "skill",
-    "itemskill",
-    "unitskilluseid",
-    "sc_start",
-    "sc_start4",
-    "sc_end",
-    "getitem",
-    "rentitem",
-    "delitem",
-    "getrandgroupitem",
-    "skilleffect",
-    "specialeffect2",
-    "setfont",
-    "buyingstore",
-    "searchstores",
-    "set",
-    "input",
-    "announce",
-    "callfunc",
-    "end",
-    "warp",
-    "pet",
-    "bpet",
-    "mercenary_create",
-    "mercenary_heal",
-    "mercenary_sc_start",
-    "produce",
-    "cooking",
-    "makerune",
-    "guildgetexp",
-    "getexp",
-    "monster",
-    "homevolution",
-    "setoption",
-    "setmounting",
-    "setfalcon",
-    "getgroupitem",
-    "resetstatus",
-    "bonus_script",
-    "playbgm",
-    "transform",
-    "sc_start2",
-    "petloot",
-    "petrecovery",
-    "petskillbonus",
-    "petskillattack",
-    "petskillattack2",
-    "petskillsupport",
-    "petheal",
-    "for",
-    "getmapxy",
-    "specialeffect",
-    "showscript",
-    "end"
+i2d_statement statements[] = {
+    {I2D_STATEMENT_START, {"start", 5}},
+    {I2D_BONUS, {"bonus", 5}},
+    {I2D_BONUS2, {"bonus2", 6}},
+    {I2D_BONUS3, {"bonus3", 6}},
+    {I2D_BONUS4, {"bonus4", 6}},
+    {I2D_BONUS5, {"bonus5", 6}},
+    {I2D_AUTOBONUS, {"autobonus", 9}},
+    {I2D_AUTOBONUS2, {"autobonus2", 10}},
+    {I2D_AUTOBONUS3, {"autobonus3", 10}},
+    {I2D_HEAL, {"heal", 4}},
+    {I2D_PERCENTHEAL, {"percentheal", 11}},
+    {I2D_ITEMHEAL, {"itemheal", 8}},
+    {I2D_SKILL, {"skill", 5}},
+    {I2D_ITEMSKILL, {"itemskill", 9}},
+    {I2D_UNITSKILLUSEID, {"unitskilluseid", 14}},
+    {I2D_SC_START, {"sc_start", 8}},
+    {I2D_SC_START4, {"sc_start4", 9}},
+    {I2D_SC_END, {"sc_end", 6}},
+    {I2D_GETITEM, {"getitem", 7}},
+    {I2D_RENTITEM, {"rentitem", 8}},
+    {I2D_DELITEM, {"delitem", 7}},
+    {I2D_GETRANDGROUPITEM, {"getrandgroupitem", 16}},
+    {I2D_SKILLEFFECT, {"skilleffect", 11}},
+    {I2D_SPECIALEFFECT2, {"specialeffect2", 14}},
+    {I2D_SETFONT, {"setfont", 7}},
+    {I2D_BUYINGSTORE, {"buyingstore", 11}},
+    {I2D_SEARCHSTORES, {"searchstores", 12}},
+    {I2D_SET, {"set", 3}},
+    {I2D_INPUT, {"input", 5}},
+    {I2D_ANNOUNCE, {"announce", 8}},
+    {I2D_CALLFUNC, {"callfunc", 8}},
+    {I2D_END, {"end", 3}},
+    {I2D_WARP, {"warp", 4}},
+    {I2D_PET, {"pet", 3}},
+    {I2D_BPET, {"bpet", 4}},
+    {I2D_MERCENARY_CREATE, {"mercenary_create", 16}},
+    {I2D_MERCENARY_HEAL, {"mercenary_heal", 14}},
+    {I2D_MERCENARY_SC_START, {"mercenary_sc_start", 18}},
+    {I2D_PRODUCE, {"produce", 7}},
+    {I2D_COOKING, {"cooking", 7}},
+    {I2D_MAKERUNE, {"makerune", 8}},
+    {I2D_GUILDGETEXP, {"guildgetexp", 11}},
+    {I2D_GETEXP, {"getexp", 6}},
+    {I2D_MONSTER, {"monster", 7}},
+    {I2D_HOMEVOLUTION, {"homevolution", 12}},
+    {I2D_SETOPTION, {"setoption", 9}},
+    {I2D_SETMOUNTING, {"setmounting", 11}},
+    {I2D_SETFALCON, {"setfalcon", 9}},
+    {I2D_GETGROUPITEM, {"getgroupitem", 12}},
+    {I2D_RESETSTATUS, {"resetstatus", 11}},
+    {I2D_BONUS_SCRIPT, {"bonus_script", 12}},
+    {I2D_PLAYBGM, {"playbgm", 7}},
+    {I2D_TRANSFORM, {"transform", 9}},
+    {I2D_SC_START2, {"sc_start2", 9}},
+    {I2D_PETLOOT, {"petloot", 7}},
+    {I2D_PETRECOVERY, {"petrecovery", 11}},
+    {I2D_PETSKILLBONUS, {"petskillbonus", 13}},
+    {I2D_PETSKILLATTACK, {"petskillattack", 14}},
+    {I2D_PETSKILLATTACK2, {"petskillattack2", 15}},
+    {I2D_PETSKILLSUPPORT, {"petskillsupport", 15}},
+    {I2D_PETHEAL, {"petheal", 7}},
+    {I2D_FOR, {"for", 3}},
+    {I2D_GETMAPXY, {"getmapxy", 8}},
+    {I2D_SPECIALEFFECT, {"specialeffect", 13}},
+    {I2D_SHOWSCRIPT, {"showscript", 10}},
+    {I2D_STATEMENT_END, {"end", 3}}
 };
-
-int i2d_statement_init(i2d_statement ** result, enum i2d_statement_type type) {
-    int status = I2D_OK;
-    i2d_statement * object = NULL;
-
-    if(i2d_is_invalid(result)) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            object->type = type;
-            if(i2d_str_init(&object->name, i2d_statement_string[type], strlen(i2d_statement_string[type]))) {
-                status = i2d_panic("failed to create string object");
-            } else {
-                object->next = object;
-                object->prev = object;
-            }
-
-            if(status)
-                i2d_statement_deit(&object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-void i2d_statement_deit(i2d_statement ** result) {
-    i2d_statement * object;
-
-    object = *result;
-    i2d_deit(object->name, i2d_str_deit);
-    i2d_free(object);
-    *result = NULL;
-}
-
-void i2d_statement_list_deit(i2d_statement ** result) {
-    i2d_statement * object;
-    i2d_statement * statement;
-
-    object = *result;
-    if(object) {
-        while(object != object->next) {
-            statement = object->next;
-            i2d_statement_remove(statement);
-            i2d_statement_deit(&statement);
-        }
-    }
-    i2d_deit(object, i2d_statement_deit);
-    *result = NULL;
-}
-
-void i2d_statement_append(i2d_statement * x, i2d_statement * y) {
-    x->next->prev = y->prev;
-    y->prev->next = x->next;
-    x->next = y;
-    y->prev = x;
-}
-
-void i2d_statement_remove(i2d_statement * x) {
-    x->prev->next = x->next;
-    x->next->prev = x->prev;
-    x->next = x;
-    x->prev = x;
-}
 
 const char * i2d_block_string[] = {
     "block",
@@ -960,7 +892,7 @@ void i2d_block_print(i2d_block * block, int level) {
         fprintf(stdout, "    ");
 
     if(block->statement)
-        fprintf(stdout, "%s [%p]\n", block->statement->name->string, block);
+        fprintf(stdout, "%s [%p]\n", block->statement->name.string, block);
     else
         fprintf(stdout, "%s [%p]\n", i2d_block_string[block->type], block);
 
@@ -984,6 +916,9 @@ int i2d_parser_init(i2d_parser ** result) {
     int status = I2D_OK;
     i2d_parser * object;
 
+    size_t i;
+    size_t size;
+
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
@@ -999,8 +934,10 @@ int i2d_parser_init(i2d_parser ** result) {
                 object->node_cache->left = object->node_cache;
                 object->node_cache->right = object->node_cache;
 
-                if(i2d_parser_statement_load(object))
-                    status = i2d_panic("failed to load statement objects");
+                size = i2d_size(statements);
+                for(i = 0; i < size; i++)
+                    if(i2d_rbt_insert(object->statement_map, &statements[i].name, &statements[i]))
+                        status = i2d_panic("failed to index statement object");
             }
 
             if(status)
@@ -1017,37 +954,11 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_parser * object;
 
     object = *result;
-    i2d_deit(object->statement_index, i2d_rbt_deit);
-    i2d_deit(object->statement_list, i2d_statement_list_deit);
+    i2d_deit(object->statement_map, i2d_rbt_deit);
     i2d_deit(object->node_cache, i2d_node_list_deit);
     i2d_deit(object->block_cache, i2d_block_list_deit);
     i2d_free(object);
     *result = NULL;
-}
-
-int i2d_parser_statement_load(i2d_parser * parser) {
-    int status = I2D_OK;
-    size_t i;
-    i2d_statement * statement;
-
-    if(i2d_statement_init(&parser->statement_list, I2D_STATEMENT_START)) {
-        status = i2d_panic("failed to create statement object");
-    } else if(i2d_rbt_init(&parser->statement_index, i2d_rbt_cmp_str)) {
-        status = i2d_panic("failed to create red black tree object");
-    } else {
-        for(i = I2D_STATEMENT_START + 1; i < I2D_STATEMENT_END && !status; i++) {
-            statement = NULL;
-            if(i2d_statement_init(&statement, i)) {
-                status = i2d_panic("failed to create statement object");
-            } else {
-                i2d_statement_append(statement, parser->statement_list);
-                if(i2d_rbt_insert(parser->statement_index, statement->name, statement))
-                    status = i2d_panic("failed to index statement object");
-            }
-        }
-    }
-
-    return status;
 }
 
 int i2d_parser_statement_map(i2d_parser * parser, i2d_lexer * lexer, i2d_block * block) {
@@ -1061,7 +972,7 @@ int i2d_parser_statement_map(i2d_parser * parser, i2d_lexer * lexer, i2d_block *
         if(i2d_token_get_literal(token, &name)) {
             status = i2d_panic("failed to get literal");
         } else {
-            if(!i2d_rbt_search(parser->statement_index, &name, (void *) &block->statement)) {
+            if(!i2d_rbt_search(parser->statement_map, &name, (void *) &block->statement)) {
                 i2d_token_remove(token);
                 i2d_lexer_reset(lexer, &token);
             }

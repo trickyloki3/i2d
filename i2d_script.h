@@ -189,9 +189,7 @@ enum i2d_statement_type {
 
 struct i2d_statement {
     enum i2d_statement_type type;
-    i2d_str * name;
-    struct i2d_statement * next;
-    struct i2d_statement * prev;
+    i2d_str name;
 };
 
 typedef struct i2d_statement i2d_statement;
@@ -220,8 +218,7 @@ typedef struct i2d_block i2d_block;
 struct i2d_parser {
     i2d_block * block_cache;
     i2d_node * node_cache;
-    i2d_statement * statement_list;
-    i2d_rbt * statement_index;
+    i2d_rbt * statement_map;
 };
 
 typedef struct i2d_parser i2d_parser;
@@ -238,12 +235,6 @@ int i2d_node_get_constant(i2d_node *, long *);
 int i2d_node_get_string(i2d_node *, i2d_str *);
 int i2d_node_get_predicate(i2d_node *, i2d_str *);
 
-int i2d_statement_init(i2d_statement **, enum i2d_statement_type);
-void i2d_statement_deit(i2d_statement **);
-void i2d_statement_list_deit(i2d_statement **);
-void i2d_statement_append(i2d_statement *, i2d_statement *);
-void i2d_statement_remove(i2d_statement *);
-
 int i2d_block_init(i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 void i2d_block_deit(i2d_block **);
 void i2d_block_list_deit(i2d_block **);
@@ -254,7 +245,6 @@ void i2d_block_list_print(i2d_block *, int);
 
 int i2d_parser_init(i2d_parser **);
 void i2d_parser_deit(i2d_parser **);
-int i2d_parser_statement_load(i2d_parser *);
 int i2d_parser_statement_map(i2d_parser *, i2d_lexer *, i2d_block *);
 void i2d_parser_reset(i2d_parser *, i2d_lexer *, i2d_block **);
 void i2d_parser_node_reset(i2d_parser *, i2d_lexer *, i2d_node **);
