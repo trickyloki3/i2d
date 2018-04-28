@@ -1,6 +1,7 @@
 #include "i2d_script.h"
 
 static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str **);
+static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_str **);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1810,7 +1811,8 @@ static struct i2d_bonus_handler {
     i2d_str name;
     i2d_bonus_argument_handler handler;
 } bonus_handlers[] = {
-    { {"elements", 8}, i2d_bonus_handler_elements }
+    { {"elements", 8}, i2d_bonus_handler_elements },
+    { {"integer", 7}, i2d_bonus_handler_integer }
 };
 
 typedef struct i2d_bonus_handler i2d_bonus_handler;
@@ -1826,6 +1828,34 @@ static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_
         status = i2d_panic("failed to map element -- %s", literal.string);
     } else if(i2d_str_init(result, element.string, element.length)) {
         status = i2d_panic("failed to create string object");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_str ** result) {
+    int status = I2D_OK;
+    long min;
+    long max;
+    i2d_str predicates;
+    i2d_str expression;
+
+    i2d_range_list_get_range(node->range, &min, &max);
+    if( min == max ?
+        i2d_buf_format(script->context->expression, "%+ld", min) :
+        i2d_buf_format(script->context->expression, "%+ld ~ %+ld", min, max) ) {
+        status = i2d_panic("failed to write integer range");
+    } else if(i2d_node_get_all_predicate(node, script->context->predicates)) {
+        status = i2d_panic("failed to get all predicate");
+    } else {
+        i2d_buf_get_str(script->context->predicates, &predicates);
+        if(predicates.length && i2d_buf_format(script->context->expression, " (%s)", predicates.string)) {
+            status = i2d_panic("failed to write predicates");
+        } else {
+            i2d_buf_get_str(script->context->expression, &expression);
+            if(i2d_str_init(result, expression.string, expression.length))
+                status = i2d_panic("failed to create string object");
+        }
     }
 
     return status;
@@ -1999,6 +2029,8 @@ void i2d_context_remove(i2d_context * x) {
 int i2d_context_reset(i2d_context * context) {
     int status = I2D_OK;
 
+    i2d_buf_zero(context->expression);
+    i2d_buf_zero(context->predicates);
     i2d_rbt_clear(context->variables);
 
     return status;
@@ -2163,6 +2195,8 @@ int i2d_script_bonus_handler(i2d_script * script, i2d_str * argument_type, i2d_n
     if(i2d_rbt_search(script->translator->bonus_handlers, argument_type, (void **) &handler)) {
         status = i2d_panic("failed to search to bonus handler -- %s", argument_type->string);
     } else {
+        i2d_buf_zero(script->context->expression);
+        i2d_buf_zero(script->context->predicates);
         status = handler->handler(script, node, result);
     }
 

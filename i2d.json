@@ -8,6 +8,34 @@
             "bAtkEle" : {
                 "description" : "Enchanted with {0} property.",
                 "argument_type" : ["elements"]
+            },
+            "bStr" : {
+                "description" : "STR {0}",
+                "argument_type" : ["integer"]
+            },
+            "bAgi" : {
+                "description" : "AGI {0}",
+                "argument_type" : ["integer"]
+            },
+            "bVit" : {
+                "description" : "VIT {0}",
+                "argument_type" : ["integer"]
+            },
+            "bInt" : {
+                "description" : "INT {0}",
+                "argument_type" : ["integer"]
+            },
+            "bDex" : {
+                "description" : "DEX {0}",
+                "argument_type" : ["integer"]
+            },
+            "bLuk" : {
+                "description" : "LUK {0}",
+                "argument_type" : ["integer"]
+            },
+            "bHit" : {
+                "description" : "HIT {0}",
+                "argument_type" : ["integer"]
             }
         },
         "bonus2" : {},
