@@ -1,5 +1,6 @@
 #include "i2d_script.h"
 
+static int i2d_bonus_handler_regen(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_splash(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_races(i2d_script *, i2d_node *, i2d_str_stack *);
@@ -1829,6 +1830,7 @@ static struct i2d_bonus_handler {
     i2d_str name;
     i2d_bonus_argument_handler handler;
 } bonus_handlers[] = {
+    { {"regen", 5}, i2d_bonus_handler_regen },
     { {"splash", 6}, i2d_bonus_handler_splash },
     { {"elements", 8}, i2d_bonus_handler_elements },
     { {"races", 4}, i2d_bonus_handler_races },
@@ -1857,6 +1859,28 @@ static i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_st
             i2d_buf_get_str(script->context->expression, &expression);
             if(i2d_str_stack_push(stack, &expression))
                 status = i2d_panic("failed to push string on stack");
+        }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_regen(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
+    int status = I2D_OK;
+    long constant;
+
+    if(i2d_node_get_constant(node, &constant)) {
+        status = i2d_panic("failed to get node string");
+    } else {
+        switch(constant) {
+            case 1: status = i2d_buf_format(script->context->expression, "HP"); break;
+            case 2: status = i2d_buf_format(script->context->expression, "SP"); break;
+            default: status = i2d_panic("unsupported regen value -- %ld", constant); break;
+        }
+        if(status) {
+            status = i2d_panic("failed to write regen");
+        } else if(i2d_bonus_handler_expression(script, node, stack)) {
+            status = i2d_panic("failed to write expression");
         }
     }
 
@@ -1961,7 +1985,7 @@ static int i2d_bonus_handler_percent(i2d_script * script, i2d_node * node, i2d_s
     if( min == max ?
         i2d_buf_format(script->context->expression, "%+ld%%", min) :
         i2d_buf_format(script->context->expression, "%+ld%% ~ %+ld%%", min, max) ) {
-        status = i2d_panic("failed to write integer range");
+        status = i2d_panic("failed to write percent range");
     } else if(i2d_bonus_handler_expression(script, node, stack)) {
         status = i2d_panic("failed to write expression");
     }
@@ -1984,7 +2008,7 @@ static int i2d_bonus_handler_percent_invert(i2d_script * script, i2d_node * node
     if( min == max ?
         i2d_buf_format(script->context->expression, "%+ld%%", min) :
         i2d_buf_format(script->context->expression, "%+ld%% ~ %+ld%%", max, min) ) {
-        status = i2d_panic("failed to write integer range");
+        status = i2d_panic("failed to write percent range");
     } else if(i2d_bonus_handler_expression(script, node, stack)) {
         status = i2d_panic("failed to write expression");
     }
@@ -2007,7 +2031,7 @@ static int i2d_bonus_handler_percent__div100(i2d_script * script, i2d_node * nod
     if( min == max ?
         i2d_buf_format(script->context->expression, "%+ld%%", min) :
         i2d_buf_format(script->context->expression, "%+ld%% ~ %+ld%%", max, min) ) {
-        status = i2d_panic("failed to write integer range");
+        status = i2d_panic("failed to write percent range");
     } else if(i2d_bonus_handler_expression(script, node, stack)) {
         status = i2d_panic("failed to write expression");
     }
