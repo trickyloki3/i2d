@@ -1803,7 +1803,7 @@ int i2d_readparam_init(void ** result, const char * key, json_t * json, i2d_rbt 
                         if(i2d_range_list_init2(&object->range, min, max))
                             status = i2d_panic("failed to create range list object");
                     }
-                } else if(i2d_range_list_init2(&object->range, INT_MIN, INT_MAX)) {
+                } else if(i2d_range_list_init2(&object->range, 0, 0)) {
                     status = i2d_panic("failed to create range list object");
                 } else if(i2d_rbt_insert(rbt, &object->name, object)) {
                     status = i2d_panic("failed to map readparam object");
