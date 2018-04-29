@@ -358,6 +358,7 @@ struct i2d_script {
     i2d_parser * parser;
     i2d_translator * translator;
     i2d_context * context;
+    i2d_rbt * functions;
 };
 
 typedef struct i2d_script i2d_script;

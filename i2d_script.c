@@ -2314,6 +2314,8 @@ static int i2d_function_handler_getrefine(i2d_script * script, i2d_node * node) 
 int i2d_script_init(i2d_script ** result, i2d_option * option) {
     int status = I2D_OK;
     i2d_script * object;
+    size_t i;
+    size_t size;
 
     if(i2d_is_invalid(result) || !option) {
         status = i2d_panic("invalid paramater");
@@ -2334,6 +2336,15 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to create translator object");
             } else if(i2d_context_init(&object->context)) {
                 status = i2d_panic("failed to create context object");
+            } else {
+                if(i2d_rbt_init(&object->functions, i2d_rbt_cmp_str)) {
+                    status = i2d_panic("failed to create red black tree object");
+                } else {
+                    size = i2d_size(function_handlers);
+                    for(i = 0; i < size && !status; i++)
+                        if(i2d_rbt_insert(object->functions, &function_handlers[i].name, &function_handlers[i]))
+                            status = i2d_panic("failed to map function handler object");
+                }
             }
 
             if(status)
@@ -2350,6 +2361,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->functions, i2d_rbt_deit);
     i2d_deit(object->context, i2d_context_list_deit);
     i2d_deit(object->translator, i2d_translator_deit);
     i2d_deit(object->parser, i2d_parser_deit);
@@ -2552,9 +2564,12 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
 int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_str literal;
+    i2d_script_function * function;
 
     if(i2d_token_get_literal(node->tokens, &literal)) {
         status = i2d_panic("failed to get literal");
+    } else if(!i2d_rbt_search(script->functions, &literal, (void **) &function)) {
+        status = function->handler(script, node);
     } else {
         status = i2d_panic("unsupported function -- %s", literal.string);
     }
