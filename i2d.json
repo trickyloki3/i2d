@@ -278,7 +278,7 @@
                 "argument_type" : ["percent"]
             },
             "bMagicDamageReturn" : {
-                "description" : "Add {0} chance to reflect magic skill back to caster.",
+                "description" : "Add {0} chance to reflect magic spells back to caster.",
                 "argument_type" : ["percent"]
             },
             "bUseSPrate" : {
@@ -320,6 +320,82 @@
             "bUnbreakable" : {
                 "description" : "Break Chance {0}",
                 "argument_type" : ["percent_invert"]
+            },
+            "bUnbreakableGarment" : {
+                "description" : "Garment is indestructible.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnbreakableWeapon" : {
+                "description" : "Weapon is indestructible.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnbreakableArmor" : {
+                "description" : "Armor is indestructible.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnbreakableHelm" : {
+                "description" : "Helm is indestructible.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnbreakableShield" : {
+                "description" : "Shield is indestructible.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnbreakableShoes" : {
+                "description" : "Shoes is indestructible.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnstripableWeapon" : {
+                "description" : "Weapon cannot be stripped.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnstripableArmor" : {
+                "description" : "Armor cannot be stripped.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnstripableHelm" : {
+                "description" : "Helm cannot be stripped.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnstripableShield" : {
+                "description" : "Shield cannot be stripped.",
+                "argument_type" : ["ignore"]
+            },
+            "bUnstripable" : {
+                "description" : "Equipment cannot be stripped.",
+                "argument_type" : ["ignore"]
+            },
+            "bPerfectHide" : {
+                "description" : "Permanent perfect hiding.",
+                "argument_type" : ["ignore"]
+            },
+            "bNoKnockback" : {
+                "description" : "Player cannot be knockback.",
+                "argument_type" : ["ignore"]
+            },
+            "bRestartFullRecover" : {
+                "description" : "Recover full HP and SP when revived.",
+                "argument_type" : ["ignore"]
+            },
+            "bNoSizeFix" : {
+                "description" : "Ignore enemy's size when dealing physical damage.",
+                "argument_type" : ["ignore"]
+            },
+            "bNoGemStone" : {
+                "description" : "Ability to use magic spells without gemstones.",
+                "argument_type" : ["ignore"]
+            },
+            "bIntravision" : {
+                "description" : "Ability to detect cloak or hidden enemies.",
+                "argument_type" : ["ignore"]
+            },
+            "bNoCastCancel" : {
+                "description" : "Ability to cast magic without interruption.",
+                "argument_type" : ["ignore"]
+            },
+            "bNoCastCancel2" : {
+                "description" : "Ability to cast magic without interruption.",
+                "argument_type" : ["ignore"]
             }
         },
         "bonus2" : {},
