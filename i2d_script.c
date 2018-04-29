@@ -1960,8 +1960,6 @@ static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_s
     int status = I2D_OK;
     long min;
     long max;
-    i2d_str predicates;
-    i2d_str expression;
 
     i2d_range_list_get_range(node->range, &min, &max);
     if( min == max ?
@@ -1979,8 +1977,6 @@ static int i2d_bonus_handler_percent(i2d_script * script, i2d_node * node, i2d_s
     int status = I2D_OK;
     long min;
     long max;
-    i2d_str predicates;
-    i2d_str expression;
 
     i2d_range_list_get_range(node->range, &min, &max);
     if( min == max ?
@@ -1998,8 +1994,6 @@ static int i2d_bonus_handler_percent_invert(i2d_script * script, i2d_node * node
     int status = I2D_OK;
     long min;
     long max;
-    i2d_str predicates;
-    i2d_str expression;
 
     i2d_range_list_get_range(node->range, &min, &max);
 
@@ -2021,8 +2015,6 @@ static int i2d_bonus_handler_percent__div100(i2d_script * script, i2d_node * nod
     int status = I2D_OK;
     long min;
     long max;
-    i2d_str predicates;
-    i2d_str expression;
 
     i2d_range_list_get_range(node->range, &min, &max);
 
