@@ -317,6 +317,7 @@ struct i2d_translator {
     i2d_object * bonus_types;
     i2d_object * elements;
     i2d_object * races;
+    i2d_object * classes;
     i2d_rbt * bonus_handlers;
 };
 
@@ -329,6 +330,7 @@ int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
 int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
 int i2d_translator_elements_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_races_map(i2d_translator *, long *, i2d_str *);
+int i2d_translator_classes_map(i2d_translator *, long *, i2d_str *);
 
 struct i2d_context {
     i2d_rbt * variables;

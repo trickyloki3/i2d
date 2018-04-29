@@ -535,6 +535,13 @@
         "RC_PLAYER" : "player",
         "RC_ALL" : "formless, undead, brute, plant, insect, fish, demon, demihuman, angel, dragon, player"
     },
+    "classes" : {
+        "CLASS_NORMAL" : "normal",
+        "CLASS_BOSS" : "boss",
+        "CLASS_GUARDIAN" : "guardian",
+        "CLASS_BATTLEFIELD" : "battlefield",
+        "CLASS_ALL" : "normal, boss, guardian, battlefield"
+    }
     "consts" : {
         "INT_MIN" : -2147483648,
         "INT_MAX" : 2147483647,
