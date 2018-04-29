@@ -2327,14 +2327,14 @@ int i2d_context_search_variable(i2d_context * context, i2d_node * node, i2d_node
     return status;
 }
 
-static struct i2d_script_function {
+static struct i2d_function_handler {
     i2d_str name;
     int (*handler)(i2d_script *, i2d_node *);
 } function_list[] = {
     { {"getrefine", 9}, i2d_function_handler_getrefine }
 };
 
-typedef struct i2d_script_function i2d_script_function;
+typedef struct i2d_function_handler i2d_function_handler;
 
 static int i2d_function_handler_getrefine(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
@@ -2612,7 +2612,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
 int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_str literal;
-    i2d_script_function * function;
+    i2d_function_handler * function;
 
     if(i2d_token_get_literal(node->tokens, &literal)) {
         status = i2d_panic("failed to get literal");
