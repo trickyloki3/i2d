@@ -532,13 +532,11 @@
             "min": 0,
             "max" : 15,
             "description" : "Refine Count Of {0}",
-            "argument_type" : ["equip_slot"]
         },
         "readparam" : {
             "min": 0,
             "max" : 99,
             "description" : "{0}",
-            "argument_type" : ["paramater"]
         },
         "getpartnerid" : {
             "min": 0,
