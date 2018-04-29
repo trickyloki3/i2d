@@ -1,6 +1,7 @@
 #include "i2d_script.h"
 
 static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str_stack *);
+static int i2d_bonus_handler_races(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_str_stack *);
@@ -1826,6 +1827,7 @@ static struct i2d_bonus_handler {
     i2d_bonus_argument_handler handler;
 } bonus_handlers[] = {
     { {"elements", 8}, i2d_bonus_handler_elements },
+    { {"races", 4}, i2d_bonus_handler_races },
     { {"integer", 7}, i2d_bonus_handler_integer },
     { {"percent", 7}, i2d_bonus_handler_percent },
     { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
@@ -1844,6 +1846,22 @@ static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_
     } else if(i2d_translator_elements_map(script->translator, &constant, &element)) {
         status = i2d_panic("failed to map element -- %ld", constant);
     } else if(i2d_str_stack_push(stack, &element)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_races(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
+    int status = I2D_OK;
+    long constant;
+    i2d_str race;
+
+    if(i2d_node_get_constant(node, &constant)) {
+        status = i2d_panic("failed to get node string");
+    } else if(i2d_translator_races_map(script->translator, &constant, &race)) {
+        status = i2d_panic("failed to map race -- %ld", constant);
+    } else if(i2d_str_stack_push(stack, &race)) {
         status = i2d_panic("failed to push string on stack");
     }
 
@@ -1972,6 +1990,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create bonus types object");
             } else if(i2d_object_init(&object->elements, json->object, "elements", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create elements object");
+            } else if(i2d_object_init(&object->races, json->object, "races", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
+                status = i2d_panic("failed to create races object");
             } else {
                 if(i2d_rbt_init(&object->bonus_handlers, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create red black tree object");
@@ -1999,6 +2019,7 @@ void i2d_translator_deit(i2d_translator ** result) {
 
     object = *result;
     i2d_deit(object->bonus_handlers, i2d_rbt_deit);
+    i2d_deit(object->races, i2d_object_deit);
     i2d_deit(object->elements, i2d_object_deit);
     i2d_deit(object->bonus_types, i2d_object_deit);
     i2d_deit(object->functions, i2d_object_deit);
@@ -2033,6 +2054,19 @@ int i2d_translator_elements_map(i2d_translator * translator, long * key, i2d_str
     i2d_str_map * str_map;
 
     if(i2d_object_map(translator->elements, key, (void **) &str_map)) {
+        status = I2D_FAIL;
+    } else {
+        *result = str_map->value;
+    }
+
+    return status;
+}
+
+int i2d_translator_race_map(i2d_translator * translator, long * key, i2d_str * result) {
+    int status = I2D_OK;
+    i2d_str_map * str_map;
+
+    if(i2d_object_map(translator->races, key, (void **) &str_map)) {
         status = I2D_FAIL;
     } else {
         *result = str_map->value;

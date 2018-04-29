@@ -509,6 +509,20 @@
         "ELE_UNDEAD" : "undead",
         "ELE_ALL" : "neutral, water, earth, fire, wind, poison, holy, dark, ghost, undead"
     },
+    "races" : {
+        "RC_FORMLESS" : "formless",
+        "RC_UNDEAD" : "undead",
+        "RC_BRUTE" : "brute",
+        "RC_PLANT" : "plant",
+        "RC_INSECT" : "insect",
+        "RC_FISH" : "fish",
+        "RC_DEMON" : "demon",
+        "RC_DEMIHUMAN" : "demihuman",
+        "RC_ANGEL" : "angel",
+        "RC_DRAGON" : "dragon",
+        "RC_PLAYER" : "player",
+        "RC_ALL" : "formless, undead, brute, plant, insect, fish, demon, demihuman, angel, dragon, player",
+    },
     "consts" : {
         "INT_MIN" : -2147483648,
         "INT_MAX" : 2147483647,
