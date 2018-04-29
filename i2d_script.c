@@ -1778,6 +1778,7 @@ void i2d_bonus_type_deit(void ** result) {
 int i2d_readparam_init(void ** result, const char * key, json_t * json, i2d_rbt * rbt, void * context) {
     int status = I2D_OK;
     i2d_readparam * object;
+    i2d_str_const search;
     i2d_str_const name;
     long min;
     long max;
@@ -1792,8 +1793,6 @@ int i2d_readparam_init(void ** result, const char * key, json_t * json, i2d_rbt 
         } else {
             if(i2d_json_get_str(json, "name", &name)) {
                 status = i2d_panic("failed to get string object");
-            } else if(i2d_str_copy(&object->key, key, strlen(key))) {
-                status = i2d_panic("failed to create string object");
             } else if(i2d_str_copy(&object->name, name.string, name.length)) {
                 status = i2d_panic("failed to create string object");
             } else {
@@ -1810,8 +1809,15 @@ int i2d_readparam_init(void ** result, const char * key, json_t * json, i2d_rbt 
                     status = i2d_panic("failed to create range list object");
                 }
 
-                if(!status && i2d_rbt_insert(rbt, &object->key, object))
-                    status = i2d_panic("failed to map readparam object");
+                if(!status) {
+                    search.string = key;
+                    search.length = strlen(key);
+                    if(i2d_translator_const_map(context, (i2d_str *) &search, &object->key)) {
+                        status = i2d_panic("failed to get readparam value -- %s", search.string);
+                    } else if(i2d_rbt_insert(rbt, &object->key, object)) {
+                        status = i2d_panic("failed to map readparam object");
+                    }
+                }
             }
 
             if(status)
@@ -1830,7 +1836,6 @@ void i2d_readparam_deit(void ** result) {
     object = *result;
     i2d_deit(object->range, i2d_range_list_deit);
     i2d_free(object->name.string);
-    i2d_free(object->key.string);
     i2d_free(object);
     *result = NULL;
 }
@@ -2166,7 +2171,7 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create functions object");
             } else if(i2d_object_init(&object->bonus_types, json->blocks, "bonus", i2d_bonus_type_init, i2d_bonus_type_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create bonus types object");
-            } else if(i2d_object_init(&object->readparam, json->object, "readparam", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_str, object)) {
+            } else if(i2d_object_init(&object->readparam, json->object, "readparam", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create readparams object");
             } else if(i2d_object_init(&object->elements, json->object, "elements", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create elements object");
@@ -2229,7 +2234,7 @@ int i2d_translator_bonus_map(i2d_translator * translator, long * key, i2d_bonus_
     return i2d_object_map(translator->bonus_types, key, (void **) result);
 }
 
-int i2d_translator_readparam_map(i2d_translator * translator, i2d_str * key, i2d_readparam ** result) {
+int i2d_translator_readparam_map(i2d_translator * translator, long * key, i2d_readparam ** result) {
     return i2d_object_map(translator->readparam, key, (void **) result);
 }
 
@@ -2432,6 +2437,7 @@ static int i2d_function_handler_readparam(i2d_script * script, i2d_node * node) 
     int status = I2D_OK;
     i2d_node * argument;
     i2d_str literal;
+    long constant;
     i2d_function * function;
     i2d_readparam * readparam;
 
@@ -2441,10 +2447,10 @@ static int i2d_function_handler_readparam(i2d_script * script, i2d_node * node) 
         status = i2d_panic("failed to get literal");
     } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
         status = i2d_panic("failed to get function -- %s", literal.string);
-    } else if(i2d_node_get_string(argument->left, &literal)) {
+    } else if(i2d_node_get_constant(argument->left, &constant)) {
         status = i2d_panic("failed to get string");
-    } else if(i2d_translator_readparam_map(script->translator, &literal, &readparam)) {
-        status = i2d_panic("failed to get readparam -- %s", literal.string);
+    } else if(i2d_translator_readparam_map(script->translator, &constant, &readparam)) {
+        status = i2d_panic("failed to get readparam -- %ld", constant);
     } else {
         i2d_buf_zero(node->tokens->buffer);
         if(i2d_str_stack_push(script->context->stack, &readparam->name)) {
