@@ -1826,12 +1826,10 @@ void i2d_str_map_deit(void ** result) {
     *result = NULL;
 }
 
-typedef int (*i2d_bonus_argument_handler)(i2d_script *, i2d_node *, i2d_str_stack *);
-
 static struct i2d_bonus_handler {
     i2d_str name;
-    i2d_bonus_argument_handler handler;
-} bonus_handlers[] = {
+    int (*handler)(i2d_script *, i2d_node *, i2d_str_stack *);
+} bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
     { {"regen", 5}, i2d_bonus_handler_regen },
     { {"splash", 6}, i2d_bonus_handler_splash },
@@ -2117,9 +2115,9 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 if(i2d_rbt_init(&object->bonus_handlers, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create red black tree object");
                 } else {
-                    size = i2d_size(bonus_handlers);
+                    size = i2d_size(bonus_list);
                     for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->bonus_handlers, &bonus_handlers[i].name, &bonus_handlers[i]))
+                        if(i2d_rbt_insert(object->bonus_handlers, &bonus_list[i].name, &bonus_list[i]))
                             status = i2d_panic("failed to map bonus handler object");
                 }
             }
@@ -2329,12 +2327,10 @@ int i2d_context_search_variable(i2d_context * context, i2d_node * node, i2d_node
     return status;
 }
 
-typedef int (*i2d_script_function_handler)(i2d_script *, i2d_node *);
-
 static struct i2d_script_function {
     i2d_str name;
-    i2d_script_function_handler handler;
-} function_handlers[] = {
+    int (*handler)(i2d_script *, i2d_node *);
+} function_list[] = {
     { {"getrefine", 9}, i2d_function_handler_getrefine }
 };
 
@@ -2392,9 +2388,9 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 if(i2d_rbt_init(&object->functions, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create red black tree object");
                 } else {
-                    size = i2d_size(function_handlers);
+                    size = i2d_size(function_list);
                     for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->functions, &function_handlers[i].name, &function_handlers[i]))
+                        if(i2d_rbt_insert(object->functions, &function_list[i].name, &function_list[i]))
                             status = i2d_panic("failed to map function handler object");
                 }
             }
