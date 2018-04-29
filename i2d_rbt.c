@@ -137,7 +137,7 @@ int i2d_rbt_cmp_long(void * left, void * right) {
 }
 
 int i2d_rbt_cmp_str(void * left, void * right) {
-    return strcmp(((i2d_str *) left)->string, ((i2d_str *) right)->string);
+    return strcasecmp(((i2d_str *) left)->string, ((i2d_str *) right)->string);
 }
 
 int i2d_rbt_init(i2d_rbt ** result, i2d_rbt_cmp compare) {
