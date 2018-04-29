@@ -104,6 +104,34 @@
             "bAspd" : {
                 "description" : "Attack Speed {0}",
                 "argument_type" : ["integer"]
+            },
+            "bAtkRange" : {
+                "description" : "Attack Range {0}",
+                "argument_type" : ["integer"]
+            },
+            "bHPDrainValue" : {
+                "description" : "Heals {0} HP per physical attack.",
+                "argument_type" : ["integer"]
+            },
+            "bSPDrainValue" : {
+                "description" : "Heals {0} SP per physical attack.",
+                "argument_type" : ["integer"]
+            },
+            "bHPGainValue" : {
+                "description" : "Heals {0} HP per physical attack after defeating an enemy.",
+                "argument_type" : ["integer"]
+            },
+            "bSPGainValue" : {
+                "description" : "Heals {0} SP per physical attack after defeating an enemy.",
+                "argument_type" : ["integer"]
+            },
+            "bMagicHPGainValue" : {
+                "description" : "Heals {0} HP per magical attack after defeating an enemy.",
+                "argument_type" : ["integer"]
+            },
+            "bMagicSPGainValue" : {
+                "description" : "Heals {0} SP per magical attack after defeating an enemy.",
+                "argument_type" : ["integer"]
             }
         },
         "bonus2" : {},
