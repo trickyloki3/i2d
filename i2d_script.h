@@ -8,6 +8,8 @@
 #include "i2d_opt.h"
 #include "i2d_db.h"
 
+#define I2D_CAP 16
+
 enum i2d_token_type {
     I2D_TOKEN,
     I2D_CURLY_OPEN,
