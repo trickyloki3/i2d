@@ -276,7 +276,7 @@ typedef struct i2d_description i2d_description;
 int i2d_description_init(i2d_description **, i2d_str_const *);
 void i2d_description_deit(i2d_description **);
 int i2d_description_tokenize(i2d_description *, const char *, size_t);
-int i2d_description_format(i2d_description *, i2d_str **, size_t, i2d_buf *);
+int i2d_description_format(i2d_description *, i2d_str_stack *, i2d_buf *);
 
 struct i2d_function {
     i2d_str name;
@@ -363,7 +363,7 @@ void i2d_script_deit(i2d_script **);
 int i2d_script_compile(i2d_script *, i2d_str *, i2d_str **);
 int i2d_script_translate(i2d_script *, i2d_block *);
 int i2d_script_statement(i2d_script *, i2d_block *);
-int i2d_script_bonus_handler(i2d_script *, i2d_str *, i2d_node *, i2d_str **);
+int i2d_script_bonus_handler(i2d_script *, i2d_str *, i2d_node *, i2d_str_stack *);
 int i2d_script_bonus(i2d_script *, i2d_block *);
 int i2d_script_expression(i2d_script *, i2d_node *, int);
 int i2d_script_expression_variable(i2d_script *, i2d_node *);

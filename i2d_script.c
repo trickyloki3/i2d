@@ -1,7 +1,7 @@
 #include "i2d_script.h"
 
-static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str **);
-static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_str **);
+static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str_stack *);
+static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_str_stack *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1035,6 +1035,7 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
             i2d_parser_reset(parser, lexer, &block->child);
         block->parent = NULL;
         i2d_buf_zero(block->buffer);
+        i2d_str_stack_clear(block->stack);
         block->statement = NULL;
         if(block->nodes)
             i2d_parser_node_reset(parser, lexer, &block->nodes);
@@ -1620,13 +1621,17 @@ int i2d_description_tokenize(i2d_description * description, const char * string,
     return status;
 }
 
-int i2d_description_format(i2d_description * description, i2d_str ** list, size_t size, i2d_buf * buffer) {
+int i2d_description_format(i2d_description * description, i2d_str_stack * stack, i2d_buf * buffer) {
     int status = I2D_OK;
+    i2d_str * list;
+    size_t size;
     i2d_token * token;
     i2d_str literal;
     long index;
 
-    if(!description->tokens) {
+    if(i2d_str_stack_get_list(stack, &list, &size)) {
+        status = i2d_panic("failed to get stack of string");
+    } else if(!description->tokens) {
         status = i2d_panic("failed on empty bonus type description");
     } else {
         token = description->tokens->next;
@@ -1646,7 +1651,7 @@ int i2d_description_format(i2d_description * description, i2d_str ** list, size_
                         status = i2d_panic("failed to convert literal to number");
                     } else if(index >= size) {
                         status = i2d_panic("failed on insufficient string list");
-                    } else if(i2d_buf_format(buffer, "%s", list[index]->string)) {
+                    } else if(i2d_buf_format(buffer, "%s", list[index].string)) {
                         status = i2d_panic("failed to format buffer");
                     }
                     break;
@@ -1808,7 +1813,7 @@ void i2d_str_map_deit(void ** result) {
     *result = NULL;
 }
 
-typedef int (*i2d_bonus_argument_handler)(i2d_script *, i2d_node *, i2d_str **);
+typedef int (*i2d_bonus_argument_handler)(i2d_script *, i2d_node *, i2d_str_stack *);
 
 static struct i2d_bonus_handler {
     i2d_str name;
@@ -1820,7 +1825,7 @@ static struct i2d_bonus_handler {
 
 typedef struct i2d_bonus_handler i2d_bonus_handler;
 
-static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_str ** result) {
+static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
     int status = I2D_OK;
     i2d_str literal;
     i2d_str element;
@@ -1829,14 +1834,14 @@ static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_
         status = i2d_panic("failed to get node string");
     } else if(i2d_translator_elements_map(script->translator, &literal, &element)) {
         status = i2d_panic("failed to map element -- %s", literal.string);
-    } else if(i2d_str_init(result, element.string, element.length)) {
-        status = i2d_panic("failed to create string object");
+    } else if(i2d_str_stack_push(stack, &element)) {
+        status = i2d_panic("failed to push string on stack");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_str ** result) {
+static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
     int status = I2D_OK;
     long min;
     long max;
@@ -1856,8 +1861,8 @@ static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_s
             status = i2d_panic("failed to write predicates");
         } else {
             i2d_buf_get_str(script->context->expression, &expression);
-            if(i2d_str_init(result, expression.string, expression.length))
-                status = i2d_panic("failed to create string object");
+            if(i2d_str_stack_push(stack, &expression))
+                status = i2d_panic("failed to push string on stack");
         }
     }
 
@@ -2191,7 +2196,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block) {
     return status;
 }
 
-int i2d_script_bonus_handler(i2d_script * script, i2d_str * argument_type, i2d_node * node, i2d_str ** result) {
+int i2d_script_bonus_handler(i2d_script * script, i2d_str * argument_type, i2d_node * node, i2d_str_stack * stack) {
     int status = I2D_OK;
     i2d_bonus_handler * handler;
 
@@ -2200,7 +2205,7 @@ int i2d_script_bonus_handler(i2d_script * script, i2d_str * argument_type, i2d_n
     } else {
         i2d_buf_zero(script->context->expression);
         i2d_buf_zero(script->context->predicates);
-        status = handler->handler(script, node, result);
+        status = handler->handler(script, node, stack);
     }
 
     return status;
@@ -2211,7 +2216,6 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
     i2d_node * arguments[2];
     long bonus_id;
     i2d_bonus_type * bonus_type;
-    i2d_str * string = NULL;
 
     if(i2d_script_expression(script, block->nodes, 0)) {
         status = i2d_panic("failed to translate expression");
@@ -2221,15 +2225,10 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block) {
         status = i2d_panic("failed to get bonus type value");
     } else if(i2d_translator_bonus_map(script->translator, &bonus_id, &bonus_type)) {
         status = i2d_panic("failed to map bonus type value");
-    } else {
-        if(i2d_script_bonus_handler(script, bonus_type->argument_type->list[0], arguments[1], &string)) {
-            status = i2d_panic("failed to translate bonus arguments");
-        } else {
-            if(i2d_description_format(bonus_type->description, &string, 1, block->buffer))
-                status = i2d_panic("failed to format bonus type");
-
-            i2d_str_deit(&string);
-        }
+    } else if(i2d_script_bonus_handler(script, bonus_type->argument_type->list[0], arguments[1], block->stack)) {
+        status = i2d_panic("failed to translate bonus arguments");
+    } else if(i2d_description_format(bonus_type->description, block->stack, block->buffer)) {
+        status = i2d_panic("failed to format bonus type");
     }
 
     return status;
