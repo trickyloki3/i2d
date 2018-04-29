@@ -23,15 +23,23 @@
             },
             "bIgnoreMdefRace" : {
                 "description" : "Ignore the magical defence of {0} enemies when dealing magical damage.",
-                "argument_type" : ["race"]
+                "argument_type" : ["races"]
             },
             "bIgnoreDefRace" : {
                 "description" : "Ignore the physical defense of {0} enemies when dealing physical damage.",
-                "argument_type" : ["race"]
+                "argument_type" : ["races"]
             },
             "bDefRatioAtkRace" : {
                 "description" : "Deal more damage for {0} enemies based on their defense.",
-                "argument_type" : ["race"]
+                "argument_type" : ["races"]
+            },
+            "bIgnoreDefClass" : {
+                "description" : "Ignore the physical defense of {0} enemies when dealing physical damage.",
+                "argument_type" : ["classes"]
+            },
+            "bDefRatioAtkClass" : {
+                "description" : "Deal more damage for {0} enemies based on their defense.",
+                "argument_type" : ["classes"]
             },
             "bStr" : {
                 "description" : "STR {0}",
@@ -541,7 +549,7 @@
         "CLASS_GUARDIAN" : "guardian",
         "CLASS_BATTLEFIELD" : "battlefield",
         "CLASS_ALL" : "normal, boss, guardian, battlefield"
-    }
+    },
     "consts" : {
         "INT_MIN" : -2147483648,
         "INT_MAX" : 2147483647,
