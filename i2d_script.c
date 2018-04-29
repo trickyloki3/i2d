@@ -13,6 +13,7 @@ static int i2d_bonus_handler_percent__div100(i2d_script *, i2d_node *, i2d_str_s
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_function_handler_getrefine(i2d_script *, i2d_node *);
 static int i2d_function_handler_readparam(i2d_script *, i2d_node *);
+static int i2d_function_handler_getskilllv(i2d_script *, i2d_node *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -2405,7 +2406,8 @@ static struct i2d_function_handler {
     int (*handler)(i2d_script *, i2d_node *);
 } function_list[] = {
     { {"getrefine", 9}, i2d_function_handler_getrefine },
-    { {"readparam", 9}, i2d_function_handler_readparam }
+    { {"readparam", 9}, i2d_function_handler_readparam },
+    { {"getskilllv", 10}, i2d_function_handler_getskilllv }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;
@@ -2442,13 +2444,43 @@ static int i2d_function_handler_readparam(i2d_script * script, i2d_node * node) 
     if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(argument->left, &constant)) {
-        status = i2d_panic("failed to get string");
+        status = i2d_panic("failed to get constant");
     } else if(i2d_translator_readparam_map(script->translator, &constant, &readparam)) {
         status = i2d_panic("failed to get readparam -- %ld", constant);
     } else if(i2d_token_assign_literal(node->tokens, &readparam->name)) {
         status = i2d_panic("failed to assign literal to token");
     } else if(i2d_range_list_copy(&node->range, readparam->range)) {
         status = i2d_panic("failed to copy range list object");
+    }
+
+    return status;
+}
+
+static int i2d_function_handler_getskilllv(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_node * argument;
+    long constant;
+    i2d_str literal;
+    i2d_skill * skill;
+
+    if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_node_get_constant(argument->left, &constant)) {
+        status = i2d_panic("failed to get constant");
+    } else if(i2d_skill_db_search_by_id(script->db->skill_db, constant, &skill)) {
+        if(i2d_node_get_string(argument->left, &literal)) {
+            status = i2d_panic("failed to get literal");
+        } else if(i2d_skill_db_search_by_macro(script->db->skill_db, &literal, &skill)) {
+            status = i2d_panic("failed to search for skill by id and macro -- %s (%ld)", literal.string, constant);
+        }
+    }
+
+    if(!status) {
+        if(i2d_token_assign_literal(node->tokens, &skill->name)) {
+            status = i2d_panic("failed to assign literal to token");
+        } else if(i2d_range_list_init2(&node->range, 0, skill->maxlv)) {
+            status = i2d_panic("failed to create range list object");
+        }
     }
 
     return status;
