@@ -9,6 +9,18 @@
                 "description" : "Enchanted with {0} property.",
                 "argument_type" : ["elements"]
             },
+            "bIgnoreMdefEle" : {
+                "description" : "Ignore the magical defence of {0} enemies when dealing magical damage.",
+                "argument_type" : ["elements"]
+            },
+            "bIgnoreDefEle" : {
+                "description" : "Ignore the physical defense of {0} enemies when dealing physical damage.",
+                "argument_type" : ["elements"]
+            },
+            "bDefRatioAtkEle" : {
+                "description" : "Deal more damage for {0} enemies based on their defense.",
+                "argument_type" : ["elements"]
+            },
             "bStr" : {
                 "description" : "STR {0}",
                 "argument_type" : ["integer"]
@@ -275,10 +287,6 @@
             },
             "bAbsorbDmgMaxHP" : {
                 "description" : "Absorb any damage received over {0} of Max HP.",
-                "argument_type" : ["percent"]
-            },
-            "bAbsorbDmgMaxHP" : {
-                "description" : "Pierce enemy's magical defense by {0}.",
                 "argument_type" : ["percent"]
             },
             "bNoMiscDamage" : {

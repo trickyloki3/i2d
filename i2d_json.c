@@ -51,7 +51,8 @@ void i2d_object_deit(i2d_object ** result) {
     object = *result;
     if(object->list && object->delete) {
         for(i = 0; i < object->size; i++)
-            object->delete(&object->list[i]);
+            if(object->list[i])
+                object->delete(&object->list[i]);
         i2d_free(object->list);
     }
     i2d_deit(object->map, i2d_rbt_deit);
