@@ -1,6 +1,14 @@
 {
     "blocks" : {
         "bonus" : {
+            "bSplashRange" : {
+                "description" : "Each hit deals AoE damage to a {0} grid.",
+                "argument_type" : ["splash"]
+            },
+            "bSplashAddRange" : {
+                "description" : "Each hit deals AoE damage to a {0} grid.",
+                "argument_type" : ["splash"]
+            },
             "bDefEle" : {
                 "description" : "Enchanted with {0} property.",
                 "argument_type" : ["elements"]
@@ -131,6 +139,10 @@
             },
             "bCritical" : {
                 "description" : "Critical Chance {0}",
+                "argument_type" : ["integer"]
+            },
+            "bCriticalLong" : {
+                "description" : "Long Range Critical Chance {0}",
                 "argument_type" : ["integer"]
             },
             "bAspd" : {
