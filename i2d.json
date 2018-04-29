@@ -256,6 +256,26 @@
             "bVariableCastrate" : {
                 "description" : "Variable Cast Time {0}",
                 "argument_type" : ["percent"]
+            },
+            "bShortWeaponDamageReturn" : {
+                "description" : "Reflect {0} short range damage.",
+                "argument_type" : ["percent"]
+            },
+            "bLongWeaponDamageReturn" : {
+                "description" : "Reflect {0} long range damage.",
+                "argument_type" : ["percent"]
+            },
+            "bMagicDamageReturn" : {
+                "description" : "Add {0} chance to reflect magic skill back to caster.",
+                "argument_type" : ["percent"]
+            },
+            "bUseSPrate" : {
+                "description" : "SP Consumption {0}",
+                "argument_type" : ["percent"]
+            },
+            "bAbsorbDmgMaxHP" : {
+                "description" : "Absorb any damage received over {0} of Max HP.",
+                "argument_type" : ["percent"]
             }
         },
         "bonus2" : {},
