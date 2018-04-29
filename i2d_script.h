@@ -302,7 +302,7 @@ int i2d_bonus_type_init(void **, const char *, json_t *, i2d_rbt *, void *);
 void i2d_bonus_type_deit(void **);
 
 struct i2d_str_map {
-    i2d_str key;
+    long key;
     i2d_str value;
 };
 
@@ -326,7 +326,7 @@ void i2d_translator_deit(i2d_translator **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
 int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
 int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
-int i2d_translator_elements_map(i2d_translator *, i2d_str *, i2d_str *);
+int i2d_translator_elements_map(i2d_translator *, long *, i2d_str *);
 
 struct i2d_context {
     i2d_rbt * variables;

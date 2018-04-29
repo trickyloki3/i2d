@@ -497,17 +497,17 @@
         }
     },
     "elements" : {
-        "Ele_Dark" : "dark",
-        "Ele_Earth" : "earth",
-        "Ele_Fire" : "fire",
-        "Ele_Ghost" : "ghost",
-        "Ele_Holy" : "holy",
-        "Ele_Neutral" : "neutral",
-        "Ele_Poison" : "poison",
-        "Ele_Undead" : "undead",
-        "Ele_Water" : "water",
-        "Ele_Wind" : "wind",
-        "Ele_All" : "dark, earth, fire, ghost, holy, neutral, poison, undead, water, wind"
+        "ELE_NEUTRAL" : "neutral",
+        "ELE_WATER" : "water",
+        "ELE_EARTH" : "earth",
+        "ELE_FIRE" : "fire",
+        "ELE_WIND" : "wind",
+        "ELE_POISON" : "poison",
+        "ELE_HOLY" : "holy",
+        "ELE_DARK" : "dark",
+        "ELE_GHOST" : "ghost",
+        "ELE_UNDEAD" : "undead",
+        "ELE_ALL" : "neutral, water, earth, fire, wind, poison, holy, dark, ghost, undead"
     },
     "consts" : {
         "INT_MIN" : -2147483648,
