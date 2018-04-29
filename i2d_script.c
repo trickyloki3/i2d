@@ -1,5 +1,6 @@
 #include "i2d_script.h"
 
+static int i2d_bonus_handler_time(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_regen(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_splash(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str_stack *);
@@ -1831,6 +1832,7 @@ static struct i2d_bonus_handler {
     i2d_str name;
     i2d_bonus_argument_handler handler;
 } bonus_handlers[] = {
+    { {"time", 4}, i2d_bonus_handler_time },
     { {"regen", 5}, i2d_bonus_handler_regen },
     { {"splash", 6}, i2d_bonus_handler_splash },
     { {"elements", 8}, i2d_bonus_handler_elements },
@@ -1861,6 +1863,47 @@ static i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_st
             if(i2d_str_stack_push(stack, &expression))
                 status = i2d_panic("failed to push string on stack");
         }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_time(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    char * suffix = NULL;
+    long unit = 0;
+
+    i2d_range_list_get_range(node->range, &min, &max);
+
+    if (min / 86400000 > 0) {
+        suffix = "day";
+        unit = 86400000;
+    } else if (min / 3600000 > 0) {
+        suffix = "hour";
+        unit = 3600000;
+    } else if (min / 60000 > 0) {
+        suffix = "minute";
+        unit = 60000;
+    } else if (min / 1000 > 0) {
+        suffix = "second";
+        unit = 1000;
+    } else {
+        suffix = "millisecond";
+        unit = 1;
+    }
+
+    min /= unit;
+    max /= unit;
+
+    if( min == max ?
+        i2d_buf_format(script->context->expression, "%ld %s%s", min, suffix, min > 1 ? "s" : "") :
+        i2d_buf_format(script->context->expression, "%ld ~ %ld %s%s", min, max, suffix, max > 1 ? "s" : "") ) {
+        status = i2d_panic("failed to write integer range");
+    } else if(i2d_bonus_handler_expression(script, node, stack)) {
+        status = i2d_panic("failed to write expression");
     }
 
     return status;

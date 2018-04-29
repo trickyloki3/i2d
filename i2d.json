@@ -1,6 +1,14 @@
 {
     "blocks" : {
         "bonus" : {
+            "bFixedCast" : {
+                "description" : "Increase fixed cast time by {0}.",
+                "argument_type" : ["time"]
+            },
+            "bVariableCast" : {
+                "description" : "Increase variable cast time by {0}.",
+                "argument_type" : ["time"]
+            },
             "bNoRegen" : {
                 "description" : "Disable {0} natural regeneration.",
                 "argument_type" : ["regen"]
