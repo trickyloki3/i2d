@@ -10,6 +10,7 @@ static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent__div100(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_str_stack *);
+static int i2d_function_handler_getrefine(i2d_script *, i2d_node *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -2284,6 +2285,35 @@ int i2d_context_search_variable(i2d_context * context, i2d_node * node, i2d_node
         status = i2d_panic("invalid node type -- %d", node->type);
     } else {
         status = i2d_rbt_search(context->variables, node->tokens, (void **) result);
+    }
+
+    return status;
+}
+
+typedef int (*i2d_script_function_handler)(i2d_script *, i2d_node *);
+
+static struct i2d_script_function {
+    i2d_str name;
+    i2d_script_function_handler handler;
+} function_handlers[] = {
+    { {"getrefine", 9}, i2d_function_handler_getrefine }
+};
+
+typedef struct i2d_script_function i2d_script_function;
+
+static int i2d_function_handler_getrefine(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_str literal;
+    i2d_function * function;
+
+    if(i2d_node_get_arguments(node->left, NULL, 0, 0)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
+        status = i2d_panic("failed to get function -- %s", literal.string);
+    } else {
+        status = i2d_range_list_copy(&node->range, function->range);
     }
 
     return status;
