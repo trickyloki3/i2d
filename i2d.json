@@ -341,6 +341,22 @@
                 "description" : "Break Chance {0}",
                 "argument_type" : ["percent_invert"]
             },
+            "bClassChange" : {
+                "description" : "Add {0} chance of transforming a monster on each hit.",
+                "argument_type" : ["percent_div100"]
+            },
+            "bAddStealRate" : {
+                "description" : "Add {0} success rate of stealing.",
+                "argument_type" : ["percent_div100"]
+            },
+            "bBreakWeaponRate" : {
+                "description" : "Add {0} chance of breaking enemy's weapon on each hit.",
+                "argument_type" : ["percent_div100"]
+            },
+            "bBreakArmorRate" : {
+                "description" : "Add {0} chance of breaking enemy's armor on each hit.",
+                "argument_type" : ["percent_div100"]
+            },
             "bUnbreakableGarment" : {
                 "description" : "Garment is indestructible.",
                 "argument_type" : ["ignore"]
