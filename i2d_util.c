@@ -248,6 +248,118 @@ void i2d_buf_dump(i2d_buf * buffer, const char * tag) {
     fprintf(stderr, "\n");
 }
 
+int i2d_str_stack_init(i2d_str_stack ** result, size_t size) {
+    int status = I2D_OK;
+    i2d_str_stack * object;
+
+    if(i2d_is_invalid(result) || !size) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_buf_init(&object->buffer, 4096)) {
+                status = i2d_panic("failed to create buffer object");
+            } else {
+                object->list = calloc(size, sizeof(*object->list));
+                if(!object->list) {
+                    status = i2d_panic("out of memory");
+                } else {
+                    object->offset = calloc(size, sizeof(*object->offset));
+                    if(!object->offset) {
+                        status = i2d_panic("out of memory");
+                    } else {
+                        object->size = size;
+                    }
+                }
+            }
+
+            if(status)
+                i2d_str_stack_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_str_stack_deit(i2d_str_stack ** result) {
+    i2d_str_stack * object;
+
+    object = *result;
+    i2d_free(object->offset);
+    i2d_free(object->list);
+    i2d_deit(object->buffer, i2d_buf_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
+int i2d_str_stack_push(i2d_str_stack * stack, i2d_str * str) {
+    int status = I2D_OK;
+    char symbol = '\0';
+
+    if(stack->top >= stack->size) {
+        status = i2d_panic("failed on full stack");
+    } else {
+        if( i2d_buf_binary(stack->buffer, str->string, str->length) ||
+            i2d_buf_binary(stack->buffer, &symbol, sizeof(symbol)) ) {
+            status = i2d_panic("failed to write buffer object");
+        } else {
+            stack->offset[stack->top] = stack->buffer->offset - 1;
+            stack->top++;
+        }
+    }
+
+    return status;
+}
+
+int i2d_str_stack_pop(i2d_str_stack * stack, i2d_str * str) {
+    int status = I2D_OK;
+    size_t last;
+
+    if(!stack->top) {
+        status = i2d_panic("failed on empty stack");
+    } else {
+        last = stack->top - 1;
+        if(0 == last) {
+            str->length = stack->offset[last];
+            str->string = stack->buffer->buffer;
+        } else {
+            str->length = stack->offset[last] - stack->offset[last - 1] - 1;
+            str->string = stack->buffer->buffer + stack->offset[last - 1] + 1;
+        }
+        stack->top--;
+    }
+
+    return status;
+}
+
+void i2d_str_stack_clear(i2d_str_stack * stack) {
+    i2d_buf_zero(stack->buffer);
+    memset(stack->list, 0, sizeof(*stack->list) * stack->size);
+    memset(stack->offset, 0, sizeof(*stack->offset) * stack->size);
+    stack->top = 0;
+}
+
+int i2d_str_stack_get_list(i2d_str_stack * stack, i2d_str ** _list, size_t * _size) {
+    int status = I2D_OK;
+
+    if(!stack->top) {
+        status = i2d_panic("failed on empty stack");
+    } else {
+        *_size = stack->top;
+        *_list = stack->list;
+
+        while(stack->top && !status)
+            if(i2d_str_stack_pop(stack, &stack->list[stack->top - 1]))
+                status = i2d_panic("failed to pop stack");
+    }
+
+    return status;
+}
+
 int i2d_fd_read(int fd, size_t size, i2d_buf * buffer) {
     int status = I2D_OK;
 

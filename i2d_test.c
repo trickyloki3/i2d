@@ -7,9 +7,10 @@ static void i2d_logic_test(void);
 static void i2d_logic_or_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_and_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_not_test(i2d_logic *, i2d_logic *, i2d_logic *);
+static void i2d_str_stack_test(void);
 
 int main(int argc, char * argv[]) {
-    i2d_json_test();
+    i2d_str_stack_test();
     return 0;
 }
 
@@ -140,4 +141,22 @@ static void i2d_logic_not_test(i2d_logic * var_logic, i2d_logic * and_logic, i2d
     i2d_logic_deit(&not_or);
     i2d_logic_deit(&not_and);
     i2d_logic_deit(&not_var);
+}
+
+static void i2d_str_stack_test() {
+    i2d_str_stack * stack = NULL;
+    i2d_str hello = {"hello", 5};
+    i2d_str world = {"world", 5};
+    i2d_str * list;
+    size_t size;
+
+    i2d_str_stack_init(&stack, 16);
+    i2d_str_stack_push(stack, &hello);
+    i2d_str_stack_push(stack, &world);
+    i2d_str_stack_get_list(stack, &list, &size);
+    assert(size == 2);
+    assert(!strcmp(list[0].string, hello.string));
+    assert(!strcmp(list[1].string, world.string));
+    i2d_str_stack_clear(stack);
+    i2d_str_stack_deit(&stack);
 }

@@ -67,6 +67,23 @@ int i2d_buf_add_null(i2d_buf *);
 void i2d_buf_get_str(i2d_buf *, i2d_str *);
 void i2d_buf_dump(i2d_buf *, const char *);
 
+struct i2d_str_stack {
+    i2d_buf * buffer;
+    i2d_str * list;
+    size_t * offset;
+    size_t size;
+    size_t top;
+};
+
+typedef struct i2d_str_stack i2d_str_stack;
+
+int i2d_str_stack_init(i2d_str_stack **, size_t);
+void i2d_str_stack_deit(i2d_str_stack **);
+int i2d_str_stack_push(i2d_str_stack *, i2d_str *);
+int i2d_str_stack_pop(i2d_str_stack *, i2d_str *);
+void i2d_str_stack_clear(i2d_str_stack *);
+int i2d_str_stack_get_list(i2d_str_stack *, i2d_str **, size_t *);
+
 typedef int (* i2d_by_line_cb) (char *, size_t, void *);
 
 int i2d_fd_read(int, size_t, i2d_buf *);
