@@ -2224,6 +2224,10 @@ int i2d_translator_bonus_map(i2d_translator * translator, long * key, i2d_bonus_
     return i2d_object_map(translator->bonus_types, key, (void **) result);
 }
 
+int i2d_translator_readparam_map(i2d_translator * translator, i2d_str * key, i2d_readparam ** result) {
+    return i2d_object_map(translator->readparam, key, (void **) result);
+}
+
 int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_function ** result) {
     return i2d_object_map(translator->functions, key, (void **) result);
 }
