@@ -132,6 +132,130 @@
             "bMagicSPGainValue" : {
                 "description" : "Heals {0} SP per magical attack after defeating an enemy.",
                 "argument_type" : ["integer"]
+            },
+            "bHitRate" : {
+                "description" : "HIT {0}",
+                "argument_type" : ["percent"]
+            },
+            "bFleeRate" : {
+                "description" : "FLEE {0}",
+                "argument_type" : ["percent"]
+            },
+            "bFlee2Rate" : {
+                "description" : "Perfect Dodge {0}",
+                "argument_type" : ["percent"]
+            },
+            "bMaxHPrate" : {
+                "description" : "Max HP {0}",
+                "argument_type" : ["percent"]
+            },
+            "bMaxSPrate" : {
+                "description" : "Max SP {0}",
+                "argument_type" : ["percent"]
+            },
+            "bSpeedRate" : {
+                "description" : "Movement Speed {0}",
+                "argument_type" : ["percent"]
+            },
+            "bSpeedAddRate" : {
+                "description" : "Movement Speed {0}",
+                "argument_type" : ["percent"]
+            },
+            "bMdefRate" : {
+                "description" : "MDEF {0}",
+                "argument_type" : ["percent"]
+            },
+            "bMdef2Rate" : {
+                "description" : "MDEF2 {0}",
+                "argument_type" : ["percent"]
+            },
+            "bAtkRate" : {
+                "description" : "ATK {0}",
+                "argument_type" : ["percent"]
+            },
+            "bMatkRate" : {
+                "description" : "MATK {0}",
+                "argument_type" : ["percent"]
+            },
+            "bDefRate" : {
+                "description" : "DEF {0}",
+                "argument_type" : ["percent"]
+            },
+            "bDef2Rate" : {
+                "description" : "DEF2 {0}",
+                "argument_type" : ["percent"]
+            },
+            "bCriticalRate" : {
+                "description" : "Critical Chance {0}",
+                "argument_type" : ["percent"]
+            },
+            "bAspdRate" : {
+                "description" : "Attack Speed {0}",
+                "argument_type" : ["percent"]
+            },
+            "bLongAtkRate" : {
+                "description" : "Ranged Damage {0}",
+                "argument_type" : ["percent"]
+            },
+            "bCritAtkRate" : {
+                "description" : "Critical Damage {0}",
+                "argument_type" : ["percent"]
+            },
+            "bCriticalDef" : {
+                "description" : "Add {0} chance block critical damage.",
+                "argument_type" : ["percent"]
+            },
+            "bDoubleRate" : {
+                "description" : "Add {0} chance of a double attack.",
+                "argument_type" : ["percent"]
+            },
+            "bDoubleAddRate" : {
+                "description" : "Add {0} chance of a double attack.",
+                "argument_type" : ["percent"]
+            },
+            "bPerfectHitRate" : {
+                "description" : "Add {0} chance of a perfect hit.",
+                "argument_type" : ["percent"]
+            },
+            "bPerfectHitAddRate" : {
+                "description" : "Add {0} chance of a perfect hit.",
+                "argument_type" : ["percent"]
+            },
+            "bAddItemHealRate" : {
+                "description" : "Heal amount {0} from healing items.",
+                "argument_type" : ["percent"]
+            },
+            "bHealPower" : {
+                "description" : "Heal amount {0} on all healing skills.",
+                "argument_type" : ["percent"]
+            },
+            "bHealPower2" : {
+                "description" : "Heal amount {0} from healing skills.",
+                "argument_type" : ["percent"]
+            },
+            "bHPrecovRate" : {
+                "description" : "HP Recovery {0}",
+                "argument_type" : ["percent"]
+            },
+            "bSPrecovRate" : {
+                "description" : "SP Recovery {0}",
+                "argument_type" : ["percent"]
+            },
+            "bCastrate" : {
+                "description" : "Cast Time {0}",
+                "argument_type" : ["percent"]
+            },
+            "bDelayrate" : {
+                "description" : "After Cast Delay {0}",
+                "argument_type" : ["percent"]
+            },
+            "bFixedCastrate" : {
+                "description" : "Fixed Cast Time {0}",
+                "argument_type" : ["percent"]
+            },
+            "bVariableCastrate" : {
+                "description" : "Variable Cast Time {0}",
+                "argument_type" : ["percent"]
             }
         },
         "bonus2" : {},
