@@ -863,6 +863,8 @@ int i2d_block_init(i2d_block ** result, enum i2d_block_type type, i2d_token * to
         } else {
             if(i2d_buf_init(&object->buffer, 4096)) {
                 status = i2d_panic("failed to create buffer object");
+            } else if(i2d_str_stack_init(&object->stack, 16)) {
+                status = i2d_panic("failed to create string stack object");
             } else {
                 object->type = type;
                 object->tokens = tokens;
@@ -884,6 +886,7 @@ void i2d_block_deit(i2d_block ** result) {
     i2d_block * object;
 
     object = *result;
+    i2d_deit(object->stack, i2d_str_stack_deit);
     i2d_deit(object->buffer, i2d_buf_deit);
     i2d_deit(object->child, i2d_block_list_deit);
     i2d_deit(object->nodes, i2d_node_deit);
