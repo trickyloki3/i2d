@@ -4,6 +4,7 @@ static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_str_stack *)
 static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_str_stack *);
+static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_str_stack *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1824,7 +1825,8 @@ static struct i2d_bonus_handler {
     { {"elements", 8}, i2d_bonus_handler_elements },
     { {"integer", 7}, i2d_bonus_handler_integer },
     { {"percent", 7}, i2d_bonus_handler_percent },
-    { {"percent_invert", 14}, i2d_bonus_handler_percent_invert }
+    { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
+    { {"ignore", 6}, i2d_bonus_handler_ignore }
 };
 
 typedef struct i2d_bonus_handler i2d_bonus_handler;
@@ -1929,6 +1931,19 @@ static int i2d_bonus_handler_percent_invert(i2d_script * script, i2d_node * node
                 status = i2d_panic("failed to push string on stack");
         }
     }
+
+    return status;
+}
+
+static int i2d_bonus_handler_ignore(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
+    int status = I2D_OK;
+    i2d_str ignore;
+
+    ignore.string = "ignore";
+    ignore.length = strlen(ignore.string);
+
+    if(i2d_str_stack_push(stack, &ignore))
+        status = i2d_panic("failed to push string on stack");
 
     return status;
 }
