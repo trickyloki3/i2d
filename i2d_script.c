@@ -2634,6 +2634,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
 int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_node * variable;
+    i2d_readparam * readparam;
     int base;
     long number;
     i2d_str literal;
@@ -2642,7 +2643,13 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node) {
     if(i2d_token_get_literal(node->tokens, &literal)) {
         status = i2d_panic("failed to get literal");
     } else {
-        if(!i2d_context_search_variable(script->context, node, &variable)) {
+        if(!i2d_translator_readparam_map(script->translator, &literal, &readparam)) {
+            if(i2d_token_assign_literal(node->tokens, &readparam->name)) {
+                status = i2d_panic("failed to assign literal to token");
+            } else if(i2d_range_list_copy(&node->range, readparam->range)) {
+                status = i2d_panic("failed to copy node object");
+            }
+        } else if(!i2d_context_search_variable(script->context, node, &variable)) {
             if(i2d_node_copy(node, variable))
                 status = i2d_panic("failed to copy node object");
         } else {
