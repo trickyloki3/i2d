@@ -2184,6 +2184,8 @@ int i2d_context_init(i2d_context ** result) {
                 if( i2d_buf_init(&object->predicates, 4096) ||
                     i2d_buf_init(&object->expression, 4096) ) {
                     status = i2d_panic("failed to create buffer objects");
+                } else if(i2d_str_stack_init(&object->stack, 16)) {
+                    status = i2d_panic("failed to create string stack object");
                 } else {
                     object->next = object;
                     object->prev = object;
@@ -2204,6 +2206,7 @@ void i2d_context_deit(i2d_context ** result) {
     i2d_context * object;
 
     object = *result;
+    i2d_deit(object->stack, i2d_str_stack_deit);
     i2d_deit(object->expression, i2d_buf_deit);
     i2d_deit(object->predicates, i2d_buf_deit);
     i2d_deit(object->variables, i2d_rbt_deit);
@@ -2245,6 +2248,7 @@ void i2d_context_remove(i2d_context * x) {
 int i2d_context_reset(i2d_context * context) {
     int status = I2D_OK;
 
+    i2d_str_stack_clear(context->stack);
     i2d_buf_zero(context->expression);
     i2d_buf_zero(context->predicates);
     i2d_rbt_clear(context->variables);

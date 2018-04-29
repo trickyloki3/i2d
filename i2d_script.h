@@ -336,6 +336,7 @@ struct i2d_context {
     i2d_rbt * variables;
     i2d_buf * predicates;
     i2d_buf * expression;
+    i2d_str_stack * stack;
     struct i2d_context * next;
     struct i2d_context * prev;
 };
