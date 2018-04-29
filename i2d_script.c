@@ -2309,7 +2309,12 @@ static int i2d_function_handler_getrefine(i2d_script * script, i2d_node * node) 
     } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
         status = i2d_panic("failed to get function -- %s", literal.string);
     } else {
-        status = i2d_range_list_copy(&node->range, function->range);
+        i2d_buf_zero(node->tokens->buffer);
+        if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
+            status = i2d_panic("failed to write description");
+        } else if(i2d_range_list_copy(&node->range, function->range)) {
+            status = i2d_panic("failed to copy range list object");
+        }
     }
 
     return status;

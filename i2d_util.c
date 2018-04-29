@@ -347,7 +347,8 @@ int i2d_str_stack_get_list(i2d_str_stack * stack, i2d_str ** _list, size_t * _si
     int status = I2D_OK;
 
     if(!stack->top) {
-        status = i2d_panic("failed on empty stack");
+        *_size = 0;
+        *_list = NULL;
     } else {
         *_size = stack->top;
         *_list = stack->list;
