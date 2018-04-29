@@ -1514,7 +1514,7 @@ int i2d_const_init(void ** result, const char * name, json_t * json, i2d_rbt * r
     int status = I2D_OK;
     i2d_const * object;
 
-    if(i2d_is_invalid(result) || !name || !json) {
+    if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramaters");
     } else {
         object = calloc(1, sizeof(*object));
@@ -1683,7 +1683,7 @@ int i2d_function_init(void ** result, const char * name, json_t * json, i2d_rbt 
     i2d_str_const description;
     i2d_zero(description);
 
-    if(i2d_is_invalid(result) || !name || !json) {
+    if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
         object = calloc(1, sizeof(*object));
@@ -1732,7 +1732,7 @@ int i2d_bonus_type_init(void ** result, const char * name, json_t * json, i2d_rb
     i2d_str_const description;
     i2d_zero(description);
 
-    if(i2d_is_invalid(result) || !name) {
+    if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramaters");
     } else {
         object = calloc(1, sizeof(*object));
@@ -1769,6 +1769,62 @@ void i2d_bonus_type_deit(void ** result) {
     object = *result;
     i2d_deit(object->argument_type, i2d_str_list_deit);
     i2d_deit(object->description, i2d_description_deit);
+    i2d_free(object->name.string);
+    i2d_free(object);
+    *result = NULL;
+}
+
+int i2d_readparam_init(void ** result, const char * key, json_t * json, i2d_rbt * rbt, void * context) {
+    int status = I2D_OK;
+    i2d_readparam * object;
+    i2d_str_const name;
+    long min;
+    long max;
+    json_t * value;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_json_get_str(json, "name", &name)) {
+                status = i2d_panic("failed to get string object");
+            } else if(i2d_str_copy(&object->name, name.string, name.length)) {
+                status = i2d_panic("failed to create string object");
+            } else {
+                value = json_object_get(json, "min");
+                if(value) {
+                    min = json_integer_value(value);
+                    value = json_object_get(json, "max");
+                    if(value) {
+                        max = json_integer_value(value);
+                        if(i2d_range_list_init2(&object->range, min, max))
+                            status = i2d_panic("failed to create range list object");
+                    }
+                } else if(i2d_range_list_init2(&object->range, INT_MIN, INT_MAX)) {
+                    status = i2d_panic("failed to create range list object");
+                } else if(i2d_rbt_insert(rbt, &object->name, object)) {
+                    status = i2d_panic("failed to map readparam object");
+                }
+            }
+
+            if(status)
+                i2d_readparam_deit((void **) &object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_readparam_deit(void ** result) {
+    i2d_readparam * object;
+
+    object = *result;
+    i2d_deit(object->range, i2d_range_list_deit);
     i2d_free(object->name.string);
     i2d_free(object);
     *result = NULL;
@@ -2105,6 +2161,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create functions object");
             } else if(i2d_object_init(&object->bonus_types, json->blocks, "bonus", i2d_bonus_type_init, i2d_bonus_type_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create bonus types object");
+            } else if(i2d_object_init(&object->readparam, json->object, "readparam", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_str, object)) {
+                status = i2d_panic("failed to create readparams object");
             } else if(i2d_object_init(&object->elements, json->object, "elements", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create elements object");
             } else if(i2d_object_init(&object->races, json->object, "races", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
@@ -2141,6 +2199,7 @@ void i2d_translator_deit(i2d_translator ** result) {
     i2d_deit(object->classes, i2d_object_deit);
     i2d_deit(object->races, i2d_object_deit);
     i2d_deit(object->elements, i2d_object_deit);
+    i2d_deit(object->readparam, i2d_object_deit);
     i2d_deit(object->bonus_types, i2d_object_deit);
     i2d_deit(object->functions, i2d_object_deit);
     i2d_deit(object->consts, i2d_object_deit);

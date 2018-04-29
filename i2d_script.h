@@ -301,6 +301,16 @@ typedef struct i2d_bonus_type i2d_bonus_type;
 int i2d_bonus_type_init(void **, const char *, json_t *, i2d_rbt *, void *);
 void i2d_bonus_type_deit(void **);
 
+struct i2d_readparam {
+    i2d_str name;
+    i2d_range_list * range;
+};
+
+typedef struct i2d_readparam i2d_readparam;
+
+int i2d_readparam_init(void **, const char *, json_t *, i2d_rbt *, void *);
+void i2d_readparam_deit(void **);
+
 struct i2d_str_map {
     long key;
     i2d_str value;
@@ -315,6 +325,7 @@ struct i2d_translator {
     i2d_object * consts;
     i2d_object * functions;
     i2d_object * bonus_types;
+    i2d_object * readparam;
     i2d_object * elements;
     i2d_object * races;
     i2d_object * classes;
