@@ -2062,7 +2062,7 @@ int i2d_translator_elements_map(i2d_translator * translator, long * key, i2d_str
     return status;
 }
 
-int i2d_translator_race_map(i2d_translator * translator, long * key, i2d_str * result) {
+int i2d_translator_races_map(i2d_translator * translator, long * key, i2d_str * result) {
     int status = I2D_OK;
     i2d_str_map * str_map;
 

@@ -21,6 +21,18 @@
                 "description" : "Deal more damage for {0} enemies based on their defense.",
                 "argument_type" : ["elements"]
             },
+            "bIgnoreMdefRace" : {
+                "description" : "Ignore the magical defence of {0} enemies when dealing magical damage.",
+                "argument_type" : ["race"]
+            },
+            "bIgnoreDefRace" : {
+                "description" : "Ignore the physical defense of {0} enemies when dealing physical damage.",
+                "argument_type" : ["race"]
+            },
+            "bDefRatioAtkRace" : {
+                "description" : "Deal more damage for {0} enemies based on their defense.",
+                "argument_type" : ["race"]
+            },
             "bStr" : {
                 "description" : "STR {0}",
                 "argument_type" : ["integer"]
@@ -521,7 +533,7 @@
         "RC_ANGEL" : "angel",
         "RC_DRAGON" : "dragon",
         "RC_PLAYER" : "player",
-        "RC_ALL" : "formless, undead, brute, plant, insect, fish, demon, demihuman, angel, dragon, player",
+        "RC_ALL" : "formless, undead, brute, plant, insect, fish, demon, demihuman, angel, dragon, player"
     },
     "consts" : {
         "INT_MIN" : -2147483648,
