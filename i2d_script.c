@@ -6,6 +6,7 @@ static int i2d_bonus_handler_classes(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_str_stack *);
+static int i2d_bonus_handler_percent__div100(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_str_stack *);
 
 const char * i2d_token_string[] = {
@@ -1833,6 +1834,7 @@ static struct i2d_bonus_handler {
     { {"integer", 7}, i2d_bonus_handler_integer },
     { {"percent", 7}, i2d_bonus_handler_percent },
     { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
+    { {"percent_div100", 14}, i2d_bonus_handler_percent__div100 },
     { {"ignore", 6}, i2d_bonus_handler_ignore }
 };
 
@@ -1953,6 +1955,38 @@ static int i2d_bonus_handler_percent_invert(i2d_script * script, i2d_node * node
 
     min *= -1;
     max *= -1;
+
+    if( min == max ?
+        i2d_buf_format(script->context->expression, "%+ld%%", min) :
+        i2d_buf_format(script->context->expression, "%+ld%% ~ %+ld%%", max, min) ) {
+        status = i2d_panic("failed to write integer range");
+    } else if(i2d_node_get_all_predicate(node, script->context->predicates)) {
+        status = i2d_panic("failed to get all predicate");
+    } else {
+        i2d_buf_get_str(script->context->predicates, &predicates);
+        if(predicates.length && i2d_buf_format(script->context->expression, " (%s)", predicates.string)) {
+            status = i2d_panic("failed to write predicates");
+        } else {
+            i2d_buf_get_str(script->context->expression, &expression);
+            if(i2d_str_stack_push(stack, &expression))
+                status = i2d_panic("failed to push string on stack");
+        }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_percent__div100(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
+    int status = I2D_OK;
+    long min;
+    long max;
+    i2d_str predicates;
+    i2d_str expression;
+
+    i2d_range_list_get_range(node->range, &min, &max);
+
+    min /= 100;
+    max /= 100;
 
     if( min == max ?
         i2d_buf_format(script->context->expression, "%+ld%%", min) :
