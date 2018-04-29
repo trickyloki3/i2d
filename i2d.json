@@ -258,11 +258,11 @@
                 "argument_type" : ["percent"]
             },
             "bShortWeaponDamageReturn" : {
-                "description" : "Reflect {0} short range damage.",
+                "description" : "Reflect {0} short range physical damage.",
                 "argument_type" : ["percent"]
             },
             "bLongWeaponDamageReturn" : {
-                "description" : "Reflect {0} long range damage.",
+                "description" : "Reflect {0} long range physical damage.",
                 "argument_type" : ["percent"]
             },
             "bMagicDamageReturn" : {
@@ -276,6 +276,42 @@
             "bAbsorbDmgMaxHP" : {
                 "description" : "Absorb any damage received over {0} of Max HP.",
                 "argument_type" : ["percent"]
+            },
+            "bAbsorbDmgMaxHP" : {
+                "description" : "Pierce enemy's magical defense by {0}.",
+                "argument_type" : ["percent"]
+            },
+            "bNoMiscDamage" : {
+                "description" : "Misc Damage {0}",
+                "argument_type" : ["percent_invert"]
+            },
+            "bNoWeaponDamage" : {
+                "description" : "Physical Damage {0}",
+                "argument_type" : ["percent_invert"]
+            },
+            "bNoMagicDamage" : {
+                "description" : "Magical Effect {0}",
+                "argument_type" : ["percent_invert"]
+            },
+            "bNearAtkDef" : {
+                "description" : "Short Range Physical Damage {0}",
+                "argument_type" : ["percent_invert"]
+            },
+            "bLongAtkDef" : {
+                "description" : "Long Range Physical Damage {0}",
+                "argument_type" : ["percent_invert"]
+            },
+            "bMagicAtkDef" : {
+                "description" : "Magical Damage {0}",
+                "argument_type" : ["percent_invert"]
+            },
+            "bMiscAtkDef" : {
+                "description" : "Misc Damage {0}",
+                "argument_type" : ["percent_invert"]
+            },
+            "bUnbreakable" : {
+                "description" : "Break Chance {0}",
+                "argument_type" : ["percent_invert"]
             }
         },
         "bonus2" : {},
