@@ -302,6 +302,7 @@ int i2d_bonus_type_init(void **, const char *, json_t *, i2d_rbt *, void *);
 void i2d_bonus_type_deit(void **);
 
 struct i2d_readparam {
+    i2d_str key;
     i2d_str name;
     i2d_range_list * range;
 };

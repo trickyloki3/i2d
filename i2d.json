@@ -531,12 +531,12 @@
         "getequiprefinerycnt" : {
             "min": 0,
             "max" : 15,
-            "description" : "Refine Count Of {0}",
+            "description" : "Refine Count Of {0}"
         },
         "readparam" : {
             "min": 0,
-            "max" : 99,
-            "description" : "{0}",
+            "max" : 0,
+            "description" : "{0}"
         },
         "getpartnerid" : {
             "min": 0,
