@@ -2436,30 +2436,19 @@ static int i2d_function_handler_getrefine(i2d_script * script, i2d_node * node) 
 static int i2d_function_handler_readparam(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_node * argument;
-    i2d_str literal;
     long constant;
-    i2d_function * function;
     i2d_readparam * readparam;
 
     if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
         status = i2d_panic("failed to get arguments");
-    } else if(i2d_token_get_literal(node->tokens, &literal)) {
-        status = i2d_panic("failed to get literal");
-    } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
-        status = i2d_panic("failed to get function -- %s", literal.string);
     } else if(i2d_node_get_constant(argument->left, &constant)) {
         status = i2d_panic("failed to get string");
     } else if(i2d_translator_readparam_map(script->translator, &constant, &readparam)) {
         status = i2d_panic("failed to get readparam -- %ld", constant);
-    } else {
-        i2d_buf_zero(node->tokens->buffer);
-        if(i2d_str_stack_push(script->context->stack, &readparam->name)) {
-            status = i2d_panic("failed to push to string stack");
-        } else if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
-            status = i2d_panic("failed to write description");
-        } else if(i2d_range_list_copy(&node->range, readparam->range)) {
-            status = i2d_panic("failed to copy range list object");
-        }
+    } else if(i2d_token_assign_literal(node->tokens, &readparam->name)) {
+        status = i2d_panic("failed to assign literal to token");
+    } else if(i2d_range_list_copy(&node->range, readparam->range)) {
+        status = i2d_panic("failed to copy range list object");
     }
 
     return status;
