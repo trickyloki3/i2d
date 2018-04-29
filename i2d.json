@@ -36,6 +36,74 @@
             "bHit" : {
                 "description" : "HIT {0}",
                 "argument_type" : ["integer"]
+            },
+            "bFlee" : {
+                "description" : "FLEE {0}",
+                "argument_type" : ["integer"]
+            },
+            "bFlee2" : {
+                "description" : "Perfect Dodge {0}",
+                "argument_type" : ["integer"]
+            },
+            "bAllStats" : {
+                "description" : "All Status {0}",
+                "argument_type" : ["integer"]
+            },
+            "bAgiVit" : {
+                "description" : "AGI {0} VIT {0}",
+                "argument_type" : ["integer"]
+            },
+            "bAgiDexStr" : {
+                "description" : "STR {0} AGI {0} DEX {0}",
+                "argument_type" : ["integer"]
+            },
+            "bMaxHP" : {
+                "description" : "Max HP {0}",
+                "argument_type" : ["integer"]
+            },
+            "bMaxSP" : {
+                "description" : "Max SP {0}",
+                "argument_type" : ["integer"]
+            },
+            "bMdef" : {
+                "description" : "MDEF {0}",
+                "argument_type" : ["integer"]
+            },
+            "bMdef2" : {
+                "description" : "MDEF2 {0}",
+                "argument_type" : ["integer"]
+            },
+            "bAtk" : {
+                "description" : "ATK {0}",
+                "argument_type" : ["integer"]
+            },
+            "bAtk2" : {
+                "description" : "ATK2 {0}",
+                "argument_type" : ["integer"]
+            },
+            "bBaseAtk" : {
+                "description" : "BATK {0}",
+                "argument_type" : ["integer"]
+            },
+            "bMatk" : {
+                "description" : "MATK {0}",
+                "argument_type" : ["integer"]
+            },
+            "bDef" : {
+                "description" : "DEF {0}",
+                "argument_type" : ["integer"]
+            },
+            "bDef2" : {
+                "description" : "DEF2 {0}",
+                "argument_type" : ["integer"]
+            },
+            "bCritical" : {
+                "description" : "Critical Chance {0}",
+                "argument_type" : ["integer"]
+            },
+            "bAspd" : {
+                "description" : "Attack Speed {0}",
+                "argument_type" : ["integer"]
             }
         },
         "bonus2" : {},
