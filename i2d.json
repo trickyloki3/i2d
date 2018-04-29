@@ -1,6 +1,10 @@
 {
     "blocks" : {
         "bonus" : {
+            "bNoRegen" : {
+                "description" : "Disable {0} natural regeneration.",
+                "argument_type" : ["regen"]
+            },
             "bSplashRange" : {
                 "description" : "Each hit deals AoE damage to a {0} grid.",
                 "argument_type" : ["splash"]
