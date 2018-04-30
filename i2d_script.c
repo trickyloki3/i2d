@@ -18,6 +18,7 @@ static int i2d_function_handler_isequipped(i2d_script *, i2d_node *);
 static int i2d_function_handler_countitem(i2d_script *, i2d_node *);
 static int i2d_function_handler_gettime(i2d_script *, i2d_node *);
 static int i2d_function_handler_strcharinfo(i2d_script *, i2d_node *);
+static int i2d_function_handler_getequipid(i2d_script *, i2d_node *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -2074,7 +2075,7 @@ int i2d_translator_locations_map(i2d_translator * translator, long * key, i2d_st
     int status = I2D_OK;
     i2d_str_map * str_map;
 
-    if(i2d_object_map(translator->classes, key, (void **) &str_map)) {
+    if(i2d_object_map(translator->locations, key, (void **) &str_map)) {
         status = I2D_FAIL;
     } else {
         *result = str_map->value;
@@ -2496,7 +2497,8 @@ static struct i2d_function_handler {
     { {"eaclass", 7}, i2d_function_handler_generic },
     { {"countitem", 9}, i2d_function_handler_countitem },
     { {"gettime", 7}, i2d_function_handler_gettime },
-    { {"strcharinfo", 11}, i2d_function_handler_strcharinfo }
+    { {"strcharinfo", 11}, i2d_function_handler_strcharinfo },
+    { {"getequipid", 10}, i2d_function_handler_getequipid }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;
@@ -2684,7 +2686,25 @@ static int i2d_function_handler_strcharinfo(i2d_script * script, i2d_node * node
     if(i2d_node_get_constant(node->left, &constant)) {
         status = i2d_panic("failed to get constant");
     } else if(i2d_translator_strcharinfo_map(script->translator, &constant, &value)) {
-        status = i2d_panic("failed to find gettime -- %ld", constant);
+        status = i2d_panic("failed to find strcharinfo -- %ld", constant);
+    } else if(i2d_token_assign_literal(node->tokens, &value)) {
+        status = i2d_panic("failed to assign literal to token");
+    } else if(i2d_range_list_copy(&node->range, node->left->range)) {
+        status = i2d_panic("failed to create range list object");
+    }
+
+    return status;
+}
+
+static int i2d_function_handler_getequipid(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    long constant;
+    i2d_str value;
+
+    if(i2d_node_get_constant(node->left, &constant)) {
+        status = i2d_panic("failed to get constant");
+    } else if(i2d_translator_locations_map(script->translator, &constant, &value)) {
+        status = i2d_panic("failed to find getequipid -- %ld", constant);
     } else if(i2d_token_assign_literal(node->tokens, &value)) {
         status = i2d_panic("failed to assign literal to token");
     } else if(i2d_range_list_copy(&node->range, node->left->range)) {
