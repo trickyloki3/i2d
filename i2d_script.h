@@ -328,10 +328,11 @@ struct i2d_translator {
     i2d_object * consts;
     i2d_object * functions;
     i2d_object * bonus_types;
-    i2d_object * readparam;
     i2d_object * elements;
     i2d_object * races;
     i2d_object * classes;
+    i2d_object * gettimes;
+    i2d_object * readparam;
     i2d_rbt * bonus_handlers;
 };
 
@@ -341,11 +342,12 @@ int i2d_translator_init(i2d_translator **, i2d_json *);
 void i2d_translator_deit(i2d_translator **);
 int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
 int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
-int i2d_translator_readparam_map(i2d_translator *, long *, i2d_readparam **);
 int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
 int i2d_translator_elements_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_races_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_classes_map(i2d_translator *, long *, i2d_str *);
+int i2d_translator_gettimes_map(i2d_translator *, long *, i2d_readparam **);
+int i2d_translator_readparam_map(i2d_translator *, long *, i2d_readparam **);
 
 struct i2d_context {
     i2d_rbt * variables;

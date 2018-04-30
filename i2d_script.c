@@ -2174,14 +2174,16 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create functions object");
             } else if(i2d_object_init(&object->bonus_types, json->blocks, "bonus", i2d_bonus_type_init, i2d_bonus_type_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create bonus types object");
-            } else if(i2d_object_init(&object->readparam, json->object, "readparam", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
-                status = i2d_panic("failed to create readparams object");
             } else if(i2d_object_init(&object->elements, json->object, "elements", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create elements object");
             } else if(i2d_object_init(&object->races, json->object, "races", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create races object");
             } else if(i2d_object_init(&object->classes, json->object, "classes", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create classes object");
+            } else if(i2d_object_init(&object->gettimes, json->object, "gettimes", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
+                status = i2d_panic("failed to create gettimes object");
+            } else if(i2d_object_init(&object->readparam, json->object, "readparam", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
+                status = i2d_panic("failed to create readparams object");
             } else {
                 if(i2d_rbt_init(&object->bonus_handlers, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create red black tree object");
@@ -2209,10 +2211,11 @@ void i2d_translator_deit(i2d_translator ** result) {
 
     object = *result;
     i2d_deit(object->bonus_handlers, i2d_rbt_deit);
+    i2d_deit(object->readparam, i2d_object_deit);
+    i2d_deit(object->gettimes, i2d_object_deit);
     i2d_deit(object->classes, i2d_object_deit);
     i2d_deit(object->races, i2d_object_deit);
     i2d_deit(object->elements, i2d_object_deit);
-    i2d_deit(object->readparam, i2d_object_deit);
     i2d_deit(object->bonus_types, i2d_object_deit);
     i2d_deit(object->functions, i2d_object_deit);
     i2d_deit(object->consts, i2d_object_deit);
@@ -2235,10 +2238,6 @@ int i2d_translator_const_map(i2d_translator * translator, i2d_str * key, long * 
 
 int i2d_translator_bonus_map(i2d_translator * translator, long * key, i2d_bonus_type ** result) {
     return i2d_object_map(translator->bonus_types, key, (void **) result);
-}
-
-int i2d_translator_readparam_map(i2d_translator * translator, long * key, i2d_readparam ** result) {
-    return i2d_object_map(translator->readparam, key, (void **) result);
 }
 
 int i2d_translator_function_map(i2d_translator * translator, i2d_str * key, i2d_function ** result) {
@@ -2282,6 +2281,14 @@ int i2d_translator_classes_map(i2d_translator * translator, long * key, i2d_str 
     }
 
     return status;
+}
+
+int i2d_translator_gettimes_map(i2d_translator * translator, long * key, i2d_readparam ** result) {
+    return i2d_object_map(translator->gettimes, key, (void **) result);
+}
+
+int i2d_translator_readparam_map(i2d_translator * translator, long * key, i2d_readparam ** result) {
+    return i2d_object_map(translator->readparam, key, (void **) result);
 }
 
 int i2d_context_init(i2d_context ** result) {
