@@ -344,7 +344,6 @@ struct i2d_translator {
     i2d_object * strcharinfo;
     i2d_object * gettimes;
     i2d_object * readparam;
-    i2d_rbt * bonus_handlers;
 };
 
 typedef struct i2d_translator i2d_translator;
@@ -389,6 +388,7 @@ struct i2d_script {
     i2d_translator * translator;
     i2d_context * context;
     i2d_rbt * functions_handlers;
+    i2d_rbt * bonus_handlers;
 };
 
 typedef struct i2d_script i2d_script;

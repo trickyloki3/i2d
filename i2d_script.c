@@ -2237,15 +2237,6 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create gettimes object");
             } else if(i2d_object_init(&object->readparam, json->object, "readparam", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create readparams object");
-            } else {
-                if(i2d_rbt_init(&object->bonus_handlers, i2d_rbt_cmp_str)) {
-                    status = i2d_panic("failed to create red black tree object");
-                } else {
-                    size = i2d_size(bonus_list);
-                    for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->bonus_handlers, &bonus_list[i].name, &bonus_list[i]))
-                            status = i2d_panic("failed to map bonus handler object");
-                }
             }
 
             if(status)
@@ -2263,7 +2254,6 @@ void i2d_translator_deit(i2d_translator ** result) {
     size_t i;
 
     object = *result;
-    i2d_deit(object->bonus_handlers, i2d_rbt_deit);
     i2d_deit(object->readparam, i2d_object_deit);
     i2d_deit(object->gettimes, i2d_object_deit);
     i2d_deit(object->strcharinfo, i2d_object_deit);
@@ -2722,6 +2712,15 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                         if(i2d_rbt_insert(object->functions_handlers, &function_list[i].name, &function_list[i]))
                             status = i2d_panic("failed to map function handler object");
                 }
+
+                if(i2d_rbt_init(&object->bonus_handlers, i2d_rbt_cmp_str)) {
+                    status = i2d_panic("failed to create red black tree object");
+                } else {
+                    size = i2d_size(bonus_list);
+                    for(i = 0; i < size && !status; i++)
+                        if(i2d_rbt_insert(object->bonus_handlers, &bonus_list[i].name, &bonus_list[i]))
+                            status = i2d_panic("failed to map bonus handler object");
+                }
             }
 
             if(status)
@@ -2738,6 +2737,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->bonus_handlers, i2d_rbt_deit);
     i2d_deit(object->functions_handlers, i2d_rbt_deit);
     i2d_deit(object->context, i2d_context_list_deit);
     i2d_deit(object->translator, i2d_translator_deit);
@@ -2826,9 +2826,10 @@ int i2d_script_bonus_handler(i2d_script * script, i2d_str * argument_type, i2d_n
     int status = I2D_OK;
     i2d_bonus_handler * handler;
 
-    if(i2d_rbt_search(script->translator->bonus_handlers, argument_type, (void **) &handler)) {
+    if(i2d_rbt_search(script->bonus_handlers, argument_type, (void **) &handler)) {
         status = i2d_panic("failed to search to bonus handler -- %s", argument_type->string);
     } else {
+        i2d_str_stack_clear(script->context->stack);
         i2d_buf_zero(script->context->expression);
         i2d_buf_zero(script->context->predicates);
         status = handler->handler(script, node, stack);
