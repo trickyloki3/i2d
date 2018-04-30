@@ -615,8 +615,8 @@
         "EQI_SHADOW_SHIELD" : "Shadow Shield",
         "EQI_SHADOW_SHOES" : "Shadow Shoes",
         "EQI_SHADOW_ACC_R" : "Right Shadow Accessory",
-        "EQI_SHADOW_ACC_L" : "Left Shadow Accessory",
-    }
+        "EQI_SHADOW_ACC_L" : "Left Shadow Accessory"
+    },
     "strcharinfo" : {
         "0" : "Character Name",
         "1" : "Party Name",

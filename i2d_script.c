@@ -1971,6 +1971,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create races object");
             } else if(i2d_object_init(&object->classes, json->object, "classes", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create classes object");
+            } else if(i2d_object_init(&object->locations, json->object, "locations", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
+                status = i2d_panic("failed to create locations object");
             } else if(i2d_object_init(&object->strcharinfo, json->object, "strcharinfo", i2d_str_long_map_init, i2d_str_long_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create strcharinfo object");
             } else if(i2d_object_init(&object->gettimes, json->object, "gettimes", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
@@ -1997,6 +1999,7 @@ void i2d_translator_deit(i2d_translator ** result) {
     i2d_deit(object->readparam, i2d_object_deit);
     i2d_deit(object->gettimes, i2d_object_deit);
     i2d_deit(object->strcharinfo, i2d_object_deit);
+    i2d_deit(object->locations, i2d_object_deit);
     i2d_deit(object->classes, i2d_object_deit);
     i2d_deit(object->races, i2d_object_deit);
     i2d_deit(object->elements, i2d_object_deit);
@@ -2055,6 +2058,19 @@ int i2d_translator_races_map(i2d_translator * translator, long * key, i2d_str * 
 }
 
 int i2d_translator_classes_map(i2d_translator * translator, long * key, i2d_str * result) {
+    int status = I2D_OK;
+    i2d_str_map * str_map;
+
+    if(i2d_object_map(translator->classes, key, (void **) &str_map)) {
+        status = I2D_FAIL;
+    } else {
+        *result = str_map->value;
+    }
+
+    return status;
+}
+
+int i2d_translator_locations_map(i2d_translator * translator, long * key, i2d_str * result) {
     int status = I2D_OK;
     i2d_str_map * str_map;
 
