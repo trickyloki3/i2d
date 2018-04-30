@@ -557,6 +557,11 @@
             "min" : 0,
             "max" : 2147483647,
             "description" : "{0} Count"
+        },
+        "getiteminfo" : {
+            "min" : 0,
+            "max" : 2147483647,
+            "description" : "{0}'s {1}"
         }
     },
     "elements" : {
