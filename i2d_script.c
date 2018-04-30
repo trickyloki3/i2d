@@ -2947,9 +2947,7 @@ int i2d_script_bonus_handler(i2d_script * script, i2d_str * argument_type, i2d_n
     if(i2d_rbt_search(script->bonus_handlers, argument_type, (void **) &handler)) {
         status = i2d_panic("failed to search to bonus handler -- %s", argument_type->string);
     } else {
-        i2d_str_stack_clear(script->context->stack);
-        i2d_buf_zero(script->context->expression);
-        i2d_buf_zero(script->context->predicates);
+        i2d_context_reset_buffer(script->context);
         status = handler->handler(script, node, stack);
     }
 
