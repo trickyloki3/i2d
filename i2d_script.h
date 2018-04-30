@@ -357,7 +357,7 @@ int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
 int i2d_translator_elements_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_races_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_classes_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_strcharinfo_map(i2d_translator *, long *, i2d_str **);
+int i2d_translator_strcharinfo_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_gettimes_map(i2d_translator *, long *, i2d_readparam **);
 int i2d_translator_readparam_map(i2d_translator *, long *, i2d_readparam **);
 

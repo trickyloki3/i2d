@@ -17,6 +17,7 @@ static int i2d_function_handler_getskilllv(i2d_script *, i2d_node *);
 static int i2d_function_handler_isequipped(i2d_script *, i2d_node *);
 static int i2d_function_handler_countitem(i2d_script *, i2d_node *);
 static int i2d_function_handler_gettime(i2d_script *, i2d_node *);
+static int i2d_function_handler_strcharinfo(i2d_script *, i2d_node *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1921,7 +1922,7 @@ int i2d_str_long_map_init(void ** result, const char * key, json_t * json, i2d_r
                         status = i2d_panic("failed on empty string");
                     } else if(i2d_str_copy(&object->value, string, length)) {
                         status = i2d_panic("failed to create string object");
-                    } else if(i2d_rbt_insert(rbt, &object->value, object)) {
+                    } else if(i2d_rbt_insert(rbt, &object->key, object)) {
                         status = i2d_panic("failed to map string long object");
                     }
                 }
@@ -2336,8 +2337,17 @@ int i2d_translator_classes_map(i2d_translator * translator, long * key, i2d_str 
     return status;
 }
 
-int i2d_translator_strcharinfo_map(i2d_translator * translator, long * key, i2d_str ** result) {
-    return i2d_object_map(translator->strcharinfo, key, (void **) result);
+int i2d_translator_strcharinfo_map(i2d_translator * translator, long * key, i2d_str * result) {
+    int status = I2D_OK;
+    i2d_str_long_map * str_long_map;
+
+    if(i2d_object_map(translator->strcharinfo, key, (void **) &str_long_map)) {
+        status = I2D_FAIL;
+    } else {
+        *result = str_long_map->value;
+    }
+
+    return status;
 }
 
 int i2d_translator_gettimes_map(i2d_translator * translator, long * key, i2d_readparam ** result) {
@@ -2479,7 +2489,8 @@ static struct i2d_function_handler {
     { {"checkmadogear", 12}, i2d_function_handler_generic },
     { {"eaclass", 7}, i2d_function_handler_generic },
     { {"countitem", 9}, i2d_function_handler_countitem },
-    { {"gettime", 7}, i2d_function_handler_gettime }
+    { {"gettime", 7}, i2d_function_handler_gettime },
+    { {"strcharinfo", 11}, i2d_function_handler_strcharinfo }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;
@@ -2646,7 +2657,6 @@ static int i2d_function_handler_gettime(i2d_script * script, i2d_node * node) {
     long constant;
     i2d_readparam * param;
 
-    i2d_str_stack_clear(script->context->stack);
     if(i2d_node_get_constant(node->left, &constant)) {
         status = i2d_panic("failed to get constant");
     } else if(i2d_translator_gettimes_map(script->translator, &constant, &param)) {
@@ -2654,6 +2664,24 @@ static int i2d_function_handler_gettime(i2d_script * script, i2d_node * node) {
     } else if(i2d_token_assign_literal(node->tokens, &param->name)) {
         status = i2d_panic("failed to assign literal to token");
     } else if(i2d_range_list_copy(&node->range, param->range)) {
+        status = i2d_panic("failed to create range list object");
+    }
+
+    return status;
+}
+
+static int i2d_function_handler_strcharinfo(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    long constant;
+    i2d_str value;
+
+    if(i2d_node_get_constant(node->left, &constant)) {
+        status = i2d_panic("failed to get constant");
+    } else if(i2d_translator_strcharinfo_map(script->translator, &constant, &value)) {
+        status = i2d_panic("failed to find gettime -- %ld", constant);
+    } else if(i2d_token_assign_literal(node->tokens, &value)) {
+        status = i2d_panic("failed to assign literal to token");
+    } else if(i2d_range_list_copy(&node->range, node->left->range)) {
         status = i2d_panic("failed to create range list object");
     }
 
