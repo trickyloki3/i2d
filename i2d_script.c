@@ -2411,7 +2411,8 @@ static struct i2d_function_handler {
     { {"getskilllv", 10}, i2d_function_handler_getskilllv },
     { {"isequipped", 10}, i2d_function_handler_isequipped },
     { {"getpartnerid", 12}, i2d_function_handler_generic },
-    { {"checkmadogear", 12}, i2d_function_handler_generic }
+    { {"checkmadogear", 12}, i2d_function_handler_generic },
+    { {"eaclass", 7}, i2d_function_handler_generic }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;

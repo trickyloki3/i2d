@@ -543,16 +543,15 @@
             "max" : 1,
             "description" : "Madogear Equipped"
         },
+        "eaclass" : {
+            "min" : -2147483648,
+            "max" : 2147483647,
+            "description" : "Class"
+        },
         "getequiprefinerycnt" : {
             "min": 0,
             "max" : 15,
             "description" : "Refine Count Of {0}"
-        },
-
-        "eaclass" : {
-            "min": -2147483648,
-            "max" : 2147483647,
-            "description" : "Class"
         }
     },
     "elements" : {
