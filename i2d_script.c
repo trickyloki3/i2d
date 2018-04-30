@@ -14,6 +14,7 @@ static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_function_handler_getrefine(i2d_script *, i2d_node *);
 static int i2d_function_handler_readparam(i2d_script *, i2d_node *);
 static int i2d_function_handler_getskilllv(i2d_script *, i2d_node *);
+static int i2d_function_handler_isequipped(i2d_script *, i2d_node *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -2407,7 +2408,8 @@ static struct i2d_function_handler {
 } function_list[] = {
     { {"getrefine", 9}, i2d_function_handler_getrefine },
     { {"readparam", 9}, i2d_function_handler_readparam },
-    { {"getskilllv", 10}, i2d_function_handler_getskilllv }
+    { {"getskilllv", 10}, i2d_function_handler_getskilllv },
+    { {"isequipped", 10}, i2d_function_handler_isequipped }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;
@@ -2424,6 +2426,7 @@ static int i2d_function_handler_getrefine(i2d_script * script, i2d_node * node) 
     } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
         status = i2d_panic("failed to get function -- %s", literal.string);
     } else {
+        i2d_str_stack_clear(script->context->stack);
         i2d_buf_zero(node->tokens->buffer);
         if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
             status = i2d_panic("failed to write description");
@@ -2480,6 +2483,46 @@ static int i2d_function_handler_getskilllv(i2d_script * script, i2d_node * node)
             status = i2d_panic("failed to assign literal to token");
         } else if(i2d_range_list_init2(&node->range, 0, skill->maxlv)) {
             status = i2d_panic("failed to create range list object");
+        }
+    }
+
+    return status;
+}
+
+static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_node * arguments[I2D_CAP];
+    size_t i;
+    size_t size;
+    long item_id;
+    i2d_item * item;
+
+    memset(arguments, 0, sizeof(arguments));
+    size = i2d_size(arguments);
+
+    if(i2d_node_get_arguments(node->left->left, arguments, 1, size - 1)) {
+        status = i2d_panic("failed to get arguments");
+    } else {
+        i2d_buf_zero(node->tokens->buffer);
+        for(i = 0; i < size && arguments[i] && !status; i++) {
+            if(i2d_node_get_constant(arguments[i], &item_id)) {
+                status = i2d_panic("failed to get item id");
+            } else if(i2d_item_db_search_by_id(script->db->item_db, item_id, &item)) {
+                status = i2d_panic("failed to find item -- %ld", item_id);
+            } else {
+                if( i ?
+                    i2d_buf_format(node->tokens->buffer, ", %s", item->name.string) :
+                    i2d_buf_format(node->tokens->buffer, "%s", item->name.string) )
+                    status = i2d_panic("failed to write buffer object");
+            }
+        }
+
+        if(!status) {
+            if(i2d_buf_format(node->tokens->buffer, " is equipped")) {
+                status = i2d_panic("failed to write buffer object");
+            } else if(i2d_range_list_init2(&node->range, 0, 1)) {
+                status = i2d_panic("failed to create range list object");
+            }
         }
     }
 
