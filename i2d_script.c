@@ -2589,7 +2589,7 @@ static int i2d_function_handler_getskilllv(i2d_script * script, i2d_node * node)
         if(i2d_node_get_string(argument->left, &literal)) {
             status = i2d_panic("failed to get string");
         } else if(i2d_skill_db_search_by_macro(script->db->skill_db, &literal, &skill)) {
-            status = i2d_panic("failed to search for skill by id and macro -- %s (%ld)", literal.string, constant);
+            status = i2d_panic("failed to get skill by id and macro -- %s (%ld)", literal.string, constant);
         }
     }
 
@@ -2629,7 +2629,7 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
             if(i2d_node_get_constant(arguments[i], &item_id)) {
                 status = i2d_panic("failed to get item id");
             } else if(i2d_item_db_search_by_id(script->db->item_db, item_id, &item)) {
-                status = i2d_panic("failed to find item -- %ld", item_id);
+                status = i2d_panic("failed to get item by id -- %ld", item_id);
             } else {
                 if( i ?
                     i2d_buf_format(node->tokens->buffer, ", %s", item->name.string) :
@@ -2648,7 +2648,7 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
                 if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
                     status = i2d_panic("failed to format bonus type");
                 } else if(i2d_range_list_copy(&node->range, function->range)) {
-                    status = i2d_panic("failed to create range list object");
+                    status = i2d_panic("failed to copy range list object");
                 }
             }
         }
@@ -2671,7 +2671,7 @@ static int i2d_function_handler_countitem(i2d_script * script, i2d_node * node) 
     } else if(i2d_node_get_constant(node->left, &item_id)) {
         status = i2d_panic("failed to get item id");
     } else if(i2d_item_db_search_by_id(script->db->item_db, item_id, &item)) {
-        status = i2d_panic("failed to find item -- %ld", item_id);
+        status = i2d_panic("failed to get item by id -- %ld", item_id);
     } else if(i2d_str_stack_push(script->context->stack, &item->name)) {
         status = i2d_panic("failed to push string on stack");
     } else {
@@ -2679,7 +2679,7 @@ static int i2d_function_handler_countitem(i2d_script * script, i2d_node * node) 
         if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
             status = i2d_panic("failed to format bonus type");
         } else if(i2d_range_list_copy(&node->range, function->range)) {
-            status = i2d_panic("failed to create range list object");
+            status = i2d_panic("failed to copy range list object");
         }
     }
 
@@ -2694,11 +2694,11 @@ static int i2d_function_handler_gettime(i2d_script * script, i2d_node * node) {
     if(i2d_node_get_constant(node->left, &constant)) {
         status = i2d_panic("failed to get constant");
     } else if(i2d_translator_gettimes_map(script->translator, &constant, &param)) {
-        status = i2d_panic("failed to find gettime -- %ld", constant);
+        status = i2d_panic("failed to get gettime -- %ld", constant);
     } else if(i2d_token_assign_literal(node->tokens, &param->name)) {
         status = i2d_panic("failed to assign literal to token");
     } else if(i2d_range_list_copy(&node->range, param->range)) {
-        status = i2d_panic("failed to create range list object");
+        status = i2d_panic("failed to copy range list object");
     }
 
     return status;
@@ -2712,7 +2712,7 @@ static int i2d_function_handler_strcharinfo(i2d_script * script, i2d_node * node
     if(i2d_node_get_constant(node->left, &constant)) {
         status = i2d_panic("failed to get constant");
     } else if(i2d_translator_strcharinfo_map(script->translator, &constant, &value)) {
-        status = i2d_panic("failed to find strcharinfo -- %ld", constant);
+        status = i2d_panic("failed to get strcharinfo -- %ld", constant);
     } else if(i2d_token_assign_literal(node->tokens, &value)) {
         status = i2d_panic("failed to assign literal to token");
     } else if(i2d_range_list_copy(&node->range, node->left->range)) {
@@ -2730,7 +2730,7 @@ static int i2d_function_handler_getequipid(i2d_script * script, i2d_node * node)
     if(i2d_node_get_constant(node->left, &constant)) {
         status = i2d_panic("failed to get constant");
     } else if(i2d_translator_locations_map(script->translator, &constant, &value)) {
-        status = i2d_panic("failed to find getequipid -- %ld", constant);
+        status = i2d_panic("failed to get getequipid -- %ld", constant);
     } else if(i2d_token_assign_literal(node->tokens, &value)) {
         status = i2d_panic("failed to assign literal to token");
     } else if(i2d_range_list_copy(&node->range, node->left->range)) {
@@ -2769,7 +2769,7 @@ static int i2d_function_handler_getiteminfo(i2d_script * script, i2d_node * node
             if(i2d_node_get_constant(arguments[0], &item_id)) {
                 status = i2d_panic("failed to get item id");
             } else if(i2d_item_db_search_by_id(script->db->item_db, item_id, &item)) {
-                status = i2d_panic("failed to find item -- %ld", item_id);
+                status = i2d_panic("failed to get item by id -- %ld", item_id);
             } else if(i2d_str_stack_push(script->context->stack, &item->name)) {
                 status = i2d_panic("failed to push string on stack");
             }
@@ -2779,7 +2779,7 @@ static int i2d_function_handler_getiteminfo(i2d_script * script, i2d_node * node
             if(i2d_node_get_constant(arguments[0], &info_type)) {
                 status = i2d_panic("failed to get info type");
             } else if(i2d_translator_getiteminfo_map(script->translator, &info_type, &item_info)) {
-                status = i2d_panic("failed to find getiteminfo -- %ld", info_type);
+                status = i2d_panic("failed to get getiteminfo -- %ld", info_type);
             } else if(i2d_str_stack_push(script->context->stack, &item_info)) {
                 status = i2d_panic("failed to push string on stack");
             } else {
