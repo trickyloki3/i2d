@@ -524,9 +524,14 @@
     },
     "functions" : {
         "getrefine" : {
-            "min": 0,
+            "min" : 0,
             "max" : 15,
             "description" : "Refine Count"
+        },
+        "isequipped" : {
+            "min" : 0,
+            "max" : 1,
+            "description" : "{0} is Equipped"
         },
         "getequiprefinerycnt" : {
             "min": 0,

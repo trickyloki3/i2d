@@ -2491,6 +2491,8 @@ static int i2d_function_handler_getskilllv(i2d_script * script, i2d_node * node)
 
 static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
+    i2d_str literal;
+    i2d_function * function;
     i2d_node * arguments[I2D_CAP];
     size_t i;
     size_t size;
@@ -2500,7 +2502,11 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
     memset(arguments, 0, sizeof(arguments));
     size = i2d_size(arguments);
 
-    if(i2d_node_get_arguments(node->left->left, arguments, 1, size - 1)) {
+    if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
+        status = i2d_panic("failed to get function -- %s", literal.string);
+    } else if(i2d_node_get_arguments(node->left->left, arguments, 1, size - 1)) {
         status = i2d_panic("failed to get arguments");
     } else {
         i2d_buf_zero(node->tokens->buffer);
@@ -2518,10 +2524,17 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
         }
 
         if(!status) {
-            if(i2d_buf_format(node->tokens->buffer, " is equipped")) {
-                status = i2d_panic("failed to write buffer object");
-            } else if(i2d_range_list_init2(&node->range, 0, 1)) {
-                status = i2d_panic("failed to create range list object");
+            if(i2d_token_get_literal(node->tokens, &literal)) {
+                status = i2d_panic("failed to get literal");
+            } else if(i2d_str_stack_push(script->context->stack, &literal)) {
+                status = i2d_panic("failed to push string on stack");
+            } else {
+                i2d_buf_zero(node->tokens->buffer);
+                if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
+                    status = i2d_panic("failed to format bonus type");
+                } else if(i2d_range_list_copy(&node->range, function->range)) {
+                    status = i2d_panic("failed to create range list object");
+                }
             }
         }
     }
