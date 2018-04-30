@@ -324,6 +324,16 @@ typedef struct i2d_str_map i2d_str_map;
 int i2d_str_map_init(void **, const char *, json_t *, i2d_rbt *, void *);
 void i2d_str_map_deit(void **);
 
+struct i2d_str_long_map {
+    long key;
+    i2d_str value;
+};
+
+typedef struct i2d_str_long_map i2d_str_long_map;
+
+int i2d_str_long_map_init(void **, const char *, json_t *, i2d_rbt *, void *);
+void i2d_str_long_map_deit(void **);
+
 struct i2d_translator {
     i2d_object * consts;
     i2d_object * functions;
@@ -331,6 +341,7 @@ struct i2d_translator {
     i2d_object * elements;
     i2d_object * races;
     i2d_object * classes;
+    i2d_object * strcharinfo;
     i2d_object * gettimes;
     i2d_object * readparam;
     i2d_rbt * bonus_handlers;
@@ -346,6 +357,7 @@ int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
 int i2d_translator_elements_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_races_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_classes_map(i2d_translator *, long *, i2d_str *);
+int i2d_translator_strcharinfo_map(i2d_translator *, long *, i2d_str **);
 int i2d_translator_gettimes_map(i2d_translator *, long *, i2d_readparam **);
 int i2d_translator_readparam_map(i2d_translator *, long *, i2d_readparam **);
 

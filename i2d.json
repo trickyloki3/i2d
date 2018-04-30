@@ -593,6 +593,12 @@
         "CLASS_BATTLEFIELD" : "battlefield",
         "CLASS_ALL" : "normal, boss, guardian, battlefield"
     },
+    "strcharinfo" : {
+        "0" : "Character Name",
+        "1" : "Party Name",
+        "2" : "Guild Name",
+        "3" : "Map Name"
+    },
     "gettimes" : {
         "DT_SECOND" : { "name" : "Second", "min" : 0, "max" : 60 },
         "DT_MINUTE" : { "name" : "Minute", "min" : 0, "max" : 60 },

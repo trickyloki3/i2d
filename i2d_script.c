@@ -1896,6 +1896,55 @@ void i2d_str_map_deit(void ** result) {
     *result = NULL;
 }
 
+int i2d_str_long_map_init(void ** result, const char * key, json_t * json, i2d_rbt * rbt, void * context) {
+    int status = I2D_OK;
+    i2d_str_long_map * object;
+    const char * string;
+    size_t length;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_strtol(&object->key, key, strlen(key), 10)) {
+                status = i2d_panic("failed to convert literal to number");
+            } else {
+                string = json_string_value(json);
+                if(!string) {
+                    status = i2d_panic("failed on invalid string");
+                } else {
+                    length = json_string_length(json);
+                    if(!length) {
+                        status = i2d_panic("failed on empty string");
+                    } else if(i2d_str_copy(&object->value, string, length)) {
+                        status = i2d_panic("failed to create string object");
+                    } else if(i2d_rbt_insert(rbt, &object->value, object)) {
+                        status = i2d_panic("failed to map string long object");
+                    }
+                }
+            }
+            if(status)
+                i2d_str_long_map_deit((void **) &object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_str_long_map_deit(void ** result) {
+    i2d_str_long_map * object;
+
+    object = *result;
+    i2d_free(object->value.string);
+    i2d_free(object);
+    *result = NULL;
+}
+
 static struct i2d_bonus_handler {
     i2d_str name;
     int (*handler)(i2d_script *, i2d_node *, i2d_str_stack *);
@@ -2181,6 +2230,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create races object");
             } else if(i2d_object_init(&object->classes, json->object, "classes", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create classes object");
+            } else if(i2d_object_init(&object->strcharinfo, json->object, "strcharinfo", i2d_str_long_map_init, i2d_str_long_map_deit, i2d_rbt_cmp_long, object)) {
+                status = i2d_panic("failed to create strcharinfo object");
             } else if(i2d_object_init(&object->gettimes, json->object, "gettimes", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create gettimes object");
             } else if(i2d_object_init(&object->readparam, json->object, "readparam", i2d_readparam_init, i2d_readparam_deit, i2d_rbt_cmp_long, object)) {
@@ -2214,6 +2265,7 @@ void i2d_translator_deit(i2d_translator ** result) {
     i2d_deit(object->bonus_handlers, i2d_rbt_deit);
     i2d_deit(object->readparam, i2d_object_deit);
     i2d_deit(object->gettimes, i2d_object_deit);
+    i2d_deit(object->strcharinfo, i2d_object_deit);
     i2d_deit(object->classes, i2d_object_deit);
     i2d_deit(object->races, i2d_object_deit);
     i2d_deit(object->elements, i2d_object_deit);
@@ -2282,6 +2334,10 @@ int i2d_translator_classes_map(i2d_translator * translator, long * key, i2d_str 
     }
 
     return status;
+}
+
+int i2d_translator_strcharinfo_map(i2d_translator * translator, long * key, i2d_str ** result) {
+    return i2d_object_map(translator->strcharinfo, key, (void **) result);
 }
 
 int i2d_translator_gettimes_map(i2d_translator * translator, long * key, i2d_readparam ** result) {
