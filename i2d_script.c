@@ -11,7 +11,7 @@ static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_percent__div100(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_str_stack *);
-static int i2d_function_handler_getrefine(i2d_script *, i2d_node *);
+static int i2d_function_handler_generic(i2d_script *, i2d_node *);
 static int i2d_function_handler_readparam(i2d_script *, i2d_node *);
 static int i2d_function_handler_getskilllv(i2d_script *, i2d_node *);
 static int i2d_function_handler_isequipped(i2d_script *, i2d_node *);
@@ -2406,22 +2406,22 @@ static struct i2d_function_handler {
     i2d_str name;
     int (*handler)(i2d_script *, i2d_node *);
 } function_list[] = {
-    { {"getrefine", 9}, i2d_function_handler_getrefine },
+    { {"getrefine", 9}, i2d_function_handler_generic },
     { {"readparam", 9}, i2d_function_handler_readparam },
     { {"getskilllv", 10}, i2d_function_handler_getskilllv },
-    { {"isequipped", 10}, i2d_function_handler_isequipped }
+    { {"isequipped", 10}, i2d_function_handler_isequipped },
+    { {"getpartnerid", 12}, i2d_function_handler_generic },
+    { {"checkmadogear", 12}, i2d_function_handler_generic }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;
 
-static int i2d_function_handler_getrefine(i2d_script * script, i2d_node * node) {
+static int i2d_function_handler_generic(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_str literal;
     i2d_function * function;
 
-    if(i2d_node_get_arguments(node->left, NULL, 0, 0)) {
-        status = i2d_panic("failed to get arguments");
-    } else if(i2d_token_get_literal(node->tokens, &literal)) {
+    if(i2d_token_get_literal(node->tokens, &literal)) {
         status = i2d_panic("failed to get literal");
     } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
         status = i2d_panic("failed to get function -- %s", literal.string);
