@@ -2211,15 +2211,15 @@ void i2d_context_remove(i2d_context * x) {
     x->prev = x;
 }
 
-int i2d_context_reset(i2d_context * context) {
-    int status = I2D_OK;
-
+void i2d_context_reset(i2d_context * context) {
     i2d_str_stack_clear(context->stack);
+    i2d_context_reset_buffer(context);
+}
+
+void i2d_context_reset_buffer(i2d_context * context) {
     i2d_buf_zero(context->expression);
     i2d_buf_zero(context->predicates);
     i2d_rbt_clear(context->variables);
-
-    return status;
 }
 
 int i2d_context_insert_variable(i2d_context * context, i2d_node * node) {
@@ -2537,12 +2537,11 @@ static int i2d_function_handler_generic(i2d_script * script, i2d_node * node) {
     i2d_str literal;
     i2d_function * function;
 
-    if(i2d_token_get_literal(node->tokens, &literal)) {
-        status = i2d_panic("failed to get literal");
+    if(i2d_node_get_string(node, &literal)) {
+        status = i2d_panic("failed to get string");
     } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
         status = i2d_panic("failed to get function -- %s", literal.string);
     } else {
-        i2d_str_stack_clear(script->context->stack);
         i2d_buf_zero(node->tokens->buffer);
         if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
             status = i2d_panic("failed to write description");
@@ -2588,7 +2587,7 @@ static int i2d_function_handler_getskilllv(i2d_script * script, i2d_node * node)
         status = i2d_panic("failed to get constant");
     } else if(i2d_skill_db_search_by_id(script->db->skill_db, constant, &skill)) {
         if(i2d_node_get_string(argument->left, &literal)) {
-            status = i2d_panic("failed to get literal");
+            status = i2d_panic("failed to get string");
         } else if(i2d_skill_db_search_by_macro(script->db->skill_db, &literal, &skill)) {
             status = i2d_panic("failed to search for skill by id and macro -- %s (%ld)", literal.string, constant);
         }
@@ -2618,8 +2617,8 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
     memset(arguments, 0, sizeof(arguments));
     size = i2d_size(arguments);
 
-    if(i2d_token_get_literal(node->tokens, &literal)) {
-        status = i2d_panic("failed to get literal");
+    if(i2d_node_get_string(node, &literal)) {
+        status = i2d_panic("failed to get string");
     } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
         status = i2d_panic("failed to get function -- %s", literal.string);
     } else if(i2d_node_get_arguments(node->left->left, arguments, 1, size - 1)) {
@@ -2640,9 +2639,8 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
         }
 
         if(!status) {
-            i2d_str_stack_clear(script->context->stack);
-            if(i2d_token_get_literal(node->tokens, &literal)) {
-                status = i2d_panic("failed to get literal");
+            if(i2d_node_get_string(node, &literal)) {
+                status = i2d_panic("failed to get string");
             } else if(i2d_str_stack_push(script->context->stack, &literal)) {
                 status = i2d_panic("failed to push string on stack");
             } else {
@@ -2666,9 +2664,8 @@ static int i2d_function_handler_countitem(i2d_script * script, i2d_node * node) 
     long item_id;
     i2d_item * item;
 
-    i2d_str_stack_clear(script->context->stack);
-    if(i2d_token_get_literal(node->tokens, &literal)) {
-        status = i2d_panic("failed to get literal");
+    if(i2d_node_get_string(node, &literal)) {
+        status = i2d_panic("failed to get string");
     } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
         status = i2d_panic("failed to get function -- %s", literal.string);
     } else if(i2d_node_get_constant(node->left, &item_id)) {
@@ -2875,10 +2872,10 @@ int i2d_script_compile(i2d_script * script, i2d_str * source, i2d_str ** target)
     i2d_token * tokens = NULL;
     i2d_block * blocks = NULL;
 
+    i2d_context_reset(script->context);
+
     if(!strcmp("{}", source->string)) {
         status = i2d_str_init(target, "", 0);
-    } else if(i2d_context_reset(script->context)) {
-        status = i2d_panic("failed to reset context object");
     } else if(i2d_lexer_tokenize(script->lexer, source, &tokens)) {
         status = i2d_panic("failed to lex -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
@@ -3066,6 +3063,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     i2d_str literal;
     i2d_function_handler * function;
 
+    i2d_context_reset_buffer(script->context);
     if(i2d_token_get_literal(node->tokens, &literal)) {
         status = i2d_panic("failed to get literal");
     } else if(!i2d_rbt_search(script->functions_handlers, &literal, (void **) &function)) {
