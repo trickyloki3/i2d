@@ -594,14 +594,14 @@
         "CLASS_ALL" : "normal, boss, guardian, battlefield"
     },
     "gettimes" : {
-        "DT_SECOND" : { "name" : "Base Level", "min" : 0, "max" : 60 },
-        "DT_MINUTE" : { "name" : "Base Level", "min" : 0, "max" : 60 },
-        "DT_HOUR" : { "name" : "Base Level", "min" : 0, "max" : 24 },
-        "DT_DAYOFWEEK" : { "name" : "Base Level", "min" : 0, "max" : 7 },
-        "DT_DAYOFMONTH" : { "name" : "Base Level", "min" : 0, "max" : 31 },
-        "DT_MONTH" : { "name" : "Base Level", "min" : 0, "max" : 12 },
-        "DT_YEAR" : { "name" : "Base Level", "min" : 0, "max" : 2050 },
-        "DT_DAYOFYEAR" : { "name" : "Base Level", "min" : 0, "max" : 365 }
+        "DT_SECOND" : { "name" : "Second", "min" : 0, "max" : 60 },
+        "DT_MINUTE" : { "name" : "Minute", "min" : 0, "max" : 60 },
+        "DT_HOUR" : { "name" : "Hour", "min" : 0, "max" : 24 },
+        "DT_DAYOFWEEK" : { "name" : "Day of Week", "min" : 0, "max" : 7 },
+        "DT_DAYOFMONTH" : { "name" : "Day of Month", "min" : 0, "max" : 31 },
+        "DT_MONTH" : { "name" : "Month", "min" : 0, "max" : 12 },
+        "DT_YEAR" : { "name" : "Year", "min" : 0, "max" : 2050 },
+        "DT_DAYOFYEAR" : { "name" : "Day of Year", "min" : 0, "max" : 365 }
     },
     "readparam" : {
         "SkillPoint" : { "name" : "Skill Points" },
