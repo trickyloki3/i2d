@@ -2325,7 +2325,7 @@ static int i2d_bonus_handler_time(i2d_script * script, i2d_node * node, i2d_str_
     if( min == max ?
         i2d_buf_format(script->context->expression, "%ld %s%s", min, suffix, min > 1 ? "s" : "") :
         i2d_buf_format(script->context->expression, "%ld ~ %ld %s%s", min, max, suffix, max > 1 ? "s" : "") ) {
-        status = i2d_panic("failed to write integer range");
+        status = i2d_panic("failed to write time range");
     } else if(i2d_bonus_handler_expression(script, node, stack)) {
         status = i2d_panic("failed to write expression");
     }
@@ -2338,7 +2338,7 @@ static int i2d_bonus_handler_regen(i2d_script * script, i2d_node * node, i2d_str
     long constant;
 
     if(i2d_node_get_constant(node, &constant)) {
-        status = i2d_panic("failed to get node string");
+        status = i2d_panic("failed to get constant");
     } else {
         switch(constant) {
             case 1: status = i2d_buf_format(script->context->expression, "HP"); break;
@@ -2367,7 +2367,7 @@ static int i2d_bonus_handler_splash(i2d_script * script, i2d_node * node, i2d_st
     if( min == max ?
         i2d_buf_format(script->context->expression, "%ld x %ld", min, min) :
         i2d_buf_format(script->context->expression, "%ld x %ld ~ %ld x %ld", min, min, max, max) ) {
-        status = i2d_panic("failed to write integer range");
+        status = i2d_panic("failed to write splash range");
     } else if(i2d_bonus_handler_expression(script, node, stack)) {
         status = i2d_panic("failed to write expression");
     }
@@ -2381,9 +2381,9 @@ static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_
     i2d_str element;
 
     if(i2d_node_get_constant(node, &constant)) {
-        status = i2d_panic("failed to get node string");
+        status = i2d_panic("failed to get constant");
     } else if(i2d_translator_elements_map(script->translator, &constant, &element)) {
-        status = i2d_panic("failed to map element -- %ld", constant);
+        status = i2d_panic("failed to get element -- %ld", constant);
     } else if(i2d_str_stack_push(stack, &element)) {
         status = i2d_panic("failed to push string on stack");
     }
@@ -2397,9 +2397,9 @@ static int i2d_bonus_handler_races(i2d_script * script, i2d_node * node, i2d_str
     i2d_str race;
 
     if(i2d_node_get_constant(node, &constant)) {
-        status = i2d_panic("failed to get node string");
+        status = i2d_panic("failed to get constant");
     } else if(i2d_translator_races_map(script->translator, &constant, &race)) {
-        status = i2d_panic("failed to map race -- %ld", constant);
+        status = i2d_panic("failed to get race -- %ld", constant);
     } else if(i2d_str_stack_push(stack, &race)) {
         status = i2d_panic("failed to push string on stack");
     }
@@ -2413,9 +2413,9 @@ static int i2d_bonus_handler_classes(i2d_script * script, i2d_node * node, i2d_s
     i2d_str class;
 
     if(i2d_node_get_constant(node, &constant)) {
-        status = i2d_panic("failed to get node string");
+        status = i2d_panic("failed to get constant");
     } else if(i2d_translator_classes_map(script->translator, &constant, &class)) {
-        status = i2d_panic("failed to map class -- %ld", constant);
+        status = i2d_panic("failed to get class -- %ld", constant);
     } else if(i2d_str_stack_push(stack, &class)) {
         status = i2d_panic("failed to push string on stack");
     }
