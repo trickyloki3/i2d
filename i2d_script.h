@@ -342,6 +342,7 @@ struct i2d_translator {
     i2d_object * races;
     i2d_object * classes;
     i2d_object * locations;
+    i2d_object * getiteminfo;
     i2d_object * strcharinfo;
     i2d_object * gettimes;
     i2d_object * readparam;
@@ -358,6 +359,7 @@ int i2d_translator_elements_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_races_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_classes_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_locations_map(i2d_translator *, long *, i2d_str *);
+int i2d_translator_getiteminfo_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_strcharinfo_map(i2d_translator *, long *, i2d_str *);
 int i2d_translator_gettimes_map(i2d_translator *, long *, i2d_readparam **);
 int i2d_translator_readparam_map(i2d_translator *, long *, i2d_readparam **);

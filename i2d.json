@@ -623,6 +623,25 @@
         "2" : "Guild Name",
         "3" : "Map Name"
     },
+    "getiteminfo" : {
+        "0" : "Buy Price",
+        "1" : "Sell Price",
+        "2" : "Type",
+        "3" : "Max Drop Chance",
+        "4" : "Gender",
+        "5" : "Equipment Location",
+        "6" : "Weight",
+        "7" : "ATK",
+        "8" : "DEF",
+        "9" : "Range",
+        "10" : "Slot",
+        "11" : "View",
+        "12" : "Required Level",
+        "13" : "Weapon Level",
+        "14" : "Sprite",
+        "15" : "Max Required Level",
+        "16" : "MATK"
+    },
     "gettimes" : {
         "DT_SECOND" : { "name" : "Second", "min" : 0, "max" : 60 },
         "DT_MINUTE" : { "name" : "Minute", "min" : 0, "max" : 60 },
