@@ -15,6 +15,7 @@ static int i2d_function_handler_generic(i2d_script *, i2d_node *);
 static int i2d_function_handler_readparam(i2d_script *, i2d_node *);
 static int i2d_function_handler_getskilllv(i2d_script *, i2d_node *);
 static int i2d_function_handler_isequipped(i2d_script *, i2d_node *);
+static int i2d_function_handler_countitem(i2d_script *, i2d_node *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -2412,7 +2413,8 @@ static struct i2d_function_handler {
     { {"isequipped", 10}, i2d_function_handler_isequipped },
     { {"getpartnerid", 12}, i2d_function_handler_generic },
     { {"checkmadogear", 12}, i2d_function_handler_generic },
-    { {"eaclass", 7}, i2d_function_handler_generic }
+    { {"eaclass", 7}, i2d_function_handler_generic },
+    { {"countitem", 9}, i2d_function_handler_countitem }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;
@@ -2525,6 +2527,7 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
         }
 
         if(!status) {
+            i2d_str_stack_clear(script->context->stack);
             if(i2d_token_get_literal(node->tokens, &literal)) {
                 status = i2d_panic("failed to get literal");
             } else if(i2d_str_stack_push(script->context->stack, &literal)) {
@@ -2537,6 +2540,36 @@ static int i2d_function_handler_isequipped(i2d_script * script, i2d_node * node)
                     status = i2d_panic("failed to create range list object");
                 }
             }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_function_handler_countitem(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_str literal;
+    i2d_function * function;
+    long item_id;
+    i2d_item * item;
+
+    i2d_str_stack_clear(script->context->stack);
+    if(i2d_token_get_literal(node->tokens, &literal)) {
+        status = i2d_panic("failed to get literal");
+    } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
+        status = i2d_panic("failed to get function -- %s", literal.string);
+    } else if(i2d_node_get_constant(node->left, &item_id)) {
+        status = i2d_panic("failed to get item id");
+    } else if(i2d_item_db_search_by_id(script->db->item_db, item_id, &item)) {
+        status = i2d_panic("failed to find item -- %ld", item_id);
+    } else if(i2d_str_stack_push(script->context->stack, &item->name)) {
+        status = i2d_panic("failed to push string on stack");
+    } else {
+        i2d_buf_zero(node->tokens->buffer);
+        if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
+            status = i2d_panic("failed to format bonus type");
+        } else if(i2d_range_list_copy(&node->range, function->range)) {
+            status = i2d_panic("failed to create range list object");
         }
     }
 
