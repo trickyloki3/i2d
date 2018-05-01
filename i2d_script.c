@@ -21,6 +21,8 @@ static int i2d_function_handler_gettime(i2d_script *, i2d_node *);
 static int i2d_function_handler_strcharinfo(i2d_script *, i2d_node *);
 static int i2d_function_handler_getequipid(i2d_script *, i2d_node *);
 static int i2d_function_handler_getiteminfo(i2d_script *, i2d_node *);
+static int i2d_function_handler_getmapflag(i2d_script *, i2d_node *);
+static int i2d_function_handler_description(i2d_script *, i2d_node *);
 
 const char * i2d_token_string[] = {
     "token",
@@ -1987,6 +1989,8 @@ int i2d_translator_init(i2d_translator ** result, i2d_json * json) {
                 status = i2d_panic("failed to create classes object");
             } else if(i2d_object_init(&object->locations, json->object, "locations", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create locations object");
+            } else if(i2d_object_init(&object->mapflags, json->object, "mapflags", i2d_str_map_init, i2d_str_map_deit, i2d_rbt_cmp_long, object)) {
+                status = i2d_panic("failed to create mapflags object");
             } else if(i2d_object_init(&object->getiteminfo, json->object, "getiteminfo", i2d_str_long_map_init, i2d_str_long_map_deit, i2d_rbt_cmp_long, object)) {
                 status = i2d_panic("failed to create getiteminfo object");
             } else if(i2d_object_init(&object->strcharinfo, json->object, "strcharinfo", i2d_str_long_map_init, i2d_str_long_map_deit, i2d_rbt_cmp_long, object)) {
@@ -2016,6 +2020,7 @@ void i2d_translator_deit(i2d_translator ** result) {
     i2d_deit(object->gettimes, i2d_object_deit);
     i2d_deit(object->strcharinfo, i2d_object_deit);
     i2d_deit(object->getiteminfo, i2d_object_deit);
+    i2d_deit(object->mapflags, i2d_object_deit);
     i2d_deit(object->locations, i2d_object_deit);
     i2d_deit(object->classes, i2d_object_deit);
     i2d_deit(object->races, i2d_object_deit);
@@ -2092,6 +2097,19 @@ int i2d_translator_locations_map(i2d_translator * translator, long * key, i2d_st
     i2d_str_map * str_map;
 
     if(i2d_object_map(translator->locations, key, (void **) &str_map)) {
+        status = I2D_FAIL;
+    } else {
+        *result = str_map->value;
+    }
+
+    return status;
+}
+
+int i2d_translator_mapflags_map(i2d_translator * translator, long * key, i2d_str * result) {
+    int status = I2D_OK;
+    i2d_str_map * str_map;
+
+    if(i2d_object_map(translator->mapflags, key, (void **) &str_map)) {
         status = I2D_FAIL;
     } else {
         *result = str_map->value;
@@ -2528,7 +2546,8 @@ static struct i2d_function_handler {
     { {"gettime", 7}, i2d_function_handler_gettime },
     { {"strcharinfo", 11}, i2d_function_handler_strcharinfo },
     { {"getequipid", 10}, i2d_function_handler_getequipid },
-    { {"getiteminfo", 11}, i2d_function_handler_getiteminfo }
+    { {"getiteminfo", 11}, i2d_function_handler_getiteminfo },
+    { {"getmapflag", 10}, i2d_function_handler_getmapflag }
 };
 
 typedef struct i2d_function_handler i2d_function_handler;
@@ -2791,6 +2810,66 @@ static int i2d_function_handler_getiteminfo(i2d_script * script, i2d_node * node
                     status = i2d_panic("failed to create range list object");
                 }
             }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_function_handler_getmapflag(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_node * arguments[3];
+    i2d_str map_name;
+    i2d_str map_flag;
+    long flag;
+
+    if(i2d_node_get_arguments(node->left->left, arguments, 2, 1)) {
+        status = i2d_panic("failed to get arguments");
+    } else {
+        if(I2D_FUNCTION == arguments[0]->type) {
+            if(i2d_node_get_string(arguments[0], &map_name)) {
+                status = i2d_panic("failed to get map name");
+            } else if(i2d_str_stack_push(script->context->stack, &map_name)) {
+                status = i2d_panic("failed to push map name on stack");
+            }
+        } else {
+            /*
+             * to-do:
+             * get map name
+             */
+        }
+
+        if(!status) {
+            if(i2d_node_get_constant(arguments[1], &flag)) {
+                status = i2d_panic("failed to get map flag");
+            } else if(i2d_translator_mapflags_map(script->translator, &flag, &map_flag)) {
+                status = i2d_panic("failed to get map flag -- %ld", flag);
+            } else if(i2d_str_stack_push(script->context->stack, &map_flag)) {
+                status = i2d_panic("failed to push map flag on stack");
+            } else if(i2d_function_handler_description(script, node)) {
+                status = i2d_panic("failed to write description");
+            }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_function_handler_description(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_str literal;
+    i2d_function * function;
+
+    if(i2d_node_get_string(node, &literal)) {
+        status = i2d_panic("failed to get string");
+    } else if(i2d_translator_function_map(script->translator, &literal, &function)) {
+        status = i2d_panic("failed to get function -- %s", literal.string);
+    } else {
+        i2d_buf_zero(node->tokens->buffer);
+        if(i2d_description_format(function->description, script->context->stack, node->tokens->buffer)) {
+            status = i2d_panic("failed to format bonus type");
+        } else if(i2d_range_list_copy(&node->range, function->range)) {
+            status = i2d_panic("failed to create range list object");
         }
     }
 
