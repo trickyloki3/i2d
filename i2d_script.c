@@ -1,5 +1,6 @@
 #include "i2d_script.h"
 
+static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_time(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_regen(i2d_script *, i2d_node *, i2d_str_stack *);
 static int i2d_bonus_handler_splash(i2d_script *, i2d_node *, i2d_str_stack *);
@@ -2271,7 +2272,7 @@ static struct i2d_bonus_handler {
 
 typedef struct i2d_bonus_handler i2d_bonus_handler;
 
-static i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
+static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_str_stack * stack) {
     int status = I2D_OK;
     i2d_str predicates;
     i2d_str expression;

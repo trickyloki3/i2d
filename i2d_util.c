@@ -231,7 +231,7 @@ int i2d_buf_add_null(i2d_buf * buffer) {
 }
 
 void i2d_buf_get_str(i2d_buf * buffer, i2d_str * string) {
-    string->string = buffer->buffer;
+    string->string = (char * ) buffer->buffer;
     string->length = buffer->offset;
 }
 
@@ -325,10 +325,10 @@ int i2d_str_stack_pop(i2d_str_stack * stack, i2d_str * str) {
         last = stack->top - 1;
         if(0 == last) {
             str->length = stack->offset[last];
-            str->string = stack->buffer->buffer;
+            str->string = (char * ) stack->buffer->buffer;
         } else {
             str->length = stack->offset[last] - stack->offset[last - 1] - 1;
-            str->string = stack->buffer->buffer + stack->offset[last - 1] + 1;
+            str->string = (char * ) stack->buffer->buffer + stack->offset[last - 1] + 1;
         }
         stack->top--;
     }
