@@ -24,24 +24,24 @@ struct i2d_range {
 
 typedef struct i2d_range i2d_range;
 
-int i2d_range_init(i2d_range **);
-int i2d_range_init2(i2d_range **, long, long);
-void i2d_range_deit(i2d_range **);
+int i2d_range_create(i2d_range *);
+int i2d_range_create_add(i2d_range *, long, long);
+void i2d_range_destroy(i2d_range *);
 void i2d_range_print(i2d_range *, const char *);
 int i2d_range_add(i2d_range *, long, long);
-int i2d_range_copy(i2d_range **, i2d_range *);
-int i2d_range_negate(i2d_range **, i2d_range *);
-int i2d_range_bitnot(i2d_range **, i2d_range *);
+int i2d_range_copy(i2d_range *, i2d_range *);
+int i2d_range_negate(i2d_range *, i2d_range *);
+int i2d_range_bitnot(i2d_range *, i2d_range *);
 
 typedef int (*i2d_range_merge_cb)(i2d_range *, i2d_range_node **, i2d_range_node *);
 int i2d_range_merge(i2d_range *, i2d_range_node *, i2d_range_node *, i2d_range_merge_cb);
 int i2d_range_merge_or(i2d_range *, i2d_range_node **, i2d_range_node *);
 int i2d_range_merge_and(i2d_range *, i2d_range_node **, i2d_range_node *);
 
-int i2d_range_or(i2d_range **, i2d_range *, i2d_range *);
-int i2d_range_and(i2d_range **, i2d_range *, i2d_range *);
-int i2d_range_not(i2d_range **, i2d_range *);
+int i2d_range_or(i2d_range *, i2d_range *, i2d_range *);
+int i2d_range_and(i2d_range *, i2d_range *, i2d_range *);
+int i2d_range_not(i2d_range *, i2d_range *);
 
 void i2d_range_get_range(i2d_range *, long *, long *);
-int i2d_range_compute(i2d_range **, i2d_range *, i2d_range *, int);
+int i2d_range_compute(i2d_range *, i2d_range *, i2d_range *, int);
 #endif
