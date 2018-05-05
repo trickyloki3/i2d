@@ -12,17 +12,17 @@ LDLIBS+=$(shell pkg-config jansson --libs)
 endif
 
 OBJECT:=i2d_util.o
-OBJECT+=i2d_opt.o
-OBJECT+=i2d_item.o
-OBJECT+=i2d_skill.o
-OBJECT+=i2d_db.o
-OBJECT+=i2d_rbt.o
-OBJECT+=i2d_script.o
-OBJECT+=i2d_json.o
 OBJECT+=i2d_range.o
-OBJECT+=i2d_logic.o
+# OBJECT+=i2d_rbt.o
+# OBJECT+=i2d_logic.o
+# OBJECT+=i2d_opt.o
+# OBJECT+=i2d_item.o
+# OBJECT+=i2d_skill.o
+# OBJECT+=i2d_db.o
+# OBJECT+=i2d_script.o
+# OBJECT+=i2d_json.o
 
-all: clean i2d
+all: clean i2d_test
 
 i2d: $(OBJECT)
 	$(CC) $(CFLAGS) -o $@ i2d.c $^ $(LDFLAGS) $(LDLIBS)

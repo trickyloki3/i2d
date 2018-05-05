@@ -1,11 +1,223 @@
 #include "i2d_util.h"
 
-int i2d_panic_func(const char * format, ...) {
+int i2d_panic_print(const char * format, ...) {
     va_list args;
     va_start(args, format);
     vfprintf(stderr, format, args);
     va_end(args);
     return I2D_FAIL;
+}
+
+int i2d_string_create(i2d_string * result, const char * string, size_t length) {
+    int status = I2D_OK;
+
+    result->length = length;
+    result->string = malloc(sizeof(*result->string) * (result->length + 1));
+    if(!result->string) {
+        status = i2d_panic("out of memory");
+    } else {
+        memcpy(result->string, string, length);
+        result->string[result->length] = 0;
+    }
+
+    return status;
+}
+
+void i2d_string_destroy(i2d_string * result) {
+    free(result->string);
+}
+
+int i2d_buffer_create(i2d_buffer * result, size_t length) {
+    int status = I2D_OK;
+
+    if(!length) {
+        status = i2d_panic("invalid buffer length");
+    } else {
+        result->length = length;
+        result->buffer = malloc(result->length);
+        if(!result->buffer) {
+            status = i2d_panic("out of memory");
+        } else {
+            result->offset = 0;
+        }
+    }
+
+    return status;
+}
+
+void i2d_buffer_destroy(i2d_buffer * result) {
+    free(result->buffer);
+}
+
+int i2d_buffer_adapt(i2d_buffer * result, size_t length) {
+    int status = I2D_OK;
+    size_t avail;
+    uint8_t * buffer;
+
+    avail = result->length - result->offset;
+    if(avail < length) {
+        length = result->length + (length - avail);
+        buffer = realloc(result->buffer, length);
+        if(!buffer) {
+            status = i2d_panic("out of memory");
+        } else {
+            result->buffer = buffer;
+            result->length = length;
+        }
+    }
+
+    return status;
+}
+
+void i2d_buffer_clear(i2d_buffer * result) {
+    if(result->offset) {
+        memset(result->buffer, 0, result->offset);
+        result->offset = 0;
+    }
+}
+
+int i2d_buffer_putc(i2d_buffer * result, char character) {
+    int status = I2D_OK;
+
+    if( result->length == result->offset &&
+        i2d_buffer_adapt(result, result->length) ) {
+        status = I2D_FAIL;
+    } else {
+        result->buffer[result->offset] = character;
+        result->offset++;
+    }
+
+    return status;
+}
+
+int i2d_buffer_printf(i2d_buffer * result, const char * format, ...) {
+    int status = I2D_OK;
+
+    va_list vl;
+    va_list vl_copy;
+
+    int length;
+    char * string;
+
+    va_start(vl, format);
+    va_copy(vl_copy, vl);
+
+    length = vsnprintf(NULL, 0, format, vl);
+    if(0 > length) {
+        status = i2d_panic("invalid print format specification");
+    } else if(i2d_buffer_adapt(result, length + 1)) {
+        status = I2D_FAIL;
+    } else {
+        string = result->buffer + result->offset;
+        if(length != vsnprintf(string, length + 1, format, vl_copy)) {
+            status = i2d_panic("failed to print format");
+        } else {
+            result->offset += length;
+        }
+    }
+
+    va_end(vl_copy);
+    va_end(vl);
+    return status;
+}
+
+int i2d_buffer_memcpy(i2d_buffer * result, const char * string, size_t length) {
+    int status = I2D_OK;
+
+    if(i2d_buffer_adapt(result, length + 1)) {
+        status = I2D_FAIL;
+    } else {
+        memcpy(&result->buffer[result->offset], string, length);
+        result->buffer[result->offset + length] = 0;
+        result->offset += length;
+    }
+
+    return status;
+}
+
+void i2d_buffer_get(i2d_buffer * result, char ** string, size_t * length) {
+    *string = result->buffer;
+    *length = result->offset;
+}
+
+int i2d_string_stack_create(i2d_string_stack * result, size_t size) {
+    int status = I2D_OK;
+
+    if(!size) {
+        status = i2d_panic("invalid stack size");
+    } else {
+        result->size = size;
+        result->top = 0;
+        if(i2d_buffer_create(&result->buffer, 4096)) {
+            status = I2D_FAIL;
+        } else {
+            result->list = calloc(result->size, sizeof(*result->list));
+            if(!result->list) {
+                status = i2d_panic("out of memory");
+            } else {
+                result->offset = calloc(result->size, sizeof(*result->offset));
+                if(!result->offset)
+                    status = i2d_panic("out of memory");
+                if(status)
+                    i2d_free(result->list);
+            }
+            if(status)
+                i2d_buffer_destroy(&result->buffer);
+        }
+    }
+
+    return status;
+}
+
+void i2d_string_stack_destroy(i2d_string_stack * result) {
+    i2d_free(result->offset);
+    i2d_free(result->list);
+    i2d_buffer_destroy(&result->buffer);
+}
+
+int i2d_string_stack_push(i2d_string_stack * result, const char * string, size_t length) {
+    int status = I2D_OK;
+
+    if(result->top == result->size) {
+        status = i2d_panic("string stack overflow");
+    } else {
+        if( i2d_buffer_memcpy(&result->buffer, string, length) ||
+            i2d_buffer_putc(&result->buffer, 0) ) {
+            status = I2D_FAIL;
+        } else {
+            result->offset[result->top] = result->buffer.offset - 1;
+            result->top++;
+        }
+    }
+
+    return status;
+}
+
+int i2d_string_stack_pop(i2d_string_stack * result) {
+    int status = I2D_OK;
+
+    if(result->top == 0) {
+        status = i2d_panic("empty string stack");
+    } else {
+        result->top--;
+        if(result->top == 0) {
+            result->buffer.offset = 0;
+        } else {
+            result->buffer.offset = result->offset[result->top - 1] + 1;
+        }
+    }
+
+    return status;
+}
+
+
+void i2d_string_stack_clear(i2d_string_stack * result) {
+    if(result->top) {
+        i2d_buffer_clear(&result->buffer);
+        memset(result->list, 0, sizeof(*result->list) * result->top);
+        memset(result->offset, 0, sizeof(*result->offset) * result->top);
+        result->top = 0;
+    }
 }
 
 int i2d_strtol(long * result, const char * string, size_t length, int base) {
@@ -49,319 +261,7 @@ int i2d_strtoul(unsigned long * result, const char * string, size_t length, int 
     return status;
 }
 
-int i2d_str_init(i2d_str ** result, const char * string, size_t length) {
-    int status = I2D_OK;
-    i2d_str * object;
-
-    if(i2d_is_invalid(result)) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            status = i2d_str_copy(object, string, length);
-
-            if(status)
-                i2d_str_deit(&object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-int i2d_str_copy(i2d_str * object, const char * string, size_t length) {
-    int status = I2D_OK;
-
-    object->length = length;
-    object->string = malloc(object->length + 1);
-    if(!object->string) {
-        status = i2d_panic("out of memory");
-    } else {
-        if(length)
-            memcpy(object->string, string, length);
-        object->string[object->length] = 0;
-    }
-
-    return status;
-}
-
-void i2d_str_deit(i2d_str ** result) {
-    i2d_str * object;
-
-    object = *result;
-    i2d_free(object->string);
-    i2d_free(object);
-    *result = NULL;
-}
-
-int i2d_buf_init(i2d_buf ** result, size_t length) {
-    int status = I2D_OK;
-    i2d_buf * object;
-
-    if(i2d_is_invalid(result)) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            object->length = length;
-            object->buffer = malloc(object->length);
-            if(!object->buffer)
-                status = i2d_panic("out of memory");
-
-            if(status)
-                i2d_buf_deit(&object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-void i2d_buf_deit(i2d_buf ** result) {
-    i2d_buf * object;
-
-    object = *result;
-    i2d_free(object->buffer);
-    i2d_free(object);
-    *result = NULL;
-}
-
-int i2d_buf_fit(i2d_buf * buffer, size_t length) {
-    int status = I2D_OK;
-    uint8_t * binary;
-
-    if(buffer->length - buffer->offset < length) {
-        length += buffer->offset;
-        binary = realloc(buffer->buffer, length);
-        if(!binary) {
-            status = i2d_panic("out of memory");
-        } else {
-            buffer->buffer = binary;
-            buffer->length = length;
-        }
-    }
-
-    return status;
-}
-
-int i2d_buf_format(i2d_buf * buffer, const char * format, ...) {
-    int status = I2D_OK;
-    int length;
-    int result;
-    va_list args;
-    va_list copy;
-
-    va_start(args, format);
-    va_copy(copy, args);
-
-    length = vsnprintf(NULL, 0, format, args);
-    if(0 > length) {
-        status = i2d_panic("format message is invalid");
-    } else if(0 == length) {
-        status = i2d_panic("format message is empty");
-    } else if(i2d_buf_fit(buffer, length + 1)) {
-        status = I2D_FAIL;
-    } else {
-        result = vsnprintf((char *) (buffer->buffer + buffer->offset), length + 1, format, copy);
-        if(result != length)
-            status = i2d_panic("format message is truncated");
-        else
-            buffer->offset += result;
-    }
-
-    va_end(copy);
-    va_end(args);
-    return status;
-}
-
-int i2d_buf_binary(i2d_buf * buffer, void * binary, size_t length) {
-    int status = I2D_OK;
-
-    if(i2d_buf_fit(buffer, length)) {
-        status = I2D_FAIL;
-    } else {
-        memcpy(buffer->buffer + buffer->offset, binary, length);
-        buffer->offset += length;
-    }
-
-    return status;
-}
-
-int i2d_buf_object(i2d_buf * buffer, size_t length, void ** result) {
-    int status = I2D_OK;
-    uint8_t * object;
-
-    if(i2d_is_invalid(result)) {
-        status = i2d_panic("invalid paramater");
-    } else if(i2d_buf_fit(buffer, length)) {
-        status = I2D_FAIL;
-    } else {
-        object = buffer->buffer + buffer->offset;
-        memset(object, 0, length);
-        buffer->offset += length;
-        *result = object;
-    }
-
-    return status;
-}
-
-void i2d_buf_zero(i2d_buf * buffer) {
-    memset(buffer->buffer, 0, buffer->offset);
-    buffer->offset = 0;
-}
-
-int i2d_buf_add_null(i2d_buf * buffer) {
-    int status = I2D_OK;
-
-    if(buffer->length > buffer->offset) {
-        buffer->buffer[buffer->offset] = 0;
-    } else if(i2d_buf_fit(buffer, 1)) {
-        status = I2D_FAIL;
-    } else {
-        buffer->buffer[buffer->offset] = 0;
-    }
-
-    return status;
-}
-
-void i2d_buf_get_str(i2d_buf * buffer, i2d_str * string) {
-    string->string = (char * ) buffer->buffer;
-    string->length = buffer->offset;
-}
-
-void i2d_buf_dump(i2d_buf * buffer, const char * tag) {
-    size_t i;
-
-    fprintf(stderr, "tag: %s\n", tag ? tag : "unspecified");
-    for(i = 0; i < buffer->length; i++) {
-        if(((i + 1) % 8) == 0)
-            fprintf(stderr, "%3" PRIu8 "\n", buffer->buffer[i]);
-        else
-            fprintf(stderr, "%3" PRIu8 " ", buffer->buffer[i]);
-    }
-    fprintf(stderr, "\n");
-}
-
-int i2d_str_stack_init(i2d_str_stack ** result, size_t size) {
-    int status = I2D_OK;
-    i2d_str_stack * object;
-
-    if(i2d_is_invalid(result) || !size) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            if(i2d_buf_init(&object->buffer, 4096)) {
-                status = i2d_panic("failed to create buffer object");
-            } else {
-                object->list = calloc(size, sizeof(*object->list));
-                if(!object->list) {
-                    status = i2d_panic("out of memory");
-                } else {
-                    object->offset = calloc(size, sizeof(*object->offset));
-                    if(!object->offset) {
-                        status = i2d_panic("out of memory");
-                    } else {
-                        object->size = size;
-                    }
-                }
-            }
-
-            if(status)
-                i2d_str_stack_deit(&object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-void i2d_str_stack_deit(i2d_str_stack ** result) {
-    i2d_str_stack * object;
-
-    object = *result;
-    i2d_free(object->offset);
-    i2d_free(object->list);
-    i2d_deit(object->buffer, i2d_buf_deit);
-    i2d_free(object);
-    *result = NULL;
-}
-
-int i2d_str_stack_push(i2d_str_stack * stack, i2d_str * str) {
-    int status = I2D_OK;
-    char symbol = '\0';
-
-    if(stack->top >= stack->size) {
-        status = i2d_panic("failed on full stack");
-    } else {
-        if( i2d_buf_binary(stack->buffer, str->string, str->length) ||
-            i2d_buf_binary(stack->buffer, &symbol, sizeof(symbol)) ) {
-            status = i2d_panic("failed to write buffer object");
-        } else {
-            stack->offset[stack->top] = stack->buffer->offset - 1;
-            stack->top++;
-        }
-    }
-
-    return status;
-}
-
-int i2d_str_stack_pop(i2d_str_stack * stack, i2d_str * str) {
-    int status = I2D_OK;
-    size_t last;
-
-    if(!stack->top) {
-        status = i2d_panic("failed on empty stack");
-    } else {
-        last = stack->top - 1;
-        if(0 == last) {
-            str->length = stack->offset[last];
-            str->string = (char * ) stack->buffer->buffer;
-        } else {
-            str->length = stack->offset[last] - stack->offset[last - 1] - 1;
-            str->string = (char * ) stack->buffer->buffer + stack->offset[last - 1] + 1;
-        }
-        stack->top--;
-    }
-
-    return status;
-}
-
-void i2d_str_stack_clear(i2d_str_stack * stack) {
-    i2d_buf_zero(stack->buffer);
-    memset(stack->list, 0, sizeof(*stack->list) * stack->size);
-    memset(stack->offset, 0, sizeof(*stack->offset) * stack->size);
-    stack->top = 0;
-}
-
-int i2d_str_stack_get_list(i2d_str_stack * stack, i2d_str ** _list, size_t * _size) {
-    int status = I2D_OK;
-
-    if(!stack->top) {
-        *_size = 0;
-        *_list = NULL;
-    } else {
-        *_size = stack->top;
-        *_list = stack->list;
-
-        while(stack->top && !status)
-            if(i2d_str_stack_pop(stack, &stack->list[stack->top - 1]))
-                status = i2d_panic("failed to pop stack");
-    }
-
-    return status;
-}
-
-int i2d_fd_read(int fd, size_t size, i2d_buf * buffer) {
+int i2d_fd_read(int fd, size_t size, i2d_buffer * buffer) {
     int status = I2D_OK;
 
     fd_set set;
@@ -376,7 +276,7 @@ int i2d_fd_read(int fd, size_t size, i2d_buf * buffer) {
 
     if(0 >= select(fd + 1, &set, NULL, NULL, &timeout) || !FD_ISSET(fd, &set)) {
         status = i2d_panic("failed on select error or timeout");
-    } else if(i2d_buf_fit(buffer, size + 1)) {
+    } else if(i2d_buffer_adapt(buffer, size + 1)) {
         status = I2D_FAIL;
     } else {
         result = read(fd, buffer->buffer + buffer->offset, size);
@@ -391,7 +291,7 @@ int i2d_fd_read(int fd, size_t size, i2d_buf * buffer) {
     return status ? -1 : result;
 }
 
-int i2d_by_line(i2d_buf * buffer, i2d_by_line_cb cb, void * data) {
+int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
     int status = I2D_OK;
     char * anchor;
     char * delimit;
