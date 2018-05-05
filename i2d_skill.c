@@ -1,10 +1,8 @@
 #include "i2d_skill.h"
 
-#define READ_SIZE 65536
-
 static int i2d_skill_parse_list(long **, size_t *, char *, size_t);
 static int i2d_skill_parse(i2d_skill *, char *, size_t);
-static int i2d_skill_db_load(i2d_skill_db *, i2d_str *);
+static int i2d_skill_db_load(i2d_skill_db *, i2d_string *);
 static int i2d_skill_db_parse(char *, size_t, void *);
 static int i2d_skill_db_index(i2d_skill_db *);
 
@@ -151,14 +149,14 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
                     case 6: status = i2d_skill_parse_list(&skill->splash, &skill->splash_size, anchor, extent); break;
                     case 7: status = i2d_strtol(&skill->maxlv, anchor, extent, 10); break;
                     case 8: status = i2d_skill_parse_list(&skill->hit_amount, &skill->hit_amount_size, anchor, extent); break;
-                    case 9: status = i2d_str_copy(&skill->cast_cancel, anchor, extent); break;
+                    case 9: status = i2d_string_create(&skill->cast_cancel, anchor, extent); break;
                     case 10: status = i2d_strtol(&skill->cast_def_reduce_rate, anchor, extent, 10); break;
                     case 11: status = i2d_strtol(&skill->inf2, anchor, extent, 16); break;
                     case 12: status = i2d_skill_parse_list(&skill->max_count, &skill->max_count_size, anchor, extent); break;
-                    case 13: status = i2d_str_copy(&skill->type, anchor, extent); break;
+                    case 13: status = i2d_string_create(&skill->type, anchor, extent); break;
                     case 14: status = i2d_skill_parse_list(&skill->blow_count, &skill->blow_count_size, anchor, extent); break;
                     case 15: status = i2d_strtol(&skill->inf3, anchor, extent, 16); break;
-                    case 16: status = i2d_str_copy(&skill->macro, anchor, extent); break;
+                    case 16: status = i2d_string_create(&skill->macro, anchor, extent); break;
                     default: status = i2d_panic("skill has too many columns"); break;
                 }
                 field++;
@@ -175,7 +173,7 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
             status = i2d_panic("line overflow");
         } else {
             extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_str_copy(&skill->name, anchor, extent);
+            status = i2d_string_create(&skill->name, anchor, extent);
         }
     }
 
@@ -196,7 +194,7 @@ void i2d_skill_remove(i2d_skill * x) {
     x->prev = x;
 }
 
-int i2d_skill_db_init(i2d_skill_db ** result, i2d_str * path) {
+int i2d_skill_db_init(i2d_skill_db ** result, i2d_string * path) {
     int status = I2D_OK;
     i2d_skill_db * object;
 
@@ -242,29 +240,29 @@ void i2d_skill_db_deit(i2d_skill_db ** result) {
     *result = NULL;
 }
 
-static int i2d_skill_db_load(i2d_skill_db * skill_db, i2d_str * path) {
+static int i2d_skill_db_load(i2d_skill_db * skill_db, i2d_string * path) {
     int status = I2D_OK;
 
     int fd;
-    i2d_buf * buffer = NULL;
+    i2d_buffer buffer;
     int result;
 
     fd = open(path->string, O_RDONLY);
     if(0 > fd) {
         status = i2d_panic("failed to open skill db -- %s", path->string);
     } else {
-        if(i2d_buf_init(&buffer, READ_SIZE + 4096)) {
+        if(i2d_buffer_create(&buffer, I2D_SIZE * 2)) {
             status = i2d_panic("failed to create buffer object");
         } else {
-            result = i2d_fd_read(fd, READ_SIZE, buffer);
+            result = i2d_fd_read(fd, I2D_SIZE, &buffer);
             while(0 < result && !status) {
-                if(i2d_by_line(buffer, i2d_skill_db_parse, skill_db))
+                if(i2d_by_line(&buffer, i2d_skill_db_parse, skill_db))
                     status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, READ_SIZE, buffer);
+                result = i2d_fd_read(fd, I2D_SIZE, &buffer);
             }
-            if(!status && buffer->offset && i2d_by_line(buffer, i2d_skill_db_parse, skill_db))
+            if(!status && buffer.offset && i2d_by_line(&buffer, i2d_skill_db_parse, skill_db))
                 status = i2d_panic("failed to parse buffer");
-            i2d_buf_deit(&buffer);
+            i2d_buffer_destroy(&buffer);
         }
         close(fd);
     }
@@ -316,6 +314,6 @@ int i2d_skill_db_search_by_id(i2d_skill_db * skill_db, long skill_id, i2d_skill 
     return i2d_rbt_search(skill_db->index_by_id, &skill_id, (void **) skill);
 }
 
-int i2d_skill_db_search_by_macro(i2d_skill_db * skill_db, i2d_str * skill_macro, i2d_skill ** skill) {
+int i2d_skill_db_search_by_macro(i2d_skill_db * skill_db, i2d_string * skill_macro, i2d_skill ** skill) {
     return i2d_rbt_search(skill_db->index_by_macro, skill_macro, (void **) skill);
 }

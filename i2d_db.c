@@ -1,14 +1,11 @@
 #include "i2d_db.h"
 
-static int i2d_db_load_item_db(i2d_db *, i2d_str *, const char *, i2d_buf *);
-static int i2d_db_load_skill_db(i2d_db *, i2d_str *, const char *, i2d_buf *);
+static int i2d_db_load_item_db(i2d_db *, i2d_string *);
+static int i2d_db_load_skill_db(i2d_db *, i2d_string *);
 
-int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_str * source_path) {
+int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_string * source_path) {
     int status = I2D_OK;
     i2d_db * object;
-
-    char * directory;
-    i2d_buf * buffer = NULL;
 
     if(i2d_is_invalid(result) || !source_path) {
         status = i2d_panic("invalid paramater");
@@ -18,30 +15,10 @@ int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_str * source_path) 
             status = i2d_panic("out of memory");
         } else {
             object->type = type;
-            switch(object->type) {
-                case i2d_db_pre_renewal:
-                    directory = "pre-re";
-                    break;
-                case i2d_db_renewal:
-                    directory = "re";
-                    break;
-                default:
-                    status = i2d_panic("invalid database type -- %d", object->type);
-                    break;
-            }
-
-            if(!status) {
-                if(i2d_buf_init(&buffer, 256)) {
-                    status = i2d_panic("failed to create buffer object");
-                } else {
-                    if(i2d_db_load_item_db(object, source_path, directory, buffer)) {
-                        status = i2d_panic("failed to load item database");
-                    } else if(i2d_db_load_skill_db(object, source_path, directory, buffer)) {
-                        status = i2d_panic("failed to load skill database");
-                    }
-
-                    i2d_buf_deit(&buffer);
-                }
+            if(i2d_db_load_item_db(object, source_path)) {
+                status = i2d_panic("failed to load item db");
+            } else if(i2d_db_load_skill_db(object, source_path)) {
+                status = i2d_panic("failed to load skill db");
             }
 
             if(status)
@@ -64,37 +41,45 @@ void i2d_db_deit(i2d_db ** result) {
     *result = NULL;
 }
 
-static int i2d_db_load_item_db(i2d_db * db, i2d_str * source_path, const char * directory, i2d_buf * buffer) {
+static int i2d_db_load_item_db(i2d_db * db, i2d_string * source_path) {
     int status = I2D_OK;
-    i2d_str path;
+    const char * type;
+    i2d_buffer buffer;
+    i2d_string path;
 
-    i2d_buf_zero(buffer);
-
-    if(i2d_buf_format(buffer, "%s/db/%s/item_db.txt", source_path->string, directory)) {
-        status = i2d_panic("failed to get item db path");
+    type = db->type == i2d_pre_renewal ? "pre-re" : "re";
+    if(i2d_buffer_create(&buffer, I2D_SIZE)) {
+        status = i2d_panic("failed to create buffer object");
     } else {
-        i2d_buf_get_str(buffer, &path);
-
-        if(i2d_item_db_init(&db->item_db, &path))
-            status = i2d_panic("failed to create item database object");
+        if(i2d_buffer_printf(&buffer, "%s/db/%s/item_db.txt", source_path->string, type)) {
+            status = i2d_panic("failed to write item db path");
+        } else {
+            i2d_buffer_get(&buffer, &path.string, &path.length);
+            status = i2d_item_db_init(&db->item_db, &path);
+        }
+        i2d_buffer_destroy(&buffer);
     }
 
     return status;
 }
 
-static int i2d_db_load_skill_db(i2d_db * db, i2d_str * source_path, const char * directory, i2d_buf * buffer) {
+static int i2d_db_load_skill_db(i2d_db * db, i2d_string * source_path) {
     int status = I2D_OK;
-    i2d_str path;
+    const char * type;
+    i2d_buffer buffer;
+    i2d_string path;
 
-    i2d_buf_zero(buffer);
-
-    if(i2d_buf_format(buffer, "%s/db/%s/skill_db.txt", source_path->string, directory)) {
-        status = i2d_panic("failed to get item db path");
+    type = db->type == i2d_pre_renewal ? "pre-re" : "re";
+    if(i2d_buffer_create(&buffer, I2D_SIZE)) {
+        status = i2d_panic("failed to create buffer object");
     } else {
-        i2d_buf_get_str(buffer, &path);
-
-        if(i2d_skill_db_init(&db->skill_db, &path))
-            status = i2d_panic("failed to create skill database object");
+        if(i2d_buffer_printf(&buffer, "%s/db/%s/skill_db.txt", source_path->string, type)) {
+            status = i2d_panic("failed to write item db path");
+        } else {
+            i2d_buffer_get(&buffer, &path.string, &path.length);
+            status = i2d_skill_db_init(&db->skill_db, &path);
+        }
+        i2d_buffer_destroy(&buffer);
     }
 
     return status;

@@ -4,6 +4,8 @@
 #include "i2d_rbt.h"
 #include "i2d_opt.h"
 #include "i2d_item.h"
+#include "i2d_skill.h"
+#include "i2d_db.h"
 
 static void i2d_logic_test(void);
 static void i2d_logic_or_test(i2d_logic *, i2d_logic *, i2d_logic *);
