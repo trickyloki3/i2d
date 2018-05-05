@@ -6,8 +6,8 @@
 
 struct i2d_item {
     long id;
-    i2d_str aegis_name;
-    i2d_str name;
+    i2d_string aegis_name;
+    i2d_string name;
     long type;
     long buy;
     long sell;
@@ -26,9 +26,9 @@ struct i2d_item {
     long max_level;
     long refineable;
     long view;
-    i2d_str script;
-    i2d_str onequip_script;
-    i2d_str onunequip_script;
+    i2d_string script;
+    i2d_string onequip_script;
+    i2d_string onunequip_script;
     struct i2d_item * next;
     struct i2d_item * prev;
 };
@@ -44,15 +44,11 @@ struct i2d_item_db {
     i2d_item * list;
     size_t size;
     i2d_rbt * index_by_id;
-    i2d_rbt * index_by_aegis;
-    i2d_rbt * index_by_name;
 };
 
 typedef struct i2d_item_db i2d_item_db;
 
-int i2d_item_db_init(i2d_item_db **, i2d_str *);
+int i2d_item_db_init(i2d_item_db **, i2d_string *);
 void i2d_item_db_deit(i2d_item_db **);
 int i2d_item_db_search_by_id(i2d_item_db *, long, i2d_item **);
-int i2d_item_db_search_by_aegis(i2d_item_db *, i2d_str *, i2d_item **);
-int i2d_item_db_search_by_name(i2d_item_db *, i2d_str *, i2d_item **);
 #endif

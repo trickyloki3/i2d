@@ -1,10 +1,8 @@
 #include "i2d_item.h"
 
-#define READ_SIZE 65536
-
 static int i2d_item_parse_optional(long *, long *, char *, size_t);
 static int i2d_item_parse(i2d_item *, char *, size_t);
-static int i2d_item_db_load(i2d_item_db *, i2d_str *);
+static int i2d_item_db_load(i2d_item_db *, i2d_string *);
 static int i2d_item_db_parse(char *, size_t, void *);
 static int i2d_item_db_index(i2d_item_db *);
 
@@ -100,8 +98,8 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                 extent = (size_t) (string + i) - (size_t) anchor;
                 switch(field) {
                     case 0: status = i2d_strtol(&item->id, anchor, extent, 10); break;
-                    case 1: status = i2d_str_copy(&item->aegis_name, anchor, extent); break;
-                    case 2: status = i2d_str_copy(&item->name, anchor, extent); break;
+                    case 1: status = i2d_string_create(&item->aegis_name, anchor, extent); break;
+                    case 2: status = i2d_string_create(&item->name, anchor, extent); break;
                     case 3: status = i2d_strtol(&item->type, anchor, extent, 10); break;
                     case 4: status = i2d_strtol(&item->buy, anchor, extent, 10); break;
                     case 5: status = i2d_strtol(&item->sell, anchor, extent, 10); break;
@@ -118,8 +116,8 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                     case 16: status = i2d_item_parse_optional(&item->base_level, &item->max_level, anchor, extent); break;
                     case 17: status = i2d_strtol(&item->refineable, anchor, extent, 10); break;
                     case 18: status = i2d_strtol(&item->view, anchor, extent, 10); break;
-                    case 19: status = i2d_str_copy(&item->script, anchor, extent); break;
-                    case 20: status = i2d_str_copy(&item->onequip_script, anchor, extent); break;
+                    case 19: status = i2d_string_create(&item->script, anchor, extent); break;
+                    case 20: status = i2d_string_create(&item->onequip_script, anchor, extent); break;
                     default: status = i2d_panic("item has too many columns"); break;
                 }
                 field++;
@@ -136,7 +134,7 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
             status = i2d_panic("line overflow");
         } else {
             extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_str_copy(&item->onunequip_script, anchor, extent);
+            status = i2d_string_create(&item->onunequip_script, anchor, extent);
         }
     }
 
@@ -157,7 +155,7 @@ void i2d_item_remove(i2d_item * x) {
     x->prev = x;
 }
 
-int i2d_item_db_init(i2d_item_db ** result, i2d_str * path) {
+int i2d_item_db_init(i2d_item_db ** result, i2d_string * path) {
     int status = I2D_OK;
     i2d_item_db * object;
 
@@ -189,8 +187,6 @@ void i2d_item_db_deit(i2d_item_db ** result) {
     i2d_item * item;
 
     object = *result;
-    i2d_deit(object->index_by_name, i2d_rbt_deit);
-    i2d_deit(object->index_by_aegis, i2d_rbt_deit);
     i2d_deit(object->index_by_id, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
@@ -204,29 +200,29 @@ void i2d_item_db_deit(i2d_item_db ** result) {
     *result = NULL;
 }
 
-static int i2d_item_db_load(i2d_item_db * item_db, i2d_str * path) {
+static int i2d_item_db_load(i2d_item_db * item_db, i2d_string * path) {
     int status = I2D_OK;
 
     int fd;
-    i2d_buf * buffer = NULL;
+    i2d_buffer buffer;
     int result;
 
     fd = open(path->string, O_RDONLY);
     if(0 > fd) {
         status = i2d_panic("failed to open item db -- %s", path->string);
     } else {
-        if(i2d_buf_init(&buffer, READ_SIZE + 4096)) {
+        if(i2d_buffer_create(&buffer, I2D_SIZE * 2)) {
             status = i2d_panic("failed to create buffer object");
         } else {
-            result = i2d_fd_read(fd, READ_SIZE, buffer);
+            result = i2d_fd_read(fd, I2D_SIZE, &buffer);
             while(0 < result && !status) {
-                if(i2d_by_line(buffer, i2d_item_db_parse, item_db))
+                if(i2d_by_line(&buffer, i2d_item_db_parse, item_db))
                     status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, READ_SIZE, buffer);
+                result = i2d_fd_read(fd, I2D_SIZE, &buffer);
             }
-            if(!status && buffer->offset && i2d_by_line(buffer, i2d_item_db_parse, item_db))
+            if(!status && buffer.offset && i2d_by_line(&buffer, i2d_item_db_parse, item_db))
                 status = i2d_panic("failed to parse buffer");
-            i2d_buf_deit(&buffer);
+            i2d_buffer_destroy(&buffer);
         }
         close(fd);
     }
@@ -258,20 +254,13 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
     int status = I2D_OK;
     i2d_item * item = NULL;
 
-    if( i2d_rbt_init(&item_db->index_by_id, i2d_rbt_cmp_long) ||
-        i2d_rbt_init(&item_db->index_by_aegis, i2d_rbt_cmp_str) ||
-        i2d_rbt_init(&item_db->index_by_name, i2d_rbt_cmp_str) ) {
-        status = i2d_panic("failed to create red black tree objects");
+    if(i2d_rbt_init(&item_db->index_by_id, i2d_rbt_cmp_long)) {
+        status = i2d_panic("failed to create red black tree object");
     } else {
         item = item_db->list;
         do {
-            if(i2d_rbt_insert(item_db->index_by_id, &item->id, item)) {
+            if(i2d_rbt_insert(item_db->index_by_id, &item->id, item))
                 status = i2d_panic("failed to index item by id -- %ld", item->id);
-            } else if(i2d_rbt_insert(item_db->index_by_aegis, &item->aegis_name, item)) {
-                status = i2d_panic("failed to index item by aegis name -- %s", item->aegis_name.string);
-            } else if(i2d_rbt_insert(item_db->index_by_name, &item->name, item)) {
-                status = i2d_panic("failed to index item by name -- %s", item->name.string);
-            }
             item = item->next;
         } while(item != item_db->list && !status);
     }
@@ -281,12 +270,4 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
 
 int i2d_item_db_search_by_id(i2d_item_db * item_db, long item_id, i2d_item ** item) {
     return i2d_rbt_search(item_db->index_by_id, &item_id, (void **) item);
-}
-
-int i2d_item_db_search_by_aegis(i2d_item_db * item_db, i2d_str * aegis, i2d_item ** item) {
-    return i2d_rbt_search(item_db->index_by_aegis, aegis, (void **) item);
-}
-
-int i2d_item_db_search_by_name(i2d_item_db * item_db, i2d_str * name, i2d_item ** item) {
-    return i2d_rbt_search(item_db->index_by_name, name, (void **) item);
 }
