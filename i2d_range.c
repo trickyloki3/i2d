@@ -58,6 +58,7 @@ void i2d_range_node_remove(i2d_range_node * x) {
 
 int i2d_range_create(i2d_range * result) {
     result->list = NULL;
+    return I2D_OK;
 }
 
 int i2d_range_create_add(i2d_range * result, long min, long max) {

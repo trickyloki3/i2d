@@ -1,6 +1,6 @@
 #include "i2d_logic.h"
 
-int i2d_logic_init(i2d_logic ** result, i2d_str * name, i2d_range_list * range) {
+int i2d_logic_init(i2d_logic ** result, i2d_string * name, i2d_range * range) {
     int status = I2D_OK;
     i2d_logic * object;
 
@@ -11,9 +11,9 @@ int i2d_logic_init(i2d_logic ** result, i2d_str * name, i2d_range_list * range) 
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_str_copy(&object->name, name->string, name->length)) {
+            if(i2d_string_create(&object->name, name->string, name->length)) {
                 status = i2d_panic("failed to create string object");
-            } else if(i2d_range_list_copy(&object->range, range)) {
+            } else if(i2d_range_copy(&object->range, range)) {
                 status = i2d_panic("failed to create range list object");
             } else {
                 object->type = var;
@@ -35,7 +35,7 @@ void i2d_logic_deit(i2d_logic ** result) {
     object = *result;
     i2d_deit(object->right, i2d_logic_deit);
     i2d_deit(object->left, i2d_logic_deit);
-    i2d_deit(object->range, i2d_range_list_deit);
+    i2d_range_destroy(&object->range);
     i2d_free(object->name.string);
     i2d_free(object);
     *result = NULL;
@@ -53,11 +53,8 @@ void i2d_logic_print(i2d_logic * logic, int level) {
             case or:  fprintf(stdout, "[or] ");  break;
             case not: fprintf(stdout, "[not] "); break;
         }
-        if(logic->range)
-            i2d_range_list_print(logic->range, NULL);
-        else
-            fprintf(stdout, "\n");
 
+        i2d_range_print(&logic->range, NULL);
         i2d_logic_print(logic->left, level + 1);
         i2d_logic_print(logic->right, level + 1);
     }
@@ -96,7 +93,7 @@ int i2d_logic_var_copy(i2d_logic ** result, i2d_logic * logic) {
     if(var != logic->type) {
         status = i2d_panic("invalid paramater");
     } else {
-        status = i2d_logic_init(result, &logic->name, logic->range);
+        status = i2d_logic_init(result, &logic->name, &logic->range);
     }
 
     return status;
@@ -190,7 +187,7 @@ int i2d_logic_copy(i2d_logic ** result, i2d_logic * logic) {
 
 int i2d_logic_var(i2d_logic ** result, i2d_logic * left, i2d_logic * right, int type) {
     int status = I2D_OK;
-    i2d_range_list * range = NULL;
+    i2d_range range;
     i2d_logic * left_copy = NULL;
     i2d_logic * right_copy = NULL;
 
@@ -198,15 +195,15 @@ int i2d_logic_var(i2d_logic ** result, i2d_logic * left, i2d_logic * right, int 
         status = i2d_panic("invalid paramater");
     } else if(!strcmp(left->name.string, right->name.string)) {
         switch(type) {
-            case and: status = i2d_range_list_and(&range, left->range, right->range); break;
-            case or:  status = i2d_range_list_or(&range, left->range, right->range);  break;
+            case and: status = i2d_range_and(&range, &left->range, &right->range); break;
+            case or:  status = i2d_range_or(&range, &left->range, &right->range);  break;
         }
         if(status) {
             status = i2d_panic("failed to merge range list");
         } else {
-            if(i2d_logic_init(result, &left->name, range))
+            if(i2d_logic_init(result, &left->name, &range))
                 status = i2d_panic("failed to create logic object");
-            i2d_range_list_deit(&range);
+            i2d_range_destroy(&range);
         }
     } else {
         if(i2d_logic_var_copy(&left_copy, left)) {
@@ -228,7 +225,7 @@ int i2d_logic_var(i2d_logic ** result, i2d_logic * left, i2d_logic * right, int 
     return status;
 }
 
-int i2d_logic_or_search(i2d_logic ** result, i2d_logic * logic, i2d_str * name) {
+int i2d_logic_or_search(i2d_logic ** result, i2d_logic * logic, i2d_string * name) {
     if(var == logic->type && !strcmp(logic->name.string, name->string)) {
         *result = logic;
     } else {
@@ -248,7 +245,7 @@ int i2d_logic_or_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
     i2d_logic * sibling = NULL;
     i2d_logic * parent = NULL;
     i2d_logic * twin = NULL;
-    i2d_range_list * range = NULL;
+    i2d_range range;
 
     if(var == logic->type) {
         if(var == (*result)->type) {
@@ -259,10 +256,10 @@ int i2d_logic_or_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
                 *result = parent;
             }
         } else if(or == (*result)->type && !i2d_logic_or_search(&twin, *result, &logic->name)) {
-            if(i2d_range_list_or(&range, twin->range, logic->range)) {
+            if(i2d_range_or(&range, &twin->range, &logic->range)) {
                 status = i2d_panic("failed to merge range list");
             } else {
-                i2d_range_list_deit(&twin->range);
+                i2d_range_destroy(&twin->range);
                 twin->range = range;
             }
         } else {
@@ -344,7 +341,7 @@ int i2d_logic_or(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
     return status;
 }
 
-int i2d_logic_and_search(i2d_logic ** result, i2d_logic * logic, i2d_str * name) {
+int i2d_logic_and_search(i2d_logic ** result, i2d_logic * logic, i2d_string * name) {
     if(var == logic->type && !strcmp(logic->name.string, name->string)) {
         *result = logic;
     } else {
@@ -364,7 +361,7 @@ int i2d_logic_and_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
     i2d_logic * sibling = NULL;
     i2d_logic * parent = NULL;
     i2d_logic * twin = NULL;
-    i2d_range_list * range = NULL;
+    i2d_range range;
 
     if(or == logic->type) {
         status = i2d_panic("invalid paramater");
@@ -377,10 +374,10 @@ int i2d_logic_and_merge_recursive(i2d_logic ** result, i2d_logic * logic) {
                 *result = parent;
             }
         } else if(and == (*result)->type && !i2d_logic_and_search(&twin, *result, &logic->name)) {
-            if(i2d_range_list_and(&range, twin->range, logic->range)) {
+            if(i2d_range_and(&range, &twin->range, &logic->range)) {
                 status = i2d_panic("failed to merge range list");
             } else {
-                i2d_range_list_deit(&twin->range);
+                i2d_range_destroy(&twin->range);
                 twin->range = range;
             }
         } else {
@@ -486,17 +483,17 @@ int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
 
 int i2d_logic_not(i2d_logic ** result, i2d_logic * logic) {
     int status = I2D_OK;
-    i2d_range_list * range = NULL;
+    i2d_range range;
     i2d_logic * left = NULL;
     i2d_logic * right = NULL;
 
     if(var == logic->type) {
-        if(i2d_range_list_not(&range, logic->range)) {
+        if(i2d_range_not(&range, &logic->range)) {
             status = i2d_panic("failed to not range list");
         } else {
-            if(i2d_logic_init(result, &logic->name, range))
+            if(i2d_logic_init(result, &logic->name, &range))
                 status = i2d_panic("failed to create logic object");
-            i2d_range_list_deit(&range);
+            i2d_range_destroy(&range);
         }
     } else {
         if(i2d_logic_not(&left, logic->left)) {

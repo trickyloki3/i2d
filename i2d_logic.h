@@ -12,8 +12,8 @@ enum {
 
 struct i2d_logic {
     int type;
-    i2d_str name;
-    i2d_range_list * range;
+    i2d_string name;
+    i2d_range range;
     struct i2d_logic * parent;
     struct i2d_logic * left;
     struct i2d_logic * right;
@@ -21,7 +21,7 @@ struct i2d_logic {
 
 typedef struct i2d_logic i2d_logic;
 
-int i2d_logic_init(i2d_logic **, i2d_str *, i2d_range_list *);
+int i2d_logic_init(i2d_logic **, i2d_string *, i2d_range *);
 void i2d_logic_deit(i2d_logic **);
 void i2d_logic_print(i2d_logic *, int);
 int i2d_logic_link(i2d_logic **, i2d_logic *, i2d_logic *, int);
@@ -30,11 +30,11 @@ int i2d_logic_and_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_or_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_copy(i2d_logic **, i2d_logic *);
 int i2d_logic_var(i2d_logic **, i2d_logic *, i2d_logic *, int);
-int i2d_logic_or_search(i2d_logic **, i2d_logic *, i2d_str *);
+int i2d_logic_or_search(i2d_logic **, i2d_logic *, i2d_string *);
 int i2d_logic_or_merge_recursive(i2d_logic **, i2d_logic *);
 int i2d_logic_or_merge(i2d_logic **, i2d_logic *, i2d_logic *);
 int i2d_logic_or(i2d_logic **, i2d_logic *, i2d_logic *);
-int i2d_logic_and_search(i2d_logic **, i2d_logic *, i2d_str *);
+int i2d_logic_and_search(i2d_logic **, i2d_logic *, i2d_string *);
 int i2d_logic_and_merge_recursive(i2d_logic **, i2d_logic *);
 int i2d_logic_and_merge(i2d_logic **, i2d_logic *, i2d_logic *);
 int i2d_logic_and_or_merge(i2d_logic **, i2d_logic *, i2d_logic *);
