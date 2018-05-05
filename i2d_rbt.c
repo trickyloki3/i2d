@@ -132,12 +132,13 @@ static void change_parent(i2d_rbt * tree, i2d_rbt_node * x, i2d_rbt_node * y) {
 }
 
 int i2d_rbt_cmp_long(void * left, void * right) {
-    return *((long * ) left) <  *((long * ) right) ? -1 :
-           *((long * ) left) == *((long * ) right) ?  0 : 1;
+    long l = *((long *) left);
+    long r = *((long *) right);
+    return l < r ? -1 : (l > r ? 1 : 0);
 }
 
 int i2d_rbt_cmp_str(void * left, void * right) {
-    return strcasecmp(((i2d_str *) left)->string, ((i2d_str *) right)->string);
+    return strcasecmp(left, right);
 }
 
 int i2d_rbt_init(i2d_rbt ** result, i2d_rbt_cmp compare) {
