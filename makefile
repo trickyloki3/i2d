@@ -1,5 +1,5 @@
 ifeq ($(BUILD), debug)
-CFLAGS+=-Di2d_debug -g
+CFLAGS+=-Di2d_debug -g -Wall
 else
 CFLAGS+=-O1
 endif

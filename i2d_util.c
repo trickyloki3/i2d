@@ -52,7 +52,7 @@ void i2d_buffer_destroy(i2d_buffer * result) {
 int i2d_buffer_adapt(i2d_buffer * result, size_t length) {
     int status = I2D_OK;
     size_t avail;
-    uint8_t * buffer;
+    void * buffer;
 
     avail = result->length - result->offset;
     if(avail < length) {

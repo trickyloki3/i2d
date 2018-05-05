@@ -16,7 +16,6 @@ int i2d_range_node_init(i2d_range_node **, long, long);
 void i2d_range_node_deit(i2d_range_node **);
 void i2d_range_node_append(i2d_range_node *, i2d_range_node *);
 void i2d_range_node_remove(i2d_range_node *);
-int i2d_range_node_add(i2d_range_node *, long, long);
 
 struct i2d_range {
     i2d_range_node * list;

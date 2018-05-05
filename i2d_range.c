@@ -62,7 +62,7 @@ int i2d_range_create(i2d_range * result) {
 }
 
 int i2d_range_create_add(i2d_range * result, long min, long max) {
-    return i2d_range_add(result, min, max);
+    return i2d_range_create(result) || i2d_range_add(result, min, max);
 }
 
 void i2d_range_destroy(i2d_range * result) {
