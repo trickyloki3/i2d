@@ -31,7 +31,7 @@ static int i2d_rbt_node_init(i2d_rbt_node **, void *, void *);
 static void i2d_rbt_node_deit(i2d_rbt_node **);
 static int i2d_rbt_node_insert(i2d_rbt *, i2d_rbt_node *);
 static int i2d_rbt_node_delete(i2d_rbt *, i2d_rbt_node *);
-static int i2d_rbt_node_search(i2d_rbt *, i2d_rbt_node **, void *);
+static int i2d_rbt_node_search(i2d_rbt *, i2d_rbt_node **, const void *);
 
 /* right rotation on x shifts the tree's height
  * from the left sub tree to the right sub tree
@@ -131,13 +131,13 @@ static void change_parent(i2d_rbt * tree, i2d_rbt_node * x, i2d_rbt_node * y) {
         y->p = x->p;
 }
 
-int i2d_rbt_cmp_long(void * left, void * right) {
+int i2d_rbt_cmp_long(const void * left, const void * right) {
     long l = *((long *) left);
     long r = *((long *) right);
     return l < r ? -1 : (l > r ? 1 : 0);
 }
 
-int i2d_rbt_cmp_str(void * left, void * right) {
+int i2d_rbt_cmp_str(const void * left, const void * right) {
     return strcasecmp(left, right);
 }
 
@@ -217,7 +217,7 @@ int i2d_rbt_delete(i2d_rbt * tree, void * key) {
     return status;
 }
 
-int i2d_rbt_search(i2d_rbt * tree, void * key, void ** value) {
+int i2d_rbt_search(i2d_rbt * tree, const void * key, void ** value) {
     int status = I2D_OK;
     i2d_rbt_node * node = NULL;
 
@@ -230,7 +230,7 @@ int i2d_rbt_search(i2d_rbt * tree, void * key, void ** value) {
     return status;
 }
 
-int i2d_rbt_exist(i2d_rbt * tree, void * key) {
+int i2d_rbt_exist(i2d_rbt * tree, const void * key) {
     i2d_rbt_node * node = NULL;
     return i2d_rbt_node_search(tree, &node, key);
 }
@@ -465,7 +465,7 @@ static int i2d_rbt_node_delete(i2d_rbt * tree, i2d_rbt_node * x) {
     return I2D_OK;
 }
 
-static int i2d_rbt_node_search(i2d_rbt * tree, i2d_rbt_node ** x, void * key) {
+static int i2d_rbt_node_search(i2d_rbt * tree, i2d_rbt_node ** x, const void * key) {
     int result;
     i2d_rbt_node * i;
 

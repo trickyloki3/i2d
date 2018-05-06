@@ -4,15 +4,15 @@
 #include "i2d_util.h"
 
 typedef struct i2d_rbt i2d_rbt;
-typedef int (*i2d_rbt_cmp)(void *, void *);
-int i2d_rbt_cmp_long(void *, void *);
-int i2d_rbt_cmp_str(void *, void *);
+typedef int (*i2d_rbt_cmp)(const void *, const void *);
+int i2d_rbt_cmp_long(const void *, const void *);
+int i2d_rbt_cmp_str(const void *, const void *);
 
 int i2d_rbt_init(i2d_rbt **, i2d_rbt_cmp);
 void i2d_rbt_deit(i2d_rbt **);
 void i2d_rbt_clear(i2d_rbt *);
 int i2d_rbt_insert(i2d_rbt *, void *, void *);
 int i2d_rbt_delete(i2d_rbt *, void *);
-int i2d_rbt_search(i2d_rbt *, void *, void **);
-int i2d_rbt_exist(i2d_rbt *, void *);
+int i2d_rbt_search(i2d_rbt *, const void *, void **);
+int i2d_rbt_exist(i2d_rbt *, const void *);
 #endif
