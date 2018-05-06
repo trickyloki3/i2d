@@ -211,7 +211,6 @@ int i2d_string_stack_pop(i2d_string_stack * result) {
     return status;
 }
 
-
 void i2d_string_stack_clear(i2d_string_stack * result) {
     if(result->top) {
         i2d_buffer_clear(&result->buffer);
@@ -219,6 +218,33 @@ void i2d_string_stack_clear(i2d_string_stack * result) {
         memset(result->offset, 0, sizeof(*result->offset) * result->top);
         result->top = 0;
     }
+}
+
+int i2d_string_stack_get(i2d_string_stack * stack, i2d_string ** list, size_t * size) {
+    int status = I2D_OK;
+    size_t i;
+    size_t offset;
+
+    if(stack->top == 0) {
+        *list = NULL;
+        *size = 0;
+    } else {
+        for(i = 0; i < stack->top; i++) {
+            if(i == 0) {
+                stack->list[i].string = stack->buffer.buffer;
+                stack->list[i].length = stack->offset[i] - 1;
+            } else {
+                offset = stack->offset[i - 1] + 1;
+                stack->list[i].string = &stack->buffer.buffer[offset];
+                stack->list[i].length = stack->offset[i] - 1;
+            }
+        }
+
+        *list = stack->list;
+        *size = stack->top;
+    }
+
+    return status;
 }
 
 int i2d_strtol(long * result, const char * string, size_t length, int base) {
