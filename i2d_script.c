@@ -221,6 +221,28 @@ int i2d_token_get_string(i2d_token * token, i2d_string * result) {
     return status;
 }
 
+int i2d_token_get_constant(i2d_token * token, long * result) {
+    int status = I2D_OK;
+    i2d_string string;
+    int base;
+
+    if(i2d_token_get_string(token, &string)) {
+        status = i2d_panic("failed to get token string");
+    } else {
+        if(!strncmp(string.string, "0x", 2) && string.length > 2) {
+            base = 16;
+        } else if(string.string[0] == '0' && string.length > 1) {
+            base = 8;
+        } else {
+            base = 10;
+        }
+
+        status = i2d_strtol(result, string.string, string.length, base);
+    }
+
+    return status;
+}
+
 int i2d_lexer_init(i2d_lexer ** result) {
     int status = I2D_OK;
     i2d_lexer * object;
@@ -945,7 +967,7 @@ int i2d_parser_statement_map(i2d_parser * parser, i2d_lexer * lexer, i2d_block *
     token = block->tokens->next;
     if(I2D_LITERAL == token->type) {
         if(i2d_token_get_string(token, &name)) {
-            status = i2d_panic("failed to get string");
+            status = i2d_panic("failed to get token string");
         } else {
             if(!i2d_rbt_search(parser->statement_map, name.string, (void *) &block->statement)) {
                 i2d_token_remove(token);
@@ -1106,7 +1128,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
             }
         } else if(I2D_LITERAL == tokens->type) {
             if(i2d_token_get_string(tokens, &string)) {
-                status = i2d_panic("failed to get string");
+                status = i2d_panic("failed to get token string");
             } else if(!strcmp("if", string.string)) {
                 if(i2d_parser_block_init(parser, &block, I2D_IF, anchor, parent)) {
                     status = i2d_panic("failed to create block object");
@@ -1424,6 +1446,111 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
             i2d_deit(root, i2d_node_deit);
         } else {
             *result = root;
+        }
+    }
+
+    return status;
+}
+
+int i2d_format_create(i2d_format * result, const char * string, size_t length) {
+    int status = I2D_OK;
+
+    size_t i;
+    char symbol;
+    i2d_token * token = NULL;
+    i2d_token * state = NULL;
+    int curly_level = 0;
+
+    result->tokens = NULL;
+
+    if(i2d_token_init(&result->tokens, I2D_TOKEN)) {
+        status = i2d_panic("failed to create token object");
+    } else {
+        for(i = 0; i < length && !status; i++) {
+            symbol = string[i];
+            switch(symbol) {
+                case '{':
+                    if(curly_level) {
+                        status = i2d_panic("invalid position level");
+                    } else {
+                        curly_level++;
+                        state = NULL;
+                    }
+                    break;
+                case '}':
+                    if(!state) {
+                        status = i2d_panic("invalid position token");
+                    } else {
+                        curly_level--;
+                        state = NULL;
+                    }
+                    break;
+                default:
+                    if(state) {
+                        status = i2d_token_putc(state, symbol);
+                    } else {
+                        status = i2d_token_init(&token, curly_level ? I2D_POSITION : I2D_LITERAL) ||
+                                 i2d_token_putc(token, symbol);
+                    }
+                    break;
+            }
+
+            if(token) {
+                i2d_token_append(token, result->tokens);
+                state = token;
+                token = NULL;
+            }
+        }
+    }
+
+    if(result->tokens == result->tokens->next)
+        status = i2d_panic("empty format specification");
+
+    if(status)
+        i2d_format_destroy(result);
+
+    return status;
+}
+
+void i2d_format_destroy(i2d_format * result) {
+    i2d_deit(result->tokens, i2d_token_list_deit);
+}
+
+int i2d_format_write(i2d_format * format, i2d_string_stack * stack, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    i2d_string * list;
+    size_t size;
+
+    i2d_token * token;
+    i2d_string string;
+    long position;
+
+    if(i2d_string_stack_get(stack, &list, &size)) {
+        status = i2d_panic("failed to get string stack");
+    } else {
+        token = format->tokens->next;
+        while(token->type != I2D_TOKEN && !status) {
+            switch(token->type) {
+                case I2D_LITERAL:
+                    if(i2d_token_get_string(token, &string)) {
+                        status = i2d_panic("failed to get token string");
+                    } else if(i2d_buffer_printf(buffer, "%s", string.string)) {
+                        status = i2d_panic("failed to write buffer");
+                    }
+                    break;
+                case I2D_POSITION:
+                    if(i2d_token_get_constant(token, &position)) {
+                        status = i2d_panic("failed to get token constant");
+                    } else if(position >= size || position < 0) {
+                        status = i2d_panic("invalid position on string stack");
+                    } else if(i2d_buffer_printf(buffer, "%s", list[position].string)) {
+                        status = i2d_panic("failed to write buffer");
+                    }
+                    break;
+                default:
+                    status = i2d_panic("invalid token type -- %d", token->type);
+            }
+            token = token->next;
         }
     }
 

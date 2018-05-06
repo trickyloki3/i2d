@@ -85,6 +85,7 @@ void i2d_token_print(i2d_token *);
 int i2d_token_putc(i2d_token *, char);
 char i2d_token_getc(i2d_token *);
 int i2d_token_get_string(i2d_token *, i2d_string *);
+int i2d_token_get_constant(i2d_token *, long *);
 
 struct i2d_lexer {
     i2d_token * cache;
@@ -253,6 +254,16 @@ int i2d_parser_node_init(i2d_parser *, i2d_node **, enum i2d_node_type, i2d_toke
 int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_token *, i2d_block **);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
+
+struct i2d_format {
+    i2d_token * tokens;
+};
+
+typedef struct i2d_format i2d_format;
+
+int i2d_format_create(i2d_format *, const char *, size_t);
+void i2d_format_destroy(i2d_format *);
+int i2d_format_write(i2d_format *, i2d_string_stack *, i2d_buffer *);
 
 struct i2d_script {
     i2d_db * db;

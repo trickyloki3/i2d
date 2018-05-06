@@ -8,6 +8,7 @@
 #include "i2d_db.h"
 #include "i2d_script.h"
 
+static void i2d_format_test(void);
 static void i2d_lexer_test(void);
 static void i2d_logic_test(void);
 static void i2d_logic_or_test(i2d_logic *, i2d_logic *, i2d_logic *);
@@ -15,9 +16,26 @@ static void i2d_logic_and_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_not_test(i2d_logic *, i2d_logic *, i2d_logic *);
 
 int main(int argc, char * argv[]) {
+    i2d_format_test();
     i2d_lexer_test();
     i2d_logic_test();
     return 0;
+}
+
+static void i2d_format_test(void) {
+    i2d_buffer buffer;
+    i2d_string_stack stack;
+    i2d_format format;
+
+    assert(!i2d_buffer_create(&buffer, I2D_SIZE));
+    assert(!i2d_string_stack_create(&stack, 16));
+    assert(!i2d_string_stack_push(&stack, "Hello", 5));
+    assert(!i2d_string_stack_push(&stack, "World", 5));
+    assert(!i2d_format_create(&format, "{0} {1}!", 8));
+    assert(!i2d_format_write(&format, &stack, &buffer));
+    i2d_format_destroy(&format);
+    i2d_string_stack_destroy(&stack);
+    i2d_buffer_destroy(&buffer);
 }
 
 static void i2d_lexer_test(void) {
