@@ -301,7 +301,7 @@ static int i2d_skill_db_index(i2d_skill_db * skill_db) {
         skill = skill_db->list;
         do {
             if( i2d_rbt_insert(skill_db->index_by_id, &skill->id, skill) ||
-                i2d_rbt_insert(skill_db->index_by_macro, &skill->macro, skill) )
+                i2d_rbt_insert(skill_db->index_by_macro, skill->macro.string, skill) )
                 status = i2d_panic("failed to index skill by id -- %ld", skill->id);
             skill = skill->next;
         } while(skill != skill_db->list && !status);
@@ -314,6 +314,6 @@ int i2d_skill_db_search_by_id(i2d_skill_db * skill_db, long skill_id, i2d_skill 
     return i2d_rbt_search(skill_db->index_by_id, &skill_id, (void **) skill);
 }
 
-int i2d_skill_db_search_by_macro(i2d_skill_db * skill_db, i2d_string * skill_macro, i2d_skill ** skill) {
-    return i2d_rbt_search(skill_db->index_by_macro, skill_macro, (void **) skill);
+int i2d_skill_db_search_by_macro(i2d_skill_db * skill_db, const char * macro, i2d_skill ** skill) {
+    return i2d_rbt_search(skill_db->index_by_macro, macro, (void **) skill);
 }
