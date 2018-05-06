@@ -6,15 +6,56 @@
 #include "i2d_item.h"
 #include "i2d_skill.h"
 #include "i2d_db.h"
+#include "i2d_script.h"
 
+static void i2d_lexer_test(void);
 static void i2d_logic_test(void);
 static void i2d_logic_or_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_and_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_not_test(i2d_logic *, i2d_logic *, i2d_logic *);
 
 int main(int argc, char * argv[]) {
+    i2d_lexer_test();
     i2d_logic_test();
     return 0;
+}
+
+static void i2d_lexer_test(void) {
+    i2d_lexer * lexer = NULL;
+    i2d_string script;
+    i2d_token * token = NULL;
+    i2d_token * tokens = NULL;
+
+    int i;
+    int j;
+    enum i2d_token_type sequence[] = { I2D_LITERAL, I2D_CURLY_OPEN, I2D_CURLY_CLOSE, I2D_PARENTHESIS_OPEN, I2D_PARENTHESIS_CLOSE, I2D_COMMA, I2D_SEMICOLON, I2D_LITERAL, I2D_LITERAL, I2D_LITERAL, I2D_LITERAL, I2D_TEMPORARY_CHARACTER, I2D_PERMANENT_GLOBAL, I2D_TEMPORARY_GLOBAL, I2D_TEMPORARY_NPC, I2D_TEMPORARY_SCOPE, I2D_TEMPORARY_INSTANCE, I2D_PERMANENT_ACCOUNT_LOCAL, I2D_PERMANENT_ACCOUNT_GLOBAL, I2D_ADD, I2D_SUBTRACT, I2D_MULTIPLY, I2D_DIVIDE, I2D_MODULUS, I2D_ADD_ASSIGN, I2D_SUBTRACT_ASSIGN, I2D_MULTIPLY_ASSIGN, I2D_DIVIDE_ASSIGN, I2D_MODULUS_ASSIGN, I2D_GREATER, I2D_LESS, I2D_NOT, I2D_EQUAL, I2D_GREATER_EQUAL, I2D_LESS_EQUAL, I2D_NOT_EQUAL, I2D_RIGHT_SHIFT, I2D_LEFT_SHIFT, I2D_BIT_AND, I2D_BIT_OR, I2D_BIT_XOR, I2D_BIT_NOT, I2D_RIGHT_SHIFT_ASSIGN, I2D_LEFT_SHIFT_ASSIGN, I2D_BIT_AND_ASSIGN, I2D_BIT_OR_ASSIGN, I2D_BIT_XOR_ASSIGN, I2D_AND, I2D_OR, I2D_CONDITIONAL, I2D_COLON, I2D_UNIQUE_NAME, I2D_ASSIGN };
+
+    assert(!i2d_lexer_init(&lexer));
+    assert(!i2d_string_create(&script, "//\n\"QUOTE\"/*123*/{}(),; _var1 var2 1234 0x11 @ $ $@ . .@ ' # ## + - * / % += -= *= /= %= > < ! == >= <= != >> <<  & | ^ ~ >>= <<= &= |= ^= && || ? : :: =", 147));
+    for(j = 0; j < 2; j++) {
+        assert(!i2d_lexer_tokenize(lexer, &script, &tokens));
+        i = 0;
+        token = tokens->next;
+        while(token != tokens) {
+            assert(token->type == sequence[i++]);
+            token = token->next;
+        }
+        i2d_lexer_reset(lexer, &tokens);
+    }
+    i2d_string_destroy(&script);
+    i2d_lexer_deit(&lexer);
+
+    assert(!i2d_lexer_init(&lexer));
+    assert(!i2d_string_create(&script, "@var $var $@var .var .@var 'var #var ##var @var$ $var$ $@var$ .var$ .@var$ 'var$ #var$ ##var$", 93));
+    assert(!i2d_lexer_tokenize(lexer, &script, &tokens));
+    token = tokens->next;
+    while(token != tokens) {
+        assert(token->type == I2D_LITERAL);
+        token = token->next;
+    }
+    i2d_lexer_reset(lexer, &tokens);
+    i2d_string_destroy(&script);
+    i2d_lexer_deit(&lexer);
 }
 
 static void i2d_logic_test(void) {

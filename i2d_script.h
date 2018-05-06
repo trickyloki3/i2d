@@ -2,13 +2,11 @@
 #define i2d_script_h
 
 #include "i2d_util.h"
-#include "i2d_json.h"
 #include "i2d_range.h"
 #include "i2d_logic.h"
 #include "i2d_opt.h"
 #include "i2d_db.h"
-
-#define I2D_CAP 16
+#include "i2d_json.h"
 
 enum i2d_token_type {
     I2D_TOKEN,
@@ -71,12 +69,22 @@ enum i2d_token_type {
 
 struct i2d_token {
     enum i2d_token_type type;
-    i2d_buf * buffer;
+    i2d_buffer buffer;
     struct i2d_token * next;
     struct i2d_token * prev;
 };
 
 typedef struct i2d_token i2d_token;
+
+int i2d_token_init(i2d_token **, enum i2d_token_type);
+void i2d_token_deit(i2d_token **);
+void i2d_token_list_deit(i2d_token **);
+void i2d_token_append(i2d_token *, i2d_token *);
+void i2d_token_remove(i2d_token *);
+void i2d_token_print(i2d_token *);
+int i2d_token_putc(i2d_token *, char);
+char i2d_token_getc(i2d_token *);
+int i2d_token_get_string(i2d_token *, i2d_string *);
 
 struct i2d_lexer {
     i2d_token * cache;
@@ -84,22 +92,11 @@ struct i2d_lexer {
 
 typedef struct i2d_lexer i2d_lexer;
 
-int i2d_token_init(i2d_token **, enum i2d_token_type);
-void i2d_token_deit(i2d_token **);
-void i2d_token_list_deit(i2d_token **);
-int i2d_token_write(i2d_token *, void *, size_t);
-int i2d_token_get_literal(i2d_token *, i2d_str *);
-int i2d_token_assign_literal(i2d_token *, i2d_str *);
-char i2d_token_get_last_symbol(i2d_token *);
-void i2d_token_append(i2d_token *, i2d_token *);
-void i2d_token_remove(i2d_token *);
-void i2d_token_print(i2d_token *);
-
 int i2d_lexer_init(i2d_lexer **);
 void i2d_lexer_deit(i2d_lexer **);
 void i2d_lexer_reset(i2d_lexer *, i2d_token **);
 int i2d_lexer_token_init(i2d_lexer *, i2d_token **, enum i2d_token_type);
-int i2d_lexer_tokenize(i2d_lexer *, i2d_str *, i2d_token **);
+int i2d_lexer_tokenize(i2d_lexer *, i2d_string *, i2d_token **);
 
 enum i2d_node_type {
     I2D_NODE,
@@ -112,7 +109,7 @@ enum i2d_node_type {
 
 struct i2d_node {
     enum i2d_node_type type;
-    i2d_range_list * range;
+    i2d_range range;
     i2d_logic * logic;
     i2d_token * tokens;
     struct i2d_node * left;
@@ -120,6 +117,18 @@ struct i2d_node {
 };
 
 typedef struct i2d_node i2d_node;
+
+int i2d_node_init(i2d_node **, enum i2d_node_type, i2d_token *);
+void i2d_node_deit(i2d_node **);
+void i2d_node_list_deit(i2d_node **);
+void i2d_node_append(i2d_node *, i2d_node *);
+void i2d_node_remove(i2d_node *);
+void i2d_node_print(i2d_node *, int);
+int i2d_node_copy(i2d_node *, i2d_node *);
+int i2d_node_get_arguments(i2d_node *, i2d_node **, size_t, size_t);
+int i2d_node_get_constant(i2d_node *, long *);
+int i2d_node_get_string(i2d_node *, i2d_string *);
+int i2d_node_get_predicate(i2d_node *, i2d_string *);
 
 enum i2d_statement_type {
     I2D_STATEMENT_START,
@@ -192,7 +201,7 @@ enum i2d_statement_type {
 
 struct i2d_statement {
     enum i2d_statement_type type;
-    i2d_str name;
+    i2d_string name;
 };
 
 typedef struct i2d_statement i2d_statement;
@@ -206,11 +215,10 @@ enum i2d_block_type {
 
 struct i2d_block {
     enum i2d_block_type type;
+    i2d_buffer buffer;
     i2d_token * tokens;
     i2d_node * nodes;
     i2d_statement * statement;
-    i2d_str_stack * stack;
-    i2d_buf * buffer;
     struct i2d_block * parent;
     struct i2d_block * child;
     struct i2d_block * next;
@@ -219,27 +227,6 @@ struct i2d_block {
 
 typedef struct i2d_block i2d_block;
 
-struct i2d_parser {
-    i2d_block * block_cache;
-    i2d_node * node_cache;
-    i2d_rbt * statement_map;
-};
-
-typedef struct i2d_parser i2d_parser;
-
-int i2d_node_init(i2d_node **, enum i2d_node_type, i2d_token *);
-void i2d_node_deit(i2d_node **);
-void i2d_node_append(i2d_node *, i2d_node *);
-void i2d_node_remove(i2d_node *);
-int i2d_node_copy(i2d_node *, i2d_node *);
-void i2d_node_print(i2d_node *, int);
-int i2d_node_cmp_literal(void *, void *);
-int i2d_node_get_arguments(i2d_node *, i2d_node **, size_t, size_t);
-int i2d_node_get_constant(i2d_node *, long *);
-int i2d_node_get_string(i2d_node *, i2d_str *);
-int i2d_node_get_predicate(i2d_node *, i2d_str *);
-int i2d_node_get_all_predicate(i2d_node *, i2d_buf *);
-
 int i2d_block_init(i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 void i2d_block_deit(i2d_block **);
 void i2d_block_list_deit(i2d_block **);
@@ -247,6 +234,14 @@ void i2d_block_append(i2d_block *, i2d_block *);
 void i2d_block_remove(i2d_block *);
 void i2d_block_print(i2d_block *, int);
 void i2d_block_list_print(i2d_block *, int);
+
+struct i2d_parser {
+    i2d_block * block_cache;
+    i2d_node * node_cache;
+    i2d_rbt * statement_map;
+};
+
+typedef struct i2d_parser i2d_parser;
 
 int i2d_parser_init(i2d_parser **);
 void i2d_parser_deit(i2d_parser **);
@@ -259,162 +254,16 @@ int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_token *, i2d_block **);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 
-struct i2d_const {
-    i2d_str name;
-    json_int_t value;
-};
-
-typedef struct i2d_const i2d_const;
-
-int i2d_const_init(void **, const char *, json_t *, i2d_rbt *, void *);
-void i2d_const_deit(void **);
-
-struct i2d_description {
-    i2d_token * tokens;
-};
-
-typedef struct i2d_description i2d_description;
-
-int i2d_description_init(i2d_description **, i2d_str_const *);
-void i2d_description_deit(i2d_description **);
-int i2d_description_tokenize(i2d_description *, const char *, size_t);
-int i2d_description_format(i2d_description *, i2d_str_stack *, i2d_buf *);
-
-struct i2d_function {
-    i2d_str name;
-    i2d_description * description;
-    i2d_range_list * range;
-};
-
-typedef struct i2d_function i2d_function;
-
-int i2d_function_init(void **, const char *, json_t *, i2d_rbt *, void *);
-void i2d_function_deit(void **);
-
-struct i2d_bonus_type {
-    long value;
-    i2d_str name;
-    i2d_description * description;
-    i2d_str_list * argument_type;
-};
-
-typedef struct i2d_bonus_type i2d_bonus_type;
-
-int i2d_bonus_type_init(void **, const char *, json_t *, i2d_rbt *, void *);
-void i2d_bonus_type_deit(void **);
-
-struct i2d_readparam {
-    long key;
-    i2d_str name;
-    i2d_range_list * range;
-};
-
-typedef struct i2d_readparam i2d_readparam;
-
-int i2d_readparam_init(void **, const char *, json_t *, i2d_rbt *, void *);
-void i2d_readparam_deit(void **);
-
-struct i2d_str_map {
-    long key;
-    i2d_str value;
-};
-
-typedef struct i2d_str_map i2d_str_map;
-
-int i2d_str_map_init(void **, const char *, json_t *, i2d_rbt *, void *);
-void i2d_str_map_deit(void **);
-
-struct i2d_str_long_map {
-    long key;
-    i2d_str value;
-};
-
-typedef struct i2d_str_long_map i2d_str_long_map;
-
-int i2d_str_long_map_init(void **, const char *, json_t *, i2d_rbt *, void *);
-void i2d_str_long_map_deit(void **);
-
-struct i2d_translator {
-    i2d_object * consts;
-    i2d_object * functions;
-    i2d_object * bonus_types;
-    i2d_object * elements;
-    i2d_object * races;
-    i2d_object * classes;
-    i2d_object * locations;
-    i2d_object * mapflags;
-    i2d_object * getiteminfo;
-    i2d_object * strcharinfo;
-    i2d_object * gettimes;
-    i2d_object * readparam;
-};
-
-typedef struct i2d_translator i2d_translator;
-
-int i2d_translator_init(i2d_translator **, i2d_json *);
-void i2d_translator_deit(i2d_translator **);
-int i2d_translator_const_map(i2d_translator *, i2d_str *, long *);
-int i2d_translator_bonus_map(i2d_translator *, long *, i2d_bonus_type **);
-int i2d_translator_function_map(i2d_translator *, i2d_str *, i2d_function **);
-int i2d_translator_elements_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_races_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_classes_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_locations_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_mapflags_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_getiteminfo_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_strcharinfo_map(i2d_translator *, long *, i2d_str *);
-int i2d_translator_gettimes_map(i2d_translator *, long *, i2d_readparam **);
-int i2d_translator_readparam_map(i2d_translator *, long *, i2d_readparam **);
-
-struct i2d_context {
-    i2d_rbt * variables;
-    i2d_buf * predicates;
-    i2d_buf * expression;
-    i2d_str_stack * stack;
-    struct i2d_context * next;
-    struct i2d_context * prev;
-};
-
-typedef struct i2d_context i2d_context;
-
-int i2d_context_init(i2d_context **);
-void i2d_context_deit(i2d_context **);
-void i2d_context_list_deit(i2d_context **);
-void i2d_context_append(i2d_context *, i2d_context *);
-void i2d_context_remove(i2d_context *);
-void i2d_context_reset(i2d_context *);
-void i2d_context_reset_buffer(i2d_context *);
-int i2d_context_insert_variable(i2d_context *, i2d_node *);
-int i2d_context_search_variable(i2d_context *, i2d_node *, i2d_node **);
-
 struct i2d_script {
     i2d_db * db;
-    i2d_json * json;
+    json_t * json;
     i2d_lexer * lexer;
     i2d_parser * parser;
-    i2d_translator * translator;
-    i2d_context * context;
-    i2d_rbt * functions_handlers;
-    i2d_rbt * bonus_handlers;
 };
 
 typedef struct i2d_script i2d_script;
 
 int i2d_script_init(i2d_script **, i2d_option *);
 void i2d_script_deit(i2d_script **);
-int i2d_script_compile(i2d_script *, i2d_str *, i2d_str **);
-int i2d_script_translate(i2d_script *, i2d_block *);
-int i2d_script_statement(i2d_script *, i2d_block *);
-int i2d_script_bonus_handler(i2d_script *, i2d_str *, i2d_node *, i2d_str_stack *);
-int i2d_script_bonus(i2d_script *, i2d_block *);
-int i2d_script_expression(i2d_script *, i2d_node *, int);
-int i2d_script_expression_variable(i2d_script *, i2d_node *);
-int i2d_script_expression_function(i2d_script *, i2d_node *);
-int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
-int i2d_script_expression_binary(i2d_script *, i2d_node *, int);
-
-#if i2d_debug
-int i2d_script_test(i2d_script *, i2d_item *);
-int i2d_lexer_test(void);
-#endif
+int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *);
 #endif

@@ -20,10 +20,10 @@ OBJECT+=i2d_item.o
 OBJECT+=i2d_skill.o
 OBJECT+=i2d_db.o
 OBJECT+=i2d_json.o
-# OBJECT+=i2d_script.o
+OBJECT+=i2d_script.o
 
 
-all: clean i2d_test
+all: clean i2d
 
 i2d: $(OBJECT)
 	$(CC) $(CFLAGS) -o $@ i2d.c $^ $(LDFLAGS) $(LDLIBS)

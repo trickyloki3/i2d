@@ -80,11 +80,12 @@ int i2d_buffer_putc(i2d_buffer * result, char character) {
     int status = I2D_OK;
 
     if( result->length == result->offset &&
-        i2d_buffer_adapt(result, result->length) ) {
+        i2d_buffer_adapt(result, result->length + 1) ) {
         status = I2D_FAIL;
     } else {
         result->buffer[result->offset] = character;
         result->offset++;
+        result->buffer[result->offset] = 0;
     }
 
     return status;
