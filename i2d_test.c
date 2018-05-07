@@ -5,6 +5,7 @@
 #include "i2d_opt.h"
 #include "i2d_item.h"
 #include "i2d_skill.h"
+#include "i2d_constant.h"
 #include "i2d_db.h"
 #include "i2d_script.h"
 

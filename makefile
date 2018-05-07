@@ -18,6 +18,7 @@ OBJECT+=i2d_rbt.o
 OBJECT+=i2d_opt.o
 OBJECT+=i2d_item.o
 OBJECT+=i2d_skill.o
+OBJECT+=i2d_constant.o
 OBJECT+=i2d_db.o
 OBJECT+=i2d_json.o
 OBJECT+=i2d_script.o
