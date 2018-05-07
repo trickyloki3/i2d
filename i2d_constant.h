@@ -17,4 +17,16 @@ typedef struct i2d_constant i2d_constant;
 
 int i2d_constant_create(i2d_constant *, const char *, json_t *);
 void i2d_constant_destroy(i2d_constant *);
+
+struct i2d_constant_db {
+    i2d_constant * constants;
+    size_t size;
+
+    i2d_rbt * macros;
+};
+
+typedef struct i2d_constant_db i2d_constant_db;
+
+int i2d_constant_db_init(i2d_constant_db **, json_t *);
+void i2d_constant_db_deit(i2d_constant_db **);
 #endif

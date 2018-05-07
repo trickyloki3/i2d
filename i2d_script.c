@@ -1576,6 +1576,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to create lexer object");
             } else if(i2d_parser_init(&object->parser)) {
                 status = i2d_panic("failed to create parser object");
+            } else if(i2d_constant_db_init(&object->constant_db, object->json)) {
+                status = i2d_panic("failed to create constant db object");
             }
 
             if(status)
@@ -1592,6 +1594,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->constant_db, i2d_constant_db_deit);
     i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);
     i2d_json_destroy(object->json);

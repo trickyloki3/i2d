@@ -5,6 +5,7 @@
 #include "i2d_range.h"
 #include "i2d_logic.h"
 #include "i2d_opt.h"
+#include "i2d_constant.h"
 #include "i2d_db.h"
 #include "i2d_json.h"
 
@@ -270,6 +271,7 @@ struct i2d_script {
     json_t * json;
     i2d_lexer * lexer;
     i2d_parser * parser;
+    i2d_constant_db * constant_db;
 };
 
 typedef struct i2d_script i2d_script;

@@ -63,3 +63,24 @@ int i2d_object_get_range(json_t * left, json_t * right, i2d_range * result) {
 
     return status;
 }
+
+int i2d_object_get_list(json_t * json, size_t element, void ** result_list, size_t * result_size) {
+    int status = I2D_OK;
+    void * list;
+    size_t size;
+
+    size = json_object_size(json);
+    if(!size) {
+        status = i2d_panic("empty object");
+    } else {
+        list = calloc(size, element);
+        if(!list) {
+            status = i2d_panic("out of memory");
+        } else {
+            *result_list = list;
+            *result_size = size;
+        }
+    }
+
+    return status;
+}
