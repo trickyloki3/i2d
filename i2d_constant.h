@@ -23,10 +23,18 @@ struct i2d_constant_db {
     size_t size;
 
     i2d_rbt * macros;
+    i2d_rbt * elements;
+    i2d_rbt * races;
+    i2d_rbt * classes;
+    i2d_rbt * locations;
+    i2d_rbt * mapflags;
+    i2d_rbt * gettimes;
+    i2d_rbt * readparam;
 };
 
 typedef struct i2d_constant_db i2d_constant_db;
 
 int i2d_constant_db_init(i2d_constant_db **, json_t *);
 void i2d_constant_db_deit(i2d_constant_db **);
+int i2d_constant_get_constant(i2d_constant_db *, const char *, i2d_constant **);
 #endif

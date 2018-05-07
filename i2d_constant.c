@@ -1,5 +1,7 @@
 #include "i2d_constant.h"
 
+static int i2d_constant_db_index(i2d_constant_db *, json_t *, const char *, i2d_rbt **);
+
 int i2d_constant_create(i2d_constant * result, const char * key, json_t * json) {
     int status = I2D_OK;
     json_t * name;
@@ -42,6 +44,50 @@ void i2d_constant_destroy(i2d_constant * result) {
     i2d_string_destroy(&result->macro);
 }
 
+static int i2d_constant_db_index(i2d_constant_db * constant_db, json_t * json, const char * key, i2d_rbt ** result) {
+    int status = I2D_OK;
+    i2d_rbt * map = NULL;
+
+    json_t * array;
+    size_t index;
+    json_t * value;
+
+    const char * string;
+    size_t length;
+    i2d_constant * constant;
+
+    if(i2d_rbt_init(&map, i2d_rbt_cmp_long)) {
+        status = i2d_panic("failed to create red black tree object");
+    } else {
+        array = json_object_get(json, key);
+        if(!array) {
+            status = i2d_panic("failed to get %s key value", key);
+        } else {
+            json_array_foreach(array, index, value) {
+                string = json_string_value(value);
+                if(!string) {
+                    status = i2d_panic("invalid string object");
+                } else {
+                    length = json_string_length(value);
+                    if(!length) {
+                        status = i2d_panic("empty string object");
+                    } else if(i2d_constant_get_constant(constant_db, string, &constant)) {
+                        status = i2d_panic("failed to find constant -- %s", string);
+                    } else if(i2d_rbt_insert(map, &constant->value, constant)) {
+                        status = i2d_panic("failed to map constant object");
+                    }
+                }
+            }
+        }
+        if(status)
+            i2d_rbt_deit(&map);
+        else
+            *result = map;
+    }
+
+    return status;
+}
+
 int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
     int status = I2D_OK;
     i2d_constant_db * object;
@@ -66,7 +112,7 @@ int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
             } else if(i2d_rbt_init(&object->macros, i2d_rbt_cmp_str)) {
                 status = i2d_panic("failed to create macro map");
             } else {
-                 json_object_foreach(consts, key, value) {
+                json_object_foreach(consts, key, value) {
                     if(i2d_constant_create(&object->constants[i], key, value)) {
                         status = i2d_panic("failed to create constant object");
                     } else if(i2d_rbt_insert(object->macros, object->constants[i].macro.string, &object->constants[i])) {
@@ -74,7 +120,20 @@ int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
                     } else {
                         i++;
                     }
-                 }
+                    if(status)
+                        break;
+                }
+                if(!status) {
+                    if( i2d_constant_db_index(object, json, "elements", &object->elements) ||
+                        i2d_constant_db_index(object, json, "races", &object->races) ||
+                        i2d_constant_db_index(object, json, "classes", &object->classes) ||
+                        i2d_constant_db_index(object, json, "locations", &object->locations) ||
+                        i2d_constant_db_index(object, json, "mapflags", &object->mapflags) ||
+                        i2d_constant_db_index(object, json, "gettimes", &object->gettimes) ||
+                        i2d_constant_db_index(object, json, "readparam", &object->readparam) ) {
+                        status = i2d_panic("failed to index categories");
+                    }
+                }
             }
 
             if(status)
@@ -92,6 +151,13 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     size_t i;
 
     object = *result;
+    i2d_deit(object->readparam, i2d_rbt_deit);
+    i2d_deit(object->gettimes, i2d_rbt_deit);
+    i2d_deit(object->mapflags, i2d_rbt_deit);
+    i2d_deit(object->locations, i2d_rbt_deit);
+    i2d_deit(object->classes, i2d_rbt_deit);
+    i2d_deit(object->races, i2d_rbt_deit);
+    i2d_deit(object->elements, i2d_rbt_deit);
     if(object->constants)
         for(i = 0; i < object->size; i++)
             i2d_constant_destroy(&object->constants[i]);
@@ -99,4 +165,8 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     i2d_free(object->constants);
     i2d_free(object);
     *result = NULL;
+}
+
+int i2d_constant_get_constant(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+    return i2d_rbt_search(constant_db->macros, key, (void **) result);
 }
