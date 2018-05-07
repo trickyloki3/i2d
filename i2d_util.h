@@ -19,6 +19,7 @@
 #define I2D_OK 0
 #define I2D_FAIL 1
 #define I2D_SIZE 4096
+#define I2D_STACK 64
 
 #define i2d_panic(format, ...) i2d_panic_print("%s (%s:%zu): " format ".\n", __FILE__, __func__, __LINE__, ## __VA_ARGS__)
 int i2d_panic_print(const char *, ...);
