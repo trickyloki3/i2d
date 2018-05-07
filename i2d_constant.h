@@ -36,5 +36,5 @@ typedef struct i2d_constant_db i2d_constant_db;
 
 int i2d_constant_db_init(i2d_constant_db **, json_t *);
 void i2d_constant_db_deit(i2d_constant_db **);
-int i2d_constant_get_constant(i2d_constant_db *, const char *, i2d_constant **);
+int i2d_constant_get_by_macro(i2d_constant_db *, const char *, i2d_constant **);
 #endif

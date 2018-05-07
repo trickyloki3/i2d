@@ -71,7 +71,7 @@ static int i2d_constant_db_index(i2d_constant_db * constant_db, json_t * json, c
                     length = json_string_length(value);
                     if(!length) {
                         status = i2d_panic("empty string object");
-                    } else if(i2d_constant_get_constant(constant_db, string, &constant)) {
+                    } else if(i2d_constant_get_by_macro(constant_db, string, &constant)) {
                         status = i2d_panic("failed to find constant -- %s", string);
                     } else if(i2d_rbt_insert(map, &constant->value, constant)) {
                         status = i2d_panic("failed to map constant object");
@@ -167,6 +167,6 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     *result = NULL;
 }
 
-int i2d_constant_get_constant(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_macro(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->macros, key, (void **) result);
 }
