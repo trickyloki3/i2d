@@ -1560,6 +1560,8 @@ int i2d_format_write(i2d_format * format, i2d_string_stack * stack, i2d_buffer *
 int i2d_script_init(i2d_script ** result, i2d_option * option) {
     int status = I2D_OK;
     i2d_script * object;
+    json_t * getiteminfo;
+    json_t * strcharinfo;
 
     if(i2d_is_invalid(result) || !option) {
         status = i2d_panic("invalid paramater");
@@ -1578,6 +1580,14 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to create parser object");
             } else if(i2d_constant_db_init(&object->constant_db, object->json)) {
                 status = i2d_panic("failed to create constant db object");
+            } else {
+                getiteminfo = json_object_get(object->json, "getiteminfo");
+                strcharinfo = json_object_get(object->json, "strcharinfo");
+                if(!getiteminfo || i2d_value_map_init(&object->getiteminfo, getiteminfo)) {
+                    status = i2d_panic("failed to load getiteminfo");
+                } else if(!strcharinfo || i2d_value_map_init(&object->strcharinfo, strcharinfo)) {
+                    status = i2d_panic("failed to load strcharinfo");
+                }
             }
 
             if(status)
@@ -1594,6 +1604,8 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->strcharinfo, i2d_value_map_deit);
+    i2d_deit(object->getiteminfo, i2d_value_map_deit);
     i2d_deit(object->constant_db, i2d_constant_db_deit);
     i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);

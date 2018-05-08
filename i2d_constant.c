@@ -158,10 +158,10 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     i2d_deit(object->classes, i2d_rbt_deit);
     i2d_deit(object->races, i2d_rbt_deit);
     i2d_deit(object->elements, i2d_rbt_deit);
+    i2d_deit(object->macros, i2d_rbt_deit);
     if(object->constants)
         for(i = 0; i < object->size; i++)
             i2d_constant_destroy(&object->constants[i]);
-    i2d_deit(object->macros, i2d_rbt_deit);
     i2d_free(object->constants);
     i2d_free(object);
     *result = NULL;

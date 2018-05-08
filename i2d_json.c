@@ -84,3 +84,62 @@ int i2d_object_get_list(json_t * json, size_t element, void ** result_list, size
 
     return status;
 }
+
+int i2d_value_map_init(i2d_value_map ** result, json_t * json) {
+    int status = I2D_OK;
+    i2d_value_map * object;
+
+    size_t i = 0;
+    const char * key;
+    json_t * value;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_rbt_init(&object->map, i2d_rbt_cmp_long)) {
+                status = i2d_panic("failed to create value map");
+            } else if(i2d_object_get_list(json, sizeof(*object->list), (void **) &object->list, &object->size)) {
+                status = i2d_panic("failed to create value array");
+            } else {
+                json_object_foreach(json, key, value) {
+                    if(i2d_strtol(&object->list[i].value, key, strlen(key), 10)) {
+                        status = i2d_panic("failed to convert value string");
+                    } else if(i2d_object_get_string(value, &object->list[i].name)) {
+                        status = i2d_panic("failed to copy value name");
+                    } else if(i2d_rbt_insert(object->map, &object->list[i].value, &object->list[i])) {
+                        status = i2d_panic("failed to map value object");
+                    } else {
+                        i++;
+                    }
+                }
+
+            }
+
+            if(status)
+                i2d_value_map_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_value_map_deit(i2d_value_map ** result) {
+    i2d_value_map * object;
+    size_t i;
+
+    object = *result;
+    if(object->list) {
+        for(i = 0; i < object->size; i++)
+            i2d_free(object->list[i].name.string);
+        i2d_free(object->list);
+    }
+    i2d_deit(object->map, i2d_rbt_deit);
+    i2d_free(object);
+    *result = NULL;
+}

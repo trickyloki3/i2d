@@ -272,6 +272,8 @@ struct i2d_script {
     i2d_lexer * lexer;
     i2d_parser * parser;
     i2d_constant_db * constant_db;
+    i2d_value_map * getiteminfo;
+    i2d_value_map * strcharinfo;
 };
 
 typedef struct i2d_script i2d_script;
