@@ -116,7 +116,6 @@ int i2d_value_map_init(i2d_value_map ** result, json_t * json) {
                         i++;
                     }
                 }
-
             }
 
             if(status)

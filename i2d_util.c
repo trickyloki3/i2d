@@ -1,5 +1,7 @@
 #include "i2d_util.h"
 
+static int i2d_string_stack_cmp(const void *, const void *);
+
 int i2d_panic_print(const char * format, ...) {
     va_list args;
     va_start(args, format);
@@ -242,6 +244,40 @@ int i2d_string_stack_get(i2d_string_stack * stack, i2d_string ** list, size_t * 
 
         *list = stack->list;
         *size = stack->top;
+    }
+
+    return status;
+}
+
+static int i2d_string_stack_cmp(const void * left, const void * right) {
+    return strcmp(((i2d_string *) left)->string, ((i2d_string *) right)->string);
+}
+
+int i2d_string_stack_get_sorted(i2d_string_stack * stack, i2d_string ** list, size_t * size) {
+    int status = I2D_OK;
+
+    status = i2d_string_stack_get(stack, list, size);
+    if(!status)
+        qsort(*list, *size, sizeof(**list), i2d_string_stack_cmp);
+
+    return status;
+}
+
+int i2d_string_stack_get_unique(i2d_string_stack * stack, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    size_t i;
+    size_t size;
+    i2d_string * list;
+
+    if(i2d_string_stack_get_sorted(stack, &list, &size)) {
+        status = i2d_panic("failed to get string list");
+    } else if(size > 0) {
+        if(i2d_buffer_printf(buffer, "%s", list[0].string))
+            status = i2d_panic("failed to write buffer");
+        for(i = 1; i < size; i++)
+            if( strcmp(list[i].string, list[i - 1].string) &&
+                i2d_buffer_printf(buffer, "%s", list[i].string) )
+                status = i2d_panic("failed to write buffer");
     }
 
     return status;
