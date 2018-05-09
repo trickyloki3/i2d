@@ -263,8 +263,22 @@ struct i2d_format {
 typedef struct i2d_format i2d_format;
 
 int i2d_format_create(i2d_format *, const char *, size_t);
+int i2d_format_create_json(i2d_format *, json_t *);
 void i2d_format_destroy(i2d_format *);
 int i2d_format_write(i2d_format *, i2d_string_stack *, i2d_buffer *);
+
+struct i2d_data {
+    long value;
+    i2d_string name;
+    i2d_format format;
+    i2d_range range;
+    i2d_string_stack types;
+};
+
+typedef struct i2d_data i2d_data;
+
+int i2d_data_init(i2d_data **, const char *, json_t *, i2d_constant_db *);
+void i2d_data_deit(i2d_data **);
 
 struct i2d_script {
     i2d_db * db;
