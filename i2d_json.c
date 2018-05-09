@@ -17,6 +17,41 @@ void i2d_json_destroy(json_t * json) {
         json_decref(json);
 }
 
+int i2d_object_get_string_stack(json_t * json, i2d_string_stack * result) {
+    int status = I2D_OK;
+    size_t size;
+
+    size_t index;
+    json_t * value;
+
+    i2d_string string;
+    i2d_zero(string);
+
+    size = json_array_size(json);
+    if(!size) {
+        status = i2d_panic("empty array");
+    } else if(i2d_string_stack_create(result, size)) {
+        status = I2D_FAIL;
+    } else {
+        json_array_foreach(json, index, value) {
+            if(i2d_object_get_string(value, &string)) {
+                status = i2d_panic("failed to get string object");
+            } else {
+                if(i2d_string_stack_push(result, string.string, string.length))
+                    status = i2d_panic("failed to push string stack");
+
+                i2d_free(string.string);
+            }
+            if(status)
+                break;
+        }
+        if(status)
+            i2d_string_stack_destroy(result);
+    }
+
+    return status;
+}
+
 int i2d_object_get_string(json_t * json, i2d_string * result) {
     int status = I2D_OK;
     const char * string;
