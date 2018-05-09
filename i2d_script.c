@@ -1515,6 +1515,7 @@ int i2d_format_create(i2d_format * result, const char * string, size_t length) {
 int i2d_format_create_json(i2d_format * result, json_t * json) {
     int status = I2D_OK;
     i2d_string format;
+    i2d_zero(format);
 
     if(i2d_object_get_string(json, &format)) {
         status = i2d_panic("failed to get string object");
@@ -1605,11 +1606,79 @@ void i2d_data_destroy(i2d_data * result) {
     i2d_string_destroy(&result->name);
 }
 
+int i2d_data_map_init(i2d_data_map ** result, enum i2d_data_map_type type, json_t * json, i2d_constant_db * constant_db) {
+    int status = I2D_OK;
+    i2d_data_map * object;
+    i2d_rbt_cmp cmp;
+
+    size_t i = 0;
+    const char * key;
+    json_t * value;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            cmp = (type == data_map_by_value) ? i2d_rbt_cmp_long :
+                  (type == data_map_by_name) ? i2d_rbt_cmp_str :
+                  NULL;
+
+            if(!cmp || i2d_rbt_init(&object->map, cmp)) {
+                status = i2d_panic("failed to create red black tree object");
+            } else if(i2d_object_get_list(json, sizeof(*object->list), (void **) &object->list, &object->size)) {
+                status = i2d_panic("failed to create data array");
+            } else {
+                json_object_foreach(json, key, value) {
+                    if(i2d_data_create(&object->list[i], key, value, constant_db)) {
+                        status = i2d_panic("failed to create data object");
+                    } else {
+                        if((type == data_map_by_value) ? i2d_rbt_insert(object->map, &object->list[i].value, &object->list[i]) :
+                           (type == data_map_by_name) ? i2d_rbt_insert(object->map, object->list[i].name.string, &object->list[i]) :
+                           1) {
+                            status = i2d_panic("failed to map data object");
+                        } else {
+                            i++;
+                        }
+                    }
+                }
+            }
+
+            if(status)
+                i2d_data_map_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_data_map_deit(i2d_data_map ** result) {
+    i2d_data_map * object;
+    size_t i;
+
+    object = *result;
+    if(object->list) {
+        for(i = 0; i < object->size; i++)
+            i2d_data_destroy(&object->list[i]);
+        i2d_free(object->list);
+    }
+    i2d_deit(object->map, i2d_rbt_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
 int i2d_script_init(i2d_script ** result, i2d_option * option) {
     int status = I2D_OK;
     i2d_script * object;
     json_t * getiteminfo;
     json_t * strcharinfo;
+    json_t * functions;
+    json_t * blocks;
+    json_t * bonus;
 
     if(i2d_is_invalid(result) || !option) {
         status = i2d_panic("invalid paramater");
@@ -1631,10 +1700,18 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
             } else {
                 getiteminfo = json_object_get(object->json, "getiteminfo");
                 strcharinfo = json_object_get(object->json, "strcharinfo");
+                functions = json_object_get(object->json, "functions");
+                blocks = json_object_get(object->json, "blocks");
+                if(blocks)
+                    bonus = json_object_get(blocks, "bonus");
                 if(!getiteminfo || i2d_value_map_init(&object->getiteminfo, getiteminfo)) {
                     status = i2d_panic("failed to load getiteminfo");
                 } else if(!strcharinfo || i2d_value_map_init(&object->strcharinfo, strcharinfo)) {
                     status = i2d_panic("failed to load strcharinfo");
+                } else if(!functions || i2d_data_map_init(&object->functions, data_map_by_name, functions, object->constant_db)) {
+                    status = i2d_panic("failed to load functions");
+                } else if(!bonus || i2d_data_map_init(&object->bonus, data_map_by_value, bonus, object->constant_db)) {
+                    status = i2d_panic("failed to load bonuses");
                 }
             }
 
@@ -1652,6 +1729,8 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->bonus, i2d_data_map_deit);
+    i2d_deit(object->functions, i2d_data_map_deit);
     i2d_deit(object->strcharinfo, i2d_value_map_deit);
     i2d_deit(object->getiteminfo, i2d_value_map_deit);
     i2d_deit(object->constant_db, i2d_constant_db_deit);

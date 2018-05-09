@@ -280,6 +280,22 @@ typedef struct i2d_data i2d_data;
 int i2d_data_create(i2d_data *, const char *, json_t *, i2d_constant_db *);
 void i2d_data_destroy(i2d_data *);
 
+enum i2d_data_map_type {
+    data_map_by_value = 1,
+    data_map_by_name
+};
+
+struct i2d_data_map {
+    i2d_rbt * map;
+    i2d_data * list;
+    size_t size;
+};
+
+typedef struct i2d_data_map i2d_data_map;
+
+int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_constant_db *);
+void i2d_data_map_deit(i2d_data_map **);
+
 struct i2d_script {
     i2d_db * db;
     json_t * json;
@@ -288,6 +304,8 @@ struct i2d_script {
     i2d_constant_db * constant_db;
     i2d_value_map * getiteminfo;
     i2d_value_map * strcharinfo;
+    i2d_data_map * functions;
+    i2d_data_map * bonus;
 };
 
 typedef struct i2d_script i2d_script;
