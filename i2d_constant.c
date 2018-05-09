@@ -167,6 +167,17 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     *result = NULL;
 }
 
+int i2d_constant_get_by_macro_value(i2d_constant_db * constant_db, const char * key, long * result) {
+    int status = I2D_OK;
+    i2d_constant * constant;
+
+    status = i2d_constant_get_by_macro(constant_db, key, &constant);
+    if(!status)
+        *result = constant->value;
+
+    return status;
+}
+
 int i2d_constant_get_by_macro(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->macros, key, (void **) result);
 }
