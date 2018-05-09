@@ -1572,58 +1572,37 @@ int i2d_format_write(i2d_format * format, i2d_string_stack * stack, i2d_buffer *
     return status;
 }
 
-int i2d_data_init(i2d_data ** result, const char * key, json_t * json, i2d_constant_db * constant_db) {
+int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_constant_db * constant_db) {
     int status = I2D_OK;
-    i2d_data * object;
     json_t * min;
     json_t * max;
     json_t * description;
     json_t * argument_type;
 
-    if(i2d_is_invalid(result)) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            min = json_object_get(json, "min");
-            max = json_object_get(json, "max");
-            description = json_object_get(json, "description");
-            argument_type = json_object_get(json, "argument_type");
+    min = json_object_get(json, "min");
+    max = json_object_get(json, "max");
+    description = json_object_get(json, "description");
+    argument_type = json_object_get(json, "argument_type");
+    i2d_constant_get_by_macro_value(constant_db, key, &result->value);
 
-            if(i2d_constant_get_by_macro_value(constant_db, key, &object->value)) {
-                status = i2d_panic("failed to search for constant -- %s", key);
-            } else if(i2d_string_create(&object->name, key, strlen(key))) {
-                status = i2d_panic("failed to copy name string");
-            } else if(description && i2d_format_create_json(&object->format, description)) {
-                status = i2d_panic("failed to create format object");
-            } else if(min && max && i2d_object_get_range(min, max, &object->range)) {
-                status = i2d_panic("failed to create range");
-            } else if(argument_type && i2d_object_get_string_stack(argument_type, &object->types)) {
-                status = i2d_panic("failed to create string stack");
-            }
-
-            if(status)
-                i2d_data_deit(&object);
-            else
-                *result = object;
-        }
+    if(i2d_string_create(&result->name, key, strlen(key))) {
+        status = i2d_panic("failed to copy name string");
+    } else if(description && i2d_format_create_json(&result->format, description)) {
+        status = i2d_panic("failed to create format object");
+    } else if(min && max && i2d_object_get_range(min, max, &result->range)) {
+        status = i2d_panic("failed to create range");
+    } else if(argument_type && i2d_object_get_string_stack(argument_type, &result->types)) {
+        status = i2d_panic("failed to create string stack");
     }
 
     return status;
 }
 
-void i2d_data_deit(i2d_data ** result) {
-    i2d_data * object;
-
-    object = *result;
-    i2d_string_stack_destroy(&object->types);
-    i2d_range_destroy(&object->range);
-    i2d_format_destroy(&object->format);
-    i2d_string_destroy(&object->name);
-    i2d_free(object);
-    *result = NULL;
+void i2d_data_destroy(i2d_data * result) {
+    i2d_string_stack_destroy(&result->types);
+    i2d_range_destroy(&result->range);
+    i2d_format_destroy(&result->format);
+    i2d_string_destroy(&result->name);
 }
 
 int i2d_script_init(i2d_script ** result, i2d_option * option) {

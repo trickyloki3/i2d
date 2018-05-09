@@ -277,8 +277,8 @@ struct i2d_data {
 
 typedef struct i2d_data i2d_data;
 
-int i2d_data_init(i2d_data **, const char *, json_t *, i2d_constant_db *);
-void i2d_data_deit(i2d_data **);
+int i2d_data_create(i2d_data *, const char *, json_t *, i2d_constant_db *);
+void i2d_data_destroy(i2d_data *);
 
 struct i2d_script {
     i2d_db * db;
