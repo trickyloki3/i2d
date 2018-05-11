@@ -167,8 +167,8 @@ void i2d_token_list_deit(i2d_token ** result) {
             i2d_token_remove(token);
             i2d_token_deit(&token);
         }
+        i2d_token_deit(&object);
     }
-    i2d_deit(object, i2d_token_deit);
     *result = NULL;
 }
 
@@ -1669,6 +1669,93 @@ void i2d_data_map_deit(i2d_data_map ** result) {
     i2d_deit(object->map, i2d_rbt_deit);
     i2d_free(object);
     *result = NULL;
+}
+
+int i2d_context_init(i2d_context ** result) {
+    int status = I2D_OK;
+    i2d_context * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if( i2d_rbt_init(&object->variables, i2d_rbt_cmp_str) ||
+                i2d_string_stack_create(&object->expression_stack, I2D_STACK) ||
+                i2d_string_stack_create(&object->predicate_stack, I2D_STACK) ||
+                i2d_buffer_create(&object->expression_buffer, I2D_SIZE) ||
+                i2d_buffer_create(&object->predicate_buffer, I2D_SIZE) ) {
+                status = i2d_panic("failed to create red black tree, string stack, and buffer objects");
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status)
+                i2d_context_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_context_deit(i2d_context ** result) {
+    i2d_context * object;
+
+    object = *result;
+    i2d_buffer_destroy(&object->predicate_buffer);
+    i2d_buffer_destroy(&object->expression_buffer);
+    i2d_string_stack_destroy(&object->predicate_stack);
+    i2d_string_stack_destroy(&object->expression_stack);
+    i2d_deit(object->variables, i2d_rbt_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_context_list_deit(i2d_context ** result) {
+    i2d_context * object;
+    i2d_context * context;
+
+    object = *result;
+    if(object) {
+        while(object != object->next) {
+            context = object->next;
+            i2d_context_remove(context);
+            i2d_context_deit(&context);
+        }
+        i2d_context_deit(&object);
+    }
+    *result = NULL;
+}
+
+void i2d_context_append(i2d_context * x, i2d_context * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_context_remove(i2d_context * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
+void i2d_context_reset(i2d_context * context) {
+    i2d_rbt_clear(context->variables);
+    i2d_context_reset_local(context);
+}
+
+void i2d_context_reset_local(i2d_context * context) {
+    i2d_string_stack_clear(&context->expression_stack);
+    i2d_string_stack_clear(&context->predicate_stack);
+    i2d_buffer_clear(&context->expression_buffer);
+    i2d_buffer_clear(&context->predicate_buffer);
 }
 
 int i2d_script_init(i2d_script ** result, i2d_option * option) {

@@ -296,6 +296,26 @@ typedef struct i2d_data_map i2d_data_map;
 int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_constant_db *);
 void i2d_data_map_deit(i2d_data_map **);
 
+struct i2d_context {
+    i2d_rbt * variables;
+    i2d_string_stack expression_stack;
+    i2d_string_stack predicate_stack;
+    i2d_buffer expression_buffer;
+    i2d_buffer predicate_buffer;
+    struct i2d_context * next;
+    struct i2d_context * prev;
+};
+
+typedef struct i2d_context i2d_context;
+
+int i2d_context_init(i2d_context **);
+void i2d_context_deit(i2d_context **);
+void i2d_context_list_deit(i2d_context **);
+void i2d_context_append(i2d_context *, i2d_context *);
+void i2d_context_remove(i2d_context *);
+void i2d_context_reset(i2d_context *);
+void i2d_context_reset_local(i2d_context *);
+
 struct i2d_script {
     i2d_db * db;
     json_t * json;
