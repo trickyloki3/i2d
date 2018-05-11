@@ -1854,6 +1854,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->strcharinfo, i2d_value_map_deit);
     i2d_deit(object->getiteminfo, i2d_value_map_deit);
     i2d_deit(object->constant_db, i2d_constant_db_deit);
+    i2d_deit(object->contexts, i2d_context_list_deit);
     i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);
     i2d_json_destroy(object->json);
@@ -1862,10 +1863,46 @@ void i2d_script_deit(i2d_script ** result) {
     *result = NULL;
 }
 
+int i2d_script_context_init(i2d_script * script, i2d_context ** result) {
+    int status = I2D_OK;
+
+    if(script->contexts) {
+        if(script->contexts == script->contexts->next) {
+            *result = script->contexts;
+            script->contexts = NULL;
+        } else {
+            *result = script->contexts->next;
+            i2d_context_remove(*result);
+        }
+    } else {
+        status = i2d_context_init(result);
+    }
+
+    return status;
+}
+
+int i2d_script_context_deit(i2d_script * script, i2d_context ** result) {
+    int status = I2D_OK;
+    i2d_context * context;
+
+    context = *result;
+    i2d_context_reset(context);
+    *result = NULL;
+
+    if(script->contexts) {
+        i2d_context_append(context, script->contexts);
+    } else {
+        script->contexts = context;
+    }
+
+    return status;
+}
+
 int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * target) {
     int status = I2D_OK;
     i2d_token * tokens = NULL;
     i2d_block * blocks = NULL;
+    i2d_context * context = NULL;
 
     if(!strcmp("{}", source->string)) {
         status = i2d_string_create(target, "", 0);
@@ -1873,8 +1910,11 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
         status = i2d_panic("failed to tokenize -- %s", source->string);
     } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
         status = i2d_panic("failed to parse -- %s", source->string);
+    } else if(i2d_script_context_init(script, &context)) {
+        status = i2d_panic("failed to create context object");
     } else {
 
+        i2d_script_context_deit(script, &context);
     }
 
     if(tokens)

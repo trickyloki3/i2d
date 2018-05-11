@@ -324,6 +324,7 @@ struct i2d_script {
     json_t * json;
     i2d_lexer * lexer;
     i2d_parser * parser;
+    i2d_context * contexts;
     i2d_constant_db * constant_db;
     i2d_value_map * getiteminfo;
     i2d_value_map * strcharinfo;
@@ -335,5 +336,7 @@ typedef struct i2d_script i2d_script;
 
 int i2d_script_init(i2d_script **, i2d_option *);
 void i2d_script_deit(i2d_script **);
+int i2d_script_context_init(i2d_script *, i2d_context **);
+int i2d_script_context_deit(i2d_script *, i2d_context **);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *);
 #endif
