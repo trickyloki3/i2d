@@ -120,6 +120,7 @@ struct i2d_node {
 
 typedef struct i2d_node i2d_node;
 
+int i2d_rbt_cmp_node(const void *, const void *);
 int i2d_node_init(i2d_node **, enum i2d_node_type, i2d_token *);
 void i2d_node_deit(i2d_node **);
 void i2d_node_list_deit(i2d_node **);
@@ -315,6 +316,8 @@ void i2d_context_append(i2d_context *, i2d_context *);
 void i2d_context_remove(i2d_context *);
 void i2d_context_reset(i2d_context *);
 void i2d_context_reset_local(i2d_context *);
+int i2d_context_add_variable(i2d_context *, i2d_node *);
+int i2d_context_get_variable(i2d_context *, i2d_node *, i2d_node **);
 
 struct i2d_script {
     i2d_db * db;

@@ -549,6 +549,17 @@ const char * i2d_node_string[] = {
     "binary"
 };
 
+int i2d_rbt_cmp_node(const void * left, const void * right) {
+    int status = I2D_OK;
+    i2d_string l;
+    i2d_string r;
+
+    if(!i2d_node_get_string((i2d_node *) left, &l) && !i2d_node_get_string((i2d_node *) right, &r))
+        status = strcasecmp(l.string, r.string);
+
+    return status;
+}
+
 int i2d_node_init(i2d_node ** result, enum i2d_node_type type, i2d_token * tokens) {
     int status = I2D_OK;
     i2d_node * object = NULL;
@@ -1682,7 +1693,7 @@ int i2d_context_init(i2d_context ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if( i2d_rbt_init(&object->variables, i2d_rbt_cmp_str) ||
+            if( i2d_rbt_init(&object->variables, i2d_rbt_cmp_node) ||
                 i2d_string_stack_create(&object->expression_stack, I2D_STACK) ||
                 i2d_string_stack_create(&object->predicate_stack, I2D_STACK) ||
                 i2d_buffer_create(&object->expression_buffer, I2D_SIZE) ||
@@ -1756,6 +1767,28 @@ void i2d_context_reset_local(i2d_context * context) {
     i2d_string_stack_clear(&context->predicate_stack);
     i2d_buffer_clear(&context->expression_buffer);
     i2d_buffer_clear(&context->predicate_buffer);
+}
+
+int i2d_context_add_variable(i2d_context * context, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_node * last;
+
+    if(I2D_VARIABLE != node->type) {
+        status = i2d_panic("invalid node type -- %d", node->type);
+    } else {
+        if(!i2d_rbt_search(context->variables, node, (void **) &last) &&
+            i2d_rbt_delete(context->variables, last) ) {
+            status = i2d_panic("failed to replace variable");
+        } else if(i2d_rbt_insert(context->variables, node, node)) {
+            status = i2d_panic("failed to insert variable");
+        }
+    }
+
+    return status;
+}
+
+int i2d_context_get_variable(i2d_context * context, i2d_node * key, i2d_node ** result) {
+    return i2d_rbt_search(context->variables, key, (void **) result);
 }
 
 int i2d_script_init(i2d_script ** result, i2d_option * option) {
