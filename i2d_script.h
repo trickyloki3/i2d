@@ -339,4 +339,10 @@ void i2d_script_deit(i2d_script **);
 int i2d_script_context_init(i2d_script *, i2d_context **);
 int i2d_script_context_deit(i2d_script *, i2d_context **);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *);
+int i2d_script_translate(i2d_script *, i2d_block *, i2d_context *);
+int i2d_script_statement(i2d_script *, i2d_block *, i2d_context *);
+int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_context *);
+int i2d_script_expression_variable(i2d_script *, i2d_node *, i2d_context *);
+int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
+int i2d_script_expression_binary(i2d_script *, i2d_node *, int, i2d_context *);
 #endif
