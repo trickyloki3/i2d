@@ -1991,7 +1991,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
                 status = i2d_script_expression_variable(script, node, context);
                 break;
             case I2D_FUNCTION:
-                /*status = i2d_script_expression_function(script, node);*/
+                status = i2d_script_expression_function(script, node, context);
                 break;
             case I2D_UNARY:
                 status = i2d_script_expression_unary(script, node, is_conditional);
@@ -2012,23 +2012,38 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_con
     int status = I2D_OK;
     i2d_node * variable;
     long number;
-    i2d_string literal;
-    i2d_zero(literal);
+    i2d_string name;
 
     if(!i2d_context_get_variable(context, node, &variable)) {
         if(i2d_node_copy(node, variable))
-            status = i2d_panic("failed to copy node object");
-    } else if(i2d_node_get_string(node, &literal)) {
+            status = i2d_panic("failed to copy variable");
+    } else if(i2d_node_get_string(node, &name)) {
         status = i2d_panic("failed to get variable string");
     } else {
-        if(isdigit(literal.string[0]) && !i2d_token_get_constant(node->tokens, &number)) {
+        if(isdigit(name.string[0]) && !i2d_token_get_constant(node->tokens, &number)) {
             node->type = I2D_NUMBER;
-        } else if(i2d_constant_get_by_macro_value(script->constant_db, literal.string, &number)) {
+        } else if(i2d_constant_get_by_macro_value(script->constant_db, name.string, &number)) {
             number = 0;
         }
 
         if(i2d_range_create_add(&node->range, number, number))
             status = i2d_panic("failed to create range object");
+    }
+
+    return status;
+}
+
+
+int i2d_script_expression_function(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_string name;
+
+    i2d_context_reset_local(context);
+
+    if(i2d_node_get_string(node, &name)) {
+        status = i2d_panic("failed to get function string");
+    } else {
+        status = i2d_panic("unsupported function -- %s", name.string);
     }
 
     return status;
@@ -2044,23 +2059,25 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
             case I2D_NOT:
                 if(is_conditional) {
                     if(i2d_range_not(&node->range, &node->right->range)) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(node->right->logic) {
-                        if(i2d_logic_not(&node->logic, node->right->logic))
-                            status = i2d_panic("failed to create logic object");
+                        status = i2d_panic("failed to not range object");
+                    } else if(node->right->logic && i2d_logic_not(&node->logic, node->right->logic)) {
+                        status = i2d_panic("failed to not logic object");
                     }
                 } else {
                     status = i2d_range_create_add(&node->range, 0, 1);
                 }
                 break;
             case I2D_BIT_NOT:
-                status = i2d_range_bitnot(&node->range, &node->right->range);
+                if(i2d_range_bitnot(&node->range, &node->right->range))
+                    status = i2d_panic("failed to bit not range object");
                 break;
             case I2D_ADD_UNARY:
-                status = i2d_node_copy(node, node->right);
+                if(i2d_node_copy(node, node->right))
+                    status = i2d_panic("failed to copy range object");
                 break;
             case I2D_SUBTRACT_UNARY:
-                status = i2d_range_negate(&node->range, &node->right->range);
+                if(i2d_range_negate(&node->range, &node->right->range))
+                    status = i2d_panic("failed to negate range object");
                 break;
             default:
                 status = i2d_panic("invalid node type -- %d", node->tokens->type);
@@ -2070,11 +2087,47 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
     return status;
 }
 
-int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional, i2d_context * context) {
+enum {
+    I2D_FLAG_ASSIGN = 0x1
+};
+
+int i2d_script_expression_binary_relational(i2d_node * node, int operator, int is_conditional) {
     int status = I2D_OK;
-    int is_assign = 0;
     i2d_string predicate;
     i2d_zero(predicate);
+
+    if(is_conditional) {
+        if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, operator)) {
+            status = i2d_panic("failed to compute range object");
+        } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
+            status = i2d_panic("failed to create logic object");
+        }
+    } else {
+        status = i2d_range_create_add(&node->range, 0, 1);
+    }
+
+    return status;
+}
+
+int i2d_script_expression_binary_logical(i2d_node * node, int operator, int is_conditional) {
+    int status = I2D_OK;
+
+    if(is_conditional) {
+        if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, operator)) {
+            status = i2d_panic("failed to compute range object");
+        } else if(node->left->logic && node->right->logic && i2d_logic_and(&node->logic, node->left->logic, node->right->logic)) {
+            status = i2d_panic("failed to create logic object");
+        }
+    } else {
+        status = i2d_range_create_add(&node->range, 0, 1);
+    }
+
+    return status;
+}
+
+int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional, i2d_context * context) {
+    int status = I2D_OK;
+    int flag = 0;
 
     if(!node->left || !node->left->range.list) {
         status = i2d_panic("binary operator missing left operand");
@@ -2083,161 +2136,117 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
     } else {
         switch(node->tokens->type) {
             case I2D_ADD_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_ADD:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '+');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '+'))
+                    status = i2d_panic("failed to add left and right operand");
                 break;
             case I2D_SUBTRACT_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_SUBTRACT:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '-');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '-'))
+                    status = i2d_panic("failed to subtract left and right operand");
                 break;
             case I2D_MULTIPLY_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_MULTIPLY:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '*');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '*'))
+                    status = i2d_panic("failed to multiply left and right operand");
                 break;
             case I2D_DIVIDE_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_DIVIDE:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '/');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '/'))
+                    status = i2d_panic("failed to divide left and right operand");
                 break;
             case I2D_MODULUS_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_MODULUS:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '%');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '%'))
+                    status = i2d_panic("failed to modulus left and right operand");
                 break;
             case I2D_COMMA:
-                status = i2d_node_copy(node, node->right);
+                if(i2d_node_copy(node, node->right))
+                    status = i2d_panic("failed to copy right operand");
                 break;
             case I2D_RIGHT_SHIFT_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_RIGHT_SHIFT:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '>' + '>' + 'b');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '>' + '>' + 'b'))
+                    status = i2d_panic("failed to right shift operand");
                 break;
             case I2D_LEFT_SHIFT_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_LEFT_SHIFT:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '<' + '<' + 'b');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '<' + '<' + 'b'))
+                    status = i2d_panic("failed to left shift operand");
                 break;
             case I2D_BIT_AND_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_BIT_AND:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '&');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '&'))
+                    status = i2d_panic("failed to bit and left and right operand");
                 break;
             case I2D_BIT_OR_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_BIT_OR:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '|');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '|'))
+                    status = i2d_panic("failed to bit or left and right operand");
                 break;
             case I2D_BIT_XOR_ASSIGN:
-                is_assign = 1;
+                flag |= I2D_FLAG_ASSIGN;
             case I2D_BIT_XOR:
-                status = i2d_range_compute(&node->range, &node->left->range, &node->right->range, '^' + 'b');
+                if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '^' + 'b'))
+                    status = i2d_panic("failed to bit xor left and right operand");
                 break;
             case I2D_GREATER:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '>')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_relational(node, '>', is_conditional))
+                    status = i2d_panic("failed to compute left is greater than right operand");
                 break;
             case I2D_GREATER_EQUAL:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '>' + '=')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_relational(node, '>' + '=', is_conditional))
+                    status = i2d_panic("failed to compute left is greater or equal than right operand");
                 break;
             case I2D_LESS:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '<')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_relational(node, '<', is_conditional))
+                    status = i2d_panic("failed to compute left is less than right operand");
                 break;
             case I2D_LESS_EQUAL:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '<' + '=')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_relational(node, '<' + '=', is_conditional))
+                    status = i2d_panic("failed to compute left is less or equal than right operand");
                 break;
             case I2D_EQUAL:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '=' + '=')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_relational(node, '=' + '=', is_conditional))
+                    status = i2d_panic("failed to compute left is equal to right operand");
                 break;
             case I2D_NOT_EQUAL:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '!' + '=')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_relational(node, '!' + '=', is_conditional))
+                    status = i2d_panic("failed to compute left is equal to right operand");
                 break;
             case I2D_AND:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '&' + '&')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(node->left->logic && node->right->logic && i2d_logic_and(&node->logic, node->left->logic, node->right->logic)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_logical(node, '&' + '&', is_conditional))
+                    status = i2d_panic("failed to compute left and right operand");
                 break;
             case I2D_OR:
-                if(is_conditional) {
-                    if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, '|' + '|')) {
-                        status = i2d_panic("failed to compute range object");
-                    } else if(node->left->logic && node->right->logic && i2d_logic_and(&node->logic, node->left->logic, node->right->logic)) {
-                        status = i2d_panic("failed to create logic object");
-                    }
-                } else {
-                    status = i2d_range_create_add(&node->range, 0, 1);
-                }
+                if(i2d_script_expression_binary_logical(node, '|' + '|', is_conditional))
+                    status = i2d_panic("failed to compute left or right operand");
                 break;
             case I2D_ASSIGN:
-                is_assign = 1;
-
-                status = i2d_node_copy(node, node->right);
+                if(i2d_node_copy(node, node->right)) {
+                    status = i2d_panic("failed to copy right range object");
+                } else {
+                    flag |= I2D_FLAG_ASSIGN;
+                }
                 break;
             default:
                 status = i2d_panic("invalid token type -- %d", node->tokens->type);
-                break;
         }
 
-        if(!status && is_assign) {
+        if(!status && (flag & I2D_FLAG_ASSIGN)) {
             if(i2d_node_copy(node->left, node)) {
-                status = i2d_panic("failed to copy range list object");
+                status = i2d_panic("failed to copy node to left node");
             } else if(i2d_context_add_variable(context, node->left)) {
-                status = i2d_panic("failed to map variable");
+                status = i2d_panic("failed to add variable to context");
             }
         }
     }
