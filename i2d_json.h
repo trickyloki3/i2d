@@ -32,5 +32,6 @@ typedef struct i2d_value_map i2d_value_map;
 
 int i2d_value_map_init(i2d_value_map **, json_t *);
 void i2d_value_map_deit(i2d_value_map **);
+int i2d_value_map_get(i2d_value_map *, long *, i2d_string *);
 
 #endif
