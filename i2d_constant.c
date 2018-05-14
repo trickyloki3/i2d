@@ -182,30 +182,30 @@ int i2d_constant_get_by_macro(i2d_constant_db * constant_db, const char * key, i
     return i2d_rbt_search(constant_db->macros, key, (void **) result);
 }
 
-int i2d_constant_get_by_element(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_element(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->elements, key, (void **) result);
 }
 
-int i2d_constant_get_by_race(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_race(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->races, key, (void **) result);
 }
 
-int i2d_constant_get_by_class(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_class(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->classes, key, (void **) result);
 }
 
-int i2d_constant_get_by_location(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_location(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->locations, key, (void **) result);
 }
 
-int i2d_constant_get_by_mapflag(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_mapflag(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->mapflags, key, (void **) result);
 }
 
-int i2d_constant_get_by_gettime(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_gettime(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->gettimes, key, (void **) result);
 }
 
-int i2d_constant_get_by_readparam(i2d_constant_db * constant_db, const char * key, i2d_constant ** result) {
+int i2d_constant_get_by_readparam(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->readparam, key, (void **) result);
 }
