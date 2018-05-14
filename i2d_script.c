@@ -34,6 +34,33 @@ i2d_handler function_list[] = {
     { {"getmapflag", 10}, i2d_handler_getmapflag }
 };
 
+static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_time(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_regen(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_splash(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_races(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_classes(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_percent100(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_context *);
+
+i2d_handler bonus_list[] = {
+    { {"time", 4}, i2d_bonus_handler_time },
+    { {"regen", 5}, i2d_bonus_handler_regen },
+    { {"splash", 6}, i2d_bonus_handler_splash },
+    { {"elements", 8}, i2d_bonus_handler_elements },
+    { {"races", 4}, i2d_bonus_handler_races },
+    { {"classes", 7}, i2d_bonus_handler_classes },
+    { {"integer", 7}, i2d_bonus_handler_integer },
+    { {"percent", 7}, i2d_bonus_handler_percent },
+    { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
+    { {"percent100", 14}, i2d_bonus_handler_percent100 },
+    { {"ignore", 6}, i2d_bonus_handler_ignore }
+};
+
 const char * i2d_token_string[] = {
     "token",
     "{",
@@ -1910,6 +1937,15 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                             if(i2d_rbt_insert(object->function_map, function_list[i].name.string, &function_list[i]))
                                 status = i2d_panic("failed to map function handler object");
                     }
+
+                    if(i2d_rbt_init(&object->bonus_map, i2d_rbt_cmp_str)) {
+                        status = i2d_panic("failed to create bonus map object");
+                    } else {
+                        size = i2d_size(bonus_list);
+                        for(i = 0; i < size && !status; i++)
+                            if(i2d_rbt_insert(object->bonus_map, bonus_list[i].name.string, &bonus_list[i]))
+                                status = i2d_panic("failed to map bonus handler object");
+                    }
                 }
             }
 
@@ -1927,6 +1963,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_deit(object->function_map, i2d_rbt_deit);
     i2d_deit(object->bonus, i2d_data_map_deit);
     i2d_deit(object->functions, i2d_data_map_deit);
@@ -2043,7 +2080,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_context * c
     if(block->statement) {
         switch(block->statement->type) {
             case I2D_BONUS:
-                /*status = i2d_script_bonus(script, block);*/
+                status = i2d_script_bonus(script, block, context);
                 break;
             default:
                 /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
@@ -2619,3 +2656,282 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_cont
     return status;
 }
 
+int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    long value;
+    i2d_data * data;
+
+    size_t i;
+    size_t size;
+    i2d_string * types;
+    i2d_handler * handler;
+
+    if(i2d_script_expression(script, block->nodes, 0, context)) {
+        status = i2d_panic("failed to evaluate expression");
+    } else if(i2d_node_get_arguments(block->nodes, arguments, 2, 0)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_node_get_constant(arguments[0], &value)) {
+        status = i2d_panic("failed to get bonus type");
+    } else if(i2d_data_map_get(script->bonus, &value, &data)) {
+        status = i2d_panic("failed to get bonus type data -- %ld", value);
+    } else {
+        if(i2d_string_stack_get(&data->types, &types, &size)) {
+            status = i2d_panic("failed to get argument type array");
+        } else if(!size) {
+            status = i2d_panic("empty argument type array");
+        } else {
+            for(i = 0; i < size && !status; i++) {
+                if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
+                    status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
+                } else {
+                    i2d_context_reset_local(context);
+
+                    status = handler->handler(script, arguments[i + 1], context);
+                }
+            }
+
+            if(!status)
+                if(i2d_format_write(&data->format, &context->expression_stack, &block->buffer))
+                    status = i2d_panic("failed to write bonus type description");
+        }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_string string;
+
+    /*
+     * to-do:
+     * get predicates
+     */
+
+    i2d_buffer_get(&context->expression_buffer, &string.string, &string.length);
+    if(i2d_string_stack_push(&context->expression_stack, string.string, string.length))
+        status = i2d_panic("failed to push string on stack");
+
+    return status;
+}
+
+static int i2d_bonus_handler_time(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    char * suffix = NULL;
+    long unit = 0;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    if (min / 86400000 > 0) {
+        suffix = "day";
+        unit = 86400000;
+    } else if (min / 3600000 > 0) {
+        suffix = "hour";
+        unit = 3600000;
+    } else if (min / 60000 > 0) {
+        suffix = "minute";
+        unit = 60000;
+    } else if (min / 1000 > 0) {
+        suffix = "second";
+        unit = 1000;
+    } else {
+        suffix = "millisecond";
+        unit = 1;
+    }
+
+    min /= unit;
+    max /= unit;
+
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%ld %s%s", min, suffix, min > 1 ? "s" : "") :
+        i2d_buffer_printf(&context->expression_buffer, "%ld ~ %ld %s%s", min, max, suffix, max > 1 ? "s" : "") ) {
+        status = i2d_panic("failed to write time range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_regen(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long constant;
+
+    if(i2d_node_get_constant(node, &constant)) {
+        status = i2d_panic("failed to get constant");
+    } else {
+        switch(constant) {
+            case 1: status = i2d_buffer_printf(&context->expression_buffer, "HP"); break;
+            case 2: status = i2d_buffer_printf(&context->expression_buffer, "SP"); break;
+            default: status = i2d_panic("unsupported regen value -- %ld", constant); break;
+        }
+        if(status) {
+            status = i2d_panic("failed to write regen");
+        } else if(i2d_bonus_handler_expression(script, node, context)) {
+            status = i2d_panic("failed to write expression");
+        }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_splash(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+    min = min * 2 + 1;
+    max = max * 2 + 1;
+
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%ld x %ld", min, min) :
+        i2d_buffer_printf(&context->expression_buffer, "%ld x %ld ~ %ld x %ld", min, min, max, max) ) {
+        status = i2d_panic("failed to write splash range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &value)) {
+        status = i2d_panic("failed to get element value");
+    } else if(i2d_constant_get_by_element(script->constant_db, &value, &constant)) {
+        status = i2d_panic("failed to get element -- %ld", value);
+    } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_races(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &value)) {
+        status = i2d_panic("failed to get race value");
+    } else if(i2d_constant_get_by_race(script->constant_db, &value, &constant)) {
+        status = i2d_panic("failed to get race -- %ld", value);
+    } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_classes(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &value)) {
+        status = i2d_panic("failed to get class value");
+    } else if(i2d_constant_get_by_class(script->constant_db, &value, &constant)) {
+        status = i2d_panic("failed to get class -- %ld", value);
+    } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%+ld", min) :
+        i2d_buffer_printf(&context->expression_buffer, "%+ld ~ %+ld", min, max) ) {
+        status = i2d_panic("failed to write integer range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_percent(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%%", min) :
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%% ~ %+ld%%", min, max) ) {
+        status = i2d_panic("failed to write percent range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_percent_invert(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    min *= -1;
+    max *= -1;
+
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%%", min) :
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%% ~ %+ld%%", max, min) ) {
+        status = i2d_panic("failed to write percent range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_percent100(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    min /= 100;
+    max /= 100;
+
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%%", min) :
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%% ~ %+ld%%", max, min) ) {
+        status = i2d_panic("failed to write percent range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_ignore(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_string string;
+
+    string.string = "ignore";
+    string.length = strlen(string.string);
+
+    if(i2d_string_stack_push(&context->expression_stack, string.string, string.length))
+        status = i2d_panic("failed to push string on stack");
+
+    return status;
+}

@@ -335,6 +335,7 @@ struct i2d_script {
     i2d_data_map * functions;
     i2d_data_map * bonus;
     i2d_rbt * function_map;
+    i2d_rbt * bonus_map;
 };
 
 typedef struct i2d_script i2d_script;
@@ -353,4 +354,5 @@ int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
 int i2d_script_expression_binary_relational(i2d_node *, int, int);
 int i2d_script_expression_binary_logical(i2d_node *, int, int);
 int i2d_script_expression_binary(i2d_script *, i2d_node *, int, i2d_context *);
+int i2d_script_bonus(i2d_script *, i2d_block *, i2d_context *);
 #endif
