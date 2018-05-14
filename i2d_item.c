@@ -187,6 +187,7 @@ void i2d_item_db_deit(i2d_item_db ** result) {
     i2d_item * item;
 
     object = *result;
+    i2d_deit(object->index_by_name, i2d_rbt_deit);
     i2d_deit(object->index_by_id, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
@@ -254,12 +255,14 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
     int status = I2D_OK;
     i2d_item * item = NULL;
 
-    if(i2d_rbt_init(&item_db->index_by_id, i2d_rbt_cmp_long)) {
+    if( i2d_rbt_init(&item_db->index_by_id, i2d_rbt_cmp_long) ||
+        i2d_rbt_init(&item_db->index_by_name, i2d_rbt_cmp_str) ) {
         status = i2d_panic("failed to create red black tree object");
     } else {
         item = item_db->list;
         do {
-            if(i2d_rbt_insert(item_db->index_by_id, &item->id, item))
+            if( i2d_rbt_insert(item_db->index_by_id, &item->id, item) ||
+                i2d_rbt_insert(item_db->index_by_name, item->name.string, item) )
                 status = i2d_panic("failed to index item by id -- %ld", item->id);
             item = item->next;
         } while(item != item_db->list && !status);
@@ -268,6 +271,10 @@ static int i2d_item_db_index(i2d_item_db * item_db) {
     return status;
 }
 
-int i2d_item_db_search_by_id(i2d_item_db * item_db, long item_id, i2d_item ** item) {
-    return i2d_rbt_search(item_db->index_by_id, &item_id, (void **) item);
+int i2d_item_db_search_by_id(i2d_item_db * item_db, long id, i2d_item ** item) {
+    return i2d_rbt_search(item_db->index_by_id, &id, (void **) item);
+}
+
+int i2d_item_db_search_by_name(i2d_item_db * item_db, const char * name, i2d_item ** item) {
+    return i2d_rbt_search(item_db->index_by_name, name, (void **) item);
 }
