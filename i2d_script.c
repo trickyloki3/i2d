@@ -1,5 +1,39 @@
 #include "i2d_script.h"
 
+struct i2d_handler {
+    i2d_string name;
+    int (*handler) (i2d_script *, i2d_node *, i2d_context *);
+};
+
+typedef struct i2d_handler i2d_handler;
+
+static int i2d_handler_general(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_readparam(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_getskilllv(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_isequipped(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_countitem(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_gettime(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_strcharinfo(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_getequipid(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_getiteminfo(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_getmapflag(i2d_script *, i2d_node *, i2d_context *);
+
+i2d_handler function_list[] = {
+    { {"getrefine", 9}, i2d_handler_general },
+    { {"readparam", 9}, i2d_handler_readparam },
+    { {"getskilllv", 10}, i2d_handler_getskilllv },
+    { {"isequipped", 10}, i2d_handler_isequipped },
+    { {"getpartnerid", 12}, i2d_handler_general },
+    { {"checkmadogear", 12}, i2d_handler_general },
+    { {"eaclass", 7}, i2d_handler_general },
+    { {"countitem", 9}, i2d_handler_countitem },
+    { {"gettime", 7}, i2d_handler_gettime },
+    { {"strcharinfo", 11}, i2d_handler_strcharinfo },
+    { {"getequipid", 10}, i2d_handler_getequipid },
+    { {"getiteminfo", 11}, i2d_handler_getiteminfo },
+    { {"getmapflag", 10}, i2d_handler_getmapflag }
+};
+
 const char * i2d_token_string[] = {
     "token",
     "{",
@@ -217,6 +251,16 @@ int i2d_token_get_string(i2d_token * token, i2d_string * result) {
     } else {
         i2d_buffer_get(&token->buffer, &result->string, &result->length);
     }
+
+    return status;
+}
+
+int i2d_token_set_string(i2d_token * token, i2d_string * string) {
+    int status = I2D_OK;
+
+    i2d_buffer_clear(&token->buffer);
+    if(i2d_buffer_printf(&token->buffer, "%s", string->string))
+        status = i2d_panic("failed to copy string");
 
     return status;
 }
@@ -671,36 +715,43 @@ int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t required, 
 
     if(!node) {
         status = i2d_panic("failed on empty argument list");
-    } else if(required > 0) {
-        size = 1;
-        iter = node;
-        while(I2D_COMMA == iter->tokens->type) {
-            iter = iter->left;
-            size++;
-        }
+    } else {
+        if(node->type == I2D_NODE)
+            node = node->left;
 
-        if(size < required) {
-            status = i2d_panic("failed on insufficient argument list");
-        } else if(required + optional < size) {
-            status = i2d_panic("failed on excessive argument list");
-        } else {
-            i = size - 1;
-            while(i > 0 && I2D_COMMA == node->tokens->type) {
-                nodes[i] = node->right;
-                node = node->left;
-                i--;
+        if(!node) {
+            status = i2d_panic("failed on empty argument list");
+        } else if(required > 0) {
+            size = 1;
+            iter = node;
+            while(I2D_COMMA == iter->tokens->type) {
+                iter = iter->left;
+                size++;
             }
 
-            if(i || !node) {
+            if(size < required) {
                 status = i2d_panic("failed on insufficient argument list");
-            } else if(I2D_COMMA == node->tokens->type) {
+            } else if(required + optional < size) {
                 status = i2d_panic("failed on excessive argument list");
             } else {
-                nodes[0] = node;
+                i = size - 1;
+                while(i > 0 && I2D_COMMA == node->tokens->type) {
+                    nodes[i] = node->right;
+                    node = node->left;
+                    i--;
+                }
+
+                if(i || !node) {
+                    status = i2d_panic("failed on insufficient argument list");
+                } else if(I2D_COMMA == node->tokens->type) {
+                    status = i2d_panic("failed on excessive argument list");
+                } else {
+                    nodes[0] = node;
+                }
             }
+        } else if(I2D_NODE != node->type || node->left || node->right) {
+            status = i2d_panic("failed on excessive argument list");
         }
-    } else if(I2D_NODE != node->type || node->left || node->right) {
-        status = i2d_panic("failed on excessive argument list");
     }
 
     return status;
@@ -717,6 +768,18 @@ int i2d_node_get_constant(i2d_node * node, long * result) {
         status = i2d_panic("failed on invalid range");
     } else {
         *result = min;
+    }
+
+    return status;
+}
+
+int i2d_node_set_constant(i2d_node * node, i2d_constant * constant) {
+    int status = I2D_OK;
+
+    if(i2d_token_set_string(node->tokens, &constant->name)) {
+        status = i2d_panic("failed to copy name");
+    } else if(i2d_range_copy(&node->range, &constant->range)) {
+        status = i2d_panic("failed to copy range");
     }
 
     return status;
@@ -1682,6 +1745,10 @@ void i2d_data_map_deit(i2d_data_map ** result) {
     *result = NULL;
 }
 
+int i2d_data_map_get(i2d_data_map * data_map, void * key, i2d_data ** result) {
+    return i2d_rbt_search(data_map->map, key, (void **) result);
+}
+
 int i2d_context_init(i2d_context ** result) {
     int status = I2D_OK;
     i2d_context * object;
@@ -1799,6 +1866,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
     json_t * functions;
     json_t * blocks;
     json_t * bonus;
+    size_t i;
+    size_t size;
 
     if(i2d_is_invalid(result) || !option) {
         status = i2d_panic("invalid paramater");
@@ -1832,6 +1901,15 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                     status = i2d_panic("failed to load functions");
                 } else if(!bonus || i2d_data_map_init(&object->bonus, data_map_by_value, bonus, object->constant_db)) {
                     status = i2d_panic("failed to load bonuses");
+                } else {
+                    if(i2d_rbt_init(&object->function_map, i2d_rbt_cmp_str)) {
+                        status = i2d_panic("failed to create function map object");
+                    } else {
+                        size = i2d_size(function_list);
+                        for(i = 0; i < size && !status; i++)
+                            if(i2d_rbt_insert(object->function_map, function_list[i].name.string, &function_list[i]))
+                                status = i2d_panic("failed to map function handler object");
+                    }
                 }
             }
 
@@ -1849,6 +1927,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->function_map, i2d_rbt_deit);
     i2d_deit(object->bonus, i2d_data_map_deit);
     i2d_deit(object->functions, i2d_data_map_deit);
     i2d_deit(object->strcharinfo, i2d_value_map_deit);
@@ -2037,13 +2116,16 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_con
 int i2d_script_expression_function(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
     i2d_string name;
+    i2d_handler * handler;
 
     i2d_context_reset_local(context);
 
     if(i2d_node_get_string(node, &name)) {
         status = i2d_panic("failed to get function string");
+    } else if(i2d_rbt_search(script->function_map, name.string, (void **) &handler)) {
+        status = i2d_panic("failed to get function handler -- %s", name.string);
     } else {
-        status = i2d_panic("unsupported function -- %s", name.string);
+        status = handler->handler(script, node, context);
     }
 
     return status;
@@ -2052,7 +2134,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node, i2d_con
 int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_conditional) {
     int status = I2D_OK;
 
-    if(!node->right || !node->right->range.list) {
+    if(!node->right) {
         status = i2d_panic("unary operator missing operand");
     } else {
         switch(node->tokens->type) {
@@ -2129,9 +2211,9 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
     int status = I2D_OK;
     int flag = 0;
 
-    if(!node->left || !node->left->range.list) {
+    if(!node->left) {
         status = i2d_panic("binary operator missing left operand");
-    } else if(!node->right || !node->right->range.list) {
+    } else if(!node->right) {
         status = i2d_panic("binary operator missing right operand");
     } else {
         switch(node->tokens->type) {
@@ -2253,3 +2335,287 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
 
     return status;
 }
+
+static int i2d_handler_general(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_string name;
+    i2d_data * data;
+
+    if(i2d_node_get_string(node, &name)) {
+        status = i2d_panic("failed to get function string");
+    } else if(i2d_data_map_get(script->functions, name.string, &data)) {
+        status = i2d_panic("failed to get function data -- %s", name.string);
+    } else {
+        i2d_buffer_clear(&node->tokens->buffer);
+
+        if(i2d_format_write(&data->format, &context->expression_stack, &node->tokens->buffer)) {
+            status = i2d_panic("failed to write function format");
+        } else if(i2d_range_copy(&node->range, &data->range)) {
+            status = i2d_panic("failed to copy function range");
+        }
+    }
+
+    return status;
+}
+
+static int i2d_handler_readparam(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
+        status = i2d_panic("failed to get readparam arguments");
+    } else if(i2d_node_get_constant(arguments[0], &value)) {
+        status = i2d_panic("failed to get paramater number");
+    } else if(i2d_constant_get_by_readparam(script->constant_db, &value, &constant)) {
+        status = i2d_panic("failed to get constant by paramater number -- %ld", value);
+    } else if(i2d_node_set_constant(node, constant)) {
+        status = i2d_panic("failed to write paramater");
+    }
+
+    return status;
+}
+
+static int i2d_handler_getskilllv(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments;
+    long value;
+    i2d_string name;
+    i2d_skill * skill;
+
+    if(i2d_node_get_arguments(node->left, &arguments, 1, 0)) {
+        status = i2d_panic("failed to get getskilllv arguments");
+    } else if(i2d_node_get_constant(arguments, &value)) {
+        status = i2d_panic("failed to get skill id");
+    } else if(i2d_skill_db_search_by_id(script->db->skill_db, value, &skill)) {
+        if(i2d_node_get_string(arguments, &name)) {
+            status = i2d_panic("failed to get skill string");
+        } else if(i2d_skill_db_search_by_macro(script->db->skill_db, name.string, &skill)) {
+            status = i2d_panic("failed to get skill by id and string -- %ld, %s", value, name.string);
+        }
+    }
+
+    if(!status) {
+        if(i2d_token_set_string(node->tokens, &skill->name)) {
+            status = i2d_panic("failed to write skill string");
+        } else if(i2d_range_create_add(&node->range, 0, skill->maxlv)) {
+            status = i2d_panic("failed to create skill range");
+        }
+    }
+
+    return status;
+}
+
+static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments[I2D_STACK];
+    size_t i;
+    size_t size;
+    long value;
+    i2d_item * item;
+    i2d_string string;
+
+    memset(arguments, 0, sizeof(arguments));
+    size = i2d_size(arguments);
+
+    if(i2d_node_get_arguments(node->left, arguments, 1, size - 1)) {
+        status = i2d_panic("failed to get arguments");
+    } else {
+        for(i = 0; i < size && arguments[i] && !status; i++) {
+            if(i2d_node_get_constant(arguments[i], &value)) {
+                status = i2d_panic("failed to get item id");
+            } else if(i2d_item_db_search_by_id(script->db->item_db, value, &item)) {
+                status = i2d_panic("failed to get item by id -- %ld", value);
+            } else {
+                if( i ?
+                    i2d_buffer_printf(&context->expression_buffer, ", %s", item->name.string) :
+                    i2d_buffer_printf(&context->expression_buffer, "%s", item->name.string) )
+                    status = i2d_panic("failed to write expression buffer");
+            }
+        }
+    }
+
+    if(!status) {
+        i2d_buffer_get(&context->expression_buffer, &string.string, &string.length);
+
+        if(i2d_string_stack_push(&context->expression_stack, string.string, string.length)) {
+            status = i2d_panic("failed to push item list");
+        } else {
+            status = i2d_handler_general(script, node, context);
+        }
+    }
+
+    return status;
+}
+
+static int i2d_handler_countitem(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments;
+    long value;
+    i2d_string name;
+    i2d_item * item;
+
+    if(i2d_node_get_arguments(node->left, &arguments, 1, 0)) {
+        status = i2d_panic("failed to get countitem arguments");
+    } else if(i2d_node_get_constant(arguments, &value)) {
+        status = i2d_panic("failed to get item id");
+    } else if(i2d_item_db_search_by_id(script->db->item_db, value, &item)) {
+        if(i2d_node_get_string(arguments, &name)) {
+            status = i2d_panic("failed to get item string");
+        } else if(i2d_item_db_search_by_name(script->db->item_db, name.string, &item)) {
+            status = i2d_panic("failed to get item by id and string -- %s (%ld)", name.string, value);
+        }
+    }
+
+    if(!status) {
+        if(i2d_string_stack_push(&context->expression_stack, item->name.string, item->name.length)) {
+            status = i2d_panic("failed to push item name");
+        } else {
+            status = i2d_handler_general(script, node, context);
+        }
+    }
+
+    return status;
+}
+
+static int i2d_handler_gettime(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments;
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_arguments(node->left, &arguments, 1, 0)) {
+        status = i2d_panic("failed to get gettime arguments");
+    } else if(i2d_node_get_constant(arguments, &value)) {
+        status = i2d_panic("failed to get tick type");
+    } else if(i2d_constant_get_by_gettime(script->constant_db, &value, &constant)) {
+        status = i2d_panic("failed to get constant tick type -- %ld", value);
+    } else if(i2d_node_set_constant(node, constant)) {
+        status = i2d_panic("failed to write tick type");
+    }
+
+    return status;
+}
+
+static int i2d_handler_strcharinfo(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    long value;
+    i2d_string string;
+
+    if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
+        status = i2d_panic("failed to get strcharinfo arguments");
+    } else if(i2d_node_get_constant(arguments[0], &value)) {
+        status = i2d_panic("failed to get type");
+    } else if(i2d_value_map_get(script->strcharinfo, &value, &string)) {
+        status = i2d_panic("failed to get strcharinfo by type -- %ld", value);
+    } else if(i2d_token_set_string(node->tokens, &string)) {
+        status = i2d_panic("failed to write strcharinfo string");
+    } else if(i2d_range_copy(&node->range, &arguments[0]->range)) {
+        status = i2d_panic("failed to copy strcharinfo range");
+    }
+
+    return status;
+}
+
+static int i2d_handler_getequipid(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
+        status = i2d_panic("failed to get getequipid arguments");
+    } else if(i2d_node_get_constant(arguments[0], &value)) {
+        status = i2d_panic("failed to get equipment slot");
+    } else if(i2d_constant_get_by_location(script->constant_db, &value, &constant)) {
+        status = i2d_panic("failed to get constant by equipment slot -- %ld", value);
+    } else if(i2d_node_set_constant(node, constant)) {
+        status = i2d_panic("failed to write equipment slot");
+    }
+
+    return status;
+}
+
+static int i2d_handler_getiteminfo(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    long value;
+    i2d_string string;
+    i2d_item * item;
+
+    if(i2d_node_get_arguments(node->left, arguments, i2d_size(arguments), 0)) {
+        status = i2d_panic("failed to get getiteminfo arguments");
+    } else {
+        if(I2D_FUNCTION == arguments[0]->type) {
+            if(i2d_node_get_string(arguments[0], &string)) {
+                status = i2d_panic("failed to get function string");
+            } else if(i2d_string_stack_push(&context->expression_stack, string.string, string.length)) {
+                status = i2d_panic("failed to push function string");
+            }
+        } else {
+            if(i2d_node_get_constant(arguments[0], &value)) {
+                status = i2d_panic("failed to get item id");
+            } else if(i2d_item_db_search_by_id(script->db->item_db, value, &item)) {
+                status = i2d_panic("failed to get item by id -- %ld", value);
+            } else if(i2d_string_stack_push(&context->expression_stack, item->name.string, item->name.length)) {
+                status = i2d_panic("failed to push function string");
+            }
+        }
+
+        if(!status) {
+            if(i2d_node_get_constant(arguments[1], &value)) {
+                status = i2d_panic("failed to get type");
+            } else if(i2d_value_map_get(script->getiteminfo, &value, &string)) {
+                status = i2d_panic("failed to get getiteminfo by type -- %ld", value);
+            } else if(i2d_string_stack_push(&context->expression_stack, string.string, string.length)) {
+                status = i2d_panic("failed to push getiteminfo string");
+            } else {
+                status = i2d_handler_general(script, node, context);
+            }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * arguments[3];
+    long value;
+    i2d_string string;
+    i2d_constant * constant;
+
+    if(i2d_node_get_arguments(node->left, arguments, 2, 1)) {
+        status = i2d_panic("failed to get getmapflag arguments");
+    } else {
+        if(I2D_FUNCTION == arguments[0]->type) {
+            if(i2d_node_get_string(arguments[0], &string)) {
+                status = i2d_panic("failed to get function string");
+            } else if(i2d_string_stack_push(&context->expression_stack, string.string, string.length)) {
+                status = i2d_panic("failed to push function string");
+            }
+        } else {
+            /*
+             * to-do:
+             * get map name
+             */
+        }
+
+        if(!status) {
+            if(i2d_node_get_constant(arguments[1], &value)) {
+                status = i2d_panic("failed to get map flag");
+            } else if(i2d_constant_get_by_mapflag(script->constant_db, &value, &constant)) {
+                status = i2d_panic("failed to get constant by map flag -- %ld", value);
+            } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+                status = i2d_panic("failed to push map flag string");
+            } else {
+                status = i2d_handler_general(script, node, context);
+            }
+        }
+    }
+
+    return status;
+}
+

@@ -86,7 +86,9 @@ void i2d_token_print(i2d_token *);
 int i2d_token_putc(i2d_token *, char);
 char i2d_token_getc(i2d_token *);
 int i2d_token_get_string(i2d_token *, i2d_string *);
+int i2d_token_set_string(i2d_token *, i2d_string *);
 int i2d_token_get_constant(i2d_token *, long *);
+
 
 struct i2d_lexer {
     i2d_token * cache;
@@ -130,6 +132,7 @@ void i2d_node_print(i2d_node *, int);
 int i2d_node_copy(i2d_node *, i2d_node *);
 int i2d_node_get_arguments(i2d_node *, i2d_node **, size_t, size_t);
 int i2d_node_get_constant(i2d_node *, long *);
+int i2d_node_set_constant(i2d_node *, i2d_constant *);
 int i2d_node_get_string(i2d_node *, i2d_string *);
 int i2d_node_get_predicate(i2d_node *, i2d_string *);
 
@@ -296,6 +299,7 @@ typedef struct i2d_data_map i2d_data_map;
 
 int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_constant_db *);
 void i2d_data_map_deit(i2d_data_map **);
+int i2d_data_map_get(i2d_data_map *, void *, i2d_data **);
 
 struct i2d_context {
     i2d_rbt * variables;
@@ -330,6 +334,7 @@ struct i2d_script {
     i2d_value_map * strcharinfo;
     i2d_data_map * functions;
     i2d_data_map * bonus;
+    i2d_rbt * function_map;
 };
 
 typedef struct i2d_script i2d_script;
