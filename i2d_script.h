@@ -135,6 +135,7 @@ int i2d_node_get_constant(i2d_node *, long *);
 int i2d_node_set_constant(i2d_node *, i2d_constant *);
 int i2d_node_get_string(i2d_node *, i2d_string *);
 int i2d_node_get_predicate(i2d_node *, i2d_string *);
+int i2d_node_get_predicate_all(i2d_node *, i2d_string_stack *);
 
 enum i2d_statement_type {
     I2D_STATEMENT_START,

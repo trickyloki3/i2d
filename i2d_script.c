@@ -833,6 +833,27 @@ int i2d_node_get_predicate(i2d_node * node, i2d_string * result) {
     return status;
 }
 
+int i2d_node_get_predicate_all(i2d_node * node, i2d_string_stack * stack) {
+    int status = I2D_OK;
+    i2d_string string;
+
+    if( I2D_VARIABLE == node->type ||
+        I2D_FUNCTION == node->type ) {
+        if(i2d_node_get_string(node, &string)) {
+            status = i2d_panic("failed to get node string");
+        } else if(i2d_string_stack_push(stack, string.string, string.length)) {
+            status = i2d_panic("failed to push node string");
+        }
+    } else {
+        if(node->left)
+            status = i2d_node_get_predicate_all(node->left, stack);
+        if(!status && node->right)
+            status = i2d_node_get_predicate_all(node->right, stack);
+    }
+
+    return status;
+}
+
 i2d_statement statements[] = {
     {I2D_BONUS, {"bonus", 5}},
     {I2D_BONUS2, {"bonus2", 6}},
@@ -2681,11 +2702,12 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
         } else if(!size) {
             status = i2d_panic("empty argument type array");
         } else {
+            i2d_string_stack_clear(&context->expression_stack);
             for(i = 0; i < size && !status; i++) {
                 if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
                     status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
                 } else {
-                    i2d_context_reset_local(context);
+                    i2d_buffer_clear(&context->expression_buffer);
 
                     status = handler->handler(script, arguments[i + 1], context);
                 }
@@ -2704,14 +2726,23 @@ static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2
     int status = I2D_OK;
     i2d_string string;
 
-    /*
-     * to-do:
-     * get predicates
-     */
+    i2d_string_stack_clear(&context->predicate_stack);
+    i2d_buffer_clear(&context->predicate_buffer);
 
-    i2d_buffer_get(&context->expression_buffer, &string.string, &string.length);
-    if(i2d_string_stack_push(&context->expression_stack, string.string, string.length))
-        status = i2d_panic("failed to push string on stack");
+    if( (node->left  && i2d_node_get_predicate_all(node->left,  &context->predicate_stack)) ||
+        (node->right && i2d_node_get_predicate_all(node->right, &context->predicate_stack)) ||
+        i2d_string_stack_get_unique(&context->predicate_stack, &context->predicate_buffer) ) {
+        status = i2d_panic("failed to get predicate list");
+    } else {
+        i2d_buffer_get(&context->predicate_buffer, &string.string, &string.length);
+        if(string.length && i2d_buffer_printf(&context->expression_buffer, " (%s)", string.string)) {
+            status = i2d_panic("failed to write predicates");
+        } else {
+            i2d_buffer_get(&context->expression_buffer, &string.string, &string.length);
+            if(i2d_string_stack_push(&context->expression_stack, string.string, string.length))
+                status = i2d_panic("failed to push string on stack");
+        }
+    }
 
     return status;
 }
@@ -2925,12 +2956,8 @@ static int i2d_bonus_handler_percent100(i2d_script * script, i2d_node * node, i2
 
 static int i2d_bonus_handler_ignore(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
-    i2d_string string;
 
-    string.string = "ignore";
-    string.length = strlen(string.string);
-
-    if(i2d_string_stack_push(&context->expression_stack, string.string, string.length))
+    if(i2d_string_stack_push(&context->expression_stack, "ignore", 6))
         status = i2d_panic("failed to push string on stack");
 
     return status;
