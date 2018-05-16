@@ -2101,7 +2101,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_context * c
     if(block->statement) {
         switch(block->statement->type) {
             case I2D_BONUS:
-                status = i2d_script_bonus(script, block, context);
+                status = i2d_script_bonus(script, block, context, script->bonus, 1);
                 break;
             default:
                 /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
@@ -2677,9 +2677,9 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_cont
     return status;
 }
 
-int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * context) {
+int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * context, i2d_data_map * bonus_map, int argc) {
     int status = I2D_OK;
-    i2d_node * arguments[2];
+    i2d_node * arguments[6];
     long value;
     i2d_data * data;
 
@@ -2688,19 +2688,23 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
     i2d_string * types;
     i2d_handler * handler;
 
-    if(i2d_script_expression(script, block->nodes, 0, context)) {
+    if(argc >= i2d_size(arguments)) {
+        status = i2d_panic("invalid paramaters");
+    } else if(i2d_script_expression(script, block->nodes, 0, context)) {
         status = i2d_panic("failed to evaluate expression");
-    } else if(i2d_node_get_arguments(block->nodes, arguments, 2, 0)) {
+    } else if(i2d_node_get_arguments(block->nodes, arguments, 1 + argc, 0)) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
         status = i2d_panic("failed to get bonus type");
-    } else if(i2d_data_map_get(script->bonus, &value, &data)) {
+    } else if(i2d_data_map_get(bonus_map, &value, &data)) {
         status = i2d_panic("failed to get bonus type data -- %ld", value);
     } else {
         if(i2d_string_stack_get(&data->types, &types, &size)) {
             status = i2d_panic("failed to get argument type array");
         } else if(!size) {
             status = i2d_panic("empty argument type array");
+        } else if(size != argc) {
+            status = i2d_panic("mismatch argument type array size and argument count");
         } else {
             i2d_string_stack_clear(&context->expression_stack);
             for(i = 0; i < size && !status; i++) {
