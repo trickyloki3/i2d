@@ -1914,6 +1914,7 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
     json_t * functions;
     json_t * blocks;
     json_t * bonus;
+    json_t * bonus2;
     size_t i;
     size_t size;
 
@@ -1939,8 +1940,10 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 strcharinfo = json_object_get(object->json, "strcharinfo");
                 functions = json_object_get(object->json, "functions");
                 blocks = json_object_get(object->json, "blocks");
-                if(blocks)
+                if(blocks) {
                     bonus = json_object_get(blocks, "bonus");
+                    bonus2 = json_object_get(blocks, "bonus2");
+                }
                 if(!getiteminfo || i2d_value_map_init(&object->getiteminfo, getiteminfo)) {
                     status = i2d_panic("failed to load getiteminfo");
                 } else if(!strcharinfo || i2d_value_map_init(&object->strcharinfo, strcharinfo)) {
@@ -1948,6 +1951,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 } else if(!functions || i2d_data_map_init(&object->functions, data_map_by_name, functions, object->constant_db)) {
                     status = i2d_panic("failed to load functions");
                 } else if(!bonus || i2d_data_map_init(&object->bonus, data_map_by_value, bonus, object->constant_db)) {
+                    status = i2d_panic("failed to load bonuses");
+                } else if(!bonus2 || i2d_data_map_init(&object->bonus2, data_map_by_value, bonus2, object->constant_db)) {
                     status = i2d_panic("failed to load bonuses");
                 } else {
                     if(i2d_rbt_init(&object->function_map, i2d_rbt_cmp_str)) {
@@ -1986,6 +1991,7 @@ void i2d_script_deit(i2d_script ** result) {
     object = *result;
     i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_deit(object->function_map, i2d_rbt_deit);
+    i2d_deit(object->bonus2, i2d_data_map_deit);
     i2d_deit(object->bonus, i2d_data_map_deit);
     i2d_deit(object->functions, i2d_data_map_deit);
     i2d_deit(object->strcharinfo, i2d_value_map_deit);
@@ -2102,6 +2108,9 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_context * c
         switch(block->statement->type) {
             case I2D_BONUS:
                 status = i2d_script_bonus(script, block, context, script->bonus, 1);
+                break;
+            case I2D_BONUS2:
+                status = i2d_script_bonus(script, block, context, script->bonus2, 2);
                 break;
             default:
                 /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
