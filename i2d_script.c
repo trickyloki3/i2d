@@ -46,6 +46,7 @@ static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent100(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_size(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -58,7 +59,8 @@ i2d_handler bonus_list[] = {
     { {"percent", 7}, i2d_bonus_handler_percent },
     { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
     { {"percent100", 14}, i2d_bonus_handler_percent100 },
-    { {"ignore", 6}, i2d_bonus_handler_ignore }
+    { {"ignore", 6}, i2d_bonus_handler_ignore },
+    { {"size", 4}, i2d_bonus_handler_size }
 };
 
 const char * i2d_token_string[] = {
@@ -2972,6 +2974,22 @@ static int i2d_bonus_handler_ignore(i2d_script * script, i2d_node * node, i2d_co
 
     if(i2d_string_stack_push(&context->expression_stack, "ignore", 6))
         status = i2d_panic("failed to push string on stack");
+
+    return status;
+}
+
+static int i2d_bonus_handler_size(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &value)) {
+        status = i2d_panic("failed to get size value");
+    } else if(i2d_constant_get_by_size(script->constant_db, &value, &constant)) {
+        status = i2d_panic("failed to get size -- %ld", value);
+    } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
 
     return status;
 }
