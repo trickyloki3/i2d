@@ -46,7 +46,7 @@ static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent100(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_context *);
-static int i2d_bonus_handler_size(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_sizes(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -60,7 +60,7 @@ i2d_handler bonus_list[] = {
     { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
     { {"percent100", 14}, i2d_bonus_handler_percent100 },
     { {"ignore", 6}, i2d_bonus_handler_ignore },
-    { {"size", 4}, i2d_bonus_handler_size }
+    { {"sizes", 4}, i2d_bonus_handler_sizes }
 };
 
 const char * i2d_token_string[] = {
@@ -2978,7 +2978,7 @@ static int i2d_bonus_handler_ignore(i2d_script * script, i2d_node * node, i2d_co
     return status;
 }
 
-static int i2d_bonus_handler_size(i2d_script * script, i2d_node * node, i2d_context * context) {
+static int i2d_bonus_handler_sizes(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
