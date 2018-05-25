@@ -2730,9 +2730,15 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
                 }
             }
 
-            if(!status)
-                if(i2d_format_write(&data->format, &context->expression_stack, &block->buffer))
+            if(!status) {
+                if(i2d_format_write(&data->format, &context->expression_stack, &block->buffer)) {
                     status = i2d_panic("failed to write bonus type description");
+                } else {
+#if i2d_debug
+                    i2d_panic("%s", block->buffer.buffer);
+#endif
+                }
+            }
         }
     }
 
