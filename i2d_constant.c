@@ -131,7 +131,8 @@ int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
                         i2d_constant_db_index(object, json, "mapflags", &object->mapflags) ||
                         i2d_constant_db_index(object, json, "gettimes", &object->gettimes) ||
                         i2d_constant_db_index(object, json, "readparam", &object->readparam) ||
-                        i2d_constant_db_index(object, json, "sizes", &object->sizes) ) {
+                        i2d_constant_db_index(object, json, "sizes", &object->sizes) ||
+                        i2d_constant_db_index(object, json, "jobs", &object->jobs) ) {
                         status = i2d_panic("failed to index categories");
                     }
                 }
@@ -152,6 +153,7 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     size_t i;
 
     object = *result;
+    i2d_deit(object->jobs, i2d_rbt_deit);
     i2d_deit(object->sizes, i2d_rbt_deit);
     i2d_deit(object->readparam, i2d_rbt_deit);
     i2d_deit(object->gettimes, i2d_rbt_deit);
@@ -214,4 +216,8 @@ int i2d_constant_get_by_readparam(i2d_constant_db * constant_db, const long * ke
 
 int i2d_constant_get_by_size(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->sizes, key, (void **) result);
+}
+
+int i2d_constant_get_by_job(i2d_constant_db * constant_db, const long * key, i2d_constant ** result) {
+    return i2d_rbt_search(constant_db->jobs, key, (void **) result);
 }
