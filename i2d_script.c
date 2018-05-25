@@ -47,6 +47,7 @@ static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_contex
 static int i2d_bonus_handler_percent100(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_sizes(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_skill(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -60,7 +61,8 @@ i2d_handler bonus_list[] = {
     { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
     { {"percent100", 14}, i2d_bonus_handler_percent100 },
     { {"ignore", 6}, i2d_bonus_handler_ignore },
-    { {"sizes", 4}, i2d_bonus_handler_sizes }
+    { {"sizes", 4}, i2d_bonus_handler_sizes },
+    { {"skill", 5}, i2d_bonus_handler_skill }
 };
 
 const char * i2d_token_string[] = {
@@ -2449,19 +2451,19 @@ static int i2d_handler_readparam(i2d_script * script, i2d_node * node, i2d_conte
 static int i2d_handler_getskilllv(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
     i2d_node * arguments;
-    long value;
+    long id;
     i2d_string name;
     i2d_skill * skill;
 
     if(i2d_node_get_arguments(node->left, &arguments, 1, 0)) {
         status = i2d_panic("failed to get getskilllv arguments");
-    } else if(i2d_node_get_constant(arguments, &value)) {
+    } else if(i2d_node_get_constant(arguments, &id)) {
         status = i2d_panic("failed to get skill id");
-    } else if(i2d_skill_db_search_by_id(script->db->skill_db, value, &skill)) {
+    } else if(i2d_skill_db_search_by_id(script->db->skill_db, id, &skill)) {
         if(i2d_node_get_string(arguments, &name)) {
             status = i2d_panic("failed to get skill string");
         } else if(i2d_skill_db_search_by_macro(script->db->skill_db, name.string, &skill)) {
-            status = i2d_panic("failed to get skill by id and string -- %ld, %s", value, name.string);
+            status = i2d_panic("failed to get skill by id and name -- %ld %s", id, name.string);
         }
     }
 
@@ -2481,7 +2483,7 @@ static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_cont
     i2d_node * arguments[I2D_STACK];
     size_t i;
     size_t size;
-    long value;
+    long id;
     i2d_item * item;
     i2d_string string;
 
@@ -2492,10 +2494,10 @@ static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_cont
         status = i2d_panic("failed to get arguments");
     } else {
         for(i = 0; i < size && arguments[i] && !status; i++) {
-            if(i2d_node_get_constant(arguments[i], &value)) {
+            if(i2d_node_get_constant(arguments[i], &id)) {
                 status = i2d_panic("failed to get item id");
-            } else if(i2d_item_db_search_by_id(script->db->item_db, value, &item)) {
-                status = i2d_panic("failed to get item by id -- %ld", value);
+            } else if(i2d_item_db_search_by_id(script->db->item_db, id, &item)) {
+                status = i2d_panic("failed to get item by id -- %ld", id);
             } else {
                 if( i ?
                     i2d_buffer_printf(&context->expression_buffer, ", %s", item->name.string) :
@@ -2521,19 +2523,19 @@ static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_cont
 static int i2d_handler_countitem(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
     i2d_node * arguments;
-    long value;
+    long id;
     i2d_string name;
     i2d_item * item;
 
     if(i2d_node_get_arguments(node->left, &arguments, 1, 0)) {
         status = i2d_panic("failed to get countitem arguments");
-    } else if(i2d_node_get_constant(arguments, &value)) {
+    } else if(i2d_node_get_constant(arguments, &id)) {
         status = i2d_panic("failed to get item id");
-    } else if(i2d_item_db_search_by_id(script->db->item_db, value, &item)) {
+    } else if(i2d_item_db_search_by_id(script->db->item_db, id, &item)) {
         if(i2d_node_get_string(arguments, &name)) {
             status = i2d_panic("failed to get item string");
         } else if(i2d_item_db_search_by_name(script->db->item_db, name.string, &item)) {
-            status = i2d_panic("failed to get item by id and string -- %s (%ld)", name.string, value);
+            status = i2d_panic("failed to get item by id and string -- %ld %s", id, name.string);
         }
     }
 
@@ -2990,6 +2992,28 @@ static int i2d_bonus_handler_sizes(i2d_script * script, i2d_node * node, i2d_con
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
+
+    return status;
+}
+
+static int i2d_bonus_handler_skill(i2d_script * script, i2d_node * node, i2d_context * context)  {
+    int status = I2D_OK;
+    long id;
+    i2d_string name;
+    i2d_skill * skill = NULL;
+
+    if(i2d_node_get_constant(node, &id)) {
+        status = i2d_panic("failed to get skill id");
+    } else if(i2d_skill_db_search_by_id(script->db->skill_db, id, &skill)) {
+        if(i2d_node_get_string(node, &name)) {
+            status = i2d_panic("failed to get skill name");
+        } else if(i2d_skill_db_search_by_macro(script->db->skill_db, name.string, &skill)) {
+            status = i2d_panic("failed to get skill by id and name -- %ld %s", id, name.string);
+        }
+    }
+
+    if(!status && i2d_string_stack_push(&context->expression_stack, skill->name.string, skill->name.length))
+        status = i2d_panic("failed to push string on stack");
 
     return status;
 }
