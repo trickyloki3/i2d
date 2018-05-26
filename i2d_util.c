@@ -95,16 +95,22 @@ int i2d_buffer_putc(i2d_buffer * result, char character) {
 
 int i2d_buffer_printf(i2d_buffer * result, const char * format, ...) {
     int status = I2D_OK;
-
     va_list vl;
+
+    va_start(vl, format);
+    status = i2d_buffer_vprintf(result, format, vl);
+    va_end(vl);
+    return status;
+}
+
+int i2d_buffer_vprintf(i2d_buffer * result, const char * format, va_list vl) {
+    int status = I2D_OK;
     va_list vl_copy;
 
     int length;
     char * string;
 
-    va_start(vl, format);
     va_copy(vl_copy, vl);
-
     length = vsnprintf(NULL, 0, format, vl);
     if(0 > length) {
         status = i2d_panic("invalid print format specification");
@@ -120,7 +126,6 @@ int i2d_buffer_printf(i2d_buffer * result, const char * format, ...) {
     }
 
     va_end(vl_copy);
-    va_end(vl);
     return status;
 }
 

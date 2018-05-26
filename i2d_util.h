@@ -54,6 +54,7 @@ int i2d_buffer_adapt(i2d_buffer *, size_t);
 void i2d_buffer_clear(i2d_buffer *);
 int i2d_buffer_putc(i2d_buffer *, char);
 int i2d_buffer_printf(i2d_buffer *, const char *, ...);
+int i2d_buffer_vprintf(i2d_buffer *, const char *, va_list);
 int i2d_buffer_memcpy(i2d_buffer *, const char *, size_t);
 void i2d_buffer_get(i2d_buffer *, char **, size_t *);
 
