@@ -48,6 +48,7 @@ static int i2d_bonus_handler_percent100(i2d_script *, i2d_node *, i2d_context *)
 static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_sizes(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_skill(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_mob(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -62,7 +63,8 @@ i2d_handler bonus_list[] = {
     { {"percent100", 14}, i2d_bonus_handler_percent100 },
     { {"ignore", 6}, i2d_bonus_handler_ignore },
     { {"sizes", 4}, i2d_bonus_handler_sizes },
-    { {"skill", 5}, i2d_bonus_handler_skill }
+    { {"skill", 5}, i2d_bonus_handler_skill },
+    { {"mob", 3}, i2d_bonus_handler_mob }
 };
 
 const char * i2d_token_string[] = {
@@ -3002,7 +3004,7 @@ static int i2d_bonus_handler_sizes(i2d_script * script, i2d_node * node, i2d_con
     return status;
 }
 
-static int i2d_bonus_handler_skill(i2d_script * script, i2d_node * node, i2d_context * context)  {
+static int i2d_bonus_handler_skill(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
     long id;
     i2d_string name;
@@ -3020,6 +3022,27 @@ static int i2d_bonus_handler_skill(i2d_script * script, i2d_node * node, i2d_con
 
     if(!status && i2d_string_stack_push(&context->expression_stack, skill->name.string, skill->name.length))
         status = i2d_panic("failed to push string on stack");
+
+    return status;
+}
+
+static int i2d_bonus_handler_mob(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long id;
+    i2d_mob * mob;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &id)) {
+        status = i2d_panic("failed to get mob or job id");
+    } else if(i2d_mob_db_search_by_id(script->db->mob_db, id, &mob)) {
+        if(i2d_constant_get_by_job(script->constant_db, &id, &constant)) {
+            status = i2d_panic("failed to get mob or job by id -- %ld", id);
+        } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+            status = i2d_panic("failed to push string on stack");
+        }
+    } else if(i2d_string_stack_push(&context->expression_stack, mob->kro.string, mob->kro.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
 
     return status;
 }
