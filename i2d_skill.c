@@ -157,7 +157,7 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
                     case 14: status = i2d_skill_parse_list(&skill->blow_count, &skill->blow_count_size, anchor, extent); break;
                     case 15: status = i2d_strtol(&skill->inf3, anchor, extent, 16); break;
                     case 16: status = i2d_string_create(&skill->macro, anchor, extent); break;
-                    default: status = i2d_panic("skill has too many columns"); break;
+                    default: status = i2d_panic("row has too many columns"); break;
                 }
                 field++;
             }
@@ -168,7 +168,7 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
 
     if(!status) {
         if(17 != field) {
-            status = i2d_panic("skill is missing columns");
+            status = i2d_panic("row is missing columns");
         } else if(&string[i] < anchor) {
             status = i2d_panic("line overflow");
         } else {
