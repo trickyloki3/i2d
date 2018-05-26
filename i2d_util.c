@@ -29,6 +29,29 @@ void i2d_string_destroy(i2d_string * result) {
     free(result->string);
 }
 
+int i2d_string_vprintf(i2d_string * result, const char * format, ...) {
+    int status = I2D_OK;
+    va_list vl;
+    i2d_buffer buffer;
+    i2d_string output;
+
+    va_start(vl, format);
+    if(i2d_buffer_create(&buffer, I2D_SIZE_SMALL)) {
+        status = i2d_panic("failed to create buffer object");
+    } else {
+        if(i2d_buffer_vprintf(&buffer, format, vl)) {
+            status = i2d_panic("failed to write buffer object");
+        } else {
+            i2d_buffer_get(&buffer, &output.string, &output.length);
+            status = i2d_string_create(result, output.string, output.length);
+        }
+        i2d_buffer_destroy(&buffer);
+    }
+
+    va_end(vl);
+    return status;
+}
+
 int i2d_buffer_create(i2d_buffer * result, size_t length) {
     int status = I2D_OK;
 

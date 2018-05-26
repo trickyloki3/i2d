@@ -48,20 +48,14 @@ void i2d_db_deit(i2d_db ** result) {
 static int i2d_db_load_item_db(i2d_db * db, i2d_string * source_path) {
     int status = I2D_OK;
     const char * type;
-    i2d_buffer buffer;
     i2d_string path;
 
     type = db->type == i2d_pre_renewal ? "pre-re" : "re";
-    if(i2d_buffer_create(&buffer, I2D_SIZE)) {
-        status = i2d_panic("failed to create buffer object");
+    if(i2d_string_vprintf(&path, "%s/db/%s/item_db.txt", source_path->string, type)) {
+        status = i2d_panic("failed to write item db path");
     } else {
-        if(i2d_buffer_printf(&buffer, "%s/db/%s/item_db.txt", source_path->string, type)) {
-            status = i2d_panic("failed to write item db path");
-        } else {
-            i2d_buffer_get(&buffer, &path.string, &path.length);
-            status = i2d_item_db_init(&db->item_db, &path);
-        }
-        i2d_buffer_destroy(&buffer);
+        status = i2d_item_db_init(&db->item_db, &path);
+        i2d_free(path.string);
     }
 
     return status;
@@ -70,20 +64,14 @@ static int i2d_db_load_item_db(i2d_db * db, i2d_string * source_path) {
 static int i2d_db_load_skill_db(i2d_db * db, i2d_string * source_path) {
     int status = I2D_OK;
     const char * type;
-    i2d_buffer buffer;
     i2d_string path;
 
     type = db->type == i2d_pre_renewal ? "pre-re" : "re";
-    if(i2d_buffer_create(&buffer, I2D_SIZE)) {
-        status = i2d_panic("failed to create buffer object");
+    if(i2d_string_vprintf(&path, "%s/db/%s/skill_db.txt", source_path->string, type)) {
+        status = i2d_panic("failed to write skill db path");
     } else {
-        if(i2d_buffer_printf(&buffer, "%s/db/%s/skill_db.txt", source_path->string, type)) {
-            status = i2d_panic("failed to write skill db path");
-        } else {
-            i2d_buffer_get(&buffer, &path.string, &path.length);
-            status = i2d_skill_db_init(&db->skill_db, &path);
-        }
-        i2d_buffer_destroy(&buffer);
+        status = i2d_skill_db_init(&db->skill_db, &path);
+        i2d_free(path.string);
     }
 
     return status;
@@ -92,20 +80,14 @@ static int i2d_db_load_skill_db(i2d_db * db, i2d_string * source_path) {
 static int i2d_db_load_mob_db(i2d_db * db, i2d_string * source_path) {
     int status = I2D_OK;
     const char * type;
-    i2d_buffer buffer;
     i2d_string path;
 
     type = db->type == i2d_pre_renewal ? "pre-re" : "re";
-    if(i2d_buffer_create(&buffer, I2D_SIZE)) {
-        status = i2d_panic("failed to create buffer object");
+    if(i2d_string_vprintf(&path, "%s/db/%s/mob_db.txt", source_path->string, type)) {
+        status = i2d_panic("failed to write mob db path");
     } else {
-        if(i2d_buffer_printf(&buffer, "%s/db/%s/mob_db.txt", source_path->string, type)) {
-            status = i2d_panic("failed to write mob db path");
-        } else {
-            i2d_buffer_get(&buffer, &path.string, &path.length);
-            status = i2d_mob_db_init(&db->mob_db, &path);
-        }
-        i2d_buffer_destroy(&buffer);
+        status = i2d_mob_db_init(&db->mob_db, &path);
+        i2d_free(path.string);
     }
 
     return status;

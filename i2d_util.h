@@ -19,6 +19,7 @@
 #define I2D_OK 0
 #define I2D_FAIL 1
 #define I2D_SIZE 4096
+#define I2D_SIZE_SMALL 64
 #define I2D_STACK 64
 
 #define i2d_panic(format, ...) i2d_panic_print("%s (%s:%zu): " format ".\n", __FILE__, __func__, __LINE__, ## __VA_ARGS__)
@@ -39,6 +40,7 @@ typedef struct i2d_string i2d_string;
 
 int i2d_string_create(i2d_string *, const char *, size_t);
 void i2d_string_destroy(i2d_string *);
+int i2d_string_vprintf(i2d_string *, const char *, ...);
 
 struct i2d_buffer {
     char * buffer;
