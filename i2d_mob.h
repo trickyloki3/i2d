@@ -56,10 +56,12 @@ void i2d_mob_remove(i2d_mob *);
 struct i2d_mob_db {
     i2d_mob * list;
     size_t size;
+    i2d_rbt * index_by_id;
 };
 
 typedef struct i2d_mob_db i2d_mob_db;
 
 int i2d_mob_db_init(i2d_mob_db **, i2d_string *);
 void i2d_mob_db_deit(i2d_mob_db **);
+int i2d_mob_db_search_by_id(i2d_mob_db *, long, i2d_mob **);
 #endif

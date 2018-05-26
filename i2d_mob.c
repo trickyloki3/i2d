@@ -3,6 +3,7 @@
 static int i2d_mob_parse(i2d_mob *, char *, size_t);
 static int i2d_mob_db_load(i2d_mob_db *, i2d_string *);
 static int i2d_mob_db_parse(char *, size_t, void *);
+static int i2d_mob_db_index(i2d_mob_db *);
 
 int i2d_mob_init(i2d_mob ** result, char * string, size_t length) {
     int status = I2D_OK;
@@ -175,8 +176,11 @@ int i2d_mob_db_init(i2d_mob_db ** result, i2d_string * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_mob_db_load(object, path))
+            if(i2d_mob_db_load(object, path)) {
                 status = i2d_panic("failed to load mob db");
+            } else if(i2d_mob_db_index(object)) {
+                status = i2d_panic("failed to index mob db");
+            }
 
             if(status)
                 i2d_mob_db_deit(&object);
@@ -193,6 +197,7 @@ void i2d_mob_db_deit(i2d_mob_db ** result) {
     i2d_mob * mob;
 
     object = *result;
+    i2d_deit(object->index_by_id, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
             mob = object->list->next;
@@ -253,4 +258,26 @@ static int i2d_mob_db_parse(char * string, size_t length, void * data) {
     }
 
     return status;
+}
+
+static int i2d_mob_db_index(i2d_mob_db * mob_db) {
+    int status = I2D_OK;
+    i2d_mob * mob = NULL;
+
+    if(i2d_rbt_init(&mob_db->index_by_id, i2d_rbt_cmp_long)) {
+        status = i2d_panic("failed to create red black tree object");
+    } else {
+        mob = mob_db->list;
+        do {
+            if(i2d_rbt_insert(mob_db->index_by_id, &mob->id, mob))
+                status = i2d_panic("failed to index mob by id -- %ld", mob->id);
+            mob = mob->next;
+        } while(mob != mob_db->list && !status);
+    }
+
+    return status;
+}
+
+int i2d_mob_db_search_by_id(i2d_mob_db * mob_db, long id, i2d_mob ** mob) {
+    return i2d_rbt_search(mob_db->index_by_id, &id, (void **) mob);
 }
