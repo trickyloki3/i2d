@@ -49,6 +49,7 @@ static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_sizes(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_skill(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_mob(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_effects(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -64,7 +65,8 @@ i2d_handler bonus_list[] = {
     { {"ignore", 6}, i2d_bonus_handler_ignore },
     { {"sizes", 4}, i2d_bonus_handler_sizes },
     { {"skill", 5}, i2d_bonus_handler_skill },
-    { {"mob", 3}, i2d_bonus_handler_mob }
+    { {"mob", 3}, i2d_bonus_handler_mob },
+    { {"effects", 7}, i2d_bonus_handler_effects }
 };
 
 const char * i2d_token_string[] = {
@@ -3041,6 +3043,22 @@ static int i2d_bonus_handler_mob(i2d_script * script, i2d_node * node, i2d_conte
             status = i2d_panic("failed to push string on stack");
         }
     } else if(i2d_string_stack_push(&context->expression_stack, mob->kro.string, mob->kro.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_effects(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &value)) {
+        status = i2d_panic("failed to get effect value");
+    } else if(i2d_constant_get_by_effect(script->constant_db, value, &constant)) {
+        status = i2d_panic("failed to get effect -- %ld", value);
+    } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
