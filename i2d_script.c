@@ -2441,7 +2441,7 @@ static int i2d_handler_readparam(i2d_script * script, i2d_node * node, i2d_conte
         status = i2d_panic("failed to get readparam arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
         status = i2d_panic("failed to get paramater number");
-    } else if(i2d_constant_get_by_readparam(script->constant_db, &value, &constant)) {
+    } else if(i2d_constant_get_by_readparam(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get constant by paramater number -- %ld", value);
     } else if(i2d_node_set_constant(node, constant)) {
         status = i2d_panic("failed to write paramater");
@@ -2562,7 +2562,7 @@ static int i2d_handler_gettime(i2d_script * script, i2d_node * node, i2d_context
         status = i2d_panic("failed to get gettime arguments");
     } else if(i2d_node_get_constant(arguments, &value)) {
         status = i2d_panic("failed to get tick type");
-    } else if(i2d_constant_get_by_gettime(script->constant_db, &value, &constant)) {
+    } else if(i2d_constant_get_by_gettime(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get constant tick type -- %ld", value);
     } else if(i2d_node_set_constant(node, constant)) {
         status = i2d_panic("failed to write tick type");
@@ -2602,7 +2602,7 @@ static int i2d_handler_getequipid(i2d_script * script, i2d_node * node, i2d_cont
         status = i2d_panic("failed to get getequipid arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
         status = i2d_panic("failed to get equipment slot");
-    } else if(i2d_constant_get_by_location(script->constant_db, &value, &constant)) {
+    } else if(i2d_constant_get_by_location(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get constant by equipment slot -- %ld", value);
     } else if(i2d_node_set_constant(node, constant)) {
         status = i2d_panic("failed to write equipment slot");
@@ -2679,7 +2679,7 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_cont
         if(!status) {
             if(i2d_node_get_constant(arguments[1], &value)) {
                 status = i2d_panic("failed to get map flag");
-            } else if(i2d_constant_get_by_mapflag(script->constant_db, &value, &constant)) {
+            } else if(i2d_constant_get_by_mapflag(script->constant_db, value, &constant)) {
                 status = i2d_panic("failed to get constant by map flag -- %ld", value);
             } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
                 status = i2d_panic("failed to push map flag string");
@@ -2862,7 +2862,7 @@ static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_
 
     if(i2d_node_get_constant(node, &value)) {
         status = i2d_panic("failed to get element value");
-    } else if(i2d_constant_get_by_element(script->constant_db, &value, &constant)) {
+    } else if(i2d_constant_get_by_element(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get element -- %ld", value);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
@@ -2878,7 +2878,7 @@ static int i2d_bonus_handler_races(i2d_script * script, i2d_node * node, i2d_con
 
     if(i2d_node_get_constant(node, &value)) {
         status = i2d_panic("failed to get race value");
-    } else if(i2d_constant_get_by_race(script->constant_db, &value, &constant)) {
+    } else if(i2d_constant_get_by_race(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get race -- %ld", value);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
@@ -2894,7 +2894,7 @@ static int i2d_bonus_handler_classes(i2d_script * script, i2d_node * node, i2d_c
 
     if(i2d_node_get_constant(node, &value)) {
         status = i2d_panic("failed to get class value");
-    } else if(i2d_constant_get_by_class(script->constant_db, &value, &constant)) {
+    } else if(i2d_constant_get_by_class(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get class -- %ld", value);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
@@ -2995,7 +2995,7 @@ static int i2d_bonus_handler_sizes(i2d_script * script, i2d_node * node, i2d_con
 
     if(i2d_node_get_constant(node, &value)) {
         status = i2d_panic("failed to get size value");
-    } else if(i2d_constant_get_by_size(script->constant_db, &value, &constant)) {
+    } else if(i2d_constant_get_by_size(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get size -- %ld", value);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
@@ -3035,7 +3035,7 @@ static int i2d_bonus_handler_mob(i2d_script * script, i2d_node * node, i2d_conte
     if(i2d_node_get_constant(node, &id)) {
         status = i2d_panic("failed to get mob or job id");
     } else if(i2d_mob_db_search_by_id(script->db->mob_db, id, &mob)) {
-        if(i2d_constant_get_by_job(script->constant_db, &id, &constant)) {
+        if(i2d_constant_get_by_job(script->constant_db, id, &constant)) {
             status = i2d_panic("failed to get mob or job by id -- %ld", id);
         } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
             status = i2d_panic("failed to push string on stack");
