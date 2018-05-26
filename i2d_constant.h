@@ -32,6 +32,7 @@ struct i2d_constant_db {
     i2d_rbt * readparam;
     i2d_rbt * sizes;
     i2d_rbt * jobs;
+    i2d_rbt * effects;
 };
 
 typedef struct i2d_constant_db i2d_constant_db;
@@ -49,4 +50,5 @@ int i2d_constant_get_by_gettime(i2d_constant_db *, const long *, i2d_constant **
 int i2d_constant_get_by_readparam(i2d_constant_db *, const long *, i2d_constant **);
 int i2d_constant_get_by_size(i2d_constant_db *, const long *, i2d_constant **);
 int i2d_constant_get_by_job(i2d_constant_db *, const long *, i2d_constant **);
+int i2d_constant_get_by_effect(i2d_constant_db *, const long *, i2d_constant **);
 #endif
