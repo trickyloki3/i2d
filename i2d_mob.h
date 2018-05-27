@@ -64,4 +64,29 @@ typedef struct i2d_mob_db i2d_mob_db;
 int i2d_mob_db_init(i2d_mob_db **, i2d_string *);
 void i2d_mob_db_deit(i2d_mob_db **);
 int i2d_mob_db_search_by_id(i2d_mob_db *, long, i2d_mob **);
+
+struct i2d_mob_race {
+    i2d_string macro;
+    long * list;
+    size_t size;
+    struct i2d_mob_race * next;
+    struct i2d_mob_race * prev;
+};
+
+typedef struct i2d_mob_race i2d_mob_race;
+
+int i2d_mob_race_init(i2d_mob_race **, char *, size_t);
+void i2d_mob_race_deit(i2d_mob_race **);
+void i2d_mob_race_append(i2d_mob_race *, i2d_mob_race *);
+void i2d_mob_race_remove(i2d_mob_race *);
+
+struct i2d_mob_race_db {
+    i2d_mob_race * list;
+    size_t size;
+};
+
+typedef struct i2d_mob_race_db i2d_mob_race_db;
+
+int i2d_mob_race_db_init(i2d_mob_race_db **, i2d_string *);
+void i2d_mob_race_db_deit(i2d_mob_race_db **);
 #endif

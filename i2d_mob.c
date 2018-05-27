@@ -4,6 +4,9 @@ static int i2d_mob_parse(i2d_mob *, char *, size_t);
 static int i2d_mob_db_load(i2d_mob_db *, i2d_string *);
 static int i2d_mob_db_parse(char *, size_t, void *);
 static int i2d_mob_db_index(i2d_mob_db *);
+static int i2d_mob_race_parse(i2d_mob_race *, char *, size_t);
+static int i2d_mob_race_db_load(i2d_mob_race_db *, i2d_string *);
+static int i2d_mob_race_db_parse(char *, size_t, void *);
 
 int i2d_mob_init(i2d_mob ** result, char * string, size_t length) {
     int status = I2D_OK;
@@ -280,4 +283,210 @@ static int i2d_mob_db_index(i2d_mob_db * mob_db) {
 
 int i2d_mob_db_search_by_id(i2d_mob_db * mob_db, long id, i2d_mob ** mob) {
     return i2d_rbt_search(mob_db->index_by_id, &id, (void **) mob);
+}
+
+int i2d_mob_race_init(i2d_mob_race ** result, char * string, size_t length) {
+    int status = I2D_OK;
+    i2d_mob_race * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_mob_race_parse(object, string, length)) {
+                status = i2d_panic("failed to load mob race -- %s", string);
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status)
+                i2d_mob_race_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_mob_race_deit(i2d_mob_race ** result) {
+    i2d_mob_race * object;
+
+    object = *result;
+    i2d_free(object->list);
+    i2d_string_destroy(&object->macro);
+    i2d_free(object);
+    *result = NULL;
+}
+
+static int i2d_mob_race_parse(i2d_mob_race * mob_race, char * string, size_t length) {
+    int status = I2D_OK;
+
+    size_t i;
+    int quote_depth = 0;
+    int brace_depth = 0;
+
+    char * anchor;
+    size_t extent;
+
+    int field = 0;
+
+    for(i = 0; i < length && !status; i++)
+        if(',' == string[i])
+            mob_race->size++;
+
+    if(!mob_race->size) {
+        status = i2d_panic("empty mob id list");
+    } else {
+        mob_race->list = calloc(mob_race->size, sizeof(*mob_race->list));
+        if(!mob_race->list) {
+            status = i2d_panic("out of memory");
+        } else {
+            anchor = string;
+            for(i = 0; i < length && !status; i++) {
+                if('"' == string[i]) {
+                    quote_depth = !quote_depth;
+                } else if('{' == string[i]) {
+                    brace_depth++;
+                } else if('}' == string[i]) {
+                    brace_depth--;
+                } else if(',' == string[i] && !quote_depth && !brace_depth) {
+                    string[i] = 0;
+
+                    if((string + i) < anchor) {
+                        status = i2d_panic("line overflow");
+                    } else {
+                        extent = (size_t) (string + i) - (size_t) anchor;
+                        switch(field) {
+                            case 0: status = i2d_string_create(&mob_race->macro, anchor, extent); break;
+                            default: status = i2d_strtol(&mob_race->list[field - 1], anchor, extent, 10); break;
+                        }
+                        field++;
+                    }
+
+                    anchor = (string + i + 1);
+                }
+            }
+
+            if(!status) {
+                if(&string[i] < anchor) {
+                    status = i2d_panic("line overflow");
+                } else {
+                    extent = (size_t) &string[i] - (size_t) anchor;
+                    status = i2d_strtol(&mob_race->list[field - 1], anchor, extent, 10);
+                }
+            }
+        }
+    }
+
+    return status;
+}
+
+void i2d_mob_race_append(i2d_mob_race * x, i2d_mob_race * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_mob_race_remove(i2d_mob_race * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
+int i2d_mob_race_db_init(i2d_mob_race_db ** result, i2d_string * path) {
+    int status = I2D_OK;
+    i2d_mob_race_db * object;
+
+    if(i2d_is_invalid(result) || !path) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_mob_race_db_load(object, path))
+                status = i2d_panic("failed to load mob race db");
+
+            if(status)
+                i2d_mob_race_db_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_mob_race_db_deit(i2d_mob_race_db ** result) {
+    i2d_mob_race_db * object;
+    i2d_mob_race * mob_race;
+
+    object = *result;
+    if(object->list) {
+        while(object->list != object->list->next) {
+            mob_race = object->list->next;
+            i2d_mob_race_remove(mob_race);
+            i2d_mob_race_deit(&mob_race);
+        }
+        i2d_mob_race_deit(&object->list);
+    }
+    i2d_free(object);
+    *result = NULL;
+}
+
+static int i2d_mob_race_db_load(i2d_mob_race_db * mob_race_db, i2d_string * path) {
+    int status = I2D_OK;
+
+    int fd;
+    i2d_buffer buffer;
+    int result;
+
+    fd = open(path->string, O_RDONLY);
+    if(0 > fd) {
+        status = i2d_panic("failed to open mob race db -- %s", path->string);
+    } else {
+        if(i2d_buffer_create(&buffer, I2D_SIZE * 2)) {
+            status = i2d_panic("failed to create buffer object");
+        } else {
+            result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+            while(0 < result && !status) {
+                if(i2d_by_line(&buffer, i2d_mob_race_db_parse, mob_race_db))
+                    status = i2d_panic("failed to parse buffer");
+                result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+            }
+            if(!status && buffer.offset && i2d_by_line(&buffer, i2d_mob_race_db_parse, mob_race_db))
+                status = i2d_panic("failed to parse buffer");
+            i2d_buffer_destroy(&buffer);
+        }
+        close(fd);
+    }
+
+    return status;
+}
+
+static int i2d_mob_race_db_parse(char * string, size_t length, void * data) {
+    int status = I2D_OK;
+    i2d_mob_race_db * mob_db_race = data;
+    i2d_mob_race * mob_race = NULL;
+
+    if(i2d_mob_race_init(&mob_race, string, length)) {
+        status = i2d_panic("failed to create mob race object");
+    } else {
+        if(!mob_db_race->list) {
+            mob_db_race->list = mob_race;
+        } else {
+            i2d_mob_race_append(mob_race, mob_db_race->list);
+        }
+
+        mob_db_race->size++;
+    }
+
+    return status;
 }

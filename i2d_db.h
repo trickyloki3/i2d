@@ -15,6 +15,7 @@ struct i2d_db {
     i2d_item_db * item_db;
     i2d_skill_db * skill_db;
     i2d_mob_db * mob_db;
+    i2d_mob_race_db * mob_race_db;
 };
 
 typedef struct i2d_db i2d_db;
