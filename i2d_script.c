@@ -50,6 +50,7 @@ static int i2d_bonus_handler_sizes(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_skill(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_mob(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_effects(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_mob_race(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -66,7 +67,8 @@ i2d_handler bonus_list[] = {
     { {"sizes", 4}, i2d_bonus_handler_sizes },
     { {"skill", 5}, i2d_bonus_handler_skill },
     { {"mob", 3}, i2d_bonus_handler_mob },
-    { {"effects", 7}, i2d_bonus_handler_effects }
+    { {"effects", 7}, i2d_bonus_handler_effects },
+    { {"mob_race", 7}, i2d_bonus_handler_mob_race }
 };
 
 const char * i2d_token_string[] = {
@@ -3058,6 +3060,25 @@ static int i2d_bonus_handler_effects(i2d_script * script, i2d_node * node, i2d_c
         status = i2d_panic("failed to get effect value");
     } else if(i2d_constant_get_by_effect(script->constant_db, value, &constant)) {
         status = i2d_panic("failed to get effect -- %ld", value);
+    } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_mob_race(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_string macro;
+    i2d_mob_race * mob_race;
+    i2d_constant * constant;
+
+    if(i2d_node_get_string(node, &macro)) {
+        status = i2d_panic("failed to get macro");
+    } else if(i2d_mob_race_db_search_by_macro(script->db->mob_race_db, macro.string, &mob_race)) {
+        status = i2d_panic("failed to get mob race by macro -- %s", macro.string);
+    } else if(i2d_constant_get_by_macro(script->constant_db, macro.string, &constant)) {
+        status = i2d_panic("failed to get mob race by macro -- %s", macro.string);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
