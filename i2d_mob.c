@@ -7,6 +7,7 @@ static int i2d_mob_db_index(i2d_mob_db *);
 static int i2d_mob_race_parse(i2d_mob_race *, char *, size_t);
 static int i2d_mob_race_db_load(i2d_mob_race_db *, i2d_string *);
 static int i2d_mob_race_db_parse(char *, size_t, void *);
+static int i2d_mob_race_db_index(i2d_mob_race_db *);
 
 int i2d_mob_init(i2d_mob ** result, char * string, size_t length) {
     int status = I2D_OK;
@@ -411,8 +412,11 @@ int i2d_mob_race_db_init(i2d_mob_race_db ** result, i2d_string * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_mob_race_db_load(object, path))
+            if(i2d_mob_race_db_load(object, path)) {
                 status = i2d_panic("failed to load mob race db");
+            } else if(i2d_mob_race_db_index(object)) {
+                status = i2d_panic("failed to index mob race db");
+            }
 
             if(status)
                 i2d_mob_race_db_deit(&object);
@@ -429,6 +433,7 @@ void i2d_mob_race_db_deit(i2d_mob_race_db ** result) {
     i2d_mob_race * mob_race;
 
     object = *result;
+    i2d_deit(object->index_by_macro, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
             mob_race = object->list->next;
@@ -489,4 +494,26 @@ static int i2d_mob_race_db_parse(char * string, size_t length, void * data) {
     }
 
     return status;
+}
+
+static int i2d_mob_race_db_index(i2d_mob_race_db * mob_race_db) {
+    int status = I2D_OK;
+    i2d_mob_race * mob_race = NULL;
+
+    if(i2d_rbt_init(&mob_race_db->index_by_macro, i2d_rbt_cmp_str)) {
+        status = i2d_panic("failed to create red black tree object");
+    } else {
+        mob_race = mob_race_db->list;
+        do {
+            if(i2d_rbt_insert(mob_race_db->index_by_macro, mob_race->macro.string, mob_race))
+                status = i2d_panic("failed to index mob race by macro -- %s", mob_race->macro.string);
+            mob_race = mob_race->next;
+        } while(mob_race != mob_race_db->list && !status);
+    }
+
+    return status;
+}
+
+int i2d_mob_race_db_search_by_macro(i2d_mob_race_db * mob_race_db, const char * key, i2d_mob_race ** mob_race) {
+    return i2d_rbt_search(mob_race_db->index_by_macro, key, (void **) mob_race);
 }

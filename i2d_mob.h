@@ -83,10 +83,12 @@ void i2d_mob_race_remove(i2d_mob_race *);
 struct i2d_mob_race_db {
     i2d_mob_race * list;
     size_t size;
+    i2d_rbt * index_by_macro;
 };
 
 typedef struct i2d_mob_race_db i2d_mob_race_db;
 
 int i2d_mob_race_db_init(i2d_mob_race_db **, i2d_string *);
 void i2d_mob_race_db_deit(i2d_mob_race_db **);
+int i2d_mob_race_db_search_by_macro(i2d_mob_race_db *, const char *, i2d_mob_race **);
 #endif
