@@ -52,6 +52,7 @@ static int i2d_bonus_handler_skill(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_mob(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_effects(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_mob_race(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_weapons(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -70,7 +71,8 @@ i2d_handler bonus_list[] = {
     { {"skill", 5}, i2d_bonus_handler_skill },
     { {"mob", 3}, i2d_bonus_handler_mob },
     { {"effects", 7}, i2d_bonus_handler_effects },
-    { {"mob_race", 7}, i2d_bonus_handler_mob_race }
+    { {"mob_race", 8}, i2d_bonus_handler_mob_race },
+    { {"weapons", 7}, i2d_bonus_handler_weapons }
 };
 
 const char * i2d_token_string[] = {
@@ -3113,6 +3115,22 @@ static int i2d_bonus_handler_mob_race(i2d_script * script, i2d_node * node, i2d_
     } else if(i2d_constant_get_by_macro(script->constant_db, macro.string, &constant)) {
         status = i2d_panic("failed to get mob race by macro -- %s", macro.string);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_weapons(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long weapon_type;
+    i2d_string weapon;
+
+    if(i2d_node_get_constant(node, &weapon_type)) {
+        status = i2d_panic("failed to get weapon type");
+    } else if(i2d_value_map_get(script->weapons, &weapon_type, &weapon)) {
+        status = i2d_panic("failed to get weapon by weapon type -- %ld", weapon_type);
+    } else if(i2d_string_stack_push(&context->expression_stack, weapon.string, weapon.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
