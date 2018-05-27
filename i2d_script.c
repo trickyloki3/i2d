@@ -1923,6 +1923,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
     i2d_script * object;
     json_t * getiteminfo;
     json_t * strcharinfo;
+    json_t * weapons;
+    json_t * ammos;
     json_t * functions;
     json_t * blocks;
     json_t * bonus;
@@ -1950,6 +1952,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
             } else {
                 getiteminfo = json_object_get(object->json, "getiteminfo");
                 strcharinfo = json_object_get(object->json, "strcharinfo");
+                weapons = json_object_get(object->json, "weapons");
+                ammos = json_object_get(object->json, "ammos");
                 functions = json_object_get(object->json, "functions");
                 blocks = json_object_get(object->json, "blocks");
                 if(blocks) {
@@ -1960,6 +1964,10 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                     status = i2d_panic("failed to load getiteminfo");
                 } else if(!strcharinfo || i2d_value_map_init(&object->strcharinfo, strcharinfo)) {
                     status = i2d_panic("failed to load strcharinfo");
+                } else if(!weapons || i2d_value_map_init(&object->weapons, weapons)) {
+                    status = i2d_panic("failed to load weapons");
+                } else if(!ammos || i2d_value_map_init(&object->ammos, ammos)) {
+                    status = i2d_panic("failed to load ammos");
                 } else if(!functions || i2d_data_map_init(&object->functions, data_map_by_name, functions, object->constant_db)) {
                     status = i2d_panic("failed to load functions");
                 } else if(!bonus || i2d_data_map_init(&object->bonus, data_map_by_value, bonus, object->constant_db)) {
@@ -2006,6 +2014,8 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->bonus2, i2d_data_map_deit);
     i2d_deit(object->bonus, i2d_data_map_deit);
     i2d_deit(object->functions, i2d_data_map_deit);
+    i2d_deit(object->ammos, i2d_value_map_deit);
+    i2d_deit(object->weapons, i2d_value_map_deit);
     i2d_deit(object->strcharinfo, i2d_value_map_deit);
     i2d_deit(object->getiteminfo, i2d_value_map_deit);
     i2d_deit(object->constant_db, i2d_constant_db_deit);

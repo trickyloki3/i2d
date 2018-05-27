@@ -333,6 +333,8 @@ struct i2d_script {
     i2d_constant_db * constant_db;
     i2d_value_map * getiteminfo;
     i2d_value_map * strcharinfo;
+    i2d_value_map * weapons;
+    i2d_value_map * ammos;
     i2d_data_map * functions;
     i2d_data_map * bonus;
     i2d_data_map * bonus2;
