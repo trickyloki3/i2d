@@ -412,7 +412,7 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
              * including the newline, hence
              * the minimum length is 28
              */
-            if(28 < length && isdigit(*anchor)) {
+            if(isalnum(*anchor)) {
                 status = cb(anchor, length, data);
             }
         }
