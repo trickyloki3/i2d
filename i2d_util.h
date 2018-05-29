@@ -31,6 +31,9 @@ int i2d_panic_print(const char *, ...);
 #define i2d_zero(str) memset(&str, 0, sizeof(str))
 #define i2d_size(ptr) (sizeof(ptr) / sizeof(ptr[0]))
 
+#define is_negative(x) ((x) <  0)
+#define is_positive(x) ((x) >= 0)
+
 struct i2d_string {
     char * string;
     size_t length;

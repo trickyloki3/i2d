@@ -53,6 +53,7 @@ static int i2d_bonus_handler_mob(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_effects(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_mob_race(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_weapons(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_zeny(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -72,7 +73,8 @@ i2d_handler bonus_list[] = {
     { {"mob", 3}, i2d_bonus_handler_mob },
     { {"effects", 7}, i2d_bonus_handler_effects },
     { {"mob_race", 8}, i2d_bonus_handler_mob_race },
-    { {"weapons", 7}, i2d_bonus_handler_weapons }
+    { {"weapons", 7}, i2d_bonus_handler_weapons },
+    { {"zeny", 4}, i2d_bonus_handler_zeny }
 };
 
 const char * i2d_token_string[] = {
@@ -3132,6 +3134,41 @@ static int i2d_bonus_handler_weapons(i2d_script * script, i2d_node * node, i2d_c
         status = i2d_panic("failed to get weapon by weapon type -- %ld", weapon_type);
     } else if(i2d_string_stack_push(&context->expression_stack, weapon.string, weapon.length)) {
         status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_zeny(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    if(is_negative(min)) {
+        if(is_positive(max)) {
+            status = i2d_panic("zeny range cannot be both negative and positive");
+        } else {
+            min *= -1;
+            max *= -1;
+            if( min == max ?
+                i2d_buffer_printf(&context->expression_buffer, "%ld * Monster Level", min) :
+                i2d_buffer_printf(&context->expression_buffer, "(%ld ~ %ld) * Monster Level", min, max) ) {
+                status = i2d_panic("failed to write zeny formula");
+            } else if(i2d_bonus_handler_expression(script, node, context)) {
+                status = i2d_panic("failed to write expression");
+            }
+        }
+    } else {
+        if( min == max ?
+            i2d_buffer_printf(&context->expression_buffer, "%ld", min) :
+            i2d_buffer_printf(&context->expression_buffer, "%ld ~ %ld", min, max) ) {
+            status = i2d_panic("failed to write zeny range");
+        } else if(i2d_bonus_handler_expression(script, node, context)) {
+            status = i2d_panic("failed to write expression");
+        }
     }
 
     return status;
