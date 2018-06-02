@@ -1934,7 +1934,7 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
     json_t * weapons;
     json_t * ammos;
     json_t * functions;
-    json_t * blocks;
+    json_t * statements;
     json_t * bonus;
     json_t * bonus2;
     size_t i;
@@ -1963,10 +1963,10 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 weapons = json_object_get(object->json, "weapons");
                 ammos = json_object_get(object->json, "ammos");
                 functions = json_object_get(object->json, "functions");
-                blocks = json_object_get(object->json, "blocks");
-                if(blocks) {
-                    bonus = json_object_get(blocks, "bonus");
-                    bonus2 = json_object_get(blocks, "bonus2");
+                statements = json_object_get(object->json, "statements");
+                if(statements) {
+                    bonus = json_object_get(statements, "bonus");
+                    bonus2 = json_object_get(statements, "bonus2");
                 }
                 if(!getiteminfo || i2d_value_map_init(&object->getiteminfo, getiteminfo)) {
                     status = i2d_panic("failed to load getiteminfo");
