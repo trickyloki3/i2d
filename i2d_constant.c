@@ -104,7 +104,7 @@ int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            consts = json_object_get(json, "consts");
+            consts = json_object_get(json, "constants");
             if(!consts) {
                 status = i2d_panic("failed to get constants object");
             } else if(i2d_object_get_list(consts, sizeof(*object->constants), (void **) &object->constants, &object->size)) {
