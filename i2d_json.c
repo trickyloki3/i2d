@@ -162,6 +162,8 @@ int i2d_json_init(i2d_json ** result, i2d_string * data_path) {
                 status = i2d_panic("failed to load weapons.json");
             } else if(i2d_json_create_data(&object->functions, data_path->string, "functions.json")) {
                 status = i2d_panic("failed to load functions.json");
+            } else if(i2d_json_create_data(&object->constants, data_path->string, "constants.json")) {
+                status = i2d_panic("failed to load constants.json");
             }
 
             if(status)
@@ -178,6 +180,7 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json * object;
 
     object = *result;
+    i2d_json_destroy(object->constants);
     i2d_json_destroy(object->functions);
     i2d_json_destroy(object->weapons);
     i2d_json_destroy(object->ammos);

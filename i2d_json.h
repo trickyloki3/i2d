@@ -23,6 +23,7 @@ struct i2d_json {
     json_t * ammos;
     json_t * weapons;
     json_t * functions;
+    json_t * constants;
 };
 
 typedef struct i2d_json i2d_json;

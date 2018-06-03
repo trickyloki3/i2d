@@ -1943,15 +1943,13 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
         } else {
             if(i2d_db_init(&object->db, i2d_pre_renewal, &option->source_path)) {
                 status = i2d_panic("failed to create database object");
-            } else if(i2d_json_create(&object->data, &option->json_path)) {
-                status = i2d_panic("failed to create json object");
             } else if(i2d_json_init(&object->json, &option->data_path)) {
                 status = i2d_panic("failed to create json object");
             } else if(i2d_lexer_init(&object->lexer)) {
                 status = i2d_panic("failed to create lexer object");
             } else if(i2d_parser_init(&object->parser)) {
                 status = i2d_panic("failed to create parser object");
-            } else if(i2d_constant_db_init(&object->constant_db, object->data)) {
+            } else if(i2d_constant_db_init(&object->constant_db, object->json->constants)) {
                 status = i2d_panic("failed to create constant db object");
             } else if(i2d_value_map_init(&object->getiteminfo, object->json->getiteminfo)) {
                 status = i2d_panic("failed to load getiteminfo");
@@ -2015,7 +2013,6 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);
     i2d_deit(object->json, i2d_json_deit);
-    i2d_json_destroy(object->data);
     i2d_deit(object->db, i2d_db_deit);
     i2d_free(object);
     *result = NULL;
