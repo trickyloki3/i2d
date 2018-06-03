@@ -326,7 +326,7 @@ int i2d_context_get_variable(i2d_context *, i2d_node *, i2d_node **);
 
 struct i2d_script {
     i2d_db * db;
-    json_t * json;
+    json_t * data;
     i2d_lexer * lexer;
     i2d_parser * parser;
     i2d_context * contexts;
