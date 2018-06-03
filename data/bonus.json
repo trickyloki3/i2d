@@ -9,7 +9,7 @@
         "argument_type" : [
             "percent"
         ],
-        "description" : "Increase heal amount from items by {0}."
+        "description" : "Increase heal amount by {0} from items."
     },
     "bAddMaxWeight" : {
         "argument_type" : [
@@ -111,7 +111,7 @@
         "argument_type" : [
             "percent"
         ],
-        "description" : "Increase cast time of all skills by {0}."
+        "description" : "Increase cast time by {0} of all skills."
     },
     "bClassChange" : {
         "argument_type" : [
@@ -201,7 +201,7 @@
         "argument_type" : [
             "percent"
         ],
-        "description" : "Increase after-cast delay of all skills by {0}."
+        "description" : "Increase after-cast delay by {0} of all skills."
     },
     "bDex" : {
         "argument_type" : [
@@ -225,13 +225,13 @@
         "argument_type" : [
             "time"
         ],
-        "description" : "Increase fixed cast time of all skills by {0}."
+        "description" : "Increase fixed cast time by {0} of all skills."
     },
     "bFixedCastrate" : {
         "argument_type" : [
             "percent"
         ],
-        "description" : "Increase fixed cast time of all skills by {0}."
+        "description" : "Increase fixed cast time by {0} of all skills."
     },
     "bFlee" : {
         "argument_type" : [
@@ -279,13 +279,13 @@
         "argument_type" : [
             "percent"
         ],
-        "description" : "Increase heal amount of all heal skills by {0}."
+        "description" : "Increase heal amount by {0} of all heal skills."
     },
     "bHealPower2" : {
         "argument_type" : [
             "percent"
         ],
-        "description" : "Increase heal amount received from any skill by {0}."
+        "description" : "Increase heal amount by {0} received from any skill."
     },
     "bHit" : {
         "argument_type" : [
@@ -603,7 +603,7 @@
         "argument_type" : [
             "percent"
         ],
-        "description" : "Reduce break chance of all equipment by {0}."
+        "description" : "Reduce break chance by {0} of all equipment."
     },
     "bUnbreakableArmor" : {
         "argument_type" : [
@@ -681,13 +681,13 @@
         "argument_type" : [
             "time"
         ],
-        "description" : "Increase variable cast time of all skills by {0}."
+        "description" : "Increase variable cast time by {0} of all skills."
     },
     "bVariableCastrate" : {
         "argument_type" : [
             "percent"
         ],
-        "description" : "Increase variable cast time of all skills by {0}."
+        "description" : "Increase variable cast time by {0} of all skills."
     },
     "bVit" : {
         "argument_type" : [
