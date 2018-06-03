@@ -303,7 +303,7 @@
         "argument_type" : [
             "classes"
         ],
-        "description" : "Pierce physical defense of {0} enemy."
+        "description" : "Pierce physical defense of {0} enemies."
     },
     "bIgnoreDefEle" : {
         "argument_type" : [
@@ -315,7 +315,7 @@
         "argument_type" : [
             "races"
         ],
-        "description" : "Pierce physical defense of {0} enemy."
+        "description" : "Pierce physical defense of {0} enemies."
     },
     "bIgnoreMdefEle" : {
         "argument_type" : [
@@ -327,7 +327,7 @@
         "argument_type" : [
             "races"
         ],
-        "description" : "Pierce magic defense of {0} enemy."
+        "description" : "Pierce magic defense of {0} enemies."
     },
     "bInt" : {
         "argument_type" : [
