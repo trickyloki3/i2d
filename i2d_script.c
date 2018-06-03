@@ -42,7 +42,9 @@ static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_races(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_classes(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_integer_sign(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_percent_sign(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent_invert(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent10(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_percent100(i2d_script *, i2d_node *, i2d_context *);
@@ -65,7 +67,9 @@ i2d_handler bonus_list[] = {
     { {"races", 4}, i2d_bonus_handler_races },
     { {"classes", 7}, i2d_bonus_handler_classes },
     { {"integer", 7}, i2d_bonus_handler_integer },
+    { {"integer_sign", 12}, i2d_bonus_handler_integer_sign },
     { {"percent", 7}, i2d_bonus_handler_percent },
+    { {"percent_sign", 12}, i2d_bonus_handler_percent_sign },
     { {"percent_invert", 14}, i2d_bonus_handler_percent_invert },
     { {"percent10", 13}, i2d_bonus_handler_percent10 },
     { {"percent100", 14}, i2d_bonus_handler_percent100 },
@@ -2944,6 +2948,23 @@ static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_c
     return status;
 }
 
+static int i2d_bonus_handler_integer_sign(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%+ld", min) :
+        i2d_buffer_printf(&context->expression_buffer, "%+ld ~ %+ld", min, max) ) {
+        status = i2d_panic("failed to write integer range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
 static int i2d_bonus_handler_percent(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
     long min;
@@ -2953,6 +2974,23 @@ static int i2d_bonus_handler_percent(i2d_script * script, i2d_node * node, i2d_c
     if( min == max ?
         i2d_buffer_printf(&context->expression_buffer, "%ld%%", min) :
         i2d_buffer_printf(&context->expression_buffer, "%ld%% ~ %ld%%", min, max) ) {
+        status = i2d_panic("failed to write percent range");
+    } else if(i2d_bonus_handler_expression(script, node, context)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_percent_sign(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+    if( min == max ?
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%%", min) :
+        i2d_buffer_printf(&context->expression_buffer, "%+ld%% ~ %+ld%%", min, max) ) {
         status = i2d_panic("failed to write percent range");
     } else if(i2d_bonus_handler_expression(script, node, context)) {
         status = i2d_panic("failed to write expression");
