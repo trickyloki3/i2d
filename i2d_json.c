@@ -1,5 +1,7 @@
 #include "i2d_json.h"
 
+static int i2d_json_create_data(json_t **, const char *, const char *);
+
 int i2d_json_create(json_t ** json, i2d_string * path) {
     int status = I2D_OK;
     json_error_t error;
@@ -119,6 +121,55 @@ int i2d_object_get_list(json_t * json, size_t element, void ** result_list, size
 
     return status;
 }
+
+static int i2d_json_create_data(json_t ** json, const char * data_path, const char * file_name) {
+    int status = I2D_OK;
+    i2d_string path;
+
+    if(i2d_string_vprintf(&path, "%s/%s", data_path, file_name)) {
+        status = i2d_panic("failed to create path string");
+    } else {
+        status = i2d_json_create(json, &path);
+
+        i2d_string_destroy(&path);
+    }
+
+    return status;
+}
+
+int i2d_json_init(i2d_json ** result, i2d_string * data_path) {
+    int status = I2D_OK;
+    i2d_json * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_json_create_data(&object->bonus, data_path->string, "bonus.json"))
+                status = i2d_panic("failed to load bonus.json");
+
+            if(status)
+                i2d_json_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_json_deit(i2d_json ** result) {
+    i2d_json * object;
+
+    object = *result;
+    i2d_json_destroy(object->bonus);
+    i2d_free(object);
+    *result = NULL;
+}
+
 
 int i2d_value_map_init(i2d_value_map ** result, json_t * json) {
     int status = I2D_OK;

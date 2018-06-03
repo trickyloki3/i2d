@@ -15,6 +15,15 @@ int i2d_object_get_number(json_t *, long *);
 int i2d_object_get_range(json_t *, json_t *, i2d_range *);
 int i2d_object_get_list(json_t *, size_t, void **, size_t *);
 
+struct i2d_json {
+    json_t * bonus;
+};
+
+typedef struct i2d_json i2d_json;
+
+int i2d_json_init(i2d_json **, i2d_string *);
+void i2d_json_deit(i2d_json **);
+
 struct i2d_value {
     long value;
     i2d_string name;
@@ -33,5 +42,4 @@ typedef struct i2d_value_map i2d_value_map;
 int i2d_value_map_init(i2d_value_map **, json_t *);
 void i2d_value_map_deit(i2d_value_map **);
 int i2d_value_map_get(i2d_value_map *, long *, i2d_string *);
-
 #endif
