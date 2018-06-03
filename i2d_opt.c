@@ -6,6 +6,7 @@ static const char * i2d_short_options = "s:j:i:";
 
 static struct option i2d_long_options[] = {
     { "source_path", required_argument, NULL, 's' },
+    { "data_path", required_argument, NULL, 'd' },
     { "json_path", required_argument, NULL, 'j' },
     { "item_id", required_argument, NULL, 'i' }
 };
@@ -28,11 +29,15 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
                 switch(opt) {
                     case 's':
                         if(i2d_string_create(&object->source_path, optarg, strlen(optarg)))
-                            status = i2d_panic("failed on item db path argument -- %s", optarg);
+                            status = i2d_panic("failed on source directory path argument -- %s", optarg);
                         break;
                     case 'j':
                         if(i2d_string_create(&object->json_path, optarg, strlen(optarg)))
                             status = i2d_panic("failed on json path argument -- %s", optarg);
+                        break;
+                    case 'd':
+                        if(i2d_string_create(&object->data_path, optarg, strlen(optarg)))
+                            status = i2d_panic("failed on data directory path argument -- %s", optarg);
                         break;
                     case 'i':
                         if(i2d_strtol(&object->item_id, optarg, strlen(optarg), 10))
@@ -57,6 +62,7 @@ void i2d_option_deit(i2d_option ** result) {
 
     object = *result;
     i2d_string_destroy(&object->json_path);
+    i2d_string_destroy(&object->data_path);
     i2d_string_destroy(&object->source_path);
     i2d_free(object);
     *result = NULL;
