@@ -6,6 +6,30 @@
 #include "i2d_rbt.h"
 #include "i2d_json.h"
 
+struct i2d_constant_bf {
+    long BF_SHORT;
+    long BF_LONG;
+    long BF_WEAPON;
+    long BF_MAGIC;
+    long BF_MISC;
+    long BF_NORMAL;
+    long BF_SKILL;
+};
+
+typedef struct i2d_constant_bf i2d_constant_bf;
+
+struct i2d_constant_atf {
+    long ATF_SELF;
+    long ATF_TARGET;
+    long ATF_SHORT;
+    long ATF_LONG;
+    long ATF_WEAPON;
+    long ATF_MAGIC;
+    long ATF_MISC;
+};
+
+typedef struct i2d_constant_atf i2d_constant_atf;
+
 struct i2d_constant {
     i2d_string macro;
     i2d_string name;
@@ -34,6 +58,9 @@ struct i2d_constant_db {
     i2d_rbt * jobs;
     i2d_rbt * effects;
     i2d_rbt * itemgroups;
+
+    i2d_constant_bf bf;
+    i2d_constant_atf atf;
 };
 
 typedef struct i2d_constant_db i2d_constant_db;
