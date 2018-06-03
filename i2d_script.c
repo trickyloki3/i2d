@@ -1937,7 +1937,6 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
     json_t * ammos;
     json_t * functions;
     json_t * statements;
-    json_t * bonus;
     json_t * bonus2;
     size_t i;
     size_t size;
@@ -1969,7 +1968,6 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 functions = json_object_get(object->data, "functions");
                 statements = json_object_get(object->data, "statements");
                 if(statements) {
-                    bonus = json_object_get(statements, "bonus");
                     bonus2 = json_object_get(statements, "bonus2");
                 }
                 if(!getiteminfo || i2d_value_map_init(&object->getiteminfo, getiteminfo)) {
@@ -1982,7 +1980,7 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                     status = i2d_panic("failed to load ammos");
                 } else if(!functions || i2d_data_map_init(&object->functions, data_map_by_name, functions, object->constant_db)) {
                     status = i2d_panic("failed to load functions");
-                } else if(!bonus || i2d_data_map_init(&object->bonus, data_map_by_value, bonus, object->constant_db)) {
+                } else if(i2d_data_map_init(&object->bonus, data_map_by_value, object->json->bonus, object->constant_db)) {
                     status = i2d_panic("failed to load bonuses");
                 } else if(!bonus2 || i2d_data_map_init(&object->bonus2, data_map_by_value, bonus2, object->constant_db)) {
                     status = i2d_panic("failed to load bonuses");
