@@ -1,0 +1,710 @@
+{
+    "bAbsorbDmgMaxHP" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Ignore any damage received over {0} of Max HP."
+    },
+    "bAddItemHealRate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase heal amount from items by {0}."
+    },
+    "bAddMaxWeight" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Max Weight {0}"
+    },
+    "bAddStealRate" : {
+        "argument_type" : [
+            "percent100"
+        ],
+        "description" : "Increase steal success rate by {0}."
+    },
+    "bAgi" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "AGI {0}"
+    },
+    "bAgiDexStr" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "STR {0}\nAGI {0}\nDEX {0}"
+    },
+    "bAgiVit" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "AGI {0}\nVIT {0}"
+    },
+    "bAllStats" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "All Status {0}"
+    },
+    "bAspd" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Attack Speed {0}"
+    },
+    "bAspdRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Attack Speed {0}"
+    },
+    "bAtk" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "ATK {0}"
+    },
+    "bAtk2" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "ATK2 {0}"
+    },
+    "bAtkEle" : {
+        "argument_type" : [
+            "elements"
+        ],
+        "description" : "Enchanted with {0} property."
+    },
+    "bAtkRange" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Attack Range {0}"
+    },
+    "bAtkRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "ATK {0}"
+    },
+    "bBaseAtk" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Base ATK {0}"
+    },
+    "bBreakArmorRate" : {
+        "argument_type" : [
+            "percent100"
+        ],
+        "description" : "Add a {0} chance of breaking enemy's armor on each normal attack."
+    },
+    "bBreakWeaponRate" : {
+        "argument_type" : [
+            "percent100"
+        ],
+        "description" : "Add a {0} chance of breaking enemy's weapon on each normal attack."
+    },
+    "bCastrate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase cast time of all skills by {0}."
+    },
+    "bClassChange" : {
+        "argument_type" : [
+            "percent100"
+        ],
+        "description" : "Add a {0} chance of transforming a monster for each normal attack."
+    },
+    "bCritAtkRate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase critical damage by {0}."
+    },
+    "bCritical" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Critical {0}"
+    },
+    "bCriticalDef" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Add a {0} chance to block critical damage."
+    },
+    "bCriticalLong" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Long Range Critical {0}"
+    },
+    "bCriticalRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Critical {0}"
+    },
+    "bDef" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "DEF {0}"
+    },
+    "bDef2" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "DEF2 {0}"
+    },
+    "bDef2Rate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "DEF2 {0}"
+    },
+    "bDefEle" : {
+        "argument_type" : [
+            "elements"
+        ],
+        "description" : "Enchanted with {0} property."
+    },
+    "bDefRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "DEF {0}"
+    },
+    "bDefRatioAtkClass" : {
+        "argument_type" : [
+            "classes"
+        ],
+        "description" : "Deal more damage against {0} enemies based on their defense."
+    },
+    "bDefRatioAtkEle" : {
+        "argument_type" : [
+            "elements"
+        ],
+        "description" : "Deal more damage against {0} enemies based on their defense."
+    },
+    "bDefRatioAtkRace" : {
+        "argument_type" : [
+            "races"
+        ],
+        "description" : "Deal more damage against {0} enemies based on their defense."
+    },
+    "bDelayrate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase after-cast delay of all skills by {0}."
+    },
+    "bDex" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "DEX {0}"
+    },
+    "bDoubleAddRate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Add a {0} chance of a double attack."
+    },
+    "bDoubleRate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Add a {0} chance of a double attack."
+    },
+    "bFixedCast" : {
+        "argument_type" : [
+            "time"
+        ],
+        "description" : "Increase fixed cast time of all skills by {0}."
+    },
+    "bFixedCastrate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase fixed cast time of all skills by {0}."
+    },
+    "bFlee" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "FLEE {0}"
+    },
+    "bFlee2" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Perfect Dodge {0}"
+    },
+    "bFlee2Rate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Perfect Dodge {0}"
+    },
+    "bFleeRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "FLEE {0}"
+    },
+    "bHPDrainValue" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Heal {0} HP when normal attacking."
+    },
+    "bHPGainValue" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Heal {0} HP when killing an enemy with a normal attack."
+    },
+    "bHPrecovRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Natural HP Recovery {0}"
+    },
+    "bHealPower" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase heal amount of all heal skills by {0}."
+    },
+    "bHealPower2" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase heal amount received from any skill by {0}."
+    },
+    "bHit" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "HIT {0}"
+    },
+    "bHitRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "HIT {0}"
+    },
+    "bIgnoreDefClass" : {
+        "argument_type" : [
+            "classes"
+        ],
+        "description" : "Pierce physical defense of {0} enemy."
+    },
+    "bIgnoreDefEle" : {
+        "argument_type" : [
+            "elements"
+        ],
+        "description" : "Pierce physical defense of {0} defensive property."
+    },
+    "bIgnoreDefRace" : {
+        "argument_type" : [
+            "races"
+        ],
+        "description" : "Pierce physical defense of {0} enemy."
+    },
+    "bIgnoreMdefEle" : {
+        "argument_type" : [
+            "elements"
+        ],
+        "description" : "Pierce magic defense of {0} defensive property."
+    },
+    "bIgnoreMdefRace" : {
+        "argument_type" : [
+            "races"
+        ],
+        "description" : "Pierce magic defense of {0} enemy."
+    },
+    "bInt" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "INT {0}"
+    },
+    "bIntravision" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Ability to detect cloak or hidden enemies."
+    },
+    "bLongAtkDef" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce long range damage by {0}."
+    },
+    "bLongAtkRate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase long range damage by {0}."
+    },
+    "bLongWeaponDamageReturn" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reflect long range damage by {0}."
+    },
+    "bLuk" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "LUK {0}"
+    },
+    "bMagicAtkDef" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce magic damage by {0}."
+    },
+    "bMagicDamageReturn" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Add a {0} chance to reflect magic spells back to caster."
+    },
+    "bMagicHPGainValue" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Heal {0} HP when killing an enemy with a magic spell."
+    },
+    "bMagicSPGainValue" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Heal {0} SP when killing an enemy with a magic spell."
+    },
+    "bMatk" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "MATK {0}"
+    },
+    "bMatkRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "MATK {0}"
+    },
+    "bMaxHP" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Max HP {0}"
+    },
+    "bMaxHPrate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Max HP {0}"
+    },
+    "bMaxSP" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "Max SP {0}"
+    },
+    "bMaxSPrate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Max SP {0}"
+    },
+    "bMdef" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "MDEF {0}"
+    },
+    "bMdef2" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "MDEF2 {0}"
+    },
+    "bMdef2Rate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "MDEF2 {0}"
+    },
+    "bMdefRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "MDEF {0}"
+    },
+    "bMiscAtkDef" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce misc damage by {0}."
+    },
+    "bNearAtkDef" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce meelee damage by {0}."
+    },
+    "bNoCastCancel" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Ability to cast spells without interruption excluding GvG."
+    },
+    "bNoCastCancel2" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Ability to cast spells without interruption."
+    },
+    "bNoGemStone" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Ability to use magic spells without gemstones."
+    },
+    "bNoKnockback" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Player cannot be knockback."
+    },
+    "bNoMadoFuel" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Ability to use skills without magic gear fuel."
+    },
+    "bNoMagicDamage" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce magic damage by {0}."
+    },
+    "bNoMiscDamage" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce misc damage by {0}."
+    },
+    "bNoRegen" : {
+        "argument_type" : [
+            "regen"
+        ],
+        "description" : "Disable natural {0} regeneration."
+    },
+    "bNoSizeFix" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Ignore enemy's size when dealing physical damage."
+    },
+    "bNoWeaponDamage" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce physical damage by {0}."
+    },
+    "bPerfectHide" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Permanent perfect hiding."
+    },
+    "bPerfectHitAddRate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Add a {0} chance of a perfect hit."
+    },
+    "bPerfectHitRate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Add a {0} chance of a perfect hit."
+    },
+    "bRestartFullRecover" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Recover full HP and SP when revived."
+    },
+    "bSPDrainValue" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Heal {0} SP when normal attacking."
+    },
+    "bSPGainValue" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Heal {0} SP when killing an enemy with a normal attack."
+    },
+    "bSPrecovRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Nautral SP Recovery {0}"
+    },
+    "bShortWeaponDamageReturn" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reflect meelee damage by {0}."
+    },
+    "bSpeedAddRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Movement Speed {0}"
+    },
+    "bSpeedRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Movement Speed {0}"
+    },
+    "bSplashAddRange" : {
+        "argument_type" : [
+            "splash"
+        ],
+        "description" : "Each normal attack deals AoE damage to a {0} grid."
+    },
+    "bSplashRange" : {
+        "argument_type" : [
+            "splash"
+        ],
+        "description" : "Each normal attack deals AoE damage to a {0} grid."
+    },
+    "bStr" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "STR {0}"
+    },
+    "bUnbreakable" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Reduce break chance of all equipment by {0}."
+    },
+    "bUnbreakableArmor" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Armor is indestructible."
+    },
+    "bUnbreakableGarment" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Garment is indestructible."
+    },
+    "bUnbreakableHelm" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Helm is indestructible."
+    },
+    "bUnbreakableShield" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Shield is indestructible."
+    },
+    "bUnbreakableShoes" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Shoes is indestructible."
+    },
+    "bUnbreakableWeapon" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Weapon is indestructible."
+    },
+    "bUnstripable" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "All equipment cannot be stripped."
+    },
+    "bUnstripableArmor" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Armor cannot be stripped."
+    },
+    "bUnstripableHelm" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Helm cannot be stripped."
+    },
+    "bUnstripableShield" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Shield cannot be stripped."
+    },
+    "bUnstripableWeapon" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Weapon cannot be stripped."
+    },
+    "bUseSPrate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase SP consumption by {0}."
+    },
+    "bVariableCast" : {
+        "argument_type" : [
+            "time"
+        ],
+        "description" : "Increase variable cast time of all skills by {0}."
+    },
+    "bVariableCastrate" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Increase variable cast time of all skills by {0}."
+    },
+    "bVit" : {
+        "argument_type" : [
+            "integer_sign"
+        ],
+        "description" : "VIT {0}"
+    },
+    "bWeaponAtkRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Weapon ATK {0}"
+    },
+    "bWeaponMatkRate" : {
+        "argument_type" : [
+            "percent_sign"
+        ],
+        "description" : "Weapon MATK {0}"
+    }
+}
