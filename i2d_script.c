@@ -1931,7 +1931,6 @@ int i2d_context_get_variable(i2d_context * context, i2d_node * key, i2d_node ** 
 int i2d_script_init(i2d_script ** result, i2d_option * option) {
     int status = I2D_OK;
     i2d_script * object;
-    json_t * functions;
     size_t i;
     size_t size;
 
@@ -1954,40 +1953,37 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to create parser object");
             } else if(i2d_constant_db_init(&object->constant_db, object->data)) {
                 status = i2d_panic("failed to create constant db object");
+            } else if(i2d_value_map_init(&object->getiteminfo, object->json->getiteminfo)) {
+                status = i2d_panic("failed to load getiteminfo");
+            } else if(i2d_value_map_init(&object->strcharinfo, object->json->strcharinfo)) {
+                status = i2d_panic("failed to load strcharinfo");
+            } else if(i2d_value_map_init(&object->weapons, object->json->weapons)) {
+                status = i2d_panic("failed to load weapons");
+            } else if(i2d_value_map_init(&object->ammos, object->json->ammos)) {
+                status = i2d_panic("failed to load ammos");
+            } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->strcharinfo, object->constant_db)) {
+                status = i2d_panic("failed to load functions");
+            } else if(i2d_data_map_init(&object->bonus, data_map_by_value, object->json->bonus, object->constant_db)) {
+                status = i2d_panic("failed to load bonuses");
+            } else if(i2d_data_map_init(&object->bonus2, data_map_by_value, object->json->bonus2, object->constant_db)) {
+                status = i2d_panic("failed to load bonuses");
             } else {
-                functions = json_object_get(object->data, "functions");
-                if(i2d_value_map_init(&object->getiteminfo, object->json->getiteminfo)) {
-                    status = i2d_panic("failed to load getiteminfo");
-                } else if(i2d_value_map_init(&object->strcharinfo, object->json->strcharinfo)) {
-                    status = i2d_panic("failed to load strcharinfo");
-                } else if(i2d_value_map_init(&object->weapons, object->json->weapons)) {
-                    status = i2d_panic("failed to load weapons");
-                } else if(i2d_value_map_init(&object->ammos, object->json->ammos)) {
-                    status = i2d_panic("failed to load ammos");
-                } else if(!functions || i2d_data_map_init(&object->functions, data_map_by_name, functions, object->constant_db)) {
-                    status = i2d_panic("failed to load functions");
-                } else if(i2d_data_map_init(&object->bonus, data_map_by_value, object->json->bonus, object->constant_db)) {
-                    status = i2d_panic("failed to load bonuses");
-                } else if(i2d_data_map_init(&object->bonus2, data_map_by_value, object->json->bonus2, object->constant_db)) {
-                    status = i2d_panic("failed to load bonuses");
+                if(i2d_rbt_init(&object->function_map, i2d_rbt_cmp_str)) {
+                    status = i2d_panic("failed to create function map object");
                 } else {
-                    if(i2d_rbt_init(&object->function_map, i2d_rbt_cmp_str)) {
-                        status = i2d_panic("failed to create function map object");
-                    } else {
-                        size = i2d_size(function_list);
-                        for(i = 0; i < size && !status; i++)
-                            if(i2d_rbt_insert(object->function_map, function_list[i].name.string, &function_list[i]))
-                                status = i2d_panic("failed to map function handler object");
-                    }
+                    size = i2d_size(function_list);
+                    for(i = 0; i < size && !status; i++)
+                        if(i2d_rbt_insert(object->function_map, function_list[i].name.string, &function_list[i]))
+                            status = i2d_panic("failed to map function handler object");
+                }
 
-                    if(i2d_rbt_init(&object->bonus_map, i2d_rbt_cmp_str)) {
-                        status = i2d_panic("failed to create bonus map object");
-                    } else {
-                        size = i2d_size(bonus_list);
-                        for(i = 0; i < size && !status; i++)
-                            if(i2d_rbt_insert(object->bonus_map, bonus_list[i].name.string, &bonus_list[i]))
-                                status = i2d_panic("failed to map bonus handler object");
-                    }
+                if(i2d_rbt_init(&object->bonus_map, i2d_rbt_cmp_str)) {
+                    status = i2d_panic("failed to create bonus map object");
+                } else {
+                    size = i2d_size(bonus_list);
+                    for(i = 0; i < size && !status; i++)
+                        if(i2d_rbt_insert(object->bonus_map, bonus_list[i].name.string, &bonus_list[i]))
+                            status = i2d_panic("failed to map bonus handler object");
                 }
             }
 

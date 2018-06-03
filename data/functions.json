@@ -1,0 +1,47 @@
+{
+    "checkmadogear" : {
+        "description" : "Madogear Equipped",
+        "max" : 1,
+        "min" : 0
+    },
+    "countitem" : {
+        "description" : "{0} Count",
+        "max" : 2147483647,
+        "min" : 0
+    },
+    "eaclass" : {
+        "description" : "Class",
+        "max" : 2147483647,
+        "min" : 0
+    },
+    "getequiprefinerycnt" : {
+        "description" : "Refine Count Of {0}",
+        "max" : 15,
+        "min" : 0
+    },
+    "getiteminfo" : {
+        "description" : "{0}'s {1}",
+        "max" : 2147483647,
+        "min" : 0
+    },
+    "getmapflag" : {
+        "description" : "{0} with {1} flag",
+        "max" : 1,
+        "min" : 0
+    },
+    "getpartnerid" : {
+        "description" : "Married",
+        "max" : 1,
+        "min" : 0
+    },
+    "getrefine" : {
+        "description" : "Refine Count",
+        "max" : 15,
+        "min" : 0
+    },
+    "isequipped" : {
+        "description" : "{0} is Equipped",
+        "max" : 1,
+        "min" : 0
+    }
+}
