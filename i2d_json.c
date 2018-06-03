@@ -148,8 +148,11 @@ int i2d_json_init(i2d_json ** result, i2d_string * data_path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_json_create_data(&object->bonus, data_path->string, "bonus.json"))
+            if(i2d_json_create_data(&object->bonus, data_path->string, "bonus.json")) {
                 status = i2d_panic("failed to load bonus.json");
+            } else if(i2d_json_create_data(&object->bonus2, data_path->string, "bonus2.json")) {
+                status = i2d_panic("failed to load bonus2.json");
+            }
 
             if(status)
                 i2d_json_deit(&object);
@@ -165,6 +168,7 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json * object;
 
     object = *result;
+    i2d_json_destroy(object->bonus2);
     i2d_json_destroy(object->bonus);
     i2d_free(object);
     *result = NULL;
