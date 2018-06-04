@@ -18,6 +18,7 @@ int i2d_object_get_list(json_t *, size_t, void **, size_t *);
 struct i2d_json {
     json_t * bonus;
     json_t * bonus2;
+    json_t * bonus3;
     json_t * getiteminfo;
     json_t * strcharinfo;
     json_t * ammos;
