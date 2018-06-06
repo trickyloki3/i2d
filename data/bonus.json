@@ -99,13 +99,13 @@
         "argument_type" : [
             "percent100"
         ],
-        "description" : "Add a {0} chance of breaking enemy's armor on each normal attack."
+        "description" : "Add a {0} chance of breaking an enemy's armor on each normal attack."
     },
     "bBreakWeaponRate" : {
         "argument_type" : [
             "percent100"
         ],
-        "description" : "Add a {0} chance of breaking enemy's weapon on each normal attack."
+        "description" : "Add a {0} chance of breaking an enemy's weapon on each normal attack."
     },
     "bCastrate" : {
         "argument_type" : [
@@ -117,7 +117,7 @@
         "argument_type" : [
             "percent100"
         ],
-        "description" : "Add a {0} chance of transforming a monster for each normal attack."
+        "description" : "Add a {0} chance of transforming a monster on each normal attack."
     },
     "bCritAtkRate" : {
         "argument_type" : [
@@ -261,13 +261,13 @@
         "argument_type" : [
             "integer"
         ],
-        "description" : "Heal {0} HP when normal attacking."
+        "description" : "Heal {0} HP on each normal attack."
     },
     "bHPGainValue" : {
         "argument_type" : [
             "integer"
         ],
-        "description" : "Heal {0} HP when killing an enemy with a normal attack."
+        "description" : "Heal {0} HP on each enemy killed with a normal attack."
     },
     "bHPrecovRate" : {
         "argument_type" : [
@@ -549,13 +549,13 @@
         "argument_type" : [
             "integer"
         ],
-        "description" : "Heal {0} SP when normal attacking."
+        "description" : "Heal {0} SP on each normal attack."
     },
     "bSPGainValue" : {
         "argument_type" : [
             "integer"
         ],
-        "description" : "Heal {0} SP when killing an enemy with a normal attack."
+        "description" : "Heal {0} SP on each enemy killed with a normal attack."
     },
     "bSPrecovRate" : {
         "argument_type" : [

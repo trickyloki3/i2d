@@ -207,7 +207,7 @@
             "races",
             "integer"
         ],
-        "description" : "Heal {1} HP when normal attacking {0} enemies."
+        "description" : "Heal {1} HP on each normal attack against {0} enemies."
     },
     "bHPLossRate" : {
         "argument_type" : [
@@ -235,7 +235,7 @@
             "classes",
             "integer"
         ],
-        "description" : "Heal {1} HP when normal attacking {0} enemies."
+        "description" : "Heal {1} HP on each normal attack against {0} enemies."
     },
     "bIgnoreDefClassRate" : {
         "argument_type" : [
@@ -347,7 +347,7 @@
             "races",
             "integer"
         ],
-        "description" : "Heal {1} SP when normal attacking {0} enemies."
+        "description" : "Heal {1} SP on each normal attack against {0} enemies."
     },
     "bSPGainRace" : {
         "argument_type" : [
@@ -438,7 +438,7 @@
             "classes",
             "integer"
         ],
-        "description" : "Heal {1} SP when normal attacking {0} enemies."
+        "description" : "Heal {1} SP on each normal attack on {0} enemies."
     },
     "bSubClass" : {
         "argument_type" : [
@@ -501,34 +501,34 @@
             "weapons",
             "integer"
         ],
-        "description" : "Increase ATK by {1} to normal attacks when {0} is equipped."
+        "description" : "Increase ATK by {1} on each normal attack when {0} is equipped."
     },
     "bWeaponComaClass" : {
         "argument_type" : [
             "classes",
             "percent100"
         ],
-        "description" : "Add a {1} chance to inflict coma when normal attacking {0} enemies."
+        "description" : "Add a {1} chance to inflict coma on {0} enemies for each normal attack."
     },
     "bWeaponComaEle" : {
         "argument_type" : [
             "elements",
             "percent100"
         ],
-        "description" : "Add a {1} chance to inflict coma when normal attacking {0} enemies."
+        "description" : "Add a {1} chance to inflict coma on {0} enemies for each normal attack ."
     },
     "bWeaponComaRace" : {
         "argument_type" : [
             "races",
             "percent100"
         ],
-        "description" : "Add a {1} chance to inflict coma when normal attacking {0} enemies."
+        "description" : "Add a {1} chance to inflict coma on {0} enemies for each normal attack."
     },
     "bWeaponDamageRate" : {
         "argument_type" : [
             "weapons",
             "percent"
         ],
-        "description" : "Increase damage by {1} to normal attacks when {0} is equipped."
+        "description" : "Increase damage by {1} on each normal attack when {0} is equipped."
     }
 }
