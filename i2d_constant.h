@@ -6,30 +6,6 @@
 #include "i2d_rbt.h"
 #include "i2d_json.h"
 
-struct i2d_constant_bf {
-    long BF_SHORT;
-    long BF_LONG;
-    long BF_WEAPON;
-    long BF_MAGIC;
-    long BF_MISC;
-    long BF_NORMAL;
-    long BF_SKILL;
-};
-
-typedef struct i2d_constant_bf i2d_constant_bf;
-
-struct i2d_constant_atf {
-    long ATF_SELF;
-    long ATF_TARGET;
-    long ATF_SHORT;
-    long ATF_LONG;
-    long ATF_WEAPON;
-    long ATF_MAGIC;
-    long ATF_MISC;
-};
-
-typedef struct i2d_constant_atf i2d_constant_atf;
-
 struct i2d_constant {
     i2d_string macro;
     i2d_string name;
@@ -41,6 +17,30 @@ typedef struct i2d_constant i2d_constant;
 
 int i2d_constant_create(i2d_constant *, const char *, json_t *);
 void i2d_constant_destroy(i2d_constant *);
+
+struct i2d_constant_bf {
+    i2d_constant * BF_SHORT;
+    i2d_constant * BF_LONG;
+    i2d_constant * BF_WEAPON;
+    i2d_constant * BF_MAGIC;
+    i2d_constant * BF_MISC;
+    i2d_constant * BF_NORMAL;
+    i2d_constant * BF_SKILL;
+};
+
+typedef struct i2d_constant_bf i2d_constant_bf;
+
+struct i2d_constant_atf {
+    i2d_constant * ATF_SELF;
+    i2d_constant * ATF_TARGET;
+    i2d_constant * ATF_SHORT;
+    i2d_constant * ATF_LONG;
+    i2d_constant * ATF_WEAPON;
+    i2d_constant * ATF_MAGIC;
+    i2d_constant * ATF_MISC;
+};
+
+typedef struct i2d_constant_atf i2d_constant_atf;
 
 struct i2d_constant_db {
     i2d_constant * constants;

@@ -3026,27 +3026,35 @@
             "value" : 5
         },
         "ATF_LONG" : {
+            "name" : "long ranged ",
             "value" : 8
         },
         "ATF_MAGIC" : {
+            "name" : "magic",
             "value" : 32
         },
         "ATF_MISC" : {
+            "name" : "misc",
             "value" : 64
         },
         "ATF_SELF" : {
+            "name" : "self",
             "value" : 1
         },
         "ATF_SHORT" : {
+            "name" : "meelee",
             "value" : 4
         },
         "ATF_SKILL" : {
+            "name" : "skill",
             "value" : 96
         },
         "ATF_TARGET" : {
+            "name" : "target",
             "value" : 2
         },
         "ATF_WEAPON" : {
+            "name" : "physical",
             "value" : 16
         },
         "AUGUST" : {
@@ -3107,24 +3115,31 @@
             "value" : 0
         },
         "BF_LONG" : {
+            "name" : "long ranged",
             "value" : 64
         },
         "BF_MAGIC" : {
+            "name" : "magic",
             "value" : 2
         },
         "BF_MISC" : {
+            "name" : "misc",
             "value" : 4
         },
         "BF_NORMAL" : {
+            "name" : "normal attacks",
             "value" : 512
         },
         "BF_SHORT" : {
+            "name" : "meelee",
             "value" : 16
         },
         "BF_SKILL" : {
+            "name" : "skills",
             "value" : 256
         },
         "BF_WEAPON" : {
+            "name" : "physical",
             "value" : 1
         },
         "BG" : {

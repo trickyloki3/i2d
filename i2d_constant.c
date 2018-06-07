@@ -93,13 +93,13 @@ static int i2d_constant_db_index(i2d_constant_db * constant_db, json_t * json, c
 static int i2d_constant_db_load_bf(i2d_constant_db * constant_db) {
     int status = I2D_OK;
 
-    if( i2d_constant_get_by_macro_value(constant_db, "BF_SHORT", &constant_db->bf.BF_SHORT) ||
-        i2d_constant_get_by_macro_value(constant_db, "BF_LONG", &constant_db->bf.BF_LONG) ||
-        i2d_constant_get_by_macro_value(constant_db, "BF_WEAPON", &constant_db->bf.BF_WEAPON) ||
-        i2d_constant_get_by_macro_value(constant_db, "BF_MAGIC", &constant_db->bf.BF_MAGIC) ||
-        i2d_constant_get_by_macro_value(constant_db, "BF_MISC", &constant_db->bf.BF_MISC) ||
-        i2d_constant_get_by_macro_value(constant_db, "BF_NORMAL", &constant_db->bf.BF_NORMAL) ||
-        i2d_constant_get_by_macro_value(constant_db, "BF_SKILL", &constant_db->bf.BF_SKILL) )
+    if( i2d_constant_get_by_macro(constant_db, "BF_SHORT", &constant_db->bf.BF_SHORT) ||
+        i2d_constant_get_by_macro(constant_db, "BF_LONG", &constant_db->bf.BF_LONG) ||
+        i2d_constant_get_by_macro(constant_db, "BF_WEAPON", &constant_db->bf.BF_WEAPON) ||
+        i2d_constant_get_by_macro(constant_db, "BF_MAGIC", &constant_db->bf.BF_MAGIC) ||
+        i2d_constant_get_by_macro(constant_db, "BF_MISC", &constant_db->bf.BF_MISC) ||
+        i2d_constant_get_by_macro(constant_db, "BF_NORMAL", &constant_db->bf.BF_NORMAL) ||
+        i2d_constant_get_by_macro(constant_db, "BF_SKILL", &constant_db->bf.BF_SKILL) )
         status = i2d_panic("failed to load bf constants");
 
     return status;
@@ -108,13 +108,13 @@ static int i2d_constant_db_load_bf(i2d_constant_db * constant_db) {
 static int i2d_constant_db_load_atf(i2d_constant_db * constant_db) {
     int status = I2D_OK;
 
-    if( i2d_constant_get_by_macro_value(constant_db, "ATF_SELF", &constant_db->atf.ATF_SELF) ||
-        i2d_constant_get_by_macro_value(constant_db, "ATF_TARGET", &constant_db->atf.ATF_TARGET) ||
-        i2d_constant_get_by_macro_value(constant_db, "ATF_SHORT", &constant_db->atf.ATF_SHORT) ||
-        i2d_constant_get_by_macro_value(constant_db, "ATF_LONG", &constant_db->atf.ATF_LONG) ||
-        i2d_constant_get_by_macro_value(constant_db, "ATF_WEAPON", &constant_db->atf.ATF_WEAPON) ||
-        i2d_constant_get_by_macro_value(constant_db, "ATF_MAGIC", &constant_db->atf.ATF_MAGIC) ||
-        i2d_constant_get_by_macro_value(constant_db, "ATF_MISC", &constant_db->atf.ATF_MISC) )
+    if( i2d_constant_get_by_macro(constant_db, "ATF_SELF", &constant_db->atf.ATF_SELF) ||
+        i2d_constant_get_by_macro(constant_db, "ATF_TARGET", &constant_db->atf.ATF_TARGET) ||
+        i2d_constant_get_by_macro(constant_db, "ATF_SHORT", &constant_db->atf.ATF_SHORT) ||
+        i2d_constant_get_by_macro(constant_db, "ATF_LONG", &constant_db->atf.ATF_LONG) ||
+        i2d_constant_get_by_macro(constant_db, "ATF_WEAPON", &constant_db->atf.ATF_WEAPON) ||
+        i2d_constant_get_by_macro(constant_db, "ATF_MAGIC", &constant_db->atf.ATF_MAGIC) ||
+        i2d_constant_get_by_macro(constant_db, "ATF_MISC", &constant_db->atf.ATF_MISC) )
         status = i2d_panic("failed to load atf constants");
 
     return status;
