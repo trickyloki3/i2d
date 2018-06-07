@@ -1,0 +1,122 @@
+{
+    "bAddEle" : {
+        "argument_type" : [
+            "elements",
+            "percent",
+            "bf"
+        ],
+        "description" : "Increase physical damage by {1} against {0} enemies when using {2} and dealing {3} damage."
+    },
+    "bSubEle" : {
+        "argument_type" : [
+            "elements",
+            "percent",
+            "bf"
+        ],
+        "description" : "Reduce physical damage by {1} from {0} enemies when receiving {2} and {3} damage."
+    },
+    "bAddEff" : {
+        "argument_type" : [
+            "effects",
+            "percent100",
+            "atf"
+        ],
+        "description" : "Add a {1} chance to inflict {0} on {2} when dealing {3} damage."
+    },
+    "bAddEffWhenHit" : {
+        "argument_type" : [
+            "effects",
+            "percent100",
+            "atf"
+        ],
+        "description" : "Add a {1} chance to inflict {0} on {2} when receiving {3} damage."
+    },
+    "bAddEffOnSkill" : {
+        "argument_type" : [
+            "skill",
+            "effects",
+            "percent100"
+        ],
+        "description" : "Add a {2} chance to inflict {1} on enemy when using {0}."
+    },
+    "bAutoSpell" : {
+        "argument_type" : [
+            "skill",
+            "percent10",
+            "integer"
+        ],
+        "description" : "Add a {1} chance to cast {0} of level {2} on each normal attack."
+    },
+    "bAutoSpellWhenHit" : {
+        "argument_type" : [
+            "skill",
+            "percent10",
+            "integer"
+        ],
+        "description" : "Add a {1} chance to cast {0} of level {2} from each normal attack."
+    },
+    "bHPVanishRaceRate" : {
+        "argument_type" : [
+            "races",
+            "percent100",
+            "percent"
+        ],
+        "description" : "Add a {1} chance of decreasing {0} enemies' HP by {2} on each normal attack."
+    },
+    "bSPVanishRaceRate" : {
+        "argument_type" : [
+            "races",
+            "percent100",
+            "percent"
+        ],
+        "description" : "Add a {1} chance of decreasing {0} eies' SP by {2} on each normal attack."
+    },
+    "bStateNoRecoverRace" : {
+        "argument_type" : [
+            "races",
+            "percent100",
+            "time"
+        ],
+        "description" : "Add a {1} chance of disabling HP and SP recovery of {0} enemies for {2} on each normal attack."
+    },
+    "bAddMonsterIdDropItem" : {
+        "argument_type" : [
+            "item",
+            "mob",
+            "percent100"
+        ],
+        "description" : "Add a {2} chance of dropping {0} for each {1} killed."
+    },
+    "bAddMonsterDropItem" : {
+        "argument_type" : [
+            "item",
+            "races",
+            "percent100"
+        ],
+        "description" : "Add a {2} chance of dropping {0} for each {1} enemy killed."
+    },
+    "bAddClassDropItem" : {
+        "argument_type" : [
+            "item",
+            "classes",
+            "percent100"
+        ],
+        "description" : "Add a {2} chance of dropping {0} for each {1} enemy killed."
+    },
+    "bAddMonsterDropItemGroup" : {
+        "argument_type" : [
+            "itemgroups",
+            "races",
+            "percent100"
+        ],
+        "description" : "Add a {2} chance of dropping an item from {0} for each {1} enemy killed."
+    },
+    "bAddClassDropItemGroup" : {
+        "argument_type" : [
+            "itemgroups",
+            "classes",
+            "percent100"
+        ],
+        "description" : "Add a {2} chance of dropping an item from {0} for each {1} enemy killed."
+    }
+}
