@@ -58,6 +58,7 @@ static int i2d_bonus_handler_zeny(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_item(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_itemgroups(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_bf(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_atf(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -82,7 +83,8 @@ i2d_handler bonus_list[] = {
     { {"zeny", 4}, i2d_bonus_handler_zeny },
     { {"item", 4}, i2d_bonus_handler_item },
     { {"itemgroups", 10}, i2d_bonus_handler_itemgroups },
-    { {"bf", 2}, i2d_bonus_handler_bf }
+    { {"bf", 2}, i2d_bonus_handler_bf },
+    { {"atf", 3}, i2d_bonus_handler_atf }
 };
 
 const char * i2d_token_string[] = {
@@ -3268,11 +3270,79 @@ static int i2d_bonus_handler_bf(i2d_script * script, i2d_node * node, i2d_contex
                 i2d_buffer_clear(&context->expression_buffer);
 
                 if(mask & bf->BF_WEAPON->value)
-                    status = i2d_buffer_printf(&context->expression_buffer, "physical");
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s", bf->BF_WEAPON->name.string);
                 if(!status && mask & bf->BF_MAGIC->value)
-                    status = i2d_buffer_printf(&context->expression_buffer, "%smagic", context->expression_buffer.offset ? ", " : "");
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s%s", context->expression_buffer.offset ? ", " : "", bf->BF_MAGIC->name.string);
                 if(!status && mask & bf->BF_MISC->value)
-                    status = i2d_buffer_printf(&context->expression_buffer, "%smisc", context->expression_buffer.offset ? ", " : "");
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s%s", context->expression_buffer.offset ? ", " : "", bf->BF_MISC->name.string);
+
+                if(status) {
+                    status = i2d_panic("failed to write buffer");
+                } else if(i2d_string_stack_push_buffer(&context->expression_stack, &context->expression_buffer)) {
+                    status = i2d_panic("failed to push string on stack");
+                }
+            }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_atf(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long mask;
+    i2d_constant_atf * atf;
+
+    if(i2d_node_get_constant(node, &mask)) {
+        status = i2d_panic("failed to get bf mask");
+    } else {
+        atf = &script->constant_db->atf;
+
+        /*
+         * default is ATF_TARGET
+         */
+        if(!(mask & atf->ATF_SELF->value) && !(mask & atf->ATF_TARGET->value))
+            mask |= atf->ATF_TARGET->value;
+
+        /*
+         * default is ATF_SHORT and ATF_LONG
+         */
+        if(!(mask & atf->ATF_SHORT->value) && !(mask & atf->ATF_LONG->value))
+            mask |= (atf->ATF_SHORT->value | atf->ATF_LONG->value);
+
+        /*
+         * default is AFT_WEAPON
+         */
+        if(!(mask & atf->ATF_WEAPON->value) && !(mask & atf->ATF_MAGIC->value) && !(mask & atf->ATF_MISC->value))
+            mask |= atf->ATF_WEAPON->value;
+
+        if(mask & atf->ATF_SELF->value) {
+            if(i2d_string_stack_push(&context->expression_stack, atf->ATF_SELF->name.string, atf->ATF_SELF->name.length))
+                status = i2d_panic("failed to push string on stack");
+        } else if(mask & atf->ATF_TARGET->value) {
+            if(i2d_string_stack_push(&context->expression_stack, atf->ATF_TARGET->name.string, atf->ATF_TARGET->name.length))
+                status = i2d_panic("failed to push string on stack");
+        }
+
+        if(status) {
+            status = i2d_panic("failed to write buffer");
+        } else {
+            if(!((atf->ATF_SHORT->value | atf->ATF_LONG->value) == (mask & (atf->ATF_SHORT->value | atf->ATF_LONG->value)))) {
+                if(mask & atf->ATF_SHORT->value) {
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s ", atf->ATF_SHORT->name.string);
+                } else if(mask & atf->ATF_LONG->value) {
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s ", atf->ATF_LONG->name.string);
+                }
+            }
+            if(status) {
+                status = i2d_panic("failed to write buffer");
+            } else {
+                if(mask & atf->ATF_WEAPON->value)
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s", atf->ATF_WEAPON->name.string);
+                if(!status && mask & atf->ATF_MAGIC->value)
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s%s", context->expression_buffer.offset ? ", " : "", atf->ATF_MAGIC->name.string);
+                if(!status && mask & atf->ATF_MISC->value)
+                    status = i2d_buffer_printf(&context->expression_buffer, "%s%s", context->expression_buffer.offset ? ", " : "", atf->ATF_MISC->name.string);
 
                 if(status) {
                     status = i2d_panic("failed to write buffer");
