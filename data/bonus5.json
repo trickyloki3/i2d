@@ -1,0 +1,42 @@
+{
+    "bAddEffOnSkill" : {
+        "argument_type" : [
+            "skill",
+            "effects",
+            "percent100",
+            "atf",
+            "time"
+        ],
+        "description" : "Add a {2} chance to inflict {1} for {5} on {3} when using {0} and dealing {4} damage."
+    },
+    "bAutoSpell" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "percent10",
+            "bf",
+            "ignore"
+        ],
+        "description" : "Add a {2} chance to cast {0} of level {1} when using {3} and dealing {4} damage."
+    },
+    "bAutoSpellWhenHit" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "percent10",
+            "bf",
+            "ignore"
+        ],
+        "description" : "Add a {2} chance to cast {0} of level {1} when receiving {3} and {4} damage."
+    },
+    "bAutoSpellOnSkill" : {
+        "argument_type" : [
+            "skill",
+            "skill",
+            "integer",
+            "percent10",
+            "ignore"
+        ],
+        "description" : "Add a {3} chance to cast {1} of level {2} when using {0}."
+    }
+}

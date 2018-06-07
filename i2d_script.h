@@ -340,6 +340,7 @@ struct i2d_script {
     i2d_data_map * bonus2;
     i2d_data_map * bonus3;
     i2d_data_map * bonus4;
+    i2d_data_map * bonus5;
     i2d_rbt * function_map;
     i2d_rbt * bonus_map;
 };

@@ -1973,6 +1973,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to load bonus3");
             } else if(i2d_data_map_init(&object->bonus4, data_map_by_value, object->json->bonus4, object->constant_db)) {
                 status = i2d_panic("failed to load bonus4");
+            } else if(i2d_data_map_init(&object->bonus5, data_map_by_value, object->json->bonus5, object->constant_db)) {
+                status = i2d_panic("failed to load bonus5");
             } else {
                 if(i2d_rbt_init(&object->function_map, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create function map object");
@@ -2009,6 +2011,7 @@ void i2d_script_deit(i2d_script ** result) {
     object = *result;
     i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_deit(object->function_map, i2d_rbt_deit);
+    i2d_deit(object->bonus5, i2d_data_map_deit);
     i2d_deit(object->bonus4, i2d_data_map_deit);
     i2d_deit(object->bonus3, i2d_data_map_deit);
     i2d_deit(object->bonus2, i2d_data_map_deit);
@@ -2139,6 +2142,9 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_context * c
                 break;
             case I2D_BONUS4:
                 status = i2d_script_bonus(script, block, context, script->bonus4, 4);
+                break;
+            case I2D_BONUS5:
+                status = i2d_script_bonus(script, block, context, script->bonus5, 5);
                 break;
             default:
                 /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
