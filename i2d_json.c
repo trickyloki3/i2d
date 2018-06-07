@@ -154,6 +154,8 @@ int i2d_json_init(i2d_json ** result, i2d_string * data_path) {
                 status = i2d_panic("failed to load bonus2.json");
             } else if(i2d_json_create_data(&object->bonus3, data_path->string, "bonus3.json")) {
                 status = i2d_panic("failed to load bonus3.json");
+            } else if(i2d_json_create_data(&object->bonus4, data_path->string, "bonus4.json")) {
+                status = i2d_panic("failed to load bonus4.json");
             } else if(i2d_json_create_data(&object->getiteminfo, data_path->string, "getiteminfo.json")) {
                 status = i2d_panic("failed to load getiteminfo.json");
             } else if(i2d_json_create_data(&object->strcharinfo, data_path->string, "strcharinfo.json")) {
@@ -188,6 +190,7 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json_destroy(object->ammos);
     i2d_json_destroy(object->strcharinfo);
     i2d_json_destroy(object->getiteminfo);
+    i2d_json_destroy(object->bonus4);
     i2d_json_destroy(object->bonus3);
     i2d_json_destroy(object->bonus2);
     i2d_json_destroy(object->bonus);

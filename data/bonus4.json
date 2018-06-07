@@ -1,0 +1,74 @@
+{
+    "bSetDefRace" : {
+        "argument_type" : [
+            "races",
+            "percent",
+            "time",
+            "integer"
+        ],
+        "description" : "Add a {1} chance to set DEF to {3} for {2} on each normal attack against {0} enemies."
+    },
+    "bSetMDefRace" : {
+        "argument_type" : [
+            "races",
+            "percent",
+            "time",
+            "integer"
+        ],
+        "description" : "Add a {1} chance to set MDEF to {3} for {2} on each normal attack against {0} enemies."
+    },
+    "bAddEff" : {
+        "argument_type" : [
+            "effects",
+            "percent100",
+            "atf",
+            "time"
+        ],
+        "description" : "Add a {1} chance to inflict {0} for {4} on {2} when dealing {3} damage."
+    },
+    "bAddEffWhenHit" : {
+        "argument_type" : [
+            "effects",
+            "percent100",
+            "atf",
+            "time"
+        ],
+        "description" : "Add a {1} chance to inflict {0} for {4} on {2} when receiving {3} damage."
+    },
+    "bAddEffOnSkill" : {
+        "argument_type" : [
+            "skill",
+            "effects",
+            "percent100",
+            "atf"
+        ],
+        "description" : "Add a {2} chance to inflict {1} on {3} when using {0} and dealing {4} damage."
+    },
+    "bAutoSpell" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "percent10",
+            "ignore"
+        ],
+        "description" : "Add a {2} chance to cast {0} of level {1} on each normal attack."
+    },
+    "bAutoSpellWhenHit" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "percent10",
+            "ignore"
+        ],
+        "description" : "Add a {2} chance to cast {0} of level {1} from each normal attack."
+    },
+    "bAutoSpellOnSkill" : {
+        "argument_type" : [
+            "skill",
+            "skill",
+            "integer",
+            "percent10"
+        ],
+        "description" : "Add a {3} chance to cast {1} of level {2} when using {0}."
+    }
+}
