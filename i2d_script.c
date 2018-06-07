@@ -57,6 +57,7 @@ static int i2d_bonus_handler_weapons(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_zeny(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_item(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_itemgroups(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_bf(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -80,7 +81,8 @@ i2d_handler bonus_list[] = {
     { {"weapons", 7}, i2d_bonus_handler_weapons },
     { {"zeny", 4}, i2d_bonus_handler_zeny },
     { {"item", 4}, i2d_bonus_handler_item },
-    { {"itemgroups", 10}, i2d_bonus_handler_itemgroups }
+    { {"itemgroups", 10}, i2d_bonus_handler_itemgroups },
+    { {"bf", 2}, i2d_bonus_handler_bf }
 };
 
 const char * i2d_token_string[] = {
@@ -3206,6 +3208,79 @@ static int i2d_bonus_handler_itemgroups(i2d_script * script, i2d_node * node, i2
         status = i2d_panic("failed to get item group by id -- %ld", id);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_bf(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    long mask;
+    i2d_constant_bf * bf;
+
+    if(i2d_node_get_constant(node, &mask)) {
+        status = i2d_panic("failed to get bf mask");
+    } else {
+        bf = &script->constant_db->bf;
+
+        /*
+         * default is BF_SHORT and BF_LONG
+         */
+        if(!(mask & bf->BF_SHORT->value) && !(mask & bf->BF_LONG->value))
+            mask |= (bf->BF_SHORT->value | bf->BF_LONG->value);
+
+        /*
+         * default is BF_WEAPON
+         */
+        if(!(mask & bf->BF_WEAPON->value) && !(mask & bf->BF_MAGIC->value) && !(mask & bf->BF_MISC->value))
+            mask |= bf->BF_WEAPON->value;
+
+        /*
+         * if BF_WEAPON then BF_NORMAL and if BF_SKILL then BF_SKILL
+         */
+        if(!(mask & bf->BF_NORMAL->value) && !(mask & bf->BF_SKILL->value))
+            mask |= (mask & bf->BF_WEAPON->value) ? bf->BF_NORMAL->value : bf->BF_SKILL->value;
+
+        if(!((bf->BF_SHORT->value | bf->BF_LONG->value) == (mask & (bf->BF_SHORT->value | bf->BF_LONG->value)))) {
+            if(mask & bf->BF_SHORT->value) {
+                status = i2d_buffer_printf(&context->expression_buffer, "%s ", bf->BF_SHORT->name.string);
+            } else if(mask & bf->BF_LONG->value) {
+                status = i2d_buffer_printf(&context->expression_buffer, "%s ", bf->BF_LONG->name.string);
+            }
+        }
+
+        if(status) {
+            status = i2d_panic("failed to write buffer");
+        } else {
+            if((bf->BF_NORMAL->value | bf->BF_SKILL->value) == (mask & (bf->BF_NORMAL->value | bf->BF_SKILL->value))) {
+                status = i2d_buffer_printf(&context->expression_buffer, "%s / %s", bf->BF_NORMAL->name.string, bf->BF_SKILL->name.string);
+            } else if(mask & bf->BF_NORMAL->value) {
+                status = i2d_buffer_printf(&context->expression_buffer, "%s", bf->BF_NORMAL->name.string);
+            } else if(mask & bf->BF_SKILL->value) {
+                status = i2d_buffer_printf(&context->expression_buffer, "%s", bf->BF_SKILL->name.string);
+            }
+
+            if(status) {
+                status = i2d_panic("failed to write buffer");
+            } else if(i2d_string_stack_push_buffer(&context->expression_stack, &context->expression_buffer)) {
+                status = i2d_panic("failed to push string on stack");
+            } else {
+                i2d_buffer_clear(&context->expression_buffer);
+
+                if(mask & bf->BF_WEAPON->value)
+                    status = i2d_buffer_printf(&context->expression_buffer, "physical");
+                if(!status && mask & bf->BF_MAGIC->value)
+                    status = i2d_buffer_printf(&context->expression_buffer, "%smagic", context->expression_buffer.offset ? ", " : "");
+                if(!status && mask & bf->BF_MISC->value)
+                    status = i2d_buffer_printf(&context->expression_buffer, "%smisc", context->expression_buffer.offset ? ", " : "");
+
+                if(status) {
+                    status = i2d_panic("failed to write buffer");
+                } else if(i2d_string_stack_push_buffer(&context->expression_stack, &context->expression_buffer)) {
+                    status = i2d_panic("failed to push string on stack");
+                }
+            }
+        }
     }
 
     return status;
