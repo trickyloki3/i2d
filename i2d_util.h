@@ -76,6 +76,7 @@ typedef struct i2d_string_stack i2d_string_stack;
 int i2d_string_stack_create(i2d_string_stack *, size_t);
 void i2d_string_stack_destroy(i2d_string_stack *);
 int i2d_string_stack_push(i2d_string_stack *, const char *, size_t);
+int i2d_string_stack_push_buffer(i2d_string_stack *, i2d_buffer *);
 int i2d_string_stack_pop(i2d_string_stack *);
 void i2d_string_stack_clear(i2d_string_stack *);
 int i2d_string_stack_get(i2d_string_stack *, i2d_string **, size_t *);

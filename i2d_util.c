@@ -224,6 +224,13 @@ int i2d_string_stack_push(i2d_string_stack * result, const char * string, size_t
     return status;
 }
 
+int i2d_string_stack_push_buffer(i2d_string_stack * result, i2d_buffer * buffer) {
+    i2d_string string;
+
+    i2d_buffer_get(buffer, &string.string, &string.length);
+    return i2d_string_stack_push(result, string.string, string.length);
+}
+
 int i2d_string_stack_pop(i2d_string_stack * result) {
     int status = I2D_OK;
 
