@@ -1963,7 +1963,7 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to load weapons");
             } else if(i2d_value_map_init(&object->ammos, object->json->ammos)) {
                 status = i2d_panic("failed to load ammos");
-            } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->strcharinfo, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
                 status = i2d_panic("failed to load functions");
             } else if(i2d_data_map_init(&object->bonus, data_map_by_value, object->json->bonus, object->constant_db)) {
                 status = i2d_panic("failed to load bonus");
@@ -2515,7 +2515,6 @@ static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_cont
     size_t size;
     long id;
     i2d_item * item;
-    i2d_string string;
 
     memset(arguments, 0, sizeof(arguments));
     size = i2d_size(arguments);
@@ -2538,9 +2537,7 @@ static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_cont
     }
 
     if(!status) {
-        i2d_buffer_get(&context->expression_buffer, &string.string, &string.length);
-
-        if(i2d_string_stack_push(&context->expression_stack, string.string, string.length)) {
+        if(i2d_string_stack_push_buffer(&context->expression_stack, &context->expression_buffer)) {
             status = i2d_panic("failed to push item list");
         } else {
             status = i2d_handler_general(script, node, context);
@@ -2698,10 +2695,7 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_cont
                 status = i2d_panic("failed to push function string");
             }
         } else {
-            /*
-             * to-do:
-             * get map name
-             */
+            status = i2d_panic("missing map name data");
         }
 
         if(!status) {
@@ -2760,15 +2754,8 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
                 }
             }
 
-            if(!status) {
-                if(i2d_format_write(&data->format, &context->expression_stack, &block->buffer)) {
+            if(!status && i2d_format_write(&data->format, &context->expression_stack, &block->buffer))
                     status = i2d_panic("failed to write bonus type description");
-                } else {
-#if i2d_debug
-                    i2d_panic("%s", block->buffer.buffer);
-#endif
-                }
-            }
         }
     }
 
@@ -2790,10 +2777,8 @@ static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2
         i2d_buffer_get(&context->predicate_buffer, &string.string, &string.length);
         if(string.length && i2d_buffer_printf(&context->expression_buffer, " (%s)", string.string)) {
             status = i2d_panic("failed to write predicates");
-        } else {
-            i2d_buffer_get(&context->expression_buffer, &string.string, &string.length);
-            if(i2d_string_stack_push(&context->expression_stack, string.string, string.length))
-                status = i2d_panic("failed to push string on stack");
+        } else if(i2d_string_stack_push_buffer(&context->expression_stack, &context->expression_buffer)) {
+            status = i2d_panic("failed to push string on stack");
         }
     }
 
