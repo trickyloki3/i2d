@@ -6,7 +6,6 @@
 struct i2d_option {
     i2d_string source_path;
     i2d_string data_path;
-    i2d_string json_path;
     long item_id;
 };
 

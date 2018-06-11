@@ -31,10 +31,6 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
                         if(i2d_string_create(&object->source_path, optarg, strlen(optarg)))
                             status = i2d_panic("failed on source directory path argument -- %s", optarg);
                         break;
-                    case 'j':
-                        if(i2d_string_create(&object->json_path, optarg, strlen(optarg)))
-                            status = i2d_panic("failed on json path argument -- %s", optarg);
-                        break;
                     case 'd':
                         if(i2d_string_create(&object->data_path, optarg, strlen(optarg)))
                             status = i2d_panic("failed on data directory path argument -- %s", optarg);
@@ -61,7 +57,6 @@ void i2d_option_deit(i2d_option ** result) {
     i2d_option * object;
 
     object = *result;
-    i2d_string_destroy(&object->json_path);
     i2d_string_destroy(&object->data_path);
     i2d_string_destroy(&object->source_path);
     i2d_free(object);
