@@ -5,6 +5,7 @@
 #include "i2d_range.h"
 #include "i2d_rbt.h"
 #include "i2d_json.h"
+#include "i2d_mob.h"
 
 struct i2d_constant {
     i2d_string macro;
@@ -58,6 +59,7 @@ struct i2d_constant_db {
     i2d_rbt * jobs;
     i2d_rbt * effects;
     i2d_rbt * itemgroups;
+    i2d_rbt * mob_races;
 
     i2d_constant_bf bf;
     i2d_constant_atf atf;
@@ -67,6 +69,7 @@ typedef struct i2d_constant_db i2d_constant_db;
 
 int i2d_constant_db_init(i2d_constant_db **, json_t *);
 void i2d_constant_db_deit(i2d_constant_db **);
+int i2d_constant_index_mob_races(i2d_constant_db *, i2d_mob_race_db *);
 int i2d_constant_get_by_macro_value(i2d_constant_db *, const char *, long *);
 int i2d_constant_get_by_macro(i2d_constant_db *, const char *, i2d_constant **);
 int i2d_constant_get_by_element(i2d_constant_db *, const long, i2d_constant **);
@@ -80,4 +83,5 @@ int i2d_constant_get_by_size(i2d_constant_db *, const long, i2d_constant **);
 int i2d_constant_get_by_job(i2d_constant_db *, const long, i2d_constant **);
 int i2d_constant_get_by_effect(i2d_constant_db *, const long, i2d_constant **);
 int i2d_constant_get_by_itemgroups(i2d_constant_db *, const long, i2d_constant **);
+int i2d_constant_get_by_mob_races(i2d_constant_db *, const long, i2d_constant **);
 #endif

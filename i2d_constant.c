@@ -191,6 +191,7 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     size_t i;
 
     object = *result;
+    i2d_deit(object->mob_races, i2d_rbt_deit);
     i2d_deit(object->itemgroups, i2d_rbt_deit);
     i2d_deit(object->effects, i2d_rbt_deit);
     i2d_deit(object->jobs, i2d_rbt_deit);
@@ -209,6 +210,29 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
     i2d_free(object->constants);
     i2d_free(object);
     *result = NULL;
+}
+
+int i2d_constant_index_mob_races(i2d_constant_db * constant_db, i2d_mob_race_db * mob_race_db) {
+    int status = I2D_OK;
+
+    i2d_mob_race * mob_race;
+    i2d_constant * constant;
+
+    if(i2d_rbt_init(&constant_db->mob_races, i2d_rbt_cmp_long)) {
+        status = i2d_panic("failed to create red black tree object");
+    } else if(mob_race_db->list) {
+        mob_race = mob_race_db->list;
+        do {
+            if(i2d_constant_get_by_macro(constant_db, mob_race->macro.string, &constant)) {
+                status = i2d_panic("failed to get mob race by macro -- %s", mob_race->macro.string);
+            } else if(i2d_rbt_insert(constant_db->mob_races, &constant->value, constant)) {
+                status = i2d_panic("failed to map constant object");
+            }
+            mob_race = mob_race->next;
+        } while(mob_race != mob_race_db->list);
+    }
+
+    return status;
 }
 
 int i2d_constant_get_by_macro_value(i2d_constant_db * constant_db, const char * key, long * result) {
@@ -268,4 +292,8 @@ int i2d_constant_get_by_effect(i2d_constant_db * constant_db, const long key, i2
 
 int i2d_constant_get_by_itemgroups(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->itemgroups, &key, (void **) result);
+}
+
+int i2d_constant_get_by_mob_races(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
+    return i2d_rbt_search(constant_db->mob_races, &key, (void **) result);
 }

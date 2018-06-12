@@ -1957,6 +1957,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to create parser object");
             } else if(i2d_constant_db_init(&object->constant_db, object->json->constants)) {
                 status = i2d_panic("failed to create constant db object");
+            } else if(i2d_constant_index_mob_races(object->constant_db, object->db->mob_race_db)) {
+                status = i2d_panic("failed to index mob race db");
             } else if(i2d_value_map_init(&object->getiteminfo, object->json->getiteminfo)) {
                 status = i2d_panic("failed to load getiteminfo");
             } else if(i2d_value_map_init(&object->strcharinfo, object->json->strcharinfo)) {
@@ -2749,6 +2751,8 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
     i2d_string * types;
     i2d_handler * handler;
 
+    i2d_zero(arguments);
+
     if(argc >= i2d_size(arguments)) {
         status = i2d_panic("invalid paramaters");
     } else if(i2d_script_expression(script, block->nodes, 0, context)) {
@@ -3140,16 +3144,13 @@ static int i2d_bonus_handler_effects(i2d_script * script, i2d_node * node, i2d_c
 
 static int i2d_bonus_handler_mob_race(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
-    i2d_string macro;
-    i2d_mob_race * mob_race;
+    long value;
     i2d_constant * constant;
 
-    if(i2d_node_get_string(node, &macro)) {
-        status = i2d_panic("failed to get macro");
-    } else if(i2d_mob_race_db_search_by_macro(script->db->mob_race_db, macro.string, &mob_race)) {
-        status = i2d_panic("failed to get mob race by macro -- %s", macro.string);
-    } else if(i2d_constant_get_by_macro(script->constant_db, macro.string, &constant)) {
-        status = i2d_panic("failed to get mob race by macro -- %s", macro.string);
+    if(i2d_node_get_constant(node, &value)) {
+        status = i2d_panic("failed to get mob race id");
+    } else if(i2d_constant_get_by_mob_races(script->constant_db, value, &constant)) {
+        status = i2d_panic("failed to get mob race by id -- %ld", value);
     } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
