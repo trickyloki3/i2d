@@ -106,7 +106,7 @@
     },
     "bAddRace2" : {
         "argument_type" : [
-            "mob_race",
+            "mob_races",
             "percent"
         ],
         "description" : "Increase physical damage by {1} against {0} enemies."
@@ -260,7 +260,7 @@
     },
     "bIgnoreMdefRace2Rate" : {
         "argument_type" : [
-            "mob_race",
+            "mob_races",
             "percent"
         ],
         "description" : "Pierce magic defense by {1} of {0} enemies."
@@ -295,7 +295,7 @@
     },
     "bMagicAddRace2" : {
         "argument_type" : [
-            "mob_race",
+            "mob_races",
             "percent"
         ],
         "description" : "Increase magic damage by {1} against {0}."
@@ -470,7 +470,7 @@
     },
     "bSubRace2" : {
         "argument_type" : [
-            "mob_race",
+            "mob_races",
             "percent"
         ],
         "description" : "Reduce damage by {1} from {0} enemies."

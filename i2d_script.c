@@ -54,7 +54,7 @@ static int i2d_bonus_handler_sizes(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_skill(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_mob(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_effects(i2d_script *, i2d_node *, i2d_context *);
-static int i2d_bonus_handler_mob_race(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_bonus_handler_mob_races(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_weapons(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_zeny(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_bonus_handler_item(i2d_script *, i2d_node *, i2d_context *);
@@ -80,7 +80,7 @@ i2d_handler bonus_list[] = {
     { {"skill", 5}, i2d_bonus_handler_skill },
     { {"mob", 3}, i2d_bonus_handler_mob },
     { {"effects", 7}, i2d_bonus_handler_effects },
-    { {"mob_race", 8}, i2d_bonus_handler_mob_race },
+    { {"mob_races", 9}, i2d_bonus_handler_mob_races },
     { {"weapons", 7}, i2d_bonus_handler_weapons },
     { {"zeny", 4}, i2d_bonus_handler_zeny },
     { {"item", 4}, i2d_bonus_handler_item },
@@ -3142,7 +3142,7 @@ static int i2d_bonus_handler_effects(i2d_script * script, i2d_node * node, i2d_c
     return status;
 }
 
-static int i2d_bonus_handler_mob_race(i2d_script * script, i2d_node * node, i2d_context * context) {
+static int i2d_bonus_handler_mob_races(i2d_script * script, i2d_node * node, i2d_context * context) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
