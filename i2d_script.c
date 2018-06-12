@@ -17,6 +17,7 @@ static int i2d_handler_strcharinfo(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_handler_getequipid(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_handler_getiteminfo(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_handler_getmapflag(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_max(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -31,7 +32,8 @@ i2d_handler function_list[] = {
     { {"strcharinfo", 11}, i2d_handler_strcharinfo },
     { {"getequipid", 10}, i2d_handler_getequipid },
     { {"getiteminfo", 11}, i2d_handler_getiteminfo },
-    { {"getmapflag", 10}, i2d_handler_getmapflag }
+    { {"getmapflag", 10}, i2d_handler_getmapflag },
+    { {"max", 3}, i2d_handler_max }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_context *);
@@ -2709,6 +2711,28 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_cont
                 status = i2d_handler_general(script, node, context);
             }
         }
+    }
+
+    return status;
+}
+
+static int i2d_handler_max(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+
+    i2d_node * arguments[2];
+
+    long xmin;
+    long xmax;
+    long ymin;
+    long ymax;
+
+    if(i2d_node_get_arguments(node->left, arguments, 2, 0)) {
+        status = i2d_panic("failed to get max arguments");
+    } else {
+        i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
+        i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
+        if(i2d_range_create_add(&node->range, max(xmin, ymin), max(xmax, ymax)))
+            status = i2d_panic("failed to create range object");
     }
 
     return status;
