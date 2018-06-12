@@ -2729,7 +2729,7 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
         status = i2d_panic("invalid paramaters");
     } else if(i2d_script_expression(script, block->nodes, 0, context)) {
         status = i2d_panic("failed to evaluate expression");
-    } else if(i2d_node_get_arguments(block->nodes, arguments, 1 + argc, 0)) {
+    } else if(i2d_node_get_arguments(block->nodes, arguments, 1, argc)) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
         status = i2d_panic("failed to get bonus type");
@@ -2750,7 +2750,11 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
                 } else {
                     i2d_buffer_clear(&context->expression_buffer);
 
-                    status = handler->handler(script, arguments[i + 1], context);
+                    if(!arguments[i + 1] && strcmp(types[i].string, "ignore")) {
+                        status = i2d_panic("missing argument at index %zu", i);
+                    } else {
+                        status = handler->handler(script, arguments[i + 1], context);
+                    }
                 }
             }
 
