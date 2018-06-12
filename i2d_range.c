@@ -1,13 +1,5 @@
 #include "i2d_range.h"
 
-#ifndef min
-#define min(x, y) ((x < y) ? x : y)
-#endif
-
-#ifndef max
-#define max(x, y) ((x < y) ? y : x)
-#endif
-
 int i2d_range_node_init(i2d_range_node ** result, long min, long max) {
     int status = I2D_OK;
     i2d_range_node * object;

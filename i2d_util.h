@@ -34,6 +34,14 @@ int i2d_panic_print(const char *, ...);
 #define is_negative(x) ((x) <  0)
 #define is_positive(x) ((x) >= 0)
 
+#ifndef min
+#define min(x, y) ((x < y) ? x : y)
+#endif
+
+#ifndef max
+#define max(x, y) ((x < y) ? y : x)
+#endif
+
 struct i2d_string {
     char * string;
     size_t length;
