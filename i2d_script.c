@@ -18,6 +18,7 @@ static int i2d_handler_getequipid(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_handler_getiteminfo(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_handler_getmapflag(i2d_script *, i2d_node *, i2d_context *);
 static int i2d_handler_max(i2d_script *, i2d_node *, i2d_context *);
+static int i2d_handler_getequiprefinerycnt(i2d_script *, i2d_node *, i2d_context *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -33,7 +34,8 @@ i2d_handler function_list[] = {
     { {"getequipid", 10}, i2d_handler_getequipid },
     { {"getiteminfo", 11}, i2d_handler_getiteminfo },
     { {"getmapflag", 10}, i2d_handler_getmapflag },
-    { {"max", 3}, i2d_handler_max }
+    { {"max", 3}, i2d_handler_max },
+    { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_context *);
@@ -2735,6 +2737,27 @@ static int i2d_handler_max(i2d_script * script, i2d_node * node, i2d_context * c
         i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
         if(i2d_range_create_add(&node->range, max(xmin, ymin), max(xmax, ymax)))
             status = i2d_panic("failed to create range object");
+    }
+
+    return status;
+}
+
+static int i2d_handler_getequiprefinerycnt(i2d_script * script, i2d_node * node, i2d_context * context) {
+    int status = I2D_OK;
+    i2d_node * argument;
+    long value;
+    i2d_constant * constant;
+
+    if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
+        status = i2d_panic("failed to getequiprefinerycnt");
+    } else if(i2d_node_get_constant(argument, &value)) {
+        status = i2d_panic("failed to get location value");
+    } else if(i2d_constant_get_by_location(script->constant_db, value, &constant)) {
+        status = i2d_panic("failed to get location by value -- %ld", value);
+    } else if(i2d_string_stack_push(&context->expression_stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push location string");
+    } else {
+        status = i2d_handler_general(script, node, context);
     }
 
     return status;
