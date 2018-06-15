@@ -52,6 +52,72 @@ int i2d_string_vprintf(i2d_string * result, const char * format, ...) {
     return status;
 }
 
+int i2d_buffer_init(i2d_buffer ** result, size_t size) {
+    int status = I2D_OK;
+    i2d_buffer * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_buffer_create(object, size)) {
+                status = i2d_panic("failed to create buffer object");
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status) {
+                i2d_buffer_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+void i2d_buffer_deit(i2d_buffer ** result) {
+    i2d_buffer * object;
+
+    object = *result;
+    i2d_buffer_destroy(object);
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_buffer_list_deit(i2d_buffer ** result) {
+    i2d_buffer * object;
+    i2d_buffer * buffer;
+
+    object = *result;
+    while(object != object->next) {
+        buffer = object->next;
+        i2d_buffer_remove(buffer);
+        i2d_buffer_deit(&buffer);
+    }
+    i2d_buffer_deit(&object);
+    *result = NULL;
+}
+
+void i2d_buffer_append(i2d_buffer * x, i2d_buffer * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_buffer_remove(i2d_buffer * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
 int i2d_buffer_create(i2d_buffer * result, size_t length) {
     int status = I2D_OK;
 

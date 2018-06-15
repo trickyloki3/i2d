@@ -57,10 +57,17 @@ struct i2d_buffer {
     char * buffer;
     size_t length;
     size_t offset;
+    struct i2d_buffer * next;
+    struct i2d_buffer * prev;
 };
 
 typedef struct i2d_buffer i2d_buffer;
 
+int i2d_buffer_init(i2d_buffer **, size_t);
+void i2d_buffer_deit(i2d_buffer **);
+void i2d_buffer_list_deit(i2d_buffer **);
+void i2d_buffer_append(i2d_buffer *, i2d_buffer *);
+void i2d_buffer_remove(i2d_buffer *);
 int i2d_buffer_create(i2d_buffer *, size_t);
 void i2d_buffer_destroy(i2d_buffer *);
 int i2d_buffer_adapt(i2d_buffer *, size_t);
