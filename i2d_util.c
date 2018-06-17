@@ -607,14 +607,10 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
             length = (size_t) delimit - (size_t) anchor;
 
             /*
-             * each item must have at least
-             * 21 commas and 6 curly braces
-             * including the newline, hence
-             * the minimum length is 28
+             * skip comments
              */
-            if(isalnum(*anchor)) {
+            if(isalnum(*anchor))
                 status = cb(anchor, length, data);
-            }
         }
 
         anchor = delimit + 1;
