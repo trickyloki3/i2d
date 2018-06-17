@@ -95,10 +95,17 @@ struct i2d_string_stack {
     size_t * offset;
     size_t size;
     size_t top;
+    struct i2d_string_stack * next;
+    struct i2d_string_stack * prev;
 };
 
 typedef struct i2d_string_stack i2d_string_stack;
 
+int i2d_string_stack_init(i2d_string_stack **, size_t);
+void i2d_string_stack_deit(i2d_string_stack **);
+void i2d_string_stack_list_deit(i2d_string_stack **);
+void i2d_string_stack_append(i2d_string_stack *, i2d_string_stack *);
+void i2d_string_stack_remove(i2d_string_stack *);
 int i2d_string_stack_create(i2d_string_stack *, size_t);
 void i2d_string_stack_destroy(i2d_string_stack *);
 int i2d_string_stack_push(i2d_string_stack *, const char *, size_t);

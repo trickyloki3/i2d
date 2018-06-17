@@ -298,6 +298,72 @@ int i2d_buffer_cache_put(i2d_buffer_cache * cache, i2d_buffer ** result) {
     return status;
 }
 
+int i2d_string_stack_init(i2d_string_stack ** result, size_t size) {
+    int status = I2D_OK;
+    i2d_string_stack * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_string_stack_create(object, size)) {
+                status = i2d_panic("failed to create string stack object");
+            } else {
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status) {
+                i2d_string_stack_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+void i2d_string_stack_deit(i2d_string_stack ** result) {
+    i2d_string_stack * object;
+
+    object = *result;
+    i2d_string_stack_destroy(object);
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_string_stack_list_deit(i2d_string_stack ** result) {
+    i2d_string_stack * object;
+    i2d_string_stack * stack;
+
+    object = *result;
+    while(object != object->next) {
+        stack = object->next;
+        i2d_string_stack_remove(stack);
+        i2d_string_stack_deit(&stack);
+    }
+    i2d_string_stack_deit(&object);
+    *result = NULL;
+}
+
+void i2d_string_stack_append(i2d_string_stack * x, i2d_string_stack * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_string_stack_remove(i2d_string_stack * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
 int i2d_string_stack_create(i2d_string_stack * result, size_t size) {
     int status = I2D_OK;
 
