@@ -237,6 +237,67 @@ void i2d_buffer_get(i2d_buffer * result, char ** string, size_t * length) {
     *length = result->offset;
 }
 
+int i2d_buffer_cache_init(i2d_buffer_cache ** result) {
+    int status = I2D_OK;
+    i2d_buffer_cache * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_buffer_init(&object->list, I2D_SIZE_SMALL))
+                status = i2d_panic("failed to create buffer object");
+
+            if(status)
+                i2d_buffer_cache_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_buffer_cache_deit(i2d_buffer_cache ** result) {
+    i2d_buffer_cache * object;
+
+    object = *result;
+    i2d_deit(object->list, i2d_buffer_list_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
+int i2d_buffer_cache_get(i2d_buffer_cache * cache, i2d_buffer ** result) {
+    int status = I2D_OK;
+    i2d_buffer * buffer;
+
+    if(cache->list != cache->list->next) {
+        buffer = cache->list->next;
+        i2d_buffer_remove(buffer);
+        i2d_buffer_clear(buffer);
+        *result = buffer;
+    } else {
+        status = i2d_buffer_init(result, I2D_SIZE_SMALL);
+    }
+
+    return status;
+}
+
+int i2d_buffer_cache_put(i2d_buffer_cache * cache, i2d_buffer ** result) {
+    int status = I2D_OK;
+    i2d_buffer * buffer;
+
+    buffer = *result;
+    i2d_buffer_remove(buffer);
+    i2d_buffer_append(buffer, cache->list);
+    *result = NULL;
+
+    return status;
+}
+
 int i2d_string_stack_create(i2d_string_stack * result, size_t size) {
     int status = I2D_OK;
 
