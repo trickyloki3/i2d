@@ -116,6 +116,17 @@ int i2d_string_stack_get(i2d_string_stack *, i2d_string **, size_t *);
 int i2d_string_stack_get_sorted(i2d_string_stack *, i2d_string **, size_t *);
 int i2d_string_stack_get_unique(i2d_string_stack *, i2d_buffer *);
 
+struct i2d_string_stack_cache {
+    i2d_string_stack * list;
+};
+
+typedef struct i2d_string_stack_cache i2d_string_stack_cache;
+
+int i2d_string_stack_cache_init(i2d_string_stack_cache **);
+void i2d_string_stack_cache_deit(i2d_string_stack_cache **);
+int i2d_string_stack_cache_get(i2d_string_stack_cache *, i2d_string_stack **);
+int i2d_string_stack_cache_put(i2d_string_stack_cache *, i2d_string_stack **);
+
 int i2d_strtol(long *, const char *, size_t, int);
 int i2d_strtoul(unsigned long *, const char *, size_t, int);
 

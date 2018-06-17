@@ -511,6 +511,67 @@ int i2d_string_stack_get_unique(i2d_string_stack * stack, i2d_buffer * buffer) {
     return status;
 }
 
+int i2d_string_stack_cache_init(i2d_string_stack_cache ** result) {
+    int status = I2D_OK;
+    i2d_string_stack_cache * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_string_stack_init(&object->list, I2D_SIZE_SMALL))
+                status = i2d_panic("failed to create stack object");
+
+            if(status)
+                i2d_string_stack_cache_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_string_stack_cache_deit(i2d_string_stack_cache ** result) {
+    i2d_string_stack_cache * object;
+
+    object = *result;
+    i2d_deit(object->list, i2d_string_stack_list_deit);
+    i2d_free(object);
+    *result = NULL;
+}
+
+int i2d_string_stack_cache_get(i2d_string_stack_cache * cache, i2d_string_stack ** result) {
+    int status = I2D_OK;
+    i2d_string_stack * stack;
+
+    if(cache->list != cache->list->next) {
+        stack = cache->list->next;
+        i2d_string_stack_remove(stack);
+        i2d_string_stack_clear(stack);
+        *result = stack;
+    } else {
+        status = i2d_string_stack_init(result, I2D_SIZE_SMALL);
+    }
+
+    return status;
+}
+
+int i2d_string_stack_cache_put(i2d_string_stack_cache * cache, i2d_string_stack ** result) {
+    int status = I2D_OK;
+    i2d_string_stack * stack;
+
+    stack = *result;
+    i2d_string_stack_remove(stack);
+    i2d_string_stack_append(stack, cache->list);
+    *result = NULL;
+
+    return status;
+}
+
 int i2d_strtol(long * result, const char * string, size_t length, int base) {
     int status = I2D_OK;
 
