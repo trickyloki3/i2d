@@ -304,10 +304,6 @@ int i2d_data_map_get(i2d_data_map *, void *, i2d_data **);
 
 struct i2d_context {
     i2d_rbt * variables;
-    i2d_string_stack expression_stack;
-    i2d_string_stack predicate_stack;
-    i2d_buffer expression_buffer;
-    i2d_buffer predicate_buffer;
     struct i2d_context * next;
     struct i2d_context * prev;
 };
@@ -320,9 +316,15 @@ void i2d_context_list_deit(i2d_context **);
 void i2d_context_append(i2d_context *, i2d_context *);
 void i2d_context_remove(i2d_context *);
 void i2d_context_reset(i2d_context *);
-void i2d_context_reset_local(i2d_context *);
 int i2d_context_add_variable(i2d_context *, i2d_node *);
 int i2d_context_get_variable(i2d_context *, i2d_node *, i2d_node **);
+
+struct i2d_local {
+    i2d_buffer * buffer;
+    i2d_string_stack * stack;
+};
+
+typedef struct i2d_local i2d_local;
 
 struct i2d_script {
     i2d_db * db;
@@ -353,6 +355,8 @@ int i2d_script_init(i2d_script **, i2d_option *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_context_init(i2d_script *, i2d_context **);
 int i2d_script_context_deit(i2d_script *, i2d_context **);
+int i2d_script_local_create(i2d_script *, i2d_local *);
+int i2d_script_local_destroy(i2d_script *, i2d_local *);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *);
 int i2d_script_translate(i2d_script *, i2d_block *, i2d_context *);
 int i2d_script_statement(i2d_script *, i2d_block *, i2d_context *);
