@@ -1,5 +1,8 @@
 #include "i2d_script.h"
 
+static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
+static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
+
 struct i2d_handler {
     i2d_string name;
     int (*handler) (i2d_script *, i2d_node *, i2d_local *);
@@ -1827,88 +1830,17 @@ int i2d_data_map_get(i2d_data_map * data_map, void * key, i2d_data ** result) {
     return i2d_rbt_search(data_map->map, key, (void **) result);
 }
 
-int i2d_context_init(i2d_context ** result) {
-    int status = I2D_OK;
-    i2d_context * object;
-
-    if(i2d_is_invalid(result)) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            if(i2d_rbt_init(&object->variables, i2d_rbt_cmp_node)) {
-                status = i2d_panic("failed to create red black tree objects");
-            } else {
-                object->next = object;
-                object->prev = object;
-            }
-
-            if(status)
-                i2d_context_deit(&object);
-            else
-                *result = object;
-        }
-    }
-
-    return status;
-}
-
-void i2d_context_deit(i2d_context ** result) {
-    i2d_context * object;
-
-    object = *result;
-    i2d_deit(object->variables, i2d_rbt_deit);
-    i2d_free(object);
-    *result = NULL;
-}
-
-void i2d_context_list_deit(i2d_context ** result) {
-    i2d_context * object;
-    i2d_context * context;
-
-    object = *result;
-    if(object) {
-        while(object != object->next) {
-            context = object->next;
-            i2d_context_remove(context);
-            i2d_context_deit(&context);
-        }
-        i2d_context_deit(&object);
-    }
-    *result = NULL;
-}
-
-void i2d_context_append(i2d_context * x, i2d_context * y) {
-    x->next->prev = y->prev;
-    y->prev->next = x->next;
-    x->next = y;
-    y->prev = x;
-}
-
-void i2d_context_remove(i2d_context * x) {
-    x->prev->next = x->next;
-    x->next->prev = x->prev;
-    x->next = x;
-    x->prev = x;
-}
-
-void i2d_context_reset(i2d_context * context) {
-    i2d_rbt_clear(context->variables);
-}
-
-int i2d_context_add_variable(i2d_context * context, i2d_node * node) {
+static int i2d_rbt_add_variable(i2d_rbt * variables, i2d_node * node) {
     int status = I2D_OK;
     i2d_node * last;
 
     if(I2D_VARIABLE != node->type) {
         status = i2d_panic("invalid node type -- %d", node->type);
     } else {
-        if(!i2d_rbt_search(context->variables, node, (void **) &last) &&
-            i2d_rbt_delete(context->variables, last) ) {
+        if(!i2d_rbt_search(variables, node, (void **) &last) &&
+            i2d_rbt_delete(variables, last) ) {
             status = i2d_panic("failed to replace variable");
-        } else if(i2d_rbt_insert(context->variables, node, node)) {
+        } else if(i2d_rbt_insert(variables, node, node)) {
             status = i2d_panic("failed to insert variable");
         }
     }
@@ -1916,8 +1848,8 @@ int i2d_context_add_variable(i2d_context * context, i2d_node * node) {
     return status;
 }
 
-int i2d_context_get_variable(i2d_context * context, i2d_node * key, i2d_node ** result) {
-    return i2d_rbt_search(context->variables, key, (void **) result);
+static int i2d_rbt_get_variable(i2d_rbt * variables, i2d_node * key, i2d_node ** result) {
+    return i2d_rbt_search(variables, key, (void **) result);
 }
 
 int i2d_script_init(i2d_script ** result, i2d_option * option) {
@@ -2018,48 +1950,12 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->strcharinfo, i2d_value_map_deit);
     i2d_deit(object->getiteminfo, i2d_value_map_deit);
     i2d_deit(object->constant_db, i2d_constant_db_deit);
-    i2d_deit(object->contexts, i2d_context_list_deit);
     i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);
     i2d_deit(object->json, i2d_json_deit);
     i2d_deit(object->db, i2d_db_deit);
     i2d_free(object);
     *result = NULL;
-}
-
-int i2d_script_context_init(i2d_script * script, i2d_context ** result) {
-    int status = I2D_OK;
-
-    if(script->contexts) {
-        if(script->contexts == script->contexts->next) {
-            *result = script->contexts;
-            script->contexts = NULL;
-        } else {
-            *result = script->contexts->next;
-            i2d_context_remove(*result);
-        }
-    } else {
-        status = i2d_context_init(result);
-    }
-
-    return status;
-}
-
-int i2d_script_context_deit(i2d_script * script, i2d_context ** result) {
-    int status = I2D_OK;
-    i2d_context * context;
-
-    context = *result;
-    i2d_context_reset(context);
-    *result = NULL;
-
-    if(script->contexts) {
-        i2d_context_append(context, script->contexts);
-    } else {
-        script->contexts = context;
-    }
-
-    return status;
 }
 
 int i2d_script_local_create(i2d_script * script, i2d_local * result) {
@@ -2090,21 +1986,23 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     int status = I2D_OK;
     i2d_token * tokens = NULL;
     i2d_block * blocks = NULL;
-    i2d_context * context = NULL;
+    i2d_rbt * variables = NULL;
 
     if(!strcmp("{}", source->string)) {
         status = i2d_string_create(target, "", 0);
-    } else if(i2d_lexer_tokenize(script->lexer, source, &tokens)) {
-        status = i2d_panic("failed to tokenize -- %s", source->string);
-    } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
-        status = i2d_panic("failed to parse -- %s", source->string);
-    } else if(i2d_script_context_init(script, &context)) {
-        status = i2d_panic("failed to create context object");
     } else {
-        if(i2d_script_translate(script, blocks, context))
-            status = i2d_panic("failed to translate -- %s", source->string);
-
-        i2d_script_context_deit(script, &context);
+        if(i2d_rbt_init(&variables, i2d_rbt_cmp_node)) {
+            status = i2d_panic("failed to create red black tree object");
+        } else {
+            if(i2d_lexer_tokenize(script->lexer, source, &tokens)) {
+                status = i2d_panic("failed to tokenize -- %s", source->string);
+            } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
+                status = i2d_panic("failed to parse -- %s", source->string);
+            } else if(i2d_script_translate(script, blocks, variables)) {
+                status = i2d_panic("failed to translate -- %s", source->string);
+            }
+            i2d_rbt_deit(&variables);
+        }
     }
 
     if(tokens)
@@ -2116,7 +2014,7 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     return status;
 }
 
-int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_context * context) {
+int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * variables) {
         int status = I2D_OK;
     i2d_block * block;
 
@@ -2125,13 +2023,13 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_context * 
         do {
             switch(block->type) {
                 case I2D_BLOCK:
-                    status = i2d_script_translate(script, block->child, context);
+                    status = i2d_script_translate(script, block->child, variables);
                     break;
                 case I2D_STATEMENT:
-                    status = i2d_script_statement(script, block, context);
+                    status = i2d_script_statement(script, block, variables);
                     break;
                 case I2D_IF:
-                    status = i2d_script_expression(script, block->nodes, 1, context);
+                    status = i2d_script_expression(script, block->nodes, 1, variables);
                     break;
                 case I2D_ELSE:
                     break;
@@ -2146,25 +2044,25 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_context * 
     return status;
 }
 
-int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_context * context) {
+int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
     int status = I2D_OK;
 
     if(block->statement) {
         switch(block->statement->type) {
             case I2D_BONUS:
-                status = i2d_script_bonus(script, block, context, script->bonus, 1);
+                status = i2d_script_bonus(script, block, variables, script->bonus, 1);
                 break;
             case I2D_BONUS2:
-                status = i2d_script_bonus(script, block, context, script->bonus2, 2);
+                status = i2d_script_bonus(script, block, variables, script->bonus2, 2);
                 break;
             case I2D_BONUS3:
-                status = i2d_script_bonus(script, block, context, script->bonus3, 3);
+                status = i2d_script_bonus(script, block, variables, script->bonus3, 3);
                 break;
             case I2D_BONUS4:
-                status = i2d_script_bonus(script, block, context, script->bonus4, 4);
+                status = i2d_script_bonus(script, block, variables, script->bonus4, 4);
                 break;
             case I2D_BONUS5:
-                status = i2d_script_bonus(script, block, context, script->bonus5, 5);
+                status = i2d_script_bonus(script, block, variables, script->bonus5, 5);
                 break;
             default:
                 /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
@@ -2175,12 +2073,12 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_context * c
     return status;
 }
 
-int i2d_script_expression(i2d_script * script, i2d_node * node, int is_conditional, i2d_context * context) {
+int i2d_script_expression(i2d_script * script, i2d_node * node, int is_conditional, i2d_rbt * variables) {
     int status = I2D_OK;
 
-    if(node->left && i2d_script_expression(script, node->left, is_conditional, context)) {
+    if(node->left && i2d_script_expression(script, node->left, is_conditional, variables)) {
         status = i2d_panic("failed to evaluate left expression");
-    } else if(node->right && i2d_script_expression(script, node->right, is_conditional, context)) {
+    } else if(node->right && i2d_script_expression(script, node->right, is_conditional, variables)) {
         status = i2d_panic("failed to evaluate right expression");
     } else {
         switch(node->type) {
@@ -2188,16 +2086,16 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
                 status = (node->left) ? i2d_node_copy(node, node->left) : i2d_range_create_add(&node->range, 0, 0);
                 break;
             case I2D_VARIABLE:
-                status = i2d_script_expression_variable(script, node, context);
+                status = i2d_script_expression_variable(script, node, variables);
                 break;
             case I2D_FUNCTION:
-                status = i2d_script_expression_function(script, node, context);
+                status = i2d_script_expression_function(script, node);
                 break;
             case I2D_UNARY:
                 status = i2d_script_expression_unary(script, node, is_conditional);
                 break;
             case I2D_BINARY:
-                status = i2d_script_expression_binary(script, node, is_conditional, context);
+                status = i2d_script_expression_binary(script, node, is_conditional, variables);
                 break;
             default:
                 status = i2d_panic("invalid node type -- %d", node->type);
@@ -2208,13 +2106,13 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
     return status;
 }
 
-int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_context * context) {
+int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt * variables) {
     int status = I2D_OK;
     i2d_node * variable;
     long number;
     i2d_string name;
 
-    if(!i2d_context_get_variable(context, node, &variable)) {
+    if(!i2d_rbt_get_variable(variables, node, &variable)) {
         if(i2d_node_copy(node, variable))
             status = i2d_panic("failed to copy variable");
     } else if(i2d_node_get_string(node, &name)) {
@@ -2234,7 +2132,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_con
 }
 
 
-int i2d_script_expression_function(i2d_script * script, i2d_node * node, i2d_context * context) {
+int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     int status = I2D_OK;
     i2d_string name;
     i2d_handler * handler;
@@ -2335,7 +2233,7 @@ int i2d_script_expression_binary_logical(i2d_node * node, int operator, int is_c
     return status;
 }
 
-int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional, i2d_context * context) {
+int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional, i2d_rbt * variables) {
     int status = I2D_OK;
     int flag = 0;
 
@@ -2455,8 +2353,8 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
         if(!status && (flag & I2D_FLAG_ASSIGN)) {
             if(i2d_node_copy(node->left, node)) {
                 status = i2d_panic("failed to copy node to left node");
-            } else if(i2d_context_add_variable(context, node->left)) {
-                status = i2d_panic("failed to add variable to context");
+            } else if(i2d_rbt_add_variable(variables, node->left)) {
+                status = i2d_panic("failed to add variable");
             }
         }
     }
@@ -2784,7 +2682,7 @@ static int i2d_handler_getequiprefinerycnt(i2d_script * script, i2d_node * node,
     return status;
 }
 
-int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * context, i2d_data_map * bonus_map, int argc) {
+int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_rbt * variables, i2d_data_map * bonus_map, int argc) {
     int status = I2D_OK;
     i2d_node * arguments[6];
     long value;
@@ -2801,7 +2699,7 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_context * conte
 
     if(argc >= i2d_size(arguments)) {
         status = i2d_panic("invalid paramaters");
-    } else if(i2d_script_expression(script, block->nodes, 0, context)) {
+    } else if(i2d_script_expression(script, block->nodes, 0, variables)) {
         status = i2d_panic("failed to evaluate expression");
     } else if(i2d_node_get_arguments(block->nodes, arguments, 1, argc)) {
         status = i2d_panic("failed to get arguments");

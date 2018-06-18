@@ -302,23 +302,6 @@ int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_con
 void i2d_data_map_deit(i2d_data_map **);
 int i2d_data_map_get(i2d_data_map *, void *, i2d_data **);
 
-struct i2d_context {
-    i2d_rbt * variables;
-    struct i2d_context * next;
-    struct i2d_context * prev;
-};
-
-typedef struct i2d_context i2d_context;
-
-int i2d_context_init(i2d_context **);
-void i2d_context_deit(i2d_context **);
-void i2d_context_list_deit(i2d_context **);
-void i2d_context_append(i2d_context *, i2d_context *);
-void i2d_context_remove(i2d_context *);
-void i2d_context_reset(i2d_context *);
-int i2d_context_add_variable(i2d_context *, i2d_node *);
-int i2d_context_get_variable(i2d_context *, i2d_node *, i2d_node **);
-
 struct i2d_local {
     i2d_buffer * buffer;
     i2d_string_stack * stack;
@@ -331,7 +314,6 @@ struct i2d_script {
     i2d_json * json;
     i2d_lexer * lexer;
     i2d_parser * parser;
-    i2d_context * contexts;
     i2d_constant_db * constant_db;
     i2d_value_map * getiteminfo;
     i2d_value_map * strcharinfo;
@@ -353,19 +335,17 @@ typedef struct i2d_script i2d_script;
 
 int i2d_script_init(i2d_script **, i2d_option *);
 void i2d_script_deit(i2d_script **);
-int i2d_script_context_init(i2d_script *, i2d_context **);
-int i2d_script_context_deit(i2d_script *, i2d_context **);
 int i2d_script_local_create(i2d_script *, i2d_local *);
 int i2d_script_local_destroy(i2d_script *, i2d_local *);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *);
-int i2d_script_translate(i2d_script *, i2d_block *, i2d_context *);
-int i2d_script_statement(i2d_script *, i2d_block *, i2d_context *);
-int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_context *);
-int i2d_script_expression_variable(i2d_script *, i2d_node *, i2d_context *);
-int i2d_script_expression_function(i2d_script *, i2d_node *, i2d_context *);
+int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *);
+int i2d_script_statement(i2d_script *, i2d_block *, i2d_rbt *);
+int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_rbt *);
+int i2d_script_expression_variable(i2d_script *, i2d_node *, i2d_rbt *);
+int i2d_script_expression_function(i2d_script *, i2d_node *);
 int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
 int i2d_script_expression_binary_relational(i2d_node *, int, int);
 int i2d_script_expression_binary_logical(i2d_node *, int, int);
-int i2d_script_expression_binary(i2d_script *, i2d_node *, int, i2d_context *);
-int i2d_script_bonus(i2d_script *, i2d_block *, i2d_context *, i2d_data_map *, int);
+int i2d_script_expression_binary(i2d_script *, i2d_node *, int, i2d_rbt *);
+int i2d_script_bonus(i2d_script *, i2d_block *, i2d_rbt *, i2d_data_map *, int);
 #endif
