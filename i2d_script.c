@@ -2339,8 +2339,11 @@ int i2d_script_expression_binary_logical(i2d_node * node, int operator, int flag
     if(flag & I2D_FLAG_CONDITIONAL) {
         if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, operator)) {
             status = i2d_panic("failed to compute range -- %d", operator);
-        } else if(node->left->logic && node->right->logic && i2d_logic_and(&node->logic, node->left->logic, node->right->logic)) {
-            status = i2d_panic("failed to create logic object");
+        } else if(node->left->logic && node->right->logic) {
+            if( operator == '|' + '|' ?
+                    i2d_logic_or(&node->logic, node->left->logic, node->right->logic) :
+                    i2d_logic_and(&node->logic, node->left->logic, node->right->logic) )
+                status = i2d_panic("failed to create logic object");
         }
     } else {
         status = i2d_range_create_add(&node->range, 0, 1);
