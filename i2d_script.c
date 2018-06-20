@@ -2147,7 +2147,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rb
     int status = I2D_OK;
     i2d_logic * conditional = NULL;
 
-    if(node->left && i2d_script_expression(script, node->left, flag | !i2d_node_is_conditional(node) ? 0 : I2D_FLAG_CONDITIONAL, variables, logics)) {
+    if(node->left && i2d_script_expression(script, node->left, flag | (i2d_node_is_conditional(node) ? 0 : I2D_FLAG_CONDITIONAL), variables, logics)) {
         status = i2d_panic("failed to evaluate left expression");
     } else {
         if(node->right && i2d_script_expression(script, node->right, flag, variables, i2d_script_expression_conditional(script, node, logics, &conditional) ? logics : conditional)) {
