@@ -136,6 +136,8 @@ int i2d_node_set_constant(i2d_node *, i2d_constant *);
 int i2d_node_get_string(i2d_node *, i2d_string *);
 int i2d_node_get_predicate(i2d_node *, i2d_string *);
 int i2d_node_get_predicate_all(i2d_node *, i2d_string_stack *);
+int i2d_node_is_conditional(i2d_node *);
+int i2d_node_is_colon(i2d_node *);
 
 enum i2d_statement_type {
     I2D_STATEMENT_START,
@@ -347,6 +349,7 @@ int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
 int i2d_script_statement(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
 int i2d_script_statement_bonus(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *, i2d_data_map *, int);
 int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_rbt *, i2d_logic *);
+int i2d_script_expression_conditional(i2d_script *, i2d_node *, i2d_logic *, i2d_logic **);
 int i2d_script_expression_variable(i2d_script *, i2d_node *, i2d_rbt *, i2d_logic *);
 int i2d_script_expression_function(i2d_script *, i2d_node *);
 int i2d_script_expression_unary(i2d_script *, i2d_node *, int);

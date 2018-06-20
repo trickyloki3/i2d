@@ -887,6 +887,14 @@ int i2d_node_get_predicate_all(i2d_node * node, i2d_string_stack * stack) {
     return status;
 }
 
+int i2d_node_is_conditional(i2d_node * node) {
+    return (node->type == I2D_BINARY && node->tokens->type == I2D_CONDITIONAL) ? I2D_OK : I2D_FAIL;
+}
+
+int i2d_node_is_colon(i2d_node * node) {
+    return (node->type == I2D_BINARY && node->tokens->type == I2D_COLON) ? I2D_OK : I2D_FAIL;
+}
+
 i2d_statement statements[] = {
     {I2D_BONUS, {"bonus", 5}},
     {I2D_BONUS2, {"bonus2", 6}},
@@ -2137,31 +2145,67 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_rbt *
 
 int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
+    i2d_logic * conditional = NULL;
 
-    if(node->left && i2d_script_expression(script, node->left, flag, variables, logics)) {
+    if(node->left && i2d_script_expression(script, node->left, flag | !i2d_node_is_conditional(node) ? 0 : I2D_FLAG_CONDITIONAL, variables, logics)) {
         status = i2d_panic("failed to evaluate left expression");
-    } else if(node->right && i2d_script_expression(script, node->right, flag, variables, logics)) {
-        status = i2d_panic("failed to evaluate right expression");
     } else {
-        switch(node->type) {
-            case I2D_NODE:
-                status = (node->left) ? i2d_node_copy(node, node->left) : i2d_range_create_add(&node->range, 0, 0);
-                break;
-            case I2D_VARIABLE:
-                status = i2d_script_expression_variable(script, node, variables, logics);
-                break;
-            case I2D_FUNCTION:
-                status = i2d_script_expression_function(script, node);
-                break;
-            case I2D_UNARY:
-                status = i2d_script_expression_unary(script, node, flag);
-                break;
-            case I2D_BINARY:
-                status = i2d_script_expression_binary(script, node, flag, variables);
-                break;
-            default:
-                status = i2d_panic("invalid node type -- %d", node->type);
-                break;
+        if(node->right && i2d_script_expression(script, node->right, flag, variables, i2d_script_expression_conditional(script, node, logics, &conditional) ? logics : conditional)) {
+            status = i2d_panic("failed to evaluate right expression");
+        } else {
+            switch(node->type) {
+                case I2D_NODE:
+                    status = (node->left) ? i2d_node_copy(node, node->left) : i2d_range_create_add(&node->range, 0, 0);
+                    break;
+                case I2D_VARIABLE:
+                    status = i2d_script_expression_variable(script, node, variables, logics);
+                    break;
+                case I2D_FUNCTION:
+                    status = i2d_script_expression_function(script, node);
+                    break;
+                case I2D_UNARY:
+                    status = i2d_script_expression_unary(script, node, flag);
+                    break;
+                case I2D_BINARY:
+                    status = i2d_script_expression_binary(script, node, flag, variables);
+                    break;
+                default:
+                    status = i2d_panic("invalid node type -- %d", node->type);
+                    break;
+            }
+        }
+    }
+
+    i2d_deit(conditional, i2d_logic_deit);
+    return status;
+}
+
+int i2d_script_expression_conditional(i2d_script * script, i2d_node * node, i2d_logic * logics, i2d_logic ** result) {
+    int status = I2D_FAIL;
+    i2d_logic * logic = NULL;
+
+    if(node->left && node->left->logic) {
+        if(!i2d_node_is_conditional(node)) {
+            if( logics ?
+                    i2d_logic_or(result, node->left->logic, logics) :
+                    i2d_logic_copy(result, node->left->logic) ) {
+                status = i2d_panic("failed to or logic object");
+            } else {
+                status = I2D_OK;
+            }
+        } else if(!i2d_node_is_colon(node)) {
+            if(i2d_logic_not(&logic, node->left->logic)) {
+                status = i2d_panic("failed to not logic object");
+            } else {
+                if( logics ?
+                        i2d_logic_or(result, logic, logics) :
+                        i2d_logic_copy(result, logic) ) {
+                    status = i2d_panic("failed to or logic object");
+                } else {
+                    status = I2D_OK;
+                }
+                i2d_logic_deit(&logic);
+            }
         }
     }
 
@@ -2427,6 +2471,17 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
                     status = i2d_panic("failed to compute left and right operand");
                 break;
             case I2D_OR:
+                if(i2d_script_expression_binary_logical(node, '|' + '|', flag))
+                    status = i2d_panic("failed to compute left or right operand");
+                break;
+            case I2D_CONDITIONAL:
+                if(i2d_node_copy(node, node->right)) {
+                    status = i2d_panic("failed to copy node object");
+                } else if(node->left->logic && i2d_logic_copy(&node->logic, node->left->logic)) {
+                    status = i2d_panic("failed to copy logic object");
+                }
+                break;
+            case I2D_COLON:
                 if(i2d_script_expression_binary_logical(node, '|' + '|', flag))
                     status = i2d_panic("failed to compute left or right operand");
                 break;
