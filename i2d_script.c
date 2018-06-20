@@ -2485,7 +2485,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
                 }
                 break;
             case I2D_COLON:
-                if(i2d_script_expression_binary_logical(node, '|' + '|', flag))
+                if(i2d_script_expression_binary_logical(node, '|' + '|', flag | I2D_FLAG_CONDITIONAL))
                     status = i2d_panic("failed to compute left or right operand");
                 break;
             case I2D_ASSIGN:
