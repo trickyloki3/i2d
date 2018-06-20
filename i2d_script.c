@@ -2029,7 +2029,7 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
                     status = i2d_script_statement(script, block, variables);
                     break;
                 case I2D_IF:
-                    status = i2d_script_expression(script, block->nodes, 1, variables);
+                    status = i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables);
                     break;
                 case I2D_ELSE:
                     break;
@@ -2073,12 +2073,12 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
     return status;
 }
 
-int i2d_script_expression(i2d_script * script, i2d_node * node, int is_conditional, i2d_rbt * variables) {
+int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rbt * variables) {
     int status = I2D_OK;
 
-    if(node->left && i2d_script_expression(script, node->left, is_conditional, variables)) {
+    if(node->left && i2d_script_expression(script, node->left, flag, variables)) {
         status = i2d_panic("failed to evaluate left expression");
-    } else if(node->right && i2d_script_expression(script, node->right, is_conditional, variables)) {
+    } else if(node->right && i2d_script_expression(script, node->right, flag, variables)) {
         status = i2d_panic("failed to evaluate right expression");
     } else {
         switch(node->type) {
@@ -2092,10 +2092,10 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int is_condition
                 status = i2d_script_expression_function(script, node);
                 break;
             case I2D_UNARY:
-                status = i2d_script_expression_unary(script, node, is_conditional);
+                status = i2d_script_expression_unary(script, node, flag);
                 break;
             case I2D_BINARY:
-                status = i2d_script_expression_binary(script, node, is_conditional, variables);
+                status = i2d_script_expression_binary(script, node, flag, variables);
                 break;
             default:
                 status = i2d_panic("invalid node type -- %d", node->type);
@@ -2157,7 +2157,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     return status;
 }
 
-int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_conditional) {
+int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int flag) {
     int status = I2D_OK;
 
     if(!node->right) {
@@ -2165,7 +2165,7 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int is_con
     } else {
         switch(node->tokens->type) {
             case I2D_NOT:
-                if(is_conditional) {
+                if(flag & I2D_FLAG_CONDITIONAL) {
                     if(i2d_range_not(&node->range, &node->right->range)) {
                         status = i2d_panic("failed to not range object");
                     } else if(node->right->logic && i2d_logic_not(&node->logic, node->right->logic)) {
@@ -2209,12 +2209,12 @@ int i2d_script_expression_binary_assign(i2d_node * node, int operator, i2d_rbt *
     return status;
 }
 
-int i2d_script_expression_binary_relational(i2d_node * node, int operator, int is_conditional) {
+int i2d_script_expression_binary_relational(i2d_node * node, int operator, int flag) {
     int status = I2D_OK;
     i2d_string predicate;
     i2d_zero(predicate);
 
-    if(is_conditional) {
+    if(flag & I2D_FLAG_CONDITIONAL) {
         if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, operator)) {
             status = i2d_panic("failed to compute range -- %d", operator);
         } else if(!i2d_node_get_predicate(node, &predicate) && i2d_logic_init(&node->logic, &predicate, &node->range)) {
@@ -2227,10 +2227,10 @@ int i2d_script_expression_binary_relational(i2d_node * node, int operator, int i
     return status;
 }
 
-int i2d_script_expression_binary_logical(i2d_node * node, int operator, int is_conditional) {
+int i2d_script_expression_binary_logical(i2d_node * node, int operator, int flag) {
     int status = I2D_OK;
 
-    if(is_conditional) {
+    if(flag & I2D_FLAG_CONDITIONAL) {
         if(i2d_range_compute(&node->range, &node->left->range, &node->right->range, operator)) {
             status = i2d_panic("failed to compute range -- %d", operator);
         } else if(node->left->logic && node->right->logic && i2d_logic_and(&node->logic, node->left->logic, node->right->logic)) {
@@ -2243,7 +2243,7 @@ int i2d_script_expression_binary_logical(i2d_node * node, int operator, int is_c
     return status;
 }
 
-int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_conditional, i2d_rbt * variables) {
+int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag, i2d_rbt * variables) {
     int status = I2D_OK;
 
     if(!node->left) {
@@ -2337,35 +2337,35 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int is_co
                     status = i2d_panic("failed to bit xor left and right operand");
                 break;
             case I2D_GREATER:
-                if(i2d_script_expression_binary_relational(node, '>', is_conditional))
+                if(i2d_script_expression_binary_relational(node, '>', flag))
                     status = i2d_panic("failed to compute left is greater than right operand");
                 break;
             case I2D_GREATER_EQUAL:
-                if(i2d_script_expression_binary_relational(node, '>' + '=', is_conditional))
+                if(i2d_script_expression_binary_relational(node, '>' + '=', flag))
                     status = i2d_panic("failed to compute left is greater or equal than right operand");
                 break;
             case I2D_LESS:
-                if(i2d_script_expression_binary_relational(node, '<', is_conditional))
+                if(i2d_script_expression_binary_relational(node, '<', flag))
                     status = i2d_panic("failed to compute left is less than right operand");
                 break;
             case I2D_LESS_EQUAL:
-                if(i2d_script_expression_binary_relational(node, '<' + '=', is_conditional))
+                if(i2d_script_expression_binary_relational(node, '<' + '=', flag))
                     status = i2d_panic("failed to compute left is less or equal than right operand");
                 break;
             case I2D_EQUAL:
-                if(i2d_script_expression_binary_relational(node, '=' + '=', is_conditional))
+                if(i2d_script_expression_binary_relational(node, '=' + '=', flag))
                     status = i2d_panic("failed to compute left is equal to right operand");
                 break;
             case I2D_NOT_EQUAL:
-                if(i2d_script_expression_binary_relational(node, '!' + '=', is_conditional))
+                if(i2d_script_expression_binary_relational(node, '!' + '=', flag))
                     status = i2d_panic("failed to compute left is equal to right operand");
                 break;
             case I2D_AND:
-                if(i2d_script_expression_binary_logical(node, '&' + '&', is_conditional))
+                if(i2d_script_expression_binary_logical(node, '&' + '&', flag))
                     status = i2d_panic("failed to compute left and right operand");
                 break;
             case I2D_OR:
-                if(i2d_script_expression_binary_logical(node, '|' + '|', is_conditional))
+                if(i2d_script_expression_binary_logical(node, '|' + '|', flag))
                     status = i2d_panic("failed to compute left or right operand");
                 break;
             case I2D_ASSIGN:
@@ -2722,7 +2722,7 @@ int i2d_script_bonus(i2d_script * script, i2d_block * block, i2d_rbt * variables
 
     if(argc >= i2d_size(arguments)) {
         status = i2d_panic("invalid paramaters");
-    } else if(i2d_script_expression(script, block->nodes, 0, variables)) {
+    } else if(i2d_script_expression(script, block->nodes, I2D_FLAG_NONE, variables)) {
         status = i2d_panic("failed to evaluate expression");
     } else if(i2d_node_get_arguments(block->nodes, arguments, 1, argc)) {
         status = i2d_panic("failed to get arguments");

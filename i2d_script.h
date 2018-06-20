@@ -309,6 +309,11 @@ struct i2d_local {
 
 typedef struct i2d_local i2d_local;
 
+enum {
+    I2D_FLAG_NONE = 0x0,
+    I2D_FLAG_CONDITIONAL = 0x1
+};
+
 struct i2d_script {
     i2d_db * db;
     i2d_json * json;
