@@ -1353,6 +1353,9 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
             } else {
                 if((I2D_IF == state->type || I2D_ELSE == state->type) && !state->child) {
                     state->child = block;
+                    block->parent = state;
+                } else if(I2D_IF == state->parent->type && I2D_ELSE == block->type) {
+                    i2d_block_append(block, state);
                 } else {
                     i2d_block_append(block, root);
                 }
@@ -2017,6 +2020,7 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
 
     if(blocks)
         i2d_parser_reset(script->parser, script->lexer, &blocks);
+
 
     return status;
 }
