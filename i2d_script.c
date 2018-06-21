@@ -2028,6 +2028,7 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
 int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * variables, i2d_logic * logics) {
         int status = I2D_OK;
     i2d_block * block;
+    i2d_logic * logic = NULL;
 
     if(blocks) {
         block = blocks;
@@ -2040,9 +2041,34 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
                     status = i2d_script_statement(script, block, variables, logics);
                     break;
                 case I2D_IF:
-                    status = i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables, logics);
+                    if(i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables, logics)) {
+                        status = i2d_panic("failed to evaluate expression");
+                    } else if(!block->nodes->logic) {
+                        status = i2d_script_translate(script, block->child, variables, logics);
+                    } else if(!logics) {
+                        status = i2d_script_translate(script, block->child, variables, block->nodes->logic);
+                    } else {
+                        if(i2d_logic_or(&logic, block->nodes->logic, logics)) {
+                            status = i2d_panic("failed to or logic object");
+                        } else {
+                            status = i2d_script_translate(script, block->child, variables, logic);
+
+                            i2d_logic_deit(&logic);
+                        }
+                    }
                     break;
                 case I2D_ELSE:
+                    if(logics) {
+                        if(i2d_logic_not(&logic, logics)) {
+                            status = i2d_panic("failed to not logic object");
+                        } else {
+                            status = i2d_script_translate(script, block->child, variables, logic);
+
+                            i2d_logic_deit(&logic);
+                        }
+                    } else {
+                        status = i2d_script_translate(script, block->child, variables, logics);
+                    }
                     break;
                 default:
                     status = i2d_panic("invalid block type -- %d", block->type);
