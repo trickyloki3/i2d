@@ -964,7 +964,6 @@ i2d_statement statements[] = {
 
 const char * i2d_block_string[] = {
     "block",
-    "expression",
     "statement",
     "if",
     "else"
