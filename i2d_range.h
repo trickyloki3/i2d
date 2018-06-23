@@ -19,6 +19,8 @@ void i2d_range_node_remove(i2d_range_node *);
 
 struct i2d_range {
     i2d_range_node * list;
+    long min;
+    long max;
 };
 
 typedef struct i2d_range i2d_range;
