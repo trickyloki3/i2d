@@ -516,3 +516,51 @@ int i2d_logic_not(i2d_logic ** result, i2d_logic * logic) {
 
     return status;
 }
+
+int i2d_logic_search_recursive(i2d_logic * logic, const char * name, i2d_range * result) {
+    int status = I2D_OK;
+    i2d_range range;
+    i2d_zero(range);
+
+    if( (logic->left  && i2d_logic_search_recursive(logic->left,  name, result)) ||
+        (logic->right && i2d_logic_search_recursive(logic->right, name, result)) ) {
+        status = i2d_panic("failed to search logic object");
+    } else if(logic->type == var && !strcmp(name, logic->name.string)) {
+        if(!result->list) {
+            if(i2d_range_copy(result, &logic->range))
+                status = i2d_panic("failed to copy range object");
+        } else {
+            if(i2d_range_or(&range, &logic->range, result)) {
+                status = i2d_panic("failed to or range object");
+            } else {
+                i2d_range_destroy(result);
+                *result = range;
+            }
+        }
+    }
+
+    return status;
+}
+
+int i2d_logic_search(i2d_logic * logic, const char * name, i2d_range * result) {
+    int status = I2D_OK;
+    i2d_range range;
+    i2d_range limit;
+
+    i2d_zero(range);
+    i2d_zero(limit);
+
+    if(i2d_logic_search_recursive(logic, name, &range)) {
+        status = i2d_panic("failed to search logic object");
+    } else if(range.list) {
+        if(i2d_range_and(&limit, &range, result)) {
+            status = i2d_panic("failed to and range object");
+        } else {
+            i2d_range_destroy(result);
+            *result = limit;
+        }
+    }
+
+    i2d_range_destroy(&range);
+    return status;
+}
