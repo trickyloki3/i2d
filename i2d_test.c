@@ -11,6 +11,7 @@
 
 static void i2d_format_test(void);
 static void i2d_lexer_test(void);
+static void i2d_range_not_test(void);
 static void i2d_logic_test(void);
 static void i2d_logic_or_test(i2d_logic *, i2d_logic *, i2d_logic *);
 static void i2d_logic_and_test(i2d_logic *, i2d_logic *, i2d_logic *);
@@ -18,6 +19,7 @@ static void i2d_logic_not_test(i2d_logic *, i2d_logic *, i2d_logic *);
 
 int main(int argc, char * argv[]) {
     i2d_format_test();
+    i2d_range_not_test();
     i2d_lexer_test();
     i2d_logic_test();
     return 0;
@@ -75,6 +77,43 @@ static void i2d_lexer_test(void) {
     i2d_lexer_reset(lexer, &tokens);
     i2d_string_destroy(&script);
     i2d_lexer_deit(&lexer);
+}
+
+static void i2d_range_not_test(void) {
+    i2d_range range1;
+    i2d_range range2;
+    i2d_range range3;
+    i2d_range range4;
+    i2d_range range5;
+    i2d_range range6;
+
+    i2d_zero(range1);
+    i2d_zero(range2);
+    i2d_zero(range3);
+    i2d_zero(range4);
+    i2d_zero(range5);
+    i2d_zero(range6);
+
+    i2d_range_create_add(&range1, 0, 15);
+    i2d_range_create_add(&range2, 2, 3);
+    i2d_range_create_add(&range3, 5, 10);
+    i2d_range_and(&range4, &range1, &range2);
+    i2d_range_or(&range5, &range4, &range3);
+    i2d_range_not(&range6, &range5);
+
+    i2d_range_print(&range1, "range1");
+    i2d_range_print(&range2, "range2");
+    i2d_range_print(&range3, "range3");
+    i2d_range_print(&range4, "range4");
+    i2d_range_print(&range5, "range5");
+    i2d_range_print(&range6, "range6");
+
+    i2d_range_destroy(&range6);
+    i2d_range_destroy(&range5);
+    i2d_range_destroy(&range4);
+    i2d_range_destroy(&range3);
+    i2d_range_destroy(&range2);
+    i2d_range_destroy(&range1);
 }
 
 static void i2d_logic_test(void) {
