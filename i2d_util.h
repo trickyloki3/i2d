@@ -1,6 +1,7 @@
 #ifndef i2d_util_h
 #define i2d_util_h
 
+#include "math.h"
 #include "ctype.h"
 #include "stdio.h"
 #include "fcntl.h"

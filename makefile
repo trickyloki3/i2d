@@ -10,6 +10,7 @@ else
 CFLAGS+=$(shell pkg-config jansson --cflags)
 LDLIBS+=$(shell pkg-config jansson --libs)
 endif
+LDLIBS+=-lm
 
 OBJECT:=i2d_util.o
 OBJECT+=i2d_range.o
