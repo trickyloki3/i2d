@@ -51,7 +51,6 @@ void i2d_logic_print(i2d_logic * logic, int level) {
             case var: fprintf(stdout, "[%s] ", logic->name.string); break;
             case and: fprintf(stdout, "[and] "); break;
             case or:  fprintf(stdout, "[or] ");  break;
-            case not: fprintf(stdout, "[not] "); break;
         }
 
         i2d_range_print(&logic->range, NULL);
@@ -457,7 +456,7 @@ int i2d_logic_and(i2d_logic ** result, i2d_logic * left, i2d_logic * right) {
     switch(left->type) {
         case var:
             switch(right->type) {
-                case var: status = i2d_logic_var(result, left, right, or); break;
+                case var: status = i2d_logic_var(result, left, right, and); break;
                 case and: status = i2d_logic_and_merge(result, left, right); break;
                 case or:  status = i2d_logic_and_or_merge(result, right, left); break;
             }

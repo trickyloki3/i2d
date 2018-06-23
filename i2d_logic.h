@@ -6,8 +6,7 @@
 enum {
     var,
     and,
-    or,
-    not
+    or
 };
 
 struct i2d_logic {
