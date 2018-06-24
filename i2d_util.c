@@ -693,3 +693,18 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
 
     return status;
 }
+
+int i2d_by_bit64(uint64_t flag, i2d_by_bit_cb cb, void * context) {
+    int status = I2D_OK;
+    uint64_t bit = 1;
+
+    while(bit && !status) {
+        if(flag & bit) {
+            status = cb(bit, context);
+            flag &= ~bit;
+        }
+        bit <<= 1;
+    }
+
+    return status;
+}

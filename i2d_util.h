@@ -135,4 +135,8 @@ typedef int (* i2d_by_line_cb) (char *, size_t, void *);
 
 int i2d_fd_read(int, size_t, i2d_buffer *);
 int i2d_by_line(i2d_buffer *, i2d_by_line_cb, void *);
+
+typedef int (* i2d_by_bit_cb) (uint64_t, void *);
+
+int i2d_by_bit64(uint64_t, i2d_by_bit_cb, void *);
 #endif
