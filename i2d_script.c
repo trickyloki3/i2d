@@ -989,7 +989,8 @@ i2d_statement statements[] = {
     {I2D_GETMAPXY, {"getmapxy", 8}},
     {I2D_SPECIALEFFECT, {"specialeffect", 13}},
     {I2D_SHOWSCRIPT, {"showscript", 10}},
-    {I2D_HATEFFECT, {"hateffect", 9}}
+    {I2D_HATEFFECT, {"hateffect", 9}},
+    {I2D_SETMADOGEAR, {"setmadogear", 11}}
 };
 
 const char * i2d_block_string[] = {
