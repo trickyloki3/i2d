@@ -2,12 +2,11 @@
 
 #include "getopt.h"
 
-static const char * i2d_short_options = "s:j:i:d:";
+static const char * i2d_short_options = "s:i:d:";
 
 static struct option i2d_long_options[] = {
     { "source_path", required_argument, NULL, 's' },
     { "data_path", required_argument, NULL, 'd' },
-    { "json_path", required_argument, NULL, 'j' },
     { "item_id", required_argument, NULL, 'i' }
 };
 
