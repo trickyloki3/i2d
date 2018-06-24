@@ -2115,6 +2115,8 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
                 /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
                 break;
         }
+    } else {
+        status = i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables, logics);
     }
 
     return status;
