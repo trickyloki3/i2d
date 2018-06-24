@@ -1043,14 +1043,18 @@ void i2d_block_remove(i2d_block * x) {
 
 void i2d_block_print(i2d_block * block, int level) {
     int i;
+    i2d_string string;
+    i2d_zero(string);
 
     for(i = 0; i < level; i++)
         fprintf(stdout, "    ");
 
+    i2d_buffer_get(&block->buffer, &string.string, &string.length);
+
     if(block->statement)
-        fprintf(stdout, "%s [%p]\n", block->statement->name.string, block);
+        fprintf(stdout, "%s [%p] %s\n", block->statement->name.string, block, string.string ? string.string : "");
     else
-        fprintf(stdout, "%s [%p]\n", i2d_block_string[block->type], block);
+        fprintf(stdout, "%s [%p] %s\n", i2d_block_string[block->type], block, string.string ? string.string : "");
 
     if(block->nodes)
         i2d_node_print(block->nodes, level + 1);
@@ -2849,7 +2853,7 @@ static int i2d_handler_getequiprefinerycnt(i2d_script * script, i2d_node * node,
     i2d_constant * constant;
 
     if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
-        status = i2d_panic("failed to getequiprefinerycnt");
+        status = i2d_panic("failed to getequiprefinerycnt argument");
     } else if(i2d_node_get_constant(argument, &value)) {
         status = i2d_panic("failed to get location value");
     } else if(i2d_constant_get_by_location(script->constant_db, value, &constant)) {
