@@ -21,6 +21,7 @@ static int i2d_handler_getequipid(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getiteminfo(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getmapflag(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_max(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_min(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getequiprefinerycnt(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_pow(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_checkoption_loop(uint64_t, void *);
@@ -41,6 +42,7 @@ i2d_handler function_list[] = {
     { {"getiteminfo", 11}, i2d_handler_getiteminfo },
     { {"getmapflag", 10}, i2d_handler_getmapflag },
     { {"max", 3}, i2d_handler_max },
+    { {"min", 3}, i2d_handler_min },
     { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt },
     { {"pow", 3}, i2d_handler_pow },
     { {"checkoption", 11}, i2d_handler_checkoption }
@@ -2840,6 +2842,28 @@ static int i2d_handler_max(i2d_script * script, i2d_node * node, i2d_local * loc
         i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
         i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
         if(i2d_range_create_add(&node->range, max(xmin, ymin), max(xmax, ymax)))
+            status = i2d_panic("failed to create range object");
+    }
+
+    return status;
+}
+
+static int i2d_handler_min(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+
+    i2d_node * arguments[2];
+
+    long xmin;
+    long xmax;
+    long ymin;
+    long ymax;
+
+    if(i2d_node_get_arguments(node->left, arguments, 2, 0)) {
+        status = i2d_panic("failed to get max arguments");
+    } else {
+        i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
+        i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
+        if(i2d_range_create_add(&node->range, min(xmin, ymin), min(xmax, ymax)))
             status = i2d_panic("failed to create range object");
     }
 
