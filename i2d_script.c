@@ -685,6 +685,7 @@ const char * i2d_node_string[] = {
     "number",
     "variable",
     "function",
+    "index",
     "unary",
     "binary"
 };
@@ -1426,7 +1427,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
                             token = anchor;
                             tokens = tokens->next;
                             i2d_token_append(anchor->prev, tokens);
-                            anchor= tokens;
+                            anchor = tokens;
                             i2d_lexer_reset(lexer, &token);
                         }
                     }
@@ -1472,6 +1473,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     i2d_node * node = NULL;
 
     int parenthesis;
+    int bracket;
     i2d_token * anchor;
     i2d_token * token = NULL;
 
@@ -1533,6 +1535,49 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                         if(I2D_VARIABLE == iter->type) {
                             iter->left = node;
                             iter->type = I2D_FUNCTION;
+                            node = NULL;
+                        }
+                    }
+                    break;
+                case I2D_BRACKET_OPEN:
+                    bracket = 1;
+                    anchor = tokens;
+                    while(I2D_TOKEN != tokens->type && bracket) {
+                        tokens = tokens->next;
+                        switch(tokens->type) {
+                            case I2D_BRACKET_OPEN:  bracket++; break;
+                            case I2D_BRACKET_CLOSE: bracket--; break;
+                            default: break;
+                        }
+                    }
+                    if(I2D_BRACKET_CLOSE != tokens->type) {
+                        status = i2d_panic("missing ] after [");
+                    } else if(anchor->next == tokens) {
+                        status = i2d_panic("empty index expression");
+                    } else {
+                        anchor = anchor->next;
+                        i2d_token_append(anchor->prev, tokens);
+                        tokens = tokens->next;
+
+                        if(i2d_lexer_token_init(lexer, &token, I2D_TOKEN)) {
+                            status = i2d_panic("failed to create token object");
+                        } else {
+                            i2d_token_append(token, anchor);
+                            if(i2d_parser_expression_recursive(parser, lexer, anchor, &node))
+                                status = i2d_panic("failed to parse expression");
+
+                            i2d_lexer_reset(lexer, &token);
+                        }
+                    }
+
+                    if(!status && root) {
+                        iter = root;
+                        while(iter->right)
+                            iter = iter->right;
+
+                        if(I2D_VARIABLE == iter->type) {
+                            iter->left = node;
+                            iter->type = I2D_INDEX;
                             node = NULL;
                         }
                     }
@@ -2292,6 +2337,9 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rb
                     break;
                 case I2D_FUNCTION:
                     status = i2d_script_expression_function(script, node);
+                    break;
+                case I2D_INDEX:
+                    /* index node is unsupported */
                     break;
                 case I2D_UNARY:
                     status = i2d_script_expression_unary(script, node, flag);
