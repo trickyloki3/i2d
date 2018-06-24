@@ -170,7 +170,7 @@ void i2d_buffer_clear(i2d_buffer * result) {
 int i2d_buffer_putc(i2d_buffer * result, char character) {
     int status = I2D_OK;
 
-    if( result->length == result->offset &&
+    if( result->length == result->offset + 1 &&
         i2d_buffer_adapt(result, result->length + 1) ) {
         status = I2D_FAIL;
     } else {
