@@ -2344,6 +2344,9 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
 int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int flag) {
     int status = I2D_OK;
 
+    long min;
+    long max;
+
     if(!node->right) {
         status = i2d_panic("unary operator missing operand");
     } else {
@@ -2370,6 +2373,14 @@ int i2d_script_expression_unary(i2d_script * script, i2d_node * node, int flag) 
             case I2D_SUBTRACT_UNARY:
                 if(i2d_range_negate(&node->range, &node->right->range))
                     status = i2d_panic("failed to negate range object");
+                break;
+            case I2D_INCREMENT:
+                i2d_range_get_range(&node->right->range, &min, &max);
+                status = i2d_range_create_add(&node->range, min++, max++);
+                break;
+            case I2D_DECREMENT:
+                i2d_range_get_range(&node->right->range, &min, &max);
+                status = i2d_range_create_add(&node->range, min--, max--);
                 break;
             default:
                 status = i2d_panic("invalid node type -- %d", node->tokens->type);
