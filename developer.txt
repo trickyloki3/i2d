@@ -1,0 +1,7 @@
+unsupported
+    * for keyword, i.e. for(.@r = 0; .@r < 10; .@r++) (handle in i2d_script_translate)
+        for keyword can be supported as long as the loop variant is check
+        in the for condition only and the state space is reasonably small
+    * setarray statement, i.e. setarray 0, 1, 2; (handle in i2d_script_statement)
+    * array indexing, i.e. .@variable[position]; (handle in i2d_script_expression)
+
