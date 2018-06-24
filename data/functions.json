@@ -48,5 +48,10 @@
         "description" : "{0}",
         "max" : 1,
         "min" : 0
+    },
+    "rand" : {
+        "description" : "Random",
+        "max" : 2147483647,
+        "min" : 0
     }
 }

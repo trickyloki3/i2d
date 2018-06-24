@@ -26,6 +26,7 @@ static int i2d_handler_getequiprefinerycnt(i2d_script *, i2d_node *, i2d_local *
 static int i2d_handler_pow(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_checkoption_loop(uint64_t, void *);
 static int i2d_handler_checkoption(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_rand(i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -45,7 +46,8 @@ i2d_handler function_list[] = {
     { {"min", 3}, i2d_handler_min },
     { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt },
     { {"pow", 3}, i2d_handler_pow },
-    { {"checkoption", 11}, i2d_handler_checkoption }
+    { {"checkoption", 11}, i2d_handler_checkoption },
+    { {"rand", 4}, i2d_handler_rand }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
@@ -2961,6 +2963,36 @@ static int i2d_handler_checkoption(i2d_script * script, i2d_node * node, i2d_loc
             } else {
                 status = i2d_handler_general(script, node, local);
             }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_handler_rand(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    i2d_zero(arguments);
+
+    long lmin;
+    long lmax;
+    long rmin;
+    long rmax;
+
+    if(i2d_handler_general(script, node, local)) {
+        status = i2d_panic("failed to handle rand function");
+    } else if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
+        status = i2d_panic("failed to rand arguments");
+    } else {
+        i2d_range_destroy(&node->range);
+        i2d_range_get_range(&arguments[0]->range, &lmin, &lmax);
+        if(arguments[1]) {
+            i2d_range_get_range(&arguments[1]->range, &rmin, &rmax);
+            if(i2d_range_create_add(&node->range, min(lmin, rmin), max(lmax, rmax)))
+                status = i2d_panic("failed to create range object");
+        } else {
+            if(i2d_range_create_add(&node->range, 0, lmax - 1))
+                status = i2d_panic("failed to create range object");
         }
     }
 
