@@ -2641,6 +2641,8 @@ static int i2d_handler_readparam(i2d_script * script, i2d_node * node, i2d_local
     long value;
     i2d_constant * constant;
 
+    i2d_zero(arguments);
+
     if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
         status = i2d_panic("failed to get readparam arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
@@ -2692,7 +2694,7 @@ static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_loca
     long id;
     i2d_item * item;
 
-    memset(arguments, 0, sizeof(arguments));
+    i2d_zero(arguments);
     size = i2d_size(arguments);
 
     if(i2d_node_get_arguments(node->left, arguments, 1, size - 1)) {
@@ -2778,6 +2780,8 @@ static int i2d_handler_strcharinfo(i2d_script * script, i2d_node * node, i2d_loc
     long value;
     i2d_string string;
 
+    i2d_zero(arguments);
+
     if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
         status = i2d_panic("failed to get strcharinfo arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
@@ -2798,6 +2802,8 @@ static int i2d_handler_getequipid(i2d_script * script, i2d_node * node, i2d_loca
     i2d_node * arguments[2];
     long value;
     i2d_constant * constant;
+
+    i2d_zero(arguments);
 
     if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
         status = i2d_panic("failed to get getequipid arguments");
@@ -2860,6 +2866,8 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_loca
     long value;
     i2d_string string;
     i2d_constant * constant;
+
+    i2d_zero(arguments);
 
     if(i2d_node_get_arguments(node->left, arguments, 2, 1)) {
         status = i2d_panic("failed to get getmapflag arguments");
@@ -3027,12 +3035,13 @@ static int i2d_handler_checkoption(i2d_script * script, i2d_node * node, i2d_loc
 static int i2d_handler_rand(i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
-    i2d_zero(arguments);
 
     long lmin;
     long lmax;
     long rmin;
     long rmax;
+
+    i2d_zero(arguments);
 
     if(i2d_handler_general(script, node, local)) {
         status = i2d_panic("failed to handle rand function");
