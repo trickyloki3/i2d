@@ -28,6 +28,7 @@ static int i2d_handler_checkoption_loop(uint64_t, void *);
 static int i2d_handler_checkoption(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_rand(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_callfunc(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getequipweaponlv(i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -51,7 +52,8 @@ i2d_handler function_list[] = {
     { {"rand", 4}, i2d_handler_rand },
     { {"callfunc", 8}, i2d_handler_callfunc },
     { {"ismounting", 10}, i2d_handler_general },
-    { {"setmounting", 11}, i2d_handler_general }
+    { {"setmounting", 11}, i2d_handler_general },
+    { {"getequipweaponlv", 16}, i2d_handler_getequipweaponlv }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
@@ -3022,7 +3024,7 @@ static int i2d_handler_min(i2d_script * script, i2d_node * node, i2d_local * loc
     long ymax;
 
     if(i2d_node_get_arguments(node->left, arguments, 2, 0)) {
-        status = i2d_panic("failed to get max arguments");
+        status = i2d_panic("failed to get min arguments");
     } else {
         i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
         i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
@@ -3161,6 +3163,29 @@ static int i2d_handler_rand(i2d_script * script, i2d_node * node, i2d_local * lo
 static int i2d_handler_callfunc(i2d_script * script, i2d_node * node, i2d_local * local) {
     /* callfunc is unsupported */
     return I2D_OK;
+}
+
+static int i2d_handler_getequipweaponlv(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+    long value;
+    i2d_constant * constant;
+
+    i2d_zero(arguments);
+
+    if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
+        status = i2d_panic("failed to get getequipweaponlv arguments");
+    } else if(i2d_node_get_constant(arguments[0], &value)) {
+        status = i2d_panic("failed to get equipment slot");
+    } else if(i2d_constant_get_by_location(script->constant_db, value, &constant)) {
+        status = i2d_panic("failed to get location by value -- %ld", value);
+    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push location string");
+    } else {
+        status = i2d_handler_general(script, node, local);
+    }
+
+    return status;
 }
 
 static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_local * local) {

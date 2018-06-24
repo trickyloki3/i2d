@@ -68,5 +68,10 @@
         "description" : "Equip On",
         "max" : 2147483647,
         "min" : 0
+    },
+    "getequipweaponlv" : {
+        "description" : "{0} Weapon Level",
+        "max" : 5,
+        "min" : 0
     }
 }
