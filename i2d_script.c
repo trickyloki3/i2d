@@ -23,6 +23,8 @@ static int i2d_handler_getmapflag(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_max(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getequiprefinerycnt(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_pow(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_checkoption_loop(uint64_t, void *);
+static int i2d_handler_checkoption(i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -40,7 +42,8 @@ i2d_handler function_list[] = {
     { {"getmapflag", 10}, i2d_handler_getmapflag },
     { {"max", 3}, i2d_handler_max },
     { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt },
-    { {"pow", 3}, i2d_handler_pow }
+    { {"pow", 3}, i2d_handler_pow },
+    { {"checkoption", 11}, i2d_handler_checkoption }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
@@ -2880,6 +2883,57 @@ static int i2d_handler_pow(i2d_script * script, i2d_node * node, i2d_local * loc
         i2d_range_get_range(&arguments[1]->range, &pow_min, &pow_max);
         if(i2d_range_create_add(&node->range, pow(min, pow_min), pow(max, pow_max))) {
             status = i2d_panic("failed to create range object");
+        }
+    }
+
+    return status;
+}
+
+struct i2d_checkoption {
+    i2d_script * script;
+    i2d_local * local;
+};
+
+typedef struct i2d_checkoption i2d_checkoption;
+
+static int i2d_handler_checkoption_loop(uint64_t flag, void * data) {
+    int status = I2D_OK;
+    i2d_checkoption * context = data;
+    i2d_constant * constant = NULL;
+
+    if(i2d_constant_get_by_options(context->script->constant_db, flag, &constant)) {
+        status = i2d_panic("failed to get option by value -- %" PRIu64, flag);
+    } else if(i2d_string_stack_push(context->local->stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push on stack");
+    }
+
+    return status;
+}
+
+static int i2d_handler_checkoption(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_node * argument;
+    long flag;
+    i2d_checkoption context;
+
+    if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
+        status = i2d_panic("failed to checkoption argument");
+    } else if(i2d_node_get_constant(argument, &flag)) {
+        status = i2d_panic("failed to get option flag");
+    } else {
+        context.script = script;
+        context.local = local;
+        if(i2d_by_bit64(flag, i2d_handler_checkoption_loop, &context)) {
+            status = i2d_panic("failed to get option by flag -- %ld", flag);
+        } else if(i2d_string_stack_get_unique(local->stack, local->buffer)) {
+            status = i2d_panic("failed to get option list from stack");
+        } else {
+            i2d_string_stack_clear(local->stack);
+            if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+                status = i2d_panic("failed to write option list to stack");
+            } else {
+                status = i2d_handler_general(script, node, local);
+            }
         }
     }
 

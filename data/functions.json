@@ -43,5 +43,10 @@
         "description" : "{0} is Equipped",
         "max" : 1,
         "min" : 0
+    },
+    "checkoption" : {
+        "description" : "{0}",
+        "max" : 1,
+        "min" : 0
     }
 }
