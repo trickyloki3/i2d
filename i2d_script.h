@@ -65,7 +65,9 @@ enum i2d_token_type {
     I2D_LINE_COMMENT,
     I2D_BLOCK_COMMENT,
     I2D_QUOTE,
-    I2D_POSITION
+    I2D_POSITION,
+    I2D_INCREMENT,
+    I2D_DECREMENT
 };
 
 struct i2d_token {

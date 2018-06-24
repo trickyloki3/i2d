@@ -163,7 +163,9 @@ const char * i2d_token_string[] = {
     "//",
     "/**/",
     "\"\"",
-    "pos"
+    "pos",
+    "++",
+    "--"
 };
 
 int i2d_token_precedence[] = {
@@ -221,7 +223,10 @@ int i2d_token_precedence[] = {
     14, /* = */
     0,
     0,
-    0
+    0,
+    0,
+    2, /* ++ */
+    2  /* -- */
 };
 
 int i2d_token_init(i2d_token ** result, enum i2d_token_type type) {
@@ -494,8 +499,20 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                         status = i2d_lexer_token_init(lexer, &token, I2D_PERMANENT_ACCOUNT_LOCAL);
                     }
                     break;
-                case  '+': status = i2d_lexer_token_init(lexer, &token, I2D_ADD); break;
-                case  '-': status = i2d_lexer_token_init(lexer, &token, I2D_SUBTRACT); break;
+                case  '+':
+                    if(state && I2D_ADD == state->type) {
+                        state->type = I2D_INCREMENT;
+                    } else {
+                        status = i2d_lexer_token_init(lexer, &token, I2D_ADD);
+                    }
+                    break;
+                case  '-':
+                    if(state && I2D_SUBTRACT == state->type) {
+                        state->type = I2D_DECREMENT;
+                    } else {
+                        status = i2d_lexer_token_init(lexer, &token, I2D_SUBTRACT);
+                    }
+                    break;
                 case  '*':
                     if(state && I2D_DIVIDE == state->type) {
                         state->type = I2D_BLOCK_COMMENT;
@@ -1473,6 +1490,8 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                     break;
                 case I2D_NOT:
                 case I2D_BIT_NOT:
+                case I2D_INCREMENT:
+                case I2D_DECREMENT:
                     if(i2d_parser_node_init(parser, &node, I2D_UNARY, tokens)) {
                         status = i2d_panic("failed to create node object");
                     } else {
@@ -1591,11 +1610,14 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                         }
                     }
                 } else {
-                    if(I2D_BINARY != node->type) {
-                        status = i2d_panic("operand without binary operator");
-                    } else {
+                    if(I2D_UNARY == node->type) {
+                        node->right = root;
+                        root = node;
+                    } else if(I2D_BINARY == node->type) {
                         node->left = root;
                         root = node;
+                    } else {
+                        status = i2d_panic("operand without operator");
                     }
                 }
 
