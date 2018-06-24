@@ -221,7 +221,8 @@ enum i2d_block_type {
     I2D_BLOCK,
     I2D_STATEMENT,
     I2D_IF,
-    I2D_ELSE
+    I2D_ELSE,
+    I2D_FOR
 };
 
 struct i2d_block {
