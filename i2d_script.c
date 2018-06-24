@@ -809,37 +809,40 @@ int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t required, 
         if(node->type == I2D_NODE)
             node = node->left;
 
-        if(!node) {
-            status = i2d_panic("failed on empty argument list");
-        } else if(required > 0) {
-            size = 1;
-            iter = node;
-            while(I2D_COMMA == iter->tokens->type) {
-                iter = iter->left;
-                size++;
-            }
-
-            if(size < required) {
-                status = i2d_panic("failed on insufficient argument list");
-            } else if(required + optional < size) {
-                status = i2d_panic("failed on excessive argument list");
+        if(required || optional) {
+            if(!node) {
+                if(required)
+                    status = i2d_panic("failed on empty argument list");
             } else {
-                i = size - 1;
-                while(i > 0 && I2D_COMMA == node->tokens->type) {
-                    nodes[i] = node->right;
-                    node = node->left;
-                    i--;
+                size = 1;
+                iter = node;
+                while(I2D_COMMA == iter->tokens->type) {
+                    iter = iter->left;
+                    size++;
                 }
 
-                if(i || !node) {
+                if(size < required) {
                     status = i2d_panic("failed on insufficient argument list");
-                } else if(I2D_COMMA == node->tokens->type) {
+                } else if(required + optional < size) {
                     status = i2d_panic("failed on excessive argument list");
                 } else {
-                    nodes[0] = node;
+                    i = size - 1;
+                    while(i > 0 && I2D_COMMA == node->tokens->type) {
+                        nodes[i] = node->right;
+                        node = node->left;
+                        i--;
+                    }
+
+                    if(i || !node) {
+                        status = i2d_panic("failed on insufficient argument list");
+                    } else if(I2D_COMMA == node->tokens->type) {
+                        status = i2d_panic("failed on excessive argument list");
+                    } else {
+                        nodes[0] = node;
+                    }
                 }
             }
-        } else if(I2D_NODE != node->type || node->left || node->right) {
+        } else if(node) {
             status = i2d_panic("failed on excessive argument list");
         }
     }
