@@ -63,5 +63,10 @@
         "description" : "Toogle Cash Mount",
         "max" : 1,
         "min" : 0
+    },
+    "getequipid" : {
+        "description" : "Equip On",
+        "max" : 2147483647,
+        "min" : 0
     }
 }

@@ -2805,14 +2805,20 @@ static int i2d_handler_getequipid(i2d_script * script, i2d_node * node, i2d_loca
 
     i2d_zero(arguments);
 
-    if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
+    if(i2d_node_get_arguments(node->left, arguments, 0, 2)) {
         status = i2d_panic("failed to get getequipid arguments");
-    } else if(i2d_node_get_constant(arguments[0], &value)) {
-        status = i2d_panic("failed to get equipment slot");
-    } else if(i2d_constant_get_by_location(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get constant by equipment slot -- %ld", value);
-    } else if(i2d_node_set_constant(node, constant)) {
-        status = i2d_panic("failed to write equipment slot");
+    } else {
+        if(arguments[0]) {
+            if(i2d_node_get_constant(arguments[0], &value)) {
+                status = i2d_panic("failed to get equipment slot");
+            } else if(i2d_constant_get_by_location(script->constant_db, value, &constant)) {
+                status = i2d_panic("failed to get constant by equipment slot -- %ld", value);
+            } else if(i2d_node_set_constant(node, constant)) {
+                status = i2d_panic("failed to write equipment slot");
+            }
+        } else {
+            status = i2d_handler_general(script, node, local);
+        }
     }
 
     return status;
