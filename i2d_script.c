@@ -27,6 +27,7 @@ static int i2d_handler_pow(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_checkoption_loop(uint64_t, void *);
 static int i2d_handler_checkoption(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_rand(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_callfunc(i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -47,7 +48,8 @@ i2d_handler function_list[] = {
     { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt },
     { {"pow", 3}, i2d_handler_pow },
     { {"checkoption", 11}, i2d_handler_checkoption },
-    { {"rand", 4}, i2d_handler_rand }
+    { {"rand", 4}, i2d_handler_rand },
+    { {"callfunc", 8}, i2d_handler_callfunc }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
@@ -2997,6 +2999,11 @@ static int i2d_handler_rand(i2d_script * script, i2d_node * node, i2d_local * lo
     }
 
     return status;
+}
+
+static int i2d_handler_callfunc(i2d_script * script, i2d_node * node, i2d_local * local) {
+    /* callfunc is unsupported */
+    return I2D_OK;
 }
 
 static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_local * local) {
