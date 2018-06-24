@@ -209,6 +209,7 @@ enum i2d_statement_type {
     I2D_SHOWSCRIPT,
     I2D_HATEFFECT,
     I2D_SETMADOGEAR,
+    I2D_SETARRAY,
     I2D_STATEMENT_END
 };
 
