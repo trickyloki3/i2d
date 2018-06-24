@@ -22,6 +22,7 @@ static int i2d_handler_getiteminfo(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getmapflag(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_max(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getequiprefinerycnt(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_pow(i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -38,7 +39,8 @@ i2d_handler function_list[] = {
     { {"getiteminfo", 11}, i2d_handler_getiteminfo },
     { {"getmapflag", 10}, i2d_handler_getmapflag },
     { {"max", 3}, i2d_handler_max },
-    { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt }
+    { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt },
+    { {"pow", 3}, i2d_handler_pow }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
@@ -2025,7 +2027,6 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     if(blocks)
         i2d_parser_reset(script->parser, script->lexer, &blocks);
 
-
     return status;
 }
 
@@ -2862,6 +2863,28 @@ static int i2d_handler_getequiprefinerycnt(i2d_script * script, i2d_node * node,
         status = i2d_panic("failed to push location string");
     } else {
         status = i2d_handler_general(script, node, local);
+    }
+
+    return status;
+}
+
+static int i2d_handler_pow(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+
+    long min;
+    long max;
+    long pow_min;
+    long pow_max;
+
+    if(i2d_node_get_arguments(node->left, arguments, 2, 0)) {
+        status = i2d_panic("failed to get pow arguments");
+    } else {
+        i2d_range_get_range(&arguments[0]->range, &min, &max);
+        i2d_range_get_range(&arguments[1]->range, &pow_min, &pow_max);
+        if(i2d_range_create_add(&node->range, pow(min, pow_min), pow(max, pow_max))) {
+            status = i2d_panic("failed to create range object");
+        }
     }
 
     return status;
