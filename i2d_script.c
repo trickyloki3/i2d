@@ -1082,9 +1082,9 @@ void i2d_block_print(i2d_block * block, int level) {
     i2d_buffer_get(&block->buffer, &string.string, &string.length);
 
     if(block->statement)
-        fprintf(stdout, "%s [%p] %s\n", block->statement->name.string, block, string.string ? string.string : "");
+        fprintf(stdout, "%s [%p] %s\n", block->statement->name.string, block, string.length ? string.string : "");
     else
-        fprintf(stdout, "%s [%p] %s\n", i2d_block_string[block->type], block, string.string ? string.string : "");
+        fprintf(stdout, "%s [%p] %s\n", i2d_block_string[block->type], block, string.length ? string.string : "");
 
     if(block->nodes)
         i2d_node_print(block->nodes, level + 1);
