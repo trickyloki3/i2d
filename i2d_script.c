@@ -113,6 +113,8 @@ const char * i2d_token_string[] = {
     "}",
     "(",
     ")",
+    "[",
+    "]",
     ",",
     ";",
     "id",
@@ -169,6 +171,8 @@ const char * i2d_token_string[] = {
 };
 
 int i2d_token_precedence[] = {
+    0,
+    0,
     0,
     0,
     0,
@@ -472,6 +476,8 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                 case  '}': status = i2d_lexer_token_init(lexer, &token, I2D_CURLY_CLOSE); break;
                 case  '(': status = i2d_lexer_token_init(lexer, &token, I2D_PARENTHESIS_OPEN); break;
                 case  ')': status = i2d_lexer_token_init(lexer, &token, I2D_PARENTHESIS_CLOSE); break;
+                case  '[': status = i2d_lexer_token_init(lexer, &token, I2D_BRACKET_OPEN); break;
+                case  ']': status = i2d_lexer_token_init(lexer, &token, I2D_BRACKET_CLOSE); break;
                 case  ',': status = i2d_lexer_token_init(lexer, &token, I2D_COMMA); break;
                 case  ';': status = i2d_lexer_token_init(lexer, &token, I2D_SEMICOLON); break;
                 case  '$':
