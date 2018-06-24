@@ -53,5 +53,15 @@
         "description" : "Random",
         "max" : 2147483647,
         "min" : 0
+    },
+    "ismounting" : {
+        "description" : "Have Cash Mount",
+        "max" : 1,
+        "min" : 0
+    },
+    "setmounting" : {
+        "description" : "Toogle Cash Mount",
+        "max" : 1,
+        "min" : 0
     }
 }

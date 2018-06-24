@@ -49,7 +49,9 @@ i2d_handler function_list[] = {
     { {"pow", 3}, i2d_handler_pow },
     { {"checkoption", 11}, i2d_handler_checkoption },
     { {"rand", 4}, i2d_handler_rand },
-    { {"callfunc", 8}, i2d_handler_callfunc }
+    { {"callfunc", 8}, i2d_handler_callfunc },
+    { {"ismounting", 10}, i2d_handler_general },
+    { {"setmounting", 11}, i2d_handler_general }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
@@ -952,7 +954,6 @@ i2d_statement statements[] = {
     {I2D_MONSTER, {"monster", 7}},
     {I2D_HOMEVOLUTION, {"homevolution", 12}},
     {I2D_SETOPTION, {"setoption", 9}},
-    {I2D_SETMOUNTING, {"setmounting", 11}},
     {I2D_SETFALCON, {"setfalcon", 9}},
     {I2D_GETGROUPITEM, {"getgroupitem", 12}},
     {I2D_RESETSTATUS, {"resetstatus", 11}},
