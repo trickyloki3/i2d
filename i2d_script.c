@@ -1254,6 +1254,13 @@ int i2d_parser_node_init(i2d_parser * parser, i2d_node ** result, enum i2d_node_
 
 int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_token * tokens, i2d_block ** result) {
     int status = I2D_OK;
+    i2d_token * token;
+
+    token = tokens->prev;
+    if(token->type == I2D_LINE_COMMENT) {
+        i2d_token_remove(token);
+        i2d_lexer_reset(lexer, &token);
+    }
 
     if(I2D_CURLY_OPEN != tokens->next->type) {
         status = i2d_panic("script must start with a {");
