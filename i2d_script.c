@@ -1886,7 +1886,7 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_db_init(&object->db, i2d_pre_renewal, &option->source_path)) {
+            if(i2d_db_init(&object->db, option->renewal ? i2d_renewal : i2d_pre_renewal, &option->source_path)) {
                 status = i2d_panic("failed to create database object");
             } else if(i2d_json_init(&object->json, &option->data_path)) {
                 status = i2d_panic("failed to create json object");

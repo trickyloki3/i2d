@@ -4,6 +4,7 @@
 #include "i2d_util.h"
 
 struct i2d_option {
+    int renewal;
     i2d_string source_path;
     i2d_string data_path;
     long item_id;

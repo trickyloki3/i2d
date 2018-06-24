@@ -2,9 +2,10 @@
 
 #include "getopt.h"
 
-static const char * i2d_short_options = "s:i:d:";
+static const char * i2d_short_options = "rs:i:d:";
 
 static struct option i2d_long_options[] = {
+    { "renewal", no_argument, NULL, 'r' },
     { "source_path", required_argument, NULL, 's' },
     { "data_path", required_argument, NULL, 'd' },
     { "item_id", required_argument, NULL, 'i' }
@@ -26,6 +27,7 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
             opt = getopt_long(argc, argv, i2d_short_options, i2d_long_options, NULL);
             while(-1 < opt && !status) {
                 switch(opt) {
+                    case 'r': object->renewal = 1; break;
                     case 's':
                         if(i2d_string_create(&object->source_path, optarg, strlen(optarg)))
                             status = i2d_panic("failed on source directory path argument -- %s", optarg);
