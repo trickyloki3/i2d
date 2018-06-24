@@ -11286,84 +11286,111 @@
             "value" : 10
         },
         "OPTION_CHASEWALK" : {
+            "name" : "chasewalk",
             "value" : 16384
         },
         "OPTION_CLOAK" : {
+            "name" : "cloak",
             "value" : 4
         },
         "OPTION_COSTUME" : {
+            "name" : "costume",
             "value" : 402984960
         },
         "OPTION_DRAGON" : {
+            "name" : "dragon",
             "value" : 126353408
         },
         "OPTION_DRAGON1" : {
+            "name" : "dragon",
             "value" : 524288
         },
         "OPTION_DRAGON2" : {
+            "name" : "dragon",
             "value" : 8388608
         },
         "OPTION_DRAGON3" : {
+            "name" : "dragon",
             "value" : 16777216
         },
         "OPTION_DRAGON4" : {
+            "name" : "dragon",
             "value" : 33554432
         },
         "OPTION_DRAGON5" : {
+            "name" : "dragon",
             "value" : 67108864
         },
         "OPTION_FALCON" : {
+            "name" : "falcon",
             "value" : 16
         },
         "OPTION_FLYING" : {
+            "name" : "flying",
             "value" : 32768
         },
         "OPTION_HANBOK" : {
+            "name" : "hanbok",
             "value" : 134217728
         },
         "OPTION_HIDE" : {
+            "name" : "hide",
             "value" : 2
         },
         "OPTION_INVISIBLE" : {
+            "name" : "invisible",
             "value" : 64
         },
         "OPTION_MADOGEAR" : {
+            "name" : "madogear",
             "value" : 4194304
         },
         "OPTION_NOTHING" : {
+            "name" : "nothing",
             "value" : 0
         },
         "OPTION_OKTOBERFEST" : {
+            "name" : "oktoberfest",
             "value" : 268435456
         },
         "OPTION_ORCISH" : {
+            "name" : "orcish",
             "value" : 2048
         },
         "OPTION_RIDING" : {
+            "name" : "riding",
             "value" : 32
         },
         "OPTION_RUWACH" : {
+            "name" : "ruwach",
             "value" : 8192
         },
         "OPTION_SIGHT" : {
+            "name" : "sight",
             "value" : 1
         },
         "OPTION_SUMMER" : {
+            "name" : "summer",
             "value" : 262144
         },
         "OPTION_TRANSFORM" : {
+            "name" : "transform",
             "value" : 131072
         },
         "OPTION_WEDDING" : {
+            "name" : "wedding",
             "value" : 4096
         },
         "OPTION_WUG" : {
+            "name" : "wug",
             "value" : 1048576
         },
         "OPTION_WUGRIDER" : {
+            "name" : "wug ridger",
             "value" : 2097152
         },
         "OPTION_XMAS" : {
+            "name" : "xmas",
             "value" : 65536
         },
         "PACKETVER" : {
