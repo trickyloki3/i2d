@@ -1295,7 +1295,15 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
             }
         } else if(I2D_SEMICOLON == tokens->type) {
             if(anchor == tokens) {
-                status = i2d_panic("empty statement");
+                /*
+                 * ignore empty statements
+                 */
+                token = tokens;
+                tokens = tokens->next;
+                anchor = tokens;
+
+                i2d_token_remove(token);
+                i2d_lexer_reset(lexer, &token);
             } else if(i2d_parser_block_init(parser, &block, I2D_STATEMENT, anchor, parent)) {
                 status = i2d_panic("failed to create block object");
             } else {
