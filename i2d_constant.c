@@ -166,7 +166,8 @@ int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
                         i2d_constant_db_index(object, json, "sizes", &object->sizes) ||
                         i2d_constant_db_index(object, json, "jobs", &object->jobs) ||
                         i2d_constant_db_index(object, json, "effects", &object->effects) ||
-                        i2d_constant_db_index(object, json, "itemgroups", &object->itemgroups) ) {
+                        i2d_constant_db_index(object, json, "itemgroups", &object->itemgroups) ||
+                        i2d_constant_db_index(object, json, "options", &object->options) ) {
                         status = i2d_panic("failed to index categories");
                     } else if(i2d_constant_db_load_bf(object)) {
                         status = i2d_panic("failed to load bf constants");
@@ -192,6 +193,7 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
 
     object = *result;
     i2d_deit(object->mob_races, i2d_rbt_deit);
+    i2d_deit(object->options, i2d_rbt_deit);
     i2d_deit(object->itemgroups, i2d_rbt_deit);
     i2d_deit(object->effects, i2d_rbt_deit);
     i2d_deit(object->jobs, i2d_rbt_deit);
@@ -292,6 +294,10 @@ int i2d_constant_get_by_effect(i2d_constant_db * constant_db, const long key, i2
 
 int i2d_constant_get_by_itemgroups(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->itemgroups, &key, (void **) result);
+}
+
+int i2d_constant_get_by_options(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
+    return i2d_rbt_search(constant_db->options, &key, (void **) result);
 }
 
 int i2d_constant_get_by_mob_races(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
