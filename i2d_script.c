@@ -2799,14 +2799,10 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_loca
     if(i2d_node_get_arguments(node->left, arguments, 2, 1)) {
         status = i2d_panic("failed to get getmapflag arguments");
     } else {
-        if(I2D_FUNCTION == arguments[0]->type) {
-            if(i2d_node_get_string(arguments[0], &string)) {
-                status = i2d_panic("failed to get function string");
-            } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
-                status = i2d_panic("failed to push function string");
-            }
-        } else {
-            status = i2d_panic("missing map name data");
+        if(i2d_node_get_string(arguments[0], &string)) {
+            status = i2d_panic("failed to get function string");
+        } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
+            status = i2d_panic("failed to push function string");
         }
 
         if(!status) {
