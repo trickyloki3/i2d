@@ -1216,17 +1216,17 @@ void i2d_parser_node_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_node ** r
     i2d_node * node;
 
     node = *result;
-    i2d_deit(node->logic, i2d_logic_deit);
-    i2d_range_destroy(&node->range);
-    if(node->left)
-        i2d_parser_node_reset(parser, lexer, &node->left);
     if(node->right)
         i2d_parser_node_reset(parser, lexer, &node->right);
+    node->right = node;
+    if(node->left)
+        i2d_parser_node_reset(parser, lexer, &node->left);
+    node->left = node;
     if(node->tokens)
         i2d_lexer_reset(lexer, &node->tokens);
+    i2d_deit(node->logic, i2d_logic_deit);
+    i2d_range_destroy(&node->range);
     node->type = I2D_NODE;
-    node->left = node;
-    node->right = node;
     i2d_node_append(node, parser->node_cache);
     *result = NULL;
 }
