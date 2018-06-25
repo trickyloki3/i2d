@@ -42,18 +42,18 @@
     "bAutoSpell" : {
         "argument_type" : [
             "skill",
-            "percent10",
-            "integer"
+            "integer",
+            "percent10"
         ],
-        "description" : "Add a {1} chance to cast {0} of level {2} on each normal attack."
+        "description" : "Add a {2} chance to cast {0} of level {1} on each normal attack."
     },
     "bAutoSpellWhenHit" : {
         "argument_type" : [
             "skill",
-            "percent10",
-            "integer"
+            "integer",
+            "percent10"
         ],
-        "description" : "Add a {1} chance to cast {0} of level {2} from each normal attack."
+        "description" : "Add a {2} chance to cast {0} of level {1} from each normal attack."
     },
     "bHPVanishRaceRate" : {
         "argument_type" : [
