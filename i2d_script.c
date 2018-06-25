@@ -1698,11 +1698,15 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                     }
                 } else if(i2d_token_precedence[node->tokens->type] < i2d_token_precedence[root->tokens->type]) {
                     if(I2D_BINARY == node->type) {
-                        if(!root->right) {
+                        iter = root;
+                        while(iter->type == I2D_BINARY && iter->right && i2d_token_precedence[node->tokens->type] < i2d_token_precedence[iter->right->tokens->type])
+                            iter = iter->right;
+
+                        if(!iter->right) {
                             status = i2d_panic("binary operator without operand");
                         } else {
-                            node->left = root->right;
-                            root->right = node;
+                            node->left = iter->right;
+                            iter->right = node;
                         }
                     } else {
                         iter = root;
