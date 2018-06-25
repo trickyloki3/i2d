@@ -73,5 +73,10 @@
         "description" : "{0} Weapon Level",
         "max" : 5,
         "min" : 0
+    },
+    "getexp2" : {
+        "description" : "Increase base exp by {0} and job exp by {1}.",
+        "max" : 1,
+        "min" : 0
     }
 }

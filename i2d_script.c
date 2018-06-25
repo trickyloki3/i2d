@@ -29,6 +29,7 @@ static int i2d_handler_checkoption(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_rand(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_callfunc(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getequipweaponlv(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getexp2(i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -53,7 +54,8 @@ i2d_handler function_list[] = {
     { {"callfunc", 8}, i2d_handler_callfunc },
     { {"ismounting", 10}, i2d_handler_general },
     { {"setmounting", 11}, i2d_handler_general },
-    { {"getequipweaponlv", 16}, i2d_handler_getequipweaponlv }
+    { {"getequipweaponlv", 16}, i2d_handler_getequipweaponlv },
+    { {"getexp2", 7}, i2d_handler_getexp2 }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
@@ -3183,6 +3185,44 @@ static int i2d_handler_getequipweaponlv(i2d_script * script, i2d_node * node, i2
         status = i2d_panic("failed to push location string");
     } else {
         status = i2d_handler_general(script, node, local);
+    }
+
+    return status;
+}
+
+static int i2d_handler_getexp2(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_node * arguments[3];
+
+    long min;
+    long max;
+
+    i2d_zero(arguments);
+
+    if(i2d_node_get_arguments(node->left, arguments, 2, 1)) {
+        status = i2d_panic("failed to get getexp2 arguments");
+    } else {
+        i2d_range_get_range(&arguments[0]->range, &min, &max);
+        if( min == max ?
+            i2d_buffer_printf(local->buffer, "%ld", min) :
+            i2d_buffer_printf(local->buffer, "%ld ~ %ld", min, max) ) {
+            status = i2d_panic("failed to write integer range");
+        } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+            status = i2d_panic("failed to push buffer on stack");
+        } else {
+            i2d_buffer_clear(local->buffer);
+
+            i2d_range_get_range(&arguments[1]->range, &min, &max);
+            if( min == max ?
+                i2d_buffer_printf(local->buffer, "%ld", min) :
+                i2d_buffer_printf(local->buffer, "%ld ~ %ld", min, max) ) {
+                status = i2d_panic("failed to write integer range");
+            } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+                status = i2d_panic("failed to push buffer on stack");
+            } else {
+                status = i2d_handler_general(script, node, local);
+            }
+        }
     }
 
     return status;
