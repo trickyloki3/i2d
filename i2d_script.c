@@ -887,7 +887,7 @@ int i2d_node_set_constant(i2d_node * node, i2d_constant * constant) {
     node->constant = constant;
     if(i2d_range_copy(&node->range, &constant->range)) {
         status = i2d_panic("failed to copy range");
-    } else if(i2d_node_set_string(node, &constant->name)) {
+    } else if(constant->name.length && i2d_node_set_string(node, &constant->name)) {
         status = i2d_panic("failed to copy name");
     }
 
