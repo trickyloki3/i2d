@@ -321,12 +321,12 @@ void i2d_token_print(i2d_token * token) {
     } while(iterator != token);
 }
 
-int i2d_token_putc(i2d_token * token, char character) {
-    return i2d_buffer_putc(&token->buffer, character);
-}
-
 char i2d_token_getc(i2d_token * token) {
     return token->buffer.offset ? token->buffer.buffer[token->buffer.offset - 1] : 0;
+}
+
+int i2d_token_putc(i2d_token * token, char character) {
+    return i2d_buffer_putc(&token->buffer, character);
 }
 
 int i2d_token_get_string(i2d_token * token, i2d_string * result) {
