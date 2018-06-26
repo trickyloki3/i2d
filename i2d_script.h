@@ -118,6 +118,7 @@ enum i2d_node_type {
 
 struct i2d_node {
     enum i2d_node_type type;
+    i2d_constant * constant;
     i2d_range range;
     i2d_logic * logic;
     i2d_token * tokens;

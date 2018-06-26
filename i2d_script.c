@@ -867,11 +867,15 @@ int i2d_node_get_constant(i2d_node * node, long * result) {
     long min;
     long max;
 
-    i2d_range_get_range(&node->range, &min, &max);
-    if(min != max) {
-        status = i2d_panic("failed on invalid range");
+    if(node->constant) {
+        *result = node->constant->value;
     } else {
-        *result = min;
+        i2d_range_get_range(&node->range, &min, &max);
+        if(min != max) {
+            status = i2d_panic("failed on invalid range");
+        } else {
+            *result = min;
+        }
     }
 
     return status;
@@ -880,10 +884,11 @@ int i2d_node_get_constant(i2d_node * node, long * result) {
 int i2d_node_set_constant(i2d_node * node, i2d_constant * constant) {
     int status = I2D_OK;
 
-    if(i2d_token_set_string(node->tokens, &constant->name)) {
-        status = i2d_panic("failed to copy name");
-    } else if(i2d_range_copy(&node->range, &constant->range)) {
+    node->constant = constant;
+    if(i2d_range_copy(&node->range, &constant->range)) {
         status = i2d_panic("failed to copy range");
+    } else if(i2d_token_set_string(node->tokens, &constant->name)) {
+        status = i2d_panic("failed to copy name");
     }
 
     return status;
@@ -1226,6 +1231,7 @@ void i2d_parser_node_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_node ** r
         i2d_lexer_reset(lexer, &node->tokens);
     i2d_deit(node->logic, i2d_logic_deit);
     i2d_range_destroy(&node->range);
+    node->constant = NULL;
     node->type = I2D_NODE;
     i2d_node_append(node, parser->node_cache);
     *result = NULL;
@@ -2411,6 +2417,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt
     i2d_node * variable;
     long number;
     i2d_string name;
+    i2d_constant * constant;
 
     if(!i2d_rbt_get_variable(variables, node, &variable)) {
         if(i2d_node_copy(node, variable))
@@ -2420,12 +2427,15 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt
     } else {
         if(isdigit(name.string[0]) && !i2d_token_get_constant(node->tokens, &number)) {
             node->type = I2D_NUMBER;
-        } else if(i2d_constant_get_by_macro_value(script->constant_db, name.string, &number)) {
-            number = 0;
+            if(i2d_range_create_add(&node->range, number, number))
+                status = i2d_panic("failed to create range object");
+        } else if(!i2d_constant_get_by_macro(script->constant_db, name.string, &constant)) {
+            if(i2d_node_set_constant(node, constant))
+                status = i2d_panic("failed to set constant on node object");
+        } else {
+            if(i2d_range_create_add(&node->range, 0, 0))
+                status = i2d_panic("failed to create range object");
         }
-
-        if(i2d_range_create_add(&node->range, number, number))
-            status = i2d_panic("failed to create range object");
     }
 
     return status;
