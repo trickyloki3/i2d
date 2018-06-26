@@ -504,7 +504,7 @@ int i2d_string_stack_get_unique(i2d_string_stack * stack, i2d_buffer * buffer) {
             status = i2d_panic("failed to write buffer");
         for(i = 1; i < size; i++)
             if( strcmp(list[i].string, list[i - 1].string) &&
-                i2d_buffer_printf(buffer, "%s", list[i].string) )
+                i2d_buffer_printf(buffer, ", %s", list[i].string) )
                 status = i2d_panic("failed to write buffer");
     }
 
