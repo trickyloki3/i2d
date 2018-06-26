@@ -2525,6 +2525,12 @@ int i2d_script_expression_binary_assign(i2d_node * node, int operator, i2d_rbt *
         status = i2d_panic("failed to copy node to left node");
     } else if(i2d_rbt_add_variable(variables, node->left)) {
         status = i2d_panic("failed to add variable");
+    } else {
+        /*
+         * assign the expression (node->right) to the variable (node->left)
+         */
+        node->left->left = node->right;
+        node->right = NULL;
     }
 
     return status;
@@ -2710,6 +2716,12 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
                     status = i2d_panic("failed to copy node object");
                 } else if(i2d_rbt_add_variable(variables, node->left)) {
                     status = i2d_panic("failed to add variable");
+                } else {
+                    /*
+                     * assign the expression (node->right) to the variable (node->left)
+                     */
+                    node->left->left = node->right;
+                    node->right = NULL;
                 }
                 break;
             default:
