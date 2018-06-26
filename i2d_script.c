@@ -917,6 +917,18 @@ int i2d_node_get_predicate(i2d_node * node, i2d_string * result) {
 
 int i2d_node_get_predicate_all(i2d_node * node, i2d_string_stack * stack) {
     int status = I2D_OK;
+
+    if(node->left && i2d_node_get_predicate_all_recursive(node->left, stack)) {
+        status = i2d_panic("failed to get left node's predicate list");
+    } else if(node->right && i2d_node_get_predicate_all_recursive(node->right, stack)) {
+        status = i2d_panic("failed to get right node's predicate list");
+    }
+
+    return status;
+}
+
+int i2d_node_get_predicate_all_recursive(i2d_node * node, i2d_string_stack * stack) {
+    int status = I2D_OK;
     i2d_string string;
 
     if( I2D_VARIABLE == node->type ||
@@ -928,9 +940,9 @@ int i2d_node_get_predicate_all(i2d_node * node, i2d_string_stack * stack) {
         }
     } else {
         if(node->left)
-            status = i2d_node_get_predicate_all(node->left, stack);
+            status = i2d_node_get_predicate_all_recursive(node->left, stack);
         if(!status && node->right)
-            status = i2d_node_get_predicate_all(node->right, stack);
+            status = i2d_node_get_predicate_all_recursive(node->right, stack);
     }
 
     return status;
@@ -3265,8 +3277,7 @@ static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2
     if(i2d_script_local_create(script, &predicate)) {
         status = i2d_panic("failed to create local object");
     } else {
-        if( (node->left  && i2d_node_get_predicate_all(node->left,  predicate.stack)) ||
-            (node->right && i2d_node_get_predicate_all(node->right, predicate.stack)) ||
+        if( i2d_node_get_predicate_all(node, predicate.stack) ||
             i2d_string_stack_get_unique(predicate.stack, predicate.buffer) ) {
             status = i2d_panic("failed to get predicate list");
         } else {
