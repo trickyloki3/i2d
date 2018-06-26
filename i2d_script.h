@@ -140,6 +140,7 @@ int i2d_node_get_arguments(i2d_node *, i2d_node **, size_t, size_t);
 int i2d_node_get_constant(i2d_node *, long *);
 int i2d_node_set_constant(i2d_node *, i2d_constant *);
 int i2d_node_get_string(i2d_node *, i2d_string *);
+int i2d_node_set_string(i2d_node *, i2d_string *);
 int i2d_node_get_predicate(i2d_node *, i2d_string *);
 int i2d_node_get_predicate_all(i2d_node *, i2d_string_stack *);
 int i2d_node_get_predicate_all_recursive(i2d_node *, i2d_string_stack *);

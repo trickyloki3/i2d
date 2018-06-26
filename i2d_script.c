@@ -887,7 +887,7 @@ int i2d_node_set_constant(i2d_node * node, i2d_constant * constant) {
     node->constant = constant;
     if(i2d_range_copy(&node->range, &constant->range)) {
         status = i2d_panic("failed to copy range");
-    } else if(i2d_token_set_string(node->tokens, &constant->name)) {
+    } else if(i2d_node_set_string(node, &constant->name)) {
         status = i2d_panic("failed to copy name");
     }
 
@@ -896,6 +896,10 @@ int i2d_node_set_constant(i2d_node * node, i2d_constant * constant) {
 
 int i2d_node_get_string(i2d_node * node, i2d_string * result) {
     return i2d_token_get_string(node->tokens, result);
+}
+
+int i2d_node_set_string(i2d_node * node, i2d_string * result) {
+    return i2d_token_set_string(node->tokens, result);
 }
 
 int i2d_node_get_predicate(i2d_node * node, i2d_string * result) {
@@ -2440,7 +2444,7 @@ int i2d_script_expression_variable_predicate(i2d_script * script, i2d_node * nod
             status = i2d_panic("failed to get predicate list");
         } else {
             i2d_buffer_get(local.buffer, &predicate.string, &predicate.length);
-            if(predicate.length && i2d_token_set_string(node->tokens, &predicate)) {
+            if(predicate.length && i2d_node_set_string(node, &predicate)) {
                 status = i2d_panic("failed to write predicate list");
             }
         }
@@ -2837,7 +2841,7 @@ static int i2d_handler_getskilllv(i2d_script * script, i2d_node * node, i2d_loca
     }
 
     if(!status) {
-        if(i2d_token_set_string(node->tokens, &skill->name)) {
+        if(i2d_node_set_string(node, &skill->name)) {
             status = i2d_panic("failed to write skill string");
         } else if(i2d_range_create_add(&node->range, 0, skill->maxlv)) {
             status = i2d_panic("failed to create skill range");
@@ -2949,7 +2953,7 @@ static int i2d_handler_strcharinfo(i2d_script * script, i2d_node * node, i2d_loc
         status = i2d_panic("failed to get type");
     } else if(i2d_value_map_get(script->strcharinfo, &value, &string)) {
         status = i2d_panic("failed to get strcharinfo by type -- %ld", value);
-    } else if(i2d_token_set_string(node->tokens, &string)) {
+    } else if(i2d_node_set_string(node, &string)) {
         status = i2d_panic("failed to write strcharinfo string");
     } else if(i2d_range_copy(&node->range, &arguments[0]->range)) {
         status = i2d_panic("failed to copy strcharinfo range");
