@@ -6,6 +6,7 @@
 #include "i2d_mob.h"
 #include "i2d_produce.h"
 #include "i2d_mercenary.h"
+#include "i2d_pet.h"
 
 enum i2d_db_type {
     i2d_pre_renewal,
@@ -20,6 +21,7 @@ struct i2d_db {
     i2d_mob_race_db * mob_race_db;
     i2d_produce_db * produce_db;
     i2d_mercenary_db * mercenary_db;
+    i2d_pet_db * pet_db;
 };
 
 typedef struct i2d_db i2d_db;

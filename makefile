@@ -22,6 +22,7 @@ OBJECT+=i2d_skill.o
 OBJECT+=i2d_mob.o
 OBJECT+=i2d_produce.o
 OBJECT+=i2d_mercenary.o
+OBJECT+=i2d_pet.o
 OBJECT+=i2d_constant.o
 OBJECT+=i2d_db.o
 OBJECT+=i2d_json.o
