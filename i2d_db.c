@@ -5,6 +5,7 @@ static int i2d_db_load_skill_db(i2d_db *, i2d_string *);
 static int i2d_db_load_mob_db(i2d_db *, i2d_string *);
 static int i2d_db_load_mob_race_db(i2d_db *, i2d_string *);
 static int i2d_db_load_produce_db(i2d_db *, i2d_string *);
+static int i2d_db_load_mercenary_db(i2d_db *, i2d_string *);
 
 int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_string * source_path) {
     int status = I2D_OK;
@@ -28,6 +29,8 @@ int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_string * source_pat
                 status = i2d_panic("failed to load mob race db");
             } else if(i2d_db_load_produce_db(object, source_path)) {
                 status = i2d_panic("failed to load produce db");
+            } else if(i2d_db_load_mercenary_db(object, source_path)) {
+                status = i2d_panic("failed to load mercenary db");
             }
 
             if(status)
@@ -44,6 +47,7 @@ void i2d_db_deit(i2d_db ** result) {
     i2d_db * object;
 
     object = *result;
+    i2d_deit(object->mercenary_db, i2d_mercenary_db_deit);
     i2d_deit(object->produce_db, i2d_produce_db_deit);
     i2d_deit(object->mob_race_db, i2d_mob_race_db_deit);
     i2d_deit(object->mob_db, i2d_mob_db_deit);
@@ -127,6 +131,20 @@ static int i2d_db_load_produce_db(i2d_db * db, i2d_string * source_path) {
         status = i2d_panic("failed to write produce db path");
     } else {
         status = i2d_produce_db_init(&db->produce_db, &path);
+        i2d_free(path.string);
+    }
+
+    return status;
+}
+
+static int i2d_db_load_mercenary_db(i2d_db * db, i2d_string * source_path) {
+    int status = I2D_OK;
+    i2d_string path;
+
+    if(i2d_string_vprintf(&path, "%s/db/mercenary_db.txt", source_path->string)) {
+        status = i2d_panic("failed to write mercenary db path");
+    } else {
+        status = i2d_mercenary_db_init(&db->mercenary_db, &path);
         i2d_free(path.string);
     }
 
