@@ -7,6 +7,7 @@ static int i2d_db_load_mob_race_db(i2d_db *, i2d_string *);
 static int i2d_db_load_produce_db(i2d_db *, i2d_string *);
 static int i2d_db_load_mercenary_db(i2d_db *, i2d_string *);
 static int i2d_db_load_pet_db(i2d_db *, i2d_string *);
+static int i2d_db_load_item_combo_db(i2d_db *, i2d_string *);
 
 int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_string * source_path) {
     int status = I2D_OK;
@@ -34,6 +35,8 @@ int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_string * source_pat
                 status = i2d_panic("failed to load mercenary db");
             } else if(i2d_db_load_pet_db(object, source_path)) {
                 status = i2d_panic("failed to load pet db");
+            } else if(i2d_db_load_item_combo_db(object, source_path)) {
+                status = i2d_panic("failed to load item combo db");
             }
 
             if(status)
@@ -50,6 +53,7 @@ void i2d_db_deit(i2d_db ** result) {
     i2d_db * object;
 
     object = *result;
+    i2d_deit(object->item_combo_db, i2d_item_combo_db_deit);
     i2d_deit(object->pet_db, i2d_pet_db_deit);
     i2d_deit(object->mercenary_db, i2d_mercenary_db_deit);
     i2d_deit(object->produce_db, i2d_produce_db_deit);
@@ -165,6 +169,22 @@ static int i2d_db_load_pet_db(i2d_db * db, i2d_string * source_path) {
         status = i2d_panic("failed to write pet db path");
     } else {
         status = i2d_pet_db_init(&db->pet_db, &path);
+        i2d_free(path.string);
+    }
+
+    return status;
+}
+
+static int i2d_db_load_item_combo_db(i2d_db * db, i2d_string * source_path) {
+    int status = I2D_OK;
+    const char * type;
+    i2d_string path;
+
+    type = db->type == i2d_pre_renewal ? "pre-re" : "re";
+    if(i2d_string_vprintf(&path, "%s/db/%s/item_combo_db.txt", source_path->string, type)) {
+        status = i2d_panic("failed to write pet db path");
+    } else {
+        status = i2d_item_combo_db_init(&db->item_combo_db, &path);
         i2d_free(path.string);
     }
 

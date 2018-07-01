@@ -22,6 +22,7 @@ struct i2d_db {
     i2d_produce_db * produce_db;
     i2d_mercenary_db * mercenary_db;
     i2d_pet_db * pet_db;
+    i2d_item_combo_db * item_combo_db;
 };
 
 typedef struct i2d_db i2d_db;

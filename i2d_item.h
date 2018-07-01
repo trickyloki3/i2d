@@ -53,4 +53,29 @@ int i2d_item_db_init(i2d_item_db **, i2d_string *);
 void i2d_item_db_deit(i2d_item_db **);
 int i2d_item_db_search_by_id(i2d_item_db *, long, i2d_item **);
 int i2d_item_db_search_by_name(i2d_item_db *, const char *, i2d_item **);
+
+struct i2d_item_combo {
+    long * list;
+    size_t size;
+    i2d_string script;
+    struct i2d_item_combo * next;
+    struct i2d_item_combo * prev;
+};
+
+typedef struct i2d_item_combo i2d_item_combo;
+
+int i2d_item_combo_init(i2d_item_combo **, char *, size_t);
+void i2d_item_combo_deit(i2d_item_combo **);
+void i2d_item_combo_append(i2d_item_combo *, i2d_item_combo *);
+void i2d_item_combo_remove(i2d_item_combo *);
+
+struct i2d_item_combo_db {
+    i2d_item_combo * list;
+    size_t size;
+};
+
+typedef struct i2d_item_combo_db i2d_item_combo_db;
+
+int i2d_item_combo_db_init(i2d_item_combo_db **, i2d_string *);
+void i2d_item_combo_db_deit(i2d_item_combo_db **);
 #endif
