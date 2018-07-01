@@ -10,6 +10,8 @@ static int i2d_item_combo_parse_list(i2d_item_combo *, char *, size_t);
 static int i2d_item_combo_parse(i2d_item_combo *, char *, size_t);
 static int i2d_item_combo_db_load(i2d_item_combo_db *, i2d_string *);
 static int i2d_item_combo_db_parse(char *, size_t, void *);
+static int i2d_item_combo_db_index(i2d_item_combo_db *);
+static int i2d_item_combo_db_create_combo_list(i2d_item_combo_db *, long, i2d_item_combo_list **);
 
 int i2d_item_init(i2d_item ** result, char * string, size_t length) {
     int status = I2D_OK;
@@ -284,6 +286,72 @@ int i2d_item_db_search_by_name(i2d_item_db * item_db, const char * name, i2d_ite
     return i2d_rbt_search(item_db->index_by_name, name, (void **) item);
 }
 
+int i2d_item_combo_list_init(i2d_item_combo_list ** result, long item_id) {
+    int status = I2D_OK;
+    i2d_item_combo_list * object;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->item_id = item_id;
+            object->next = object;
+            object->prev = object;
+
+            if(status)
+                i2d_item_combo_list_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+void i2d_item_combo_list_deit(i2d_item_combo_list ** result) {
+    i2d_item_combo_list * object;
+
+    object = *result;
+    i2d_free(object->list);
+    i2d_free(object);
+    *result = NULL;
+}
+
+int i2d_item_combo_list_add(i2d_item_combo_list * item_combo_list, i2d_item_combo * item_combo) {
+    int status = I2D_OK;
+    i2d_item_combo ** list = NULL;
+    size_t size;
+
+    size = item_combo_list->size + 1;
+    list = realloc(item_combo_list->list, size * sizeof(*item_combo_list->list));
+    if(!list) {
+        status = i2d_panic("out of memory");
+    } else {
+        list[size - 1] = item_combo;
+        item_combo_list->list = list;
+        item_combo_list->size = size;
+    }
+
+    return status;
+}
+
+void i2d_item_combo_list_append(i2d_item_combo_list * x, i2d_item_combo_list * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_item_combo_list_remove(i2d_item_combo_list * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
 int i2d_item_combo_init(i2d_item_combo ** result, char * string, size_t length) {
     int status = I2D_OK;
     i2d_item_combo * object;
@@ -452,8 +520,11 @@ int i2d_item_combo_db_init(i2d_item_combo_db ** result, i2d_string * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_item_combo_db_load(object, path))
+            if(i2d_item_combo_db_load(object, path)) {
                 status = i2d_panic("failed to load item combo db");
+            } else if(i2d_item_combo_db_index(object)) {
+                status = i2d_panic("failed to index item combo db");
+            }
 
             if(status)
                 i2d_item_combo_db_deit(&object);
@@ -468,8 +539,10 @@ int i2d_item_combo_db_init(i2d_item_combo_db ** result, i2d_string * path) {
 void i2d_item_combo_db_deit(i2d_item_combo_db ** result) {
     i2d_item_combo_db * object;
     i2d_item_combo * item_combo;
+    i2d_item_combo_list * item_combo_list;
 
     object = *result;
+    i2d_deit(object->index_by_id, i2d_rbt_deit);
     if(object->list) {
         while(object->list != object->list->next) {
             item_combo = object->list->next;
@@ -477,6 +550,14 @@ void i2d_item_combo_db_deit(i2d_item_combo_db ** result) {
             i2d_item_combo_deit(&item_combo);
         }
         i2d_item_combo_deit(&object->list);
+    }
+    if(object->combo_list) {
+        while(object->combo_list != object->combo_list->next) {
+            item_combo_list = object->combo_list->next;
+            i2d_item_combo_list_remove(item_combo_list);
+            i2d_item_combo_list_deit(&item_combo_list);
+        }
+        i2d_item_combo_list_deit(&object->combo_list);
     }
     i2d_free(object);
     *result = NULL;
@@ -530,4 +611,59 @@ static int i2d_item_combo_db_parse(char * string, size_t length, void * data) {
     }
 
     return status;
+}
+
+static int i2d_item_combo_db_index(i2d_item_combo_db * item_combo_db) {
+    int status = I2D_OK;
+    i2d_item_combo * item_combo = NULL;
+
+    size_t i;
+    i2d_item_combo_list * item_combo_list;
+
+    if(i2d_rbt_init(&item_combo_db->index_by_id, i2d_rbt_cmp_long)) {
+        status = i2d_panic("failed to create red black tree object");
+    } else {
+        item_combo = item_combo_db->list;
+        do {
+            for(i = 0; i < item_combo->size; i++) {
+                if(i2d_item_combo_db_search_by_id(item_combo_db, item_combo->list[i], &item_combo_list)) {
+                    if(i2d_item_combo_db_create_combo_list(item_combo_db, item_combo->list[i], &item_combo_list)) {
+                        status = i2d_panic("failed to create item combo list object");
+                    } else if(i2d_item_combo_list_add(item_combo_list, item_combo)) {
+                        status = i2d_panic("failed to add item combo");
+                    } else if(i2d_rbt_insert(item_combo_db->index_by_id, &item_combo_list->item_id, item_combo_list)) {
+                        status = i2d_panic("failed to index item combo list by id -- %d", item_combo_list->item_id);
+                    }
+                } else if(i2d_item_combo_list_add(item_combo_list, item_combo)) {
+                    status = i2d_panic("failed to add item combo");
+                }
+            }
+            item_combo = item_combo->next;
+        } while(item_combo != item_combo_db->list && !status);
+    }
+
+    return status;
+}
+
+static int i2d_item_combo_db_create_combo_list(i2d_item_combo_db * item_combo_db, long item_id, i2d_item_combo_list ** result) {
+    int status = I2D_OK;
+    i2d_item_combo_list * item_combo_list = NULL;
+
+    if(i2d_item_combo_list_init(&item_combo_list, item_id)) {
+        status = i2d_panic("failed to create item combo list object");
+    } else {
+        if(!item_combo_db->combo_list) {
+            item_combo_db->combo_list = item_combo_list;
+        } else {
+            i2d_item_combo_list_append(item_combo_list, item_combo_db->combo_list);
+        }
+        item_combo_db->combo_size++;
+        *result = item_combo_list;
+    }
+
+    return status;
+}
+
+int i2d_item_combo_db_search_by_id(i2d_item_combo_db * item_combo_db, long id, i2d_item_combo_list ** item_combo_list) {
+    return i2d_rbt_search(item_combo_db->index_by_id, &id, (void **) item_combo_list);
 }

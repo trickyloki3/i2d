@@ -69,13 +69,33 @@ void i2d_item_combo_deit(i2d_item_combo **);
 void i2d_item_combo_append(i2d_item_combo *, i2d_item_combo *);
 void i2d_item_combo_remove(i2d_item_combo *);
 
+struct i2d_item_combo_list {
+    long item_id;
+    i2d_item_combo ** list;
+    size_t size;
+    struct i2d_item_combo_list * next;
+    struct i2d_item_combo_list * prev;
+};
+
+typedef struct i2d_item_combo_list i2d_item_combo_list;
+
+int i2d_item_combo_list_init(i2d_item_combo_list **, long);
+void i2d_item_combo_list_deit(i2d_item_combo_list **);
+int i2d_item_combo_list_add(i2d_item_combo_list *, i2d_item_combo *);
+void i2d_item_combo_list_append(i2d_item_combo_list *, i2d_item_combo_list *);
+void i2d_item_combo_list_remove(i2d_item_combo_list *);
+
 struct i2d_item_combo_db {
     i2d_item_combo * list;
     size_t size;
+    i2d_item_combo_list * combo_list;
+    size_t combo_size;
+    i2d_rbt * index_by_id;
 };
 
 typedef struct i2d_item_combo_db i2d_item_combo_db;
 
 int i2d_item_combo_db_init(i2d_item_combo_db **, i2d_string *);
 void i2d_item_combo_db_deit(i2d_item_combo_db **);
+int i2d_item_combo_db_search_by_id(i2d_item_combo_db *, long, i2d_item_combo_list **);
 #endif
