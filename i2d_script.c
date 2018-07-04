@@ -2211,7 +2211,11 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
                     status = i2d_script_translate(script, block->child, variables, logics);
                     break;
                 case I2D_STATEMENT:
-                    status = i2d_script_statement(script, block, variables, logics);
+                    if(i2d_script_expression(script, block->nodes, block->statement ? I2D_FLAG_NONE : I2D_FLAG_CONDITIONAL, variables, logics)) {
+                        status = i2d_panic("failed to evaluate expression");
+                    } else if(block->statement) {
+                        status = i2d_script_statement(script, block, variables, logics);
+                    }
                     break;
                 case I2D_IF:
                     if(i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables, logics)) {
@@ -2260,35 +2264,31 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
 int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
 
-    if(block->statement) {
-        switch(block->statement->type) {
-            case I2D_BONUS:
-                status = i2d_script_statement_bonus(script, block, variables, logics, script->bonus, 1);
-                break;
-            case I2D_BONUS2:
-                status = i2d_script_statement_bonus(script, block, variables, logics, script->bonus2, 2);
-                break;
-            case I2D_BONUS3:
-                status = i2d_script_statement_bonus(script, block, variables, logics, script->bonus3, 3);
-                break;
-            case I2D_BONUS4:
-                status = i2d_script_statement_bonus(script, block, variables, logics, script->bonus4, 4);
-                break;
-            case I2D_BONUS5:
-                status = i2d_script_statement_bonus(script, block, variables, logics, script->bonus5, 5);
-                break;
-            default:
-                /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
-                break;
-        }
-    } else {
-        status = i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables, logics);
+    switch(block->statement->type) {
+        case I2D_BONUS:
+            status = i2d_script_statement_bonus(script, block, script->bonus, 1);
+            break;
+        case I2D_BONUS2:
+            status = i2d_script_statement_bonus(script, block, script->bonus2, 2);
+            break;
+        case I2D_BONUS3:
+            status = i2d_script_statement_bonus(script, block, script->bonus3, 3);
+            break;
+        case I2D_BONUS4:
+            status = i2d_script_statement_bonus(script, block, script->bonus4, 4);
+            break;
+        case I2D_BONUS5:
+            status = i2d_script_statement_bonus(script, block, script->bonus5, 5);
+            break;
+        default:
+            /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
+            break;
     }
 
     return status;
 }
 
-int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_rbt * variables, i2d_logic * logics, i2d_data_map * bonus_map, int argc) {
+int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_map * bonus_map, int argc) {
     int status = I2D_OK;
     i2d_node * arguments[6];
     long value;
@@ -2305,8 +2305,6 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_rbt *
 
     if(argc >= i2d_size(arguments)) {
         status = i2d_panic("invalid paramaters");
-    } else if(i2d_script_expression(script, block->nodes, I2D_FLAG_NONE, variables, logics)) {
-        status = i2d_panic("failed to evaluate expression");
     } else if(i2d_node_get_arguments(block->nodes, arguments, 1, argc)) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
