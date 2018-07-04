@@ -1,0 +1,12 @@
+{
+    "autobonus" : {
+        "argument_type" : [
+            "script",
+            "percent10",
+            "time",
+            "bf",
+            "script"
+        ],
+        "description" : ""
+    }
+}

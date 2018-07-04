@@ -21,6 +21,7 @@ struct i2d_json {
     json_t * bonus3;
     json_t * bonus4;
     json_t * bonus5;
+    json_t * statements;
     json_t * getiteminfo;
     json_t * strcharinfo;
     json_t * ammos;
