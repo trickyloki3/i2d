@@ -348,6 +348,7 @@ struct i2d_script {
     i2d_rbt * function_map;
     i2d_rbt * bonus_map;
     i2d_node * default_bf_flag;
+    i2d_node * default_script;
 };
 
 typedef struct i2d_script i2d_script;

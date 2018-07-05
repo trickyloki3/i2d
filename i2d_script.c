@@ -2107,9 +2107,13 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                             status = i2d_panic("failed to map bonus handler object");
                 }
 
-                if(!status)
-                    if(i2d_script_default_node(object, "0", &object->default_bf_flag))
+                if(!status) {
+                    if(i2d_script_default_node(object, "0", &object->default_bf_flag)) {
                         status = i2d_panic("failed to create default node for bf flag");
+                    } else if(i2d_script_default_node(object, "\"{}\"", &object->default_script)) {
+                        status = i2d_panic("failed to create default node for script");
+                    }
+                }
             }
 
             if(status)
@@ -2126,6 +2130,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->default_script, i2d_node_deit);
     i2d_deit(object->default_bf_flag, i2d_node_deit);
     i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_deit(object->function_map, i2d_rbt_deit);
@@ -2197,7 +2202,8 @@ int i2d_script_default_node(i2d_script * script, const char * string, i2d_node *
             } else if(i2d_script_expression(script, nodes, I2D_FLAG_NONE, variables, NULL)) {
                 status = i2d_panic("failed to evaluate expression");
             } else {
-                *result = nodes;
+                *result = nodes->left;
+                nodes->left = NULL;
             }
             i2d_string_destroy(&source);
         }
@@ -2207,7 +2213,7 @@ int i2d_script_default_node(i2d_script * script, const char * string, i2d_node *
     if(tokens)
         i2d_lexer_reset(script->lexer, &tokens);
 
-    if(status && nodes)
+    if(nodes)
         i2d_parser_node_reset(script->parser, script->lexer, &nodes);
 
     return status;
@@ -2415,6 +2421,8 @@ int i2d_script_statement_autobonus(i2d_script * script, i2d_block * block) {
     } else {
         if(!arguments[3])
             arguments[3] = script->default_bf_flag;
+        if(!arguments[4])
+            arguments[4] = script->default_script;
 
         if(i2d_script_statement_arguments(script, block, arguments, data))
             status = i2d_panic("failed to handle statement arguments");
