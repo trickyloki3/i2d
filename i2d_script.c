@@ -2175,7 +2175,8 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     i2d_rbt * variables = NULL;
 
     if(!strcmp("{}", source->string)) {
-        status = i2d_string_create(target, "", 0);
+        target->string = "";
+        target->length = 0;
     } else {
         if(i2d_rbt_init(&variables, i2d_rbt_cmp_node)) {
             status = i2d_panic("failed to create red black tree object");
@@ -2186,6 +2187,8 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
                 status = i2d_panic("failed to parse -- %s", source->string);
             } else if(i2d_script_translate(script, blocks, variables, NULL)) {
                 status = i2d_panic("failed to translate -- %s", source->string);
+            } else {
+                i2d_buffer_get(&blocks->buffer, &target->string, &target->length);
             }
             i2d_rbt_deit(&variables);
         }

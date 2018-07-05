@@ -40,23 +40,14 @@ static int i2d_item_compile_script(i2d_script * script, i2d_item * item) {
     i2d_string description;
     i2d_zero(description);
 
-    if(i2d_script_compile(script, &item->script, &description)) {
+    if(i2d_script_compile(script, &item->script, &description))
         status = i2d_panic("failed to translate script for item %ld", item->id);
-    } else {
-        i2d_free(description.string);
-    }
 
-    if(i2d_script_compile(script, &item->onequip_script, &description)) {
+    if(i2d_script_compile(script, &item->onequip_script, &description))
         status = i2d_panic("failed to translate script for item %ld", item->id);
-    } else {
-        i2d_free(description.string);
-    }
 
-    if(i2d_script_compile(script, &item->onunequip_script, &description)) {
+    if(i2d_script_compile(script, &item->onunequip_script, &description))
         status = i2d_panic("failed to translate script for item %ld", item->id);
-    } else {
-        i2d_free(description.string);
-    }
 
     return status;
 }
