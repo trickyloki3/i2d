@@ -2282,6 +2282,9 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_BONUS5:
             status = i2d_script_statement_bonus(script, block, script->bonus5, 5);
             break;
+        case I2D_AUTOBONUS:
+            status = i2d_script_statement_autobonus(script, block);
+            break;
         default:
             /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
             break;
@@ -2345,6 +2348,59 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_
                     status = i2d_panic("failed to destroy local object");
             }
         }
+    }
+
+    return status;
+}
+
+int i2d_script_statement_autobonus(i2d_script * script, i2d_block * block) {
+    int status = I2D_OK;
+    i2d_node * arguments[5];
+    i2d_data * data = NULL;
+
+    i2d_zero(arguments);
+
+    if(i2d_node_get_arguments(block->nodes, arguments, 3, 2)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
+        status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
+    } else {
+        status = i2d_script_statement_arguments(script, block, arguments, data);
+    }
+
+    return status;
+}
+
+int i2d_script_statement_arguments(i2d_script * script, i2d_block * block, i2d_node ** arguments, i2d_data * data) {
+    int status = I2D_OK;
+    i2d_local local;
+
+    size_t i;
+    size_t size;
+    i2d_string * types;
+    i2d_handler * handler;
+
+    i2d_zero(local);
+
+    if(i2d_script_local_create(script, &local)) {
+        status = i2d_panic("failed to create local object");
+    } else {
+        if(i2d_string_stack_get(&data->types, &types, &size)) {
+            status = i2d_panic("failed to get argument type array");
+        } else {
+            for(i = 0; i < size && arguments[i] && !status; i++) {
+                i2d_buffer_clear(local.buffer);
+
+                if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
+                    status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
+                } else {
+                    status = handler->handler(script, arguments[i], &local);
+                }
+            }
+        }
+
+        if(i2d_script_local_destroy(script, &local))
+            status = i2d_panic("failed to destroy local object");
     }
 
     return status;
