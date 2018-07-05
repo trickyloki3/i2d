@@ -2459,6 +2459,9 @@ int i2d_script_statement_arguments(i2d_script * script, i2d_block * block, i2d_n
             }
         }
 
+        if(!status && i2d_format_write(&data->format, local.stack, &block->buffer))
+            status = i2d_panic("failed to write bonus type description");
+
         if(i2d_script_local_destroy(script, &local))
             status = i2d_panic("failed to destroy local object");
     }

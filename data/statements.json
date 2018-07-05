@@ -7,6 +7,6 @@
             "bf",
             "script"
         ],
-        "description" : "{0}"
+        "description" : "Add {1} chance to activate bonus for {2} when using {3} and dealing {4} damage.\n{0}"
     }
 }
