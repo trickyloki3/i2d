@@ -85,6 +85,7 @@ static int i2d_bonus_handler_item(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_itemgroups(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_bf(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_atf(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_script(i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -110,7 +111,8 @@ i2d_handler bonus_list[] = {
     { {"item", 4}, i2d_bonus_handler_item },
     { {"itemgroups", 10}, i2d_bonus_handler_itemgroups },
     { {"bf", 2}, i2d_bonus_handler_bf },
-    { {"atf", 3}, i2d_bonus_handler_atf }
+    { {"atf", 3}, i2d_bonus_handler_atf },
+    { {"script", 6}, i2d_bonus_handler_script }
 };
 
 const char * i2d_token_string[] = {
@@ -1305,7 +1307,7 @@ int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_token * toke
     if(I2D_CURLY_OPEN != tokens->next->type) {
         status = i2d_panic("script must start with a {");
     } else if(I2D_CURLY_CLOSE != tokens->prev->type) {
-        status = i2d_panic("script must end with a {");
+        status = i2d_panic("script must end with a }");
     } else if(i2d_parser_analysis_recursive(parser, lexer, NULL, result, tokens->next)) {
         status = i2d_panic("failed to parse script");
     }
@@ -3963,6 +3965,22 @@ static int i2d_bonus_handler_atf(i2d_script * script, i2d_node * node, i2d_local
                 }
             }
         }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_script(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_string string;
+    i2d_string description;
+
+    if(i2d_node_get_string(node, &string)) {
+        status = i2d_panic("failed to get script");
+    } else if(i2d_script_compile(script, &string, &description)) {
+        status = i2d_panic("failed to compile script -- %s", string.string);
+    } else if(i2d_string_stack_push(local->stack, description.string, description.length)) {
+        status = i2d_panic("failed to push string on stack");
     }
 
     return status;
