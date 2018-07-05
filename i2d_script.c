@@ -605,7 +605,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                     }
                     break;
                 case '"': status = i2d_lexer_token_init(lexer, &token, I2D_QUOTE); break;
-                case '\\': continue;
+                case '\\': i++; continue;
                 default:
                     if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
                         if(state) {
