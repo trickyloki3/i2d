@@ -2106,6 +2106,10 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                         if(i2d_rbt_insert(object->bonus_map, bonus_list[i].name.string, &bonus_list[i]))
                             status = i2d_panic("failed to map bonus handler object");
                 }
+
+                if(!status)
+                    if(i2d_script_default_node(object, "0", &object->default_bf_flag))
+                        status = i2d_panic("failed to create default node for bf flag");
             }
 
             if(status)
@@ -2122,6 +2126,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->default_bf_flag, i2d_node_deit);
     i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_deit(object->function_map, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
@@ -2166,6 +2171,44 @@ int i2d_script_local_destroy(i2d_script * script, i2d_local * result) {
     } else if(i2d_buffer_cache_put(script->buffer_cache, &result->buffer)) {
         status = i2d_panic("failed to cache buffer object");
     }
+
+    return status;
+}
+
+int i2d_script_default_node(i2d_script * script, const char * string, i2d_node ** result) {
+    int status = I2D_OK;
+    i2d_string source;
+    i2d_token * tokens = NULL;
+    i2d_node * nodes = NULL;
+    i2d_rbt * variables = NULL;
+
+    i2d_zero(source);
+
+    if(i2d_rbt_init(&variables, i2d_rbt_cmp_node)) {
+        status = i2d_panic("failed to create red black tree object");
+    } else {
+        if(i2d_string_create(&source, string, strlen(string))) {
+            status = i2d_panic("failed to create string object");
+        } else {
+            if(i2d_lexer_tokenize(script->lexer, &source, &tokens)) {
+                status = i2d_panic("failed to tokenize -- %s", source.string);
+            } else if(i2d_parser_expression_recursive(script->parser, script->lexer, tokens->next, &nodes)) {
+                status = i2d_panic("failed to parse -- %s", source.string);
+            } else if(i2d_script_expression(script, nodes, I2D_FLAG_NONE, variables, NULL)) {
+                status = i2d_panic("failed to evaluate expression");
+            } else {
+                *result = nodes;
+            }
+            i2d_string_destroy(&source);
+        }
+        i2d_rbt_deit(&variables);
+    }
+
+    if(tokens)
+        i2d_lexer_reset(script->lexer, &tokens);
+
+    if(status && nodes)
+        i2d_parser_node_reset(script->parser, script->lexer, &nodes);
 
     return status;
 }
@@ -2370,7 +2413,11 @@ int i2d_script_statement_autobonus(i2d_script * script, i2d_block * block) {
     } else if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
         status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
     } else {
-        status = i2d_script_statement_arguments(script, block, arguments, data);
+        if(!arguments[3])
+            arguments[3] = script->default_bf_flag;
+
+        if(i2d_script_statement_arguments(script, block, arguments, data))
+            status = i2d_panic("failed to handle statement arguments");
     }
 
     return status;
