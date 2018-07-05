@@ -55,7 +55,9 @@ i2d_handler function_list[] = {
     { {"ismounting", 10}, i2d_handler_general },
     { {"setmounting", 11}, i2d_handler_general },
     { {"getequipweaponlv", 16}, i2d_handler_getequipweaponlv },
-    { {"getexp2", 7}, i2d_handler_getexp2 }
+    { {"getexp2", 7}, i2d_handler_getexp2 },
+    { {"getcharid", 9}, i2d_handler_general },
+    { {"checkfalcon", 11}, i2d_handler_general }
 };
 
 static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
