@@ -480,24 +480,24 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
             }
 
             switch(symbol) {
-                case  '{': status = i2d_lexer_token_init(lexer, &token, I2D_CURLY_OPEN); break;
-                case  '}': status = i2d_lexer_token_init(lexer, &token, I2D_CURLY_CLOSE); break;
-                case  '(': status = i2d_lexer_token_init(lexer, &token, I2D_PARENTHESIS_OPEN); break;
-                case  ')': status = i2d_lexer_token_init(lexer, &token, I2D_PARENTHESIS_CLOSE); break;
-                case  '[': status = i2d_lexer_token_init(lexer, &token, I2D_BRACKET_OPEN); break;
-                case  ']': status = i2d_lexer_token_init(lexer, &token, I2D_BRACKET_CLOSE); break;
-                case  ',': status = i2d_lexer_token_init(lexer, &token, I2D_COMMA); break;
-                case  ';': status = i2d_lexer_token_init(lexer, &token, I2D_SEMICOLON); break;
-                case  '$':
+                case '{': status = i2d_lexer_token_init(lexer, &token, I2D_CURLY_OPEN); break;
+                case '}': status = i2d_lexer_token_init(lexer, &token, I2D_CURLY_CLOSE); break;
+                case '(': status = i2d_lexer_token_init(lexer, &token, I2D_PARENTHESIS_OPEN); break;
+                case ')': status = i2d_lexer_token_init(lexer, &token, I2D_PARENTHESIS_CLOSE); break;
+                case '[': status = i2d_lexer_token_init(lexer, &token, I2D_BRACKET_OPEN); break;
+                case ']': status = i2d_lexer_token_init(lexer, &token, I2D_BRACKET_CLOSE); break;
+                case ',': status = i2d_lexer_token_init(lexer, &token, I2D_COMMA); break;
+                case ';': status = i2d_lexer_token_init(lexer, &token, I2D_SEMICOLON); break;
+                case '$':
                     if(state && I2D_LITERAL == state->type && '$' != i2d_token_getc(state)) {
                         status = i2d_token_putc(state, '$');
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_PERMANENT_GLOBAL);
                     }
                     break;
-                case  '.': status = i2d_lexer_token_init(lexer, &token, I2D_TEMPORARY_NPC); break;
+                case '.': status = i2d_lexer_token_init(lexer, &token, I2D_TEMPORARY_NPC); break;
                 case '\'': status = i2d_lexer_token_init(lexer, &token, I2D_TEMPORARY_INSTANCE); break;
-                case  '@':
+                case '@':
                     if(state && I2D_PERMANENT_GLOBAL == state->type) {
                         state->type = I2D_TEMPORARY_GLOBAL;
                     } else if(state && I2D_TEMPORARY_NPC == state->type) {
@@ -506,74 +506,74 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                         status = i2d_lexer_token_init(lexer, &token, I2D_TEMPORARY_CHARACTER); break;
                     }
                     break;
-                case  '#':
+                case '#':
                     if(state && I2D_PERMANENT_ACCOUNT_LOCAL == state->type) {
                         state->type = I2D_PERMANENT_ACCOUNT_GLOBAL;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_PERMANENT_ACCOUNT_LOCAL);
                     }
                     break;
-                case  '+':
+                case '+':
                     if(state && I2D_ADD == state->type) {
                         state->type = I2D_INCREMENT;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_ADD);
                     }
                     break;
-                case  '-':
+                case '-':
                     if(state && I2D_SUBTRACT == state->type) {
                         state->type = I2D_DECREMENT;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_SUBTRACT);
                     }
                     break;
-                case  '*':
+                case '*':
                     if(state && I2D_DIVIDE == state->type) {
                         state->type = I2D_BLOCK_COMMENT;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_MULTIPLY);
                     }
                     break;
-                case  '/':
+                case '/':
                     if(state && I2D_DIVIDE == state->type) {
                         state->type = I2D_LINE_COMMENT;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_DIVIDE);
                     }
                     break;
-                case  '%': status = i2d_lexer_token_init(lexer, &token, I2D_MODULUS); break;
-                case  '>':
+                case '%': status = i2d_lexer_token_init(lexer, &token, I2D_MODULUS); break;
+                case '>':
                     if(state && I2D_GREATER == state->type) {
                         state->type = I2D_RIGHT_SHIFT;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_GREATER);
                     }
                     break;
-                case  '<':
+                case '<':
                     if(state && I2D_LESS == state->type) {
                         state->type = I2D_LEFT_SHIFT;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_LESS);
                     }
                     break;
-                case  '!': status = i2d_lexer_token_init(lexer, &token, I2D_NOT); break;
-                case  '&':
+                case '!': status = i2d_lexer_token_init(lexer, &token, I2D_NOT); break;
+                case '&':
                     if(state && I2D_BIT_AND == state->type) {
                         state->type = I2D_AND;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_BIT_AND);
                     }
                     break;
-                case  '|':
+                case '|':
                     if(state && I2D_BIT_OR == state->type) {
                         state->type = I2D_OR;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_BIT_OR);
                     }
                     break;
-                case  '^': status = i2d_lexer_token_init(lexer, &token, I2D_BIT_XOR); break;
-                case  '~': status = i2d_lexer_token_init(lexer, &token, I2D_BIT_NOT); break;
-                case  '=':
+                case '^': status = i2d_lexer_token_init(lexer, &token, I2D_BIT_XOR); break;
+                case '~': status = i2d_lexer_token_init(lexer, &token, I2D_BIT_NOT); break;
+                case '=':
                     if(state) {
                         switch(state->type) {
                             case I2D_ADD: state->type = I2D_ADD_ASSIGN; break;
@@ -596,15 +596,15 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                         status = i2d_lexer_token_init(lexer, &token, I2D_ASSIGN);
                     }
                     break;
-                case  '?': status = i2d_lexer_token_init(lexer, &token, I2D_CONDITIONAL); break;
-                case  ':':
+                case '?': status = i2d_lexer_token_init(lexer, &token, I2D_CONDITIONAL); break;
+                case ':':
                     if(state && I2D_COLON == state->type) {
                         state->type = I2D_UNIQUE_NAME;
                     } else {
                         status = i2d_lexer_token_init(lexer, &token, I2D_COLON);
                     }
                     break;
-                case  '"': status = i2d_lexer_token_init(lexer, &token, I2D_QUOTE); break;
+                case '"': status = i2d_lexer_token_init(lexer, &token, I2D_QUOTE); break;
                 case '\\': continue;
                 default:
                     if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
