@@ -1035,8 +1035,9 @@ i2d_statement statements[] = {
     {I2D_SPECIALEFFECT, {"specialeffect", 13}},
     {I2D_SHOWSCRIPT, {"showscript", 10}},
     {I2D_HATEFFECT, {"hateffect", 9}},
-    {I2D_SETMADOGEAR, {"setmadogear", 11}}
+    {I2D_SETMADOGEAR, {"setmadogear", 11}},
     {I2D_SETARRAY, {"setarray", 8}},
+    {I2D_ACTIVE_TRANSFORM, {"active_transform", 16}}
 };
 
 const char * i2d_block_string[] = {
