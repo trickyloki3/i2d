@@ -456,8 +456,15 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
 
             if(state) {
                 if(I2D_QUOTE == state->type) {
-                    if('"' == symbol && '\\' != i2d_token_getc(state)) {
+                    if('"' == symbol) {
                         state->type = I2D_LITERAL;
+                    } else if('\\' == symbol) {
+                        i++;
+                        if(i >= script->length) {
+                            status = i2d_panic("invalid escape character");
+                        } else {
+                            status = i2d_token_putc(state, script->string[i]);
+                        }
                     } else {
                         status = i2d_token_putc(state, symbol);
                     }
@@ -605,7 +612,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                     }
                     break;
                 case '"': status = i2d_lexer_token_init(lexer, &token, I2D_QUOTE); break;
-                case '\\': i++; continue;
+                case '\\': continue;
                 default:
                     if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
                         if(state) {
