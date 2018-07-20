@@ -18,5 +18,15 @@
             "script"
         ],
         "description" : "Add {1} chance to activate bonus for {2} on {3} when receiving {4} damage.\n{0}"
+    },
+    "autobonus3" : {
+        "argument_type" : [
+            "script",
+            "percent10",
+            "time",
+            "skill",
+            "script"
+        ],
+        "description" : "Add {1} chance to activate bonus for {2} when using {3}.\n{0}"
     }
 }

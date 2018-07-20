@@ -2391,6 +2391,9 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_AUTOBONUS2:
             status = i2d_script_statement_autobonus(script, block);
             break;
+        case I2D_AUTOBONUS3:
+            status = i2d_script_statement_autobonus3(script, block);
+            break;
         default:
             /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
             break;
@@ -2473,6 +2476,28 @@ int i2d_script_statement_autobonus(i2d_script * script, i2d_block * block) {
     } else {
         if(!arguments[3])
             arguments[3] = script->default_bf_flag;
+        if(!arguments[4])
+            arguments[4] = script->default_script;
+
+        if(i2d_script_statement_arguments(script, block, arguments, data))
+            status = i2d_panic("failed to handle statement arguments");
+    }
+
+    return status;
+}
+
+int i2d_script_statement_autobonus3(i2d_script * script, i2d_block * block) {
+    int status = I2D_OK;
+    i2d_node * arguments[5];
+    i2d_data * data = NULL;
+
+    i2d_zero(arguments);
+
+    if(i2d_node_get_arguments(block->nodes, arguments, 4, 1)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
+        status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
+    } else {
         if(!arguments[4])
             arguments[4] = script->default_script;
 
