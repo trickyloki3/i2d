@@ -2232,10 +2232,13 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     i2d_token * tokens = NULL;
     i2d_block * blocks = NULL;
     i2d_rbt * variables = NULL;
+    i2d_string description;
+
+    i2d_zero(description);
 
     if(!strcmp("{}", source->string)) {
-        target->string = "";
-        target->length = 0;
+        if(i2d_string_create(target, "", 0))
+            status = i2d_panic("failed to create string object");
     } else {
         if(i2d_rbt_init(&variables, i2d_rbt_cmp_node)) {
             status = i2d_panic("failed to create red black tree object");
@@ -2246,8 +2249,12 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
                 status = i2d_panic("failed to parse -- %s", source->string);
             } else if(i2d_script_translate(script, blocks, variables, NULL)) {
                 status = i2d_panic("failed to translate -- %s", source->string);
+            } else if(i2d_script_generate(script, blocks, &blocks->buffer)) {
+                status = i2d_panic("failed to generate -- %s", source->string);
             } else {
-                i2d_buffer_get(&blocks->buffer, &target->string, &target->length);
+                i2d_buffer_get(&blocks->buffer, &description.string, &description.length);
+                if(i2d_string_create(target, description.string, description.length))
+                    status = i2d_panic("failed to create string object");
             }
             i2d_rbt_deit(&variables);
         }
@@ -2262,8 +2269,44 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     return status;
 }
 
+int i2d_script_generate(i2d_script * script, i2d_block * blocks, i2d_buffer * buffer) {
+    int status = I2D_OK;
+
+    i2d_block * block;
+    i2d_string string;
+
+    if(blocks) {
+        block = blocks;
+        do {
+            switch(block->type) {
+                case I2D_BLOCK:
+                    status = i2d_script_generate(script, block->child, buffer);
+                    break;
+                case I2D_STATEMENT:
+                    i2d_buffer_get(&block->buffer, &string.string, &string.length);
+                    if(string.length && i2d_buffer_printf(buffer, "%s\n", string.string))
+                        status = i2d_panic("failed to write buffer object");
+                    break;
+                case I2D_IF:
+                case I2D_ELSE:
+                    status = i2d_script_generate(script, block->child, buffer);
+                    break;
+                case I2D_FOR:
+                    /* for is unsupported */
+                    break;
+                default:
+                    status = i2d_panic("invalid block type -- %d", block->type);
+                    break;
+            }
+            block = block->next;
+        } while(block != blocks && !status);
+    }
+
+    return status;
+}
+
 int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * variables, i2d_logic * logics) {
-        int status = I2D_OK;
+    int status = I2D_OK;
     i2d_block * block;
     i2d_logic * logic = NULL;
 
@@ -4045,8 +4088,11 @@ static int i2d_bonus_handler_script(i2d_script * script, i2d_node * node, i2d_lo
         status = i2d_panic("failed to get script");
     } else if(i2d_script_compile(script, &string, &description)) {
         status = i2d_panic("failed to compile script -- %s", string.string);
-    } else if(i2d_string_stack_push(local->stack, description.string, description.length)) {
-        status = i2d_panic("failed to push string on stack");
+    } else {
+        if(i2d_string_stack_push(local->stack, description.string, description.length))
+            status = i2d_panic("failed to push string on stack");
+
+        i2d_string_destroy(&description);
     }
 
     return status;
