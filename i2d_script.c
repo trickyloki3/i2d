@@ -2388,6 +2388,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
             status = i2d_script_statement_bonus(script, block, script->bonus5, 5);
             break;
         case I2D_AUTOBONUS:
+        case I2D_AUTOBONUS2:
             status = i2d_script_statement_autobonus(script, block);
             break;
         default:
