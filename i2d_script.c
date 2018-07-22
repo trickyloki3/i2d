@@ -1803,15 +1803,46 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
 int i2d_format_create(i2d_format * result, const char * string, size_t length) {
     int status = I2D_OK;
 
+    if(i2d_format_tokenize(string, length, &result->tokens))
+        status = i2d_panic("failed to parse format -- %s", string);
+
+    if(status)
+        i2d_format_destroy(result);
+
+    return status;
+}
+
+int i2d_format_create_json(i2d_format * result, json_t * json) {
+    int status = I2D_OK;
+    i2d_string format;
+    i2d_zero(format);
+
+    if(i2d_object_get_string(json, &format)) {
+        status = i2d_panic("failed to get string object");
+    } else {
+        status = i2d_format_create(result, format.string, format.length);
+
+        i2d_string_destroy(&format);
+    }
+
+    return status;
+}
+
+void i2d_format_destroy(i2d_format * result) {
+    i2d_deit(result->tokens, i2d_token_list_deit);
+}
+
+int i2d_format_tokenize(const char * string, size_t length, i2d_token ** result) {
+    int status = I2D_OK;
+
     size_t i;
     char symbol;
+    i2d_token * root = NULL;
     i2d_token * token = NULL;
     i2d_token * state = NULL;
     int curly_level = 0;
 
-    result->tokens = NULL;
-
-    if(i2d_token_init(&result->tokens, I2D_TOKEN)) {
+    if(i2d_token_init(&root, I2D_TOKEN)) {
         status = i2d_panic("failed to create token object");
     } else {
         for(i = 0; i < length && !status; i++) {
@@ -1844,40 +1875,22 @@ int i2d_format_create(i2d_format * result, const char * string, size_t length) {
             }
 
             if(token) {
-                i2d_token_append(token, result->tokens);
+                i2d_token_append(token, root);
                 state = token;
                 token = NULL;
             }
         }
-    }
 
-    if(result->tokens == result->tokens->next)
-        status = i2d_panic("empty format specification");
+        if(root == root->next)
+            status = i2d_panic("empty format specification");
 
-    if(status)
-        i2d_format_destroy(result);
-
-    return status;
-}
-
-int i2d_format_create_json(i2d_format * result, json_t * json) {
-    int status = I2D_OK;
-    i2d_string format;
-    i2d_zero(format);
-
-    if(i2d_object_get_string(json, &format)) {
-        status = i2d_panic("failed to get string object");
-    } else {
-        status = i2d_format_create(result, format.string, format.length);
-
-        i2d_string_destroy(&format);
+        if(status)
+            i2d_token_list_deit(&root);
+        else
+            *result = root;
     }
 
     return status;
-}
-
-void i2d_format_destroy(i2d_format * result) {
-    i2d_deit(result->tokens, i2d_token_list_deit);
 }
 
 int i2d_format_write(i2d_format * format, i2d_string_stack * stack, i2d_buffer * buffer) {
