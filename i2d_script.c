@@ -2421,55 +2421,16 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_
     long value;
     i2d_data * data;
 
-    size_t i;
-    size_t size;
-    i2d_string * types;
-    i2d_handler * handler;
-    i2d_local local;
-
     i2d_zero(arguments);
-    i2d_zero(local);
 
-    if(argc >= i2d_size(arguments)) {
-        status = i2d_panic("invalid paramaters");
-    } else if(i2d_node_get_arguments(block->nodes, arguments, 1, argc)) {
+    if(i2d_node_get_arguments(block->nodes, arguments, 1, argc)) {
         status = i2d_panic("failed to get arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
         status = i2d_panic("failed to get bonus type");
     } else if(i2d_data_map_get(bonus_map, &value, &data)) {
         status = i2d_panic("failed to get bonus type data -- %ld", value);
-    } else {
-        if(i2d_string_stack_get(&data->types, &types, &size)) {
-            status = i2d_panic("failed to get argument type array");
-        } else if(!size) {
-            status = i2d_panic("empty argument type array");
-        } else if(size != argc) {
-            status = i2d_panic("mismatch argument type array size and argument count");
-        } else {
-            if(i2d_script_local_create(script, &local)) {
-                status = i2d_panic("failed to create local object");
-            } else {
-                for(i = 0; i < size && !status; i++) {
-                    if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
-                        status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
-                    } else {
-                        if(!arguments[i + 1] && strcmp(types[i].string, "ignore")) {
-                            status = i2d_panic("missing argument at index %zu", i);
-                        } else {
-                            i2d_buffer_clear(local.buffer);
-
-                            status = handler->handler(script, arguments[i + 1], &local);
-                        }
-                    }
-                }
-
-                if(!status && i2d_format_write(&data->format, local.stack, &block->buffer))
-                    status = i2d_panic("failed to write bonus type description");
-
-                if(i2d_script_local_destroy(script, &local))
-                    status = i2d_panic("failed to destroy local object");
-            }
-        }
+    } else if(i2d_script_statement_arguments(script, block, &arguments[1], data)) {
+        status = i2d_panic("failed to handle bonus arguments");
     }
 
     return status;
