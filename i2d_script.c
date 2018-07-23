@@ -2501,13 +2501,37 @@ int i2d_script_statement_arguments(i2d_script * script, i2d_block * block, i2d_n
         if(i2d_string_stack_get(&data->types, &types, &size)) {
             status = i2d_panic("failed to get argument type array");
         } else {
-            for(i = 0; i < size && arguments[i] && !status; i++) {
-                i2d_buffer_clear(local.buffer);
-
-                if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
-                    status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
+            if(data->orders) {
+                /*
+                 * specified order
+                 */
+                if(size != data->orders_size) {
+                    status = i2d_panic("argument type and order size mismatch");
                 } else {
-                    status = handler->handler(script, arguments[i], &local);
+                    for(i = 0; i < size && !status; i++) {
+                        i2d_buffer_clear(local.buffer);
+
+                        if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
+                            status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
+                        } else if(arguments[data->orders[i]]) {
+                            status = handler->handler(script, arguments[data->orders[i]], &local);
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                /*
+                 * default order
+                 */
+                for(i = 0; i < size && arguments[i] && !status; i++) {
+                    i2d_buffer_clear(local.buffer);
+
+                    if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
+                        status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
+                    } else {
+                        status = handler->handler(script, arguments[i], &local);
+                    }
                 }
             }
         }
