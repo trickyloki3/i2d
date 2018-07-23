@@ -2420,7 +2420,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
 
 int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_map * bonus_map, int argc) {
     int status = I2D_OK;
-    i2d_node * arguments[6];
+    i2d_node * arguments[MAX_ARGUMENT];
     long value;
     i2d_data * data;
 
@@ -2441,13 +2441,13 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_
 
 int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
     int status = I2D_OK;
-    i2d_node * arguments[5];
+    i2d_node * arguments[MAX_ARGUMENT];
     i2d_data * data = NULL;
 
     long i;
     i2d_string * list;
     size_t size;
-    i2d_node * defaults[2];
+    i2d_node * defaults[MAX_ARGUMENT];
 
     i2d_zero(arguments);
     i2d_zero(defaults);
