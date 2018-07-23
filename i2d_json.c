@@ -74,6 +74,42 @@ int i2d_object_get_string(json_t * json, i2d_string * result) {
     return status;
 }
 
+int i2d_object_get_number_array(json_t * json, long ** result, size_t * result_size) {
+    int status = I2D_OK;
+    size_t size;
+    long * list = NULL;
+
+    size_t index;
+    json_t * value;
+
+    size = json_array_size(json);
+    if(!size) {
+        status = i2d_panic("empty array");
+    } else {
+        list = calloc(size, sizeof(*list));
+        if(!list) {
+            status = i2d_panic("out of memory");
+        } else {
+            json_array_foreach(json, index, value) {
+                if(i2d_object_get_number(value, &list[index]))
+                    status = i2d_panic("failed to get number object");
+
+                if(status)
+                    break;
+            }
+
+            if(status) {
+                free(list);
+            } else {
+                *result = list;
+                *result_size = size;
+            }
+        }
+    }
+
+    return status;
+}
+
 int i2d_object_get_number(json_t * json, long * result) {
     int status = I2D_OK;
 
