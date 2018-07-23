@@ -14,8 +14,17 @@
             "skill",
             "integer",
             "percent10",
-            "bf",
+            "bf_type",
+            "bf_damage",
             "ignore"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            3,
+            3,
+            4
         ],
         "description" : "Add a {2} chance to cast {0} of level {1} when using {3} and dealing {4} damage."
     },
@@ -24,10 +33,19 @@
             "skill",
             "integer",
             "percent10",
-            "bf",
+            "bf_type",
+            "bf_damage",
             "ignore"
         ],
-        "description" : "Add a {2} chance to cast {0} of level {1} when receiving {3} and {4} damage."
+        "argument_order" : [
+            0,
+            1,
+            2,
+            3,
+            3,
+            4
+        ],
+        "description" : "Add a {2} chance to cast {0} of level {1} when receiving {4} damage from {3}."
     },
     "bAutoSpellOnSkill" : {
         "argument_type" : [

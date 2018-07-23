@@ -83,7 +83,8 @@ static int i2d_bonus_handler_weapons(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_zeny(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_item(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_itemgroups(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_bf(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_bf_type(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_bf_damage(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_atf(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_script(i2d_script *, i2d_node *, i2d_local *);
 
@@ -110,7 +111,8 @@ i2d_handler bonus_list[] = {
     { {"zeny", 4}, i2d_bonus_handler_zeny },
     { {"item", 4}, i2d_bonus_handler_item },
     { {"itemgroups", 10}, i2d_bonus_handler_itemgroups },
-    { {"bf", 2}, i2d_bonus_handler_bf },
+    { {"bf_type", 7}, i2d_bonus_handler_bf_type },
+    { {"bf_damage", 9}, i2d_bonus_handler_bf_damage },
     { {"atf", 3}, i2d_bonus_handler_atf },
     { {"script", 6}, i2d_bonus_handler_script }
 };
@@ -2411,6 +2413,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_AUTOBONUS:
         case I2D_AUTOBONUS2:
             status = i2d_script_statement_generic(script, block);
+            i2d_block_print(block, 0);
             break;
         case I2D_AUTOBONUS3:
             status = i2d_script_statement_generic(script, block);
@@ -3964,7 +3967,7 @@ static int i2d_bonus_handler_itemgroups(i2d_script * script, i2d_node * node, i2
     return status;
 }
 
-static int i2d_bonus_handler_bf(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_bf_type(i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
     i2d_constant_bf * bf;
@@ -4015,22 +4018,40 @@ static int i2d_bonus_handler_bf(i2d_script * script, i2d_node * node, i2d_local 
                 status = i2d_panic("failed to write buffer");
             } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
                 status = i2d_panic("failed to push string on stack");
-            } else {
-                i2d_buffer_clear(local->buffer);
-
-                if(mask & bf->BF_WEAPON->value)
-                    status = i2d_buffer_printf(local->buffer, "%s", bf->BF_WEAPON->name.string);
-                if(!status && mask & bf->BF_MAGIC->value)
-                    status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", bf->BF_MAGIC->name.string);
-                if(!status && mask & bf->BF_MISC->value)
-                    status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", bf->BF_MISC->name.string);
-
-                if(status) {
-                    status = i2d_panic("failed to write buffer");
-                } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
-                    status = i2d_panic("failed to push string on stack");
-                }
             }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_bf_damage(i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long mask;
+    i2d_constant_bf * bf;
+
+    if(i2d_node_get_constant(node, &mask)) {
+        status = i2d_panic("failed to get bf mask");
+    } else {
+        bf = &script->constant_db->bf;
+
+        /*
+         * default is BF_WEAPON
+         */
+        if(!(mask & bf->BF_WEAPON->value) && !(mask & bf->BF_MAGIC->value) && !(mask & bf->BF_MISC->value))
+            mask |= bf->BF_WEAPON->value;
+
+        if(mask & bf->BF_WEAPON->value)
+            status = i2d_buffer_printf(local->buffer, "%s", bf->BF_WEAPON->name.string);
+        if(!status && mask & bf->BF_MAGIC->value)
+            status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", bf->BF_MAGIC->name.string);
+        if(!status && mask & bf->BF_MISC->value)
+            status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", bf->BF_MISC->name.string);
+
+        if(status) {
+            status = i2d_panic("failed to write buffer");
+        } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+            status = i2d_panic("failed to push string on stack");
         }
     }
 

@@ -4,8 +4,17 @@
             "script",
             "percent10",
             "time",
-            "bf",
+            "bf_type",
+            "bf_damage",
             "script"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            3,
+            3,
+            4
         ],
         "argument_default" : [
             "0",
@@ -20,14 +29,23 @@
             "script",
             "percent10",
             "time",
-            "bf",
+            "bf_type",
+            "bf_damage",
             "script"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            3,
+            3,
+            4
         ],
         "argument_default" : [
             "0",
             "\"{}\""
         ],
-        "description" : "Add {1} chance to activate bonus for {2} on {3} when receiving {4} damage.\n{0}",
+        "description" : "Add {1} chance to activate bonus for {2} when receiving {4} damage from {3}.\n{0}",
         "required" : 3,
         "optional" : 2
     },

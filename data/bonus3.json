@@ -3,7 +3,14 @@
         "argument_type" : [
             "elements",
             "percent",
-            "bf"
+            "bf_type",
+            "bf_damage"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            2
         ],
         "description" : "Increase physical damage by {1} against {0} enemies when using {2} and dealing {3} damage."
     },
@@ -11,9 +18,16 @@
         "argument_type" : [
             "elements",
             "percent",
-            "bf"
+            "bf_type",
+            "bf_damage"
         ],
-        "description" : "Reduce physical damage by {1} from {0} enemies when receiving {2} and {3} damage."
+        "argument_order" : [
+            0,
+            1,
+            2,
+            2
+        ],
+        "description" : "Reduce physical damage by {1} from {0} enemies when receiving {3} damage from {2}."
     },
     "bAddEff" : {
         "argument_type" : [
