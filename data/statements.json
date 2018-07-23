@@ -7,7 +7,13 @@
             "bf",
             "script"
         ],
-        "description" : "Add {1} chance to activate bonus for {2} when using {3} and dealing {4} damage.\n{0}"
+        "argument_default" : [
+            "0",
+            "\"{}\""
+        ],
+        "description" : "Add {1} chance to activate bonus for {2} when using {3} and dealing {4} damage.\n{0}",
+        "required" : 3,
+        "optional" : 2
     },
     "autobonus2" : {
         "argument_type" : [
@@ -17,7 +23,13 @@
             "bf",
             "script"
         ],
-        "description" : "Add {1} chance to activate bonus for {2} on {3} when receiving {4} damage.\n{0}"
+        "argument_default" : [
+            "0",
+            "\"{}\""
+        ],
+        "description" : "Add {1} chance to activate bonus for {2} on {3} when receiving {4} damage.\n{0}",
+        "required" : 3,
+        "optional" : 2
     },
     "autobonus3" : {
         "argument_type" : [
@@ -27,6 +39,11 @@
             "skill",
             "script"
         ],
-        "description" : "Add {1} chance to activate bonus for {2} when using {3}.\n{0}"
+        "argument_default" : [
+            "\"{}\""
+        ],
+        "description" : "Add {1} chance to activate bonus for {2} when using {3}.\n{0}",
+        "required" : 4,
+        "optional" : 1
     }
 }

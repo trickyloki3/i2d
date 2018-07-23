@@ -1940,11 +1940,17 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * max;
     json_t * description;
     json_t * argument_type;
+    json_t * argument_default;
+    json_t * required;
+    json_t * optional;
 
     min = json_object_get(json, "min");
     max = json_object_get(json, "max");
     description = json_object_get(json, "description");
     argument_type = json_object_get(json, "argument_type");
+    argument_default = json_object_get(json, "argument_default");
+    required = json_object_get(json, "required");
+    optional = json_object_get(json, "optional");
     i2d_constant_get_by_macro_value(constant_db, key, &result->value);
 
     if(i2d_string_create(&result->name, key, strlen(key))) {
@@ -1955,12 +1961,19 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
         status = i2d_panic("failed to create range");
     } else if(argument_type && i2d_object_get_string_stack(argument_type, &result->types)) {
         status = i2d_panic("failed to create string stack");
+    } else if(argument_default && i2d_object_get_string_stack(argument_default, &result->defaults)) {
+        status = i2d_panic("failed to create string stack");
+    } else if(required && i2d_object_get_number(required, &result->required)) {
+        status = i2d_panic("failed to create number");
+    } else if(optional && i2d_object_get_number(optional, &result->optional)) {
+        status = i2d_panic("failed to create number");
     }
 
     return status;
 }
 
 void i2d_data_destroy(i2d_data * result) {
+    i2d_string_stack_destroy(&result->defaults);
     i2d_string_stack_destroy(&result->types);
     i2d_range_destroy(&result->range);
     i2d_format_destroy(&result->format);
@@ -2127,14 +2140,6 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                         if(i2d_rbt_insert(object->bonus_map, bonus_list[i].name.string, &bonus_list[i]))
                             status = i2d_panic("failed to map bonus handler object");
                 }
-
-                if(!status) {
-                    if(i2d_script_default_node(object, "0", &object->default_bf_flag)) {
-                        status = i2d_panic("failed to create default node for bf flag");
-                    } else if(i2d_script_default_node(object, "\"{}\"", &object->default_script)) {
-                        status = i2d_panic("failed to create default node for script");
-                    }
-                }
             }
 
             if(status)
@@ -2151,8 +2156,6 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
-    i2d_deit(object->default_script, i2d_node_deit);
-    i2d_deit(object->default_bf_flag, i2d_node_deit);
     i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_deit(object->function_map, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
@@ -2402,10 +2405,10 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
             break;
         case I2D_AUTOBONUS:
         case I2D_AUTOBONUS2:
-            status = i2d_script_statement_autobonus(script, block);
+            status = i2d_script_statement_generic(script, block);
             break;
         case I2D_AUTOBONUS3:
-            status = i2d_script_statement_autobonus3(script, block);
+            status = i2d_script_statement_generic(script, block);
             break;
         default:
             /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
@@ -2436,47 +2439,41 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_
     return status;
 }
 
-int i2d_script_statement_autobonus(i2d_script * script, i2d_block * block) {
+int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
     int status = I2D_OK;
     i2d_node * arguments[5];
     i2d_data * data = NULL;
 
-    i2d_zero(arguments);
+    long i;
+    i2d_string * list;
+    size_t size;
+    i2d_node * defaults[2];
 
-    if(i2d_node_get_arguments(block->nodes, arguments, 3, 2)) {
-        status = i2d_panic("failed to get arguments");
-    } else if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
+    i2d_zero(arguments);
+    i2d_zero(defaults);
+
+    if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
         status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
+    } else if(i2d_node_get_arguments(block->nodes, arguments, data->required, data->optional)) {
+        status = i2d_panic("failed to get arguments");
     } else {
-        if(!arguments[3])
-            arguments[3] = script->default_bf_flag;
-        if(!arguments[4])
-            arguments[4] = script->default_script;
+        i2d_string_stack_get(&data->defaults, &list, &size);
+        for(i = 0; i < data->optional; i++) {
+            if(!arguments[i + data->required]) {
+                if(i2d_script_default_node(script, list[i].string, &defaults[i])) {
+                    status = i2d_panic("failed to create default node object");
+                } else {
+                    arguments[i + data->required] = defaults[i];
+                }
+            }
+        }
 
         if(i2d_script_statement_arguments(script, block, arguments, data))
             status = i2d_panic("failed to handle statement arguments");
-    }
 
-    return status;
-}
-
-int i2d_script_statement_autobonus3(i2d_script * script, i2d_block * block) {
-    int status = I2D_OK;
-    i2d_node * arguments[5];
-    i2d_data * data = NULL;
-
-    i2d_zero(arguments);
-
-    if(i2d_node_get_arguments(block->nodes, arguments, 4, 1)) {
-        status = i2d_panic("failed to get arguments");
-    } else if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
-        status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
-    } else {
-        if(!arguments[4])
-            arguments[4] = script->default_script;
-
-        if(i2d_script_statement_arguments(script, block, arguments, data))
-            status = i2d_panic("failed to handle statement arguments");
+        for(i = 0; i < data->optional; i++)
+            if(defaults[i])
+                i2d_parser_node_reset(script->parser, script->lexer, &defaults[i]);
     }
 
     return status;

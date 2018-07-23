@@ -292,6 +292,9 @@ struct i2d_data {
     i2d_format format;
     i2d_range range;
     i2d_string_stack types;
+    i2d_string_stack defaults;
+    long required;
+    long optional;
 };
 
 typedef struct i2d_data i2d_data;
@@ -349,8 +352,6 @@ struct i2d_script {
     i2d_string_stack_cache * stack_cache;
     i2d_rbt * function_map;
     i2d_rbt * bonus_map;
-    i2d_node * default_bf_flag;
-    i2d_node * default_script;
 };
 
 typedef struct i2d_script i2d_script;
@@ -365,8 +366,7 @@ int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
 int i2d_script_generate(i2d_script *, i2d_block *, i2d_buffer *);
 int i2d_script_statement(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
 int i2d_script_statement_bonus(i2d_script *, i2d_block *, i2d_data_map *, int);
-int i2d_script_statement_autobonus(i2d_script *, i2d_block *);
-int i2d_script_statement_autobonus3(i2d_script *, i2d_block *);
+int i2d_script_statement_generic(i2d_script *, i2d_block *);
 int i2d_script_statement_arguments(i2d_script *, i2d_block *, i2d_node **, i2d_data *);
 int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_rbt *, i2d_logic *);
 int i2d_script_expression_conditional(i2d_script *, i2d_node *, i2d_logic *, i2d_logic **);
