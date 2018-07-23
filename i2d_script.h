@@ -295,6 +295,8 @@ struct i2d_data {
     i2d_range range;
     i2d_string_stack types;
     i2d_string_stack defaults;
+    long * orders;
+    size_t orders_size;
     long required;
     long optional;
 };

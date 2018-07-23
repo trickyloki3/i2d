@@ -1941,6 +1941,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * description;
     json_t * argument_type;
     json_t * argument_default;
+    json_t * argument_order;
     json_t * required;
     json_t * optional;
 
@@ -1949,6 +1950,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     description = json_object_get(json, "description");
     argument_type = json_object_get(json, "argument_type");
     argument_default = json_object_get(json, "argument_default");
+    argument_order = json_object_get(json, "argument_order");
     required = json_object_get(json, "required");
     optional = json_object_get(json, "optional");
     i2d_constant_get_by_macro_value(constant_db, key, &result->value);
@@ -1963,6 +1965,8 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
         status = i2d_panic("failed to create string stack");
     } else if(argument_default && i2d_object_get_string_stack(argument_default, &result->defaults)) {
         status = i2d_panic("failed to create string stack");
+    } else if(argument_order && i2d_object_get_number_array(argument_order, &result->orders, &result->orders_size)) {
+        status = i2d_panic("failed to create number array");
     } else if(required && i2d_object_get_number(required, &result->required)) {
         status = i2d_panic("failed to create number");
     } else if(optional && i2d_object_get_number(optional, &result->optional)) {
@@ -1973,6 +1977,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
 }
 
 void i2d_data_destroy(i2d_data * result) {
+    i2d_free(result->orders);
     i2d_string_stack_destroy(&result->defaults);
     i2d_string_stack_destroy(&result->types);
     i2d_range_destroy(&result->range);
