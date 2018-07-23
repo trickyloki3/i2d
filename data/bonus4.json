@@ -21,8 +21,16 @@
         "argument_type" : [
             "effects",
             "percent100",
-            "atf",
+            "atf_target",
+            "atf_type",
             "time"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            2,
+            3
         ],
         "description" : "Add a {1} chance to inflict {0} for {4} on {2} when dealing {3} damage."
     },
@@ -30,8 +38,16 @@
         "argument_type" : [
             "effects",
             "percent100",
-            "atf",
+            "atf_target",
+            "atf_type",
             "time"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            2,
+            3
         ],
         "description" : "Add a {1} chance to inflict {0} for {4} on {2} when receiving {3} damage."
     },
@@ -40,7 +56,15 @@
             "skill",
             "effects",
             "percent100",
-            "atf"
+            "atf_target",
+            "atf_type"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            3,
+            3
         ],
         "description" : "Add a {2} chance to inflict {1} on {3} when using {0} and dealing {4} damage."
     },

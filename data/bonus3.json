@@ -33,7 +33,14 @@
         "argument_type" : [
             "effects",
             "percent100",
-            "atf"
+            "atf_target",
+            "atf_type"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            2
         ],
         "description" : "Add a {1} chance to inflict {0} on {2} when dealing {3} damage."
     },
@@ -41,7 +48,14 @@
         "argument_type" : [
             "effects",
             "percent100",
-            "atf"
+            "atf_target",
+            "atf_type"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            2
         ],
         "description" : "Add a {1} chance to inflict {0} on {2} when receiving {3} damage."
     },

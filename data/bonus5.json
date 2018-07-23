@@ -4,8 +4,17 @@
             "skill",
             "effects",
             "percent100",
-            "atf",
+            "atf_target",
+            "atf_type",
             "time"
+        ],
+        "argument_order" : [
+            0,
+            1,
+            2,
+            3,
+            3,
+            4
         ],
         "description" : "Add a {2} chance to inflict {1} for {5} on {3} when using {0} and dealing {4} damage."
     },
