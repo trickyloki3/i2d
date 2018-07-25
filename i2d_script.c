@@ -2461,6 +2461,8 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
 
     if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
         status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
+    } else if(MAX_ARGUMENT <= data->required + data->optional) {
+        status = i2d_panic("MAX_ARGUMENT overflow");
     } else if(i2d_node_get_arguments(block->nodes, arguments, data->required, data->optional)) {
         status = i2d_panic("failed to get arguments");
     } else {
