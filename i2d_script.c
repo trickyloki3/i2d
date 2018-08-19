@@ -2467,7 +2467,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
         status = i2d_panic("failed to get arguments");
     } else {
         i2d_string_stack_get(&data->defaults, &list, &size);
-        for(i = 0; i < data->optional; i++) {
+        for(i = 0; i < data->optional && i < size; i++) {
             if(!arguments[i + data->required]) {
                 if(i2d_script_default_node(script, list[i].string, &defaults[i])) {
                     status = i2d_panic("failed to create default node object");
@@ -2480,7 +2480,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
         if(i2d_script_statement_arguments(script, block, arguments, data))
             status = i2d_panic("failed to handle statement arguments");
 
-        for(i = 0; i < data->optional; i++)
+        for(i = 0; i < data->optional && i < size; i++)
             if(defaults[i])
                 i2d_parser_node_reset(script->parser, script->lexer, &defaults[i]);
     }
