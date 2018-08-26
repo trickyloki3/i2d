@@ -462,11 +462,11 @@ int i2d_string_stack_get(i2d_string_stack * stack, i2d_string ** list, size_t * 
         for(i = 0; i < stack->top; i++) {
             if(i == 0) {
                 stack->list[i].string = stack->buffer.buffer;
-                stack->list[i].length = stack->offset[i] - 1;
+                stack->list[i].length = stack->offset[i];
             } else {
                 offset = stack->offset[i - 1] + 1;
                 stack->list[i].string = &stack->buffer.buffer[offset];
-                stack->list[i].length = stack->offset[i] - 1;
+                stack->list[i].length = stack->offset[i] - stack->offset[i - 1] - 1;
             }
         }
 
