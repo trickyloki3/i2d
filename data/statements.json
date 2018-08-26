@@ -63,5 +63,15 @@
         "description" : "Add {1} chance to activate bonus for {2} when using {3}.\n{0}",
         "required" : 4,
         "optional" : 1
+    },
+    "heal" : {
+        "argument_type" : [
+            "hp",
+            "sp",
+            "ignore"
+        ],
+        "description" : "{0}\n{1}",
+        "required" : 2,
+        "optional" : 1
     }
 }
