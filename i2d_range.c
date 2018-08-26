@@ -413,8 +413,10 @@ void i2d_range_get_range_absolute(i2d_range * list, long * result_min, long * re
 
     i2d_range_get_range(list, &min, &max);
 
-    min = abs(min);
-    max = abs(max);
+    if(min < 0)
+        min *= -1;
+    if(max < 0)
+        max *= -1;
 
     *result_min = min(min, max);
     *result_max = max(min, max);
