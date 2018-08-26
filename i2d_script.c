@@ -2439,7 +2439,7 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_
         status = i2d_panic("failed to get bonus type");
     } else if(i2d_data_map_get(bonus_map, &value, &data)) {
         status = i2d_panic("failed to get bonus type data -- %ld", value);
-    } else if(i2d_script_statement_arguments(script, block, &arguments[1], data)) {
+    } else if(i2d_script_statement_evaluate(script, &arguments[1], data, &block->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     }
 
@@ -2477,7 +2477,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
             }
         }
 
-        if(i2d_script_statement_arguments(script, block, arguments, data))
+        if(i2d_script_statement_evaluate(script, arguments, data, &block->buffer))
             status = i2d_panic("failed to handle statement arguments");
 
         for(i = 0; i < data->optional && i < size; i++)
@@ -2488,7 +2488,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
     return status;
 }
 
-int i2d_script_statement_arguments(i2d_script * script, i2d_block * block, i2d_node ** arguments, i2d_data * data) {
+int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2d_data * data, i2d_buffer * buffer) {
     int status = I2D_OK;
     i2d_local local;
 
@@ -2540,7 +2540,7 @@ int i2d_script_statement_arguments(i2d_script * script, i2d_block * block, i2d_n
             }
         }
 
-        if(!status && i2d_format_write(&data->format, local.stack, &block->buffer))
+        if(!status && i2d_format_write(&data->format, local.stack, buffer))
             status = i2d_panic("failed to write bonus type description");
 
         if(i2d_script_local_destroy(script, &local))
