@@ -291,12 +291,14 @@ int i2d_format_write(i2d_format *, i2d_string_stack *, i2d_buffer *);
 struct i2d_data {
     long value;
     i2d_string name;
-    i2d_format format;
     i2d_range range;
-    i2d_string_stack types;
-    i2d_string_stack defaults;
-    long * orders;
-    size_t orders_size;
+    i2d_format description;
+    i2d_string_stack argument_type;
+    i2d_string_stack argument_default;
+    struct {
+        long * list;
+        size_t size;
+    } argument_order;
     long required;
     long optional;
     i2d_string_stack prefixes;

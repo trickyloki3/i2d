@@ -1978,15 +1978,15 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
 
     if(i2d_string_create(&result->name, key, strlen(key))) {
         status = i2d_panic("failed to copy name string");
-    } else if(description && i2d_format_create_json(&result->format, description)) {
-        status = i2d_panic("failed to create format object");
     } else if(min && max && i2d_object_get_range(min, max, &result->range)) {
         status = i2d_panic("failed to create range");
-    } else if(argument_type && i2d_object_get_string_stack(argument_type, &result->types)) {
+    } else if(description && i2d_format_create_json(&result->description, description)) {
+        status = i2d_panic("failed to create format object");
+    } else if(argument_type && i2d_object_get_string_stack(argument_type, &result->argument_type)) {
         status = i2d_panic("failed to create string stack");
-    } else if(argument_default && i2d_object_get_string_stack(argument_default, &result->defaults)) {
+    } else if(argument_default && i2d_object_get_string_stack(argument_default, &result->argument_default)) {
         status = i2d_panic("failed to create string stack");
-    } else if(argument_order && i2d_object_get_number_array(argument_order, &result->orders, &result->orders_size)) {
+    } else if(argument_order && i2d_object_get_number_array(argument_order, &result->argument_order.list, &result->argument_order.size)) {
         status = i2d_panic("failed to create number array");
     } else if(required && i2d_object_get_number(required, &result->required)) {
         status = i2d_panic("failed to create number");
@@ -2001,11 +2001,11 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
 
 void i2d_data_destroy(i2d_data * result) {
     i2d_string_stack_destroy(&result->prefixes);
-    i2d_free(result->orders);
-    i2d_string_stack_destroy(&result->defaults);
-    i2d_string_stack_destroy(&result->types);
+    i2d_free(result->argument_order.list);
+    i2d_string_stack_destroy(&result->argument_default);
+    i2d_string_stack_destroy(&result->argument_type);
+    i2d_format_destroy(&result->description);
     i2d_range_destroy(&result->range);
-    i2d_format_destroy(&result->format);
     i2d_string_destroy(&result->name);
 }
 
@@ -2531,7 +2531,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
     } else if(i2d_node_get_arguments(block->nodes, arguments, data->required, data->optional)) {
         status = i2d_panic("failed to get arguments");
     } else {
-        i2d_string_stack_get(&data->defaults, &list, &size);
+        i2d_string_stack_get(&data->argument_default, &list, &size);
         for(i = 0; i < data->optional && i < size; i++) {
             if(!arguments[i + data->required]) {
                 if(i2d_script_default_node(script, list[i].string, &defaults[i])) {
@@ -2559,7 +2559,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
 
     size_t i;
     size_t size;
-    i2d_string * types;
+    i2d_string * list;
     i2d_handler * handler;
 
     i2d_zero(local);
@@ -2567,23 +2567,23 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
     if(i2d_script_local_create(script, &local)) {
         status = i2d_panic("failed to create local object");
     } else {
-        if(i2d_string_stack_get(&data->types, &types, &size)) {
+        if(i2d_string_stack_get(&data->argument_type, &list, &size)) {
             status = i2d_panic("failed to get argument type array");
         } else {
-            if(data->orders) {
+            if(data->argument_order.list) {
                 /*
                  * specified order
                  */
-                if(size != data->orders_size) {
+                if(size != data->argument_order.size) {
                     status = i2d_panic("argument type and order size mismatch");
                 } else {
                     for(i = 0; i < size && !status; i++) {
                         i2d_buffer_clear(local.buffer);
 
-                        if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
-                            status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
-                        } else if(arguments[data->orders[i]]) {
-                            status = handler->handler(handler, script, arguments[data->orders[i]], &local);
+                        if(i2d_rbt_search(script->bonus_map, list[i].string, (void **) &handler)) {
+                            status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
+                        } else if(arguments[data->argument_order.list[i]]) {
+                            status = handler->handler(handler, script, arguments[data->argument_order.list[i]], &local);
                         } else {
                             break;
                         }
@@ -2596,8 +2596,8 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
                 for(i = 0; i < size && arguments[i] && !status; i++) {
                     i2d_buffer_clear(local.buffer);
 
-                    if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
-                        status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
+                    if(i2d_rbt_search(script->bonus_map, list[i].string, (void **) &handler)) {
+                        status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
                     } else {
                         status = handler->handler(handler, script, arguments[i], &local);
                     }
@@ -2605,7 +2605,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
             }
         }
 
-        if(!status && i2d_format_write(&data->format, local.stack, buffer))
+        if(!status && i2d_format_write(&data->description, local.stack, buffer))
             status = i2d_panic("failed to write bonus type description");
 
         if(i2d_script_local_destroy(script, &local))
@@ -3127,7 +3127,7 @@ static int i2d_handler_general(i2d_handler * handler, i2d_script * script, i2d_n
     } else {
         i2d_buffer_clear(&node->tokens->buffer);
 
-        if(i2d_format_write(&data->format, local->stack, &node->tokens->buffer)) {
+        if(i2d_format_write(&data->description, local->stack, &node->tokens->buffer)) {
             status = i2d_panic("failed to write function format");
         } else if(i2d_range_copy(&node->range, &data->range)) {
             status = i2d_panic("failed to copy function range");
