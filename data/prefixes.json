@@ -1,0 +1,8 @@
+{
+    "heal" : {
+        "prefixes" : [
+            "recover",
+            "drain"
+        ]
+    }
+}

@@ -299,6 +299,7 @@ struct i2d_data {
     size_t orders_size;
     long required;
     long optional;
+    i2d_string_stack prefixes;
 };
 
 typedef struct i2d_data i2d_data;
@@ -355,6 +356,7 @@ struct i2d_script {
     i2d_data_map * bonus5;
     i2d_data_map * statements;
     i2d_data_map * arguments;
+    i2d_data_map * prefixes;
     i2d_buffer_cache * buffer_cache;
     i2d_string_stack_cache * stack_cache;
     i2d_rbt * function_map;

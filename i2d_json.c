@@ -210,6 +210,8 @@ int i2d_json_init(i2d_json ** result, i2d_string * data_path) {
                 status = i2d_panic("failed to load constants.json");
             } else if(i2d_json_create_data(&object->arguments, data_path->string, "arguments.json")) {
                 status = i2d_panic("failed to load arguments.json");
+            } else if(i2d_json_create_data(&object->prefixes, data_path->string, "prefixes.json")) {
+                status = i2d_panic("failed to load prefixes.json");
             }
 
             if(status)
@@ -226,6 +228,7 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json * object;
 
     object = *result;
+    i2d_json_destroy(object->prefixes);
     i2d_json_destroy(object->arguments);
     i2d_json_destroy(object->constants);
     i2d_json_destroy(object->functions);

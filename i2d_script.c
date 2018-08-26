@@ -100,6 +100,7 @@ static int i2d_bonus_handler_atf_type(i2d_handler *, i2d_script *, i2d_node *, i
 static int i2d_bonus_handler_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -1960,6 +1961,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * argument_order;
     json_t * required;
     json_t * optional;
+    json_t * prefixes;
 
     min = json_object_get(json, "min");
     max = json_object_get(json, "max");
@@ -1969,6 +1971,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     argument_order = json_object_get(json, "argument_order");
     required = json_object_get(json, "required");
     optional = json_object_get(json, "optional");
+    prefixes = json_object_get(json, "prefixes");
     i2d_constant_get_by_macro_value(constant_db, key, &result->value);
 
     if(i2d_string_create(&result->name, key, strlen(key))) {
@@ -1987,12 +1990,15 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
         status = i2d_panic("failed to create number");
     } else if(optional && i2d_object_get_number(optional, &result->optional)) {
         status = i2d_panic("failed to create number");
+    } else if(prefixes && i2d_object_get_string_stack(prefixes, &result->prefixes)) {
+        status = i2d_panic("failed to create string stack");
     }
 
     return status;
 }
 
 void i2d_data_destroy(i2d_data * result) {
+    i2d_string_stack_destroy(&result->prefixes);
     i2d_free(result->orders);
     i2d_string_stack_destroy(&result->defaults);
     i2d_string_stack_destroy(&result->types);
@@ -2142,6 +2148,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to load statements");
             } else if(i2d_data_map_init(&object->arguments, data_map_by_name, object->json->arguments, object->constant_db)) {
                 status = i2d_panic("failed to load arguments");
+            } else if(i2d_data_map_init(&object->prefixes, data_map_by_name, object->json->prefixes, object->constant_db)) {
+                status = i2d_panic("failed to load prefixes");
             } else if(i2d_buffer_cache_init(&object->buffer_cache)) {
                 status = i2d_panic("failed to create buffer cache object");
             } else if(i2d_string_stack_cache_init(&object->stack_cache)) {
@@ -2174,10 +2182,30 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                             } else {
                                 i2d_handler_append(handler, object->handlers);
                             }
+                        }
+                    }
 
+                    for(i = 0; i < object->prefixes->size && !status; i++) {
+                        handler = NULL;
+                        if(i2d_handler_init(&handler, &object->prefixes->list[i], i2d_data_handler_prefixes)) {
+                            status = i2d_panic("failed to create handler object");
+                        } else {
+                            if(!object->handlers) {
+                                object->handlers = handler;
+                            } else {
+                                i2d_handler_append(handler, object->handlers);
+                            }
+                        }
+                    }
+
+                    if(object->handlers) {
+                        handler = object->handlers;
+                        do {
                             if(i2d_rbt_insert(object->bonus_map, handler->name.string, handler))
                                 status = i2d_panic("failed to map bonus handler object");
-                        }
+
+                            handler = handler->next;
+                        } while(handler != object->handlers && !status);
                     }
                 }
             }
@@ -2201,6 +2229,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->function_map, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
     i2d_deit(object->buffer_cache, i2d_buffer_cache_deit);
+    i2d_deit(object->prefixes, i2d_data_map_deit);
     i2d_deit(object->arguments, i2d_data_map_deit);
     i2d_deit(object->statements, i2d_data_map_deit);
     i2d_deit(object->bonus5, i2d_data_map_deit);
@@ -4265,6 +4294,32 @@ static int i2d_data_handler_evaluate(i2d_handler * handler, i2d_script * script,
         status = i2d_panic("failed to evaluate data object");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
         status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_data_handler_prefixes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+
+    long min;
+    long max;
+
+    i2d_string * list;
+    size_t size;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    if(i2d_string_stack_get(&handler->data->prefixes, &list, &size)) {
+        status = i2d_panic("failed to get string stack");
+    } else {
+        if(min >= 0) {
+            if(i2d_string_stack_push(local->stack, list[0].string, list[0].length))
+                status = i2d_panic("failed to push string on stack");
+        } else {
+            if(i2d_string_stack_push(local->stack, list[1].string, list[1].length))
+                status = i2d_panic("failed to push string on stack");
+        }
     }
 
     return status;
