@@ -1,7 +1,7 @@
 {
     "hp" : {
         "argument_type" : [
-            "heal",
+            "heal_prefix",
             "integer_absolute"
         ],
         "argument_order" : [
@@ -12,7 +12,7 @@
     },
     "sp" : {
         "argument_type" : [
-            "heal",
+            "heal_prefix",
             "integer_absolute"
         ],
         "argument_order" : [
