@@ -335,6 +335,8 @@ enum {
     I2D_FLAG_CONDITIONAL = 0x1
 };
 
+typedef struct i2d_handler i2d_handler;
+
 struct i2d_script {
     i2d_db * db;
     i2d_json * json;
@@ -357,6 +359,7 @@ struct i2d_script {
     i2d_string_stack_cache * stack_cache;
     i2d_rbt * function_map;
     i2d_rbt * bonus_map;
+    i2d_handler * handlers;
 };
 
 typedef struct i2d_script i2d_script;

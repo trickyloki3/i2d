@@ -3,7 +3,6 @@
 static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
 static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
-typedef struct i2d_handler i2d_handler;
 typedef int (* i2d_handler_cb)(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 struct i2d_handler {
@@ -99,6 +98,8 @@ static int i2d_bonus_handler_bf_damage(i2d_handler *, i2d_script *, i2d_node *, 
 static int i2d_bonus_handler_atf_target(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_atf_type(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+
+static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -2096,6 +2097,7 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
     i2d_script * object;
     size_t i;
     size_t size;
+    i2d_handler * handler;
 
     if(i2d_is_invalid(result) || !option) {
         status = i2d_panic("invalid paramater");
@@ -2161,6 +2163,22 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                     for(i = 0; i < size && !status; i++)
                         if(i2d_rbt_insert(object->bonus_map, bonus_list[i].name.string, &bonus_list[i]))
                             status = i2d_panic("failed to map bonus handler object");
+
+                    for(i = 0; i < object->arguments->size && !status; i++) {
+                        handler = NULL;
+                        if(i2d_handler_init(&handler, &object->arguments->list[i], i2d_data_handler_evaluate)) {
+                            status = i2d_panic("failed to create handler object");
+                        } else {
+                            if(!object->handlers) {
+                                object->handlers = handler;
+                            } else {
+                                i2d_handler_append(handler, object->handlers);
+                            }
+
+                            if(i2d_rbt_insert(object->bonus_map, handler->name.string, handler))
+                                status = i2d_panic("failed to map bonus handler object");
+                        }
+                    }
                 }
             }
 
@@ -2178,10 +2196,12 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
+    i2d_deit(object->handlers, i2d_handler_list_deit);
     i2d_deit(object->bonus_map, i2d_rbt_deit);
     i2d_deit(object->function_map, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
     i2d_deit(object->buffer_cache, i2d_buffer_cache_deit);
+    i2d_deit(object->arguments, i2d_data_map_deit);
     i2d_deit(object->statements, i2d_data_map_deit);
     i2d_deit(object->bonus5, i2d_data_map_deit);
     i2d_deit(object->bonus4, i2d_data_map_deit);
@@ -4233,6 +4253,18 @@ static int i2d_bonus_handler_script(i2d_handler * handler, i2d_script * script, 
             status = i2d_panic("failed to push string on stack");
 
         i2d_string_destroy(&description);
+    }
+
+    return status;
+}
+
+static int i2d_data_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+
+    if(i2d_script_statement_evaluate(script, &node, handler->data, local->buffer)) {
+        status = i2d_panic("failed to evaluate data object");
+    } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+        status = i2d_panic("failed to push string on stack");
     }
 
     return status;
