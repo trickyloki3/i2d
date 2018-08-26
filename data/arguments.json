@@ -22,5 +22,29 @@
         ],
         "description" : "{0} {1} SP.",
         "empty_description_on_zero" : null
+    },
+    "hp_percent" : {
+        "argument_type" : [
+            "heal_prefix",
+            "percent_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} {1} HP.",
+        "empty_description_on_zero" : null
+    },
+    "sp_percent" : {
+        "argument_type" : [
+            "heal_prefix",
+            "percent_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} {1} SP.",
+        "empty_description_on_zero" : null
     }
 }

@@ -73,5 +73,15 @@
         "required" : 2,
         "optional" : 1,
         "dump_stack_instead_of_description" : null
+    },
+    "percentheal" : {
+        "argument_type" : [
+            "hp_percent",
+            "sp_percent",
+            "ignore"
+        ],
+        "required" : 2,
+        "optional" : 1,
+        "dump_stack_instead_of_description" : null
     }
 }
