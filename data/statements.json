@@ -83,5 +83,15 @@
         "required" : 2,
         "optional" : 1,
         "dump_stack_instead_of_description" : null
+    },
+    "itemheal" : {
+        "argument_type" : [
+            "hp_integer",
+            "sp_integer",
+            "ignore"
+        ],
+        "required" : 2,
+        "optional" : 1,
+        "dump_stack_instead_of_description" : null
     }
 }
