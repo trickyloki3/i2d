@@ -407,6 +407,19 @@ void i2d_range_get_range(i2d_range * list, long * min, long * max) {
     }
 }
 
+void i2d_range_get_range_absolute(i2d_range * list, long * result_min, long * result_max) {
+    long min;
+    long max;
+
+    i2d_range_get_range(list, &min, &max);
+
+    min = abs(min);
+    max = abs(max);
+
+    *result_min = min(min, max);
+    *result_max = max(min, max);
+}
+
 int i2d_range_compute(i2d_range * result, i2d_range * left, i2d_range * right, int operator) {
     int status = I2D_OK;
     i2d_range object;

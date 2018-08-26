@@ -79,6 +79,7 @@ static int i2d_bonus_handler_races(i2d_handler *, i2d_script *, i2d_node *, i2d_
 static int i2d_bonus_handler_classes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_integer(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_integer_sign(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_integer_absolute(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent_sign(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent10(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -111,6 +112,7 @@ i2d_handler bonus_list[] = {
     { {"classes", 7}, i2d_bonus_handler_classes },
     { {"integer", 7}, i2d_bonus_handler_integer },
     { {"integer_sign", 12}, i2d_bonus_handler_integer_sign },
+    { {"integer_absolute", 16}, i2d_bonus_handler_integer_absolute },
     { {"percent", 7}, i2d_bonus_handler_percent },
     { {"percent_sign", 12}, i2d_bonus_handler_percent_sign },
     { {"percent10", 13}, i2d_bonus_handler_percent10 },
@@ -3833,6 +3835,24 @@ static int i2d_bonus_handler_integer_sign(i2d_handler * handler, i2d_script * sc
     if( min == max ?
         i2d_buffer_printf(local->buffer, "%+ld", min) :
         i2d_buffer_printf(local->buffer, "%+ld ~ %+ld", min, max) ) {
+        status = i2d_panic("failed to write integer range");
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_integer_absolute(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range_absolute(&node->range, &min, &max);
+
+    if( min == max ?
+        i2d_buffer_printf(local->buffer, "%ld", min) :
+        i2d_buffer_printf(local->buffer, "%ld ~ %ld", min, max) ) {
         status = i2d_panic("failed to write integer range");
     } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
