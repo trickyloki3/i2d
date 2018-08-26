@@ -82,6 +82,7 @@ static int i2d_bonus_handler_integer_sign(i2d_handler *, i2d_script *, i2d_node 
 static int i2d_bonus_handler_integer_absolute(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent_sign(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_percent_absolute(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent10(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent100(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_ignore(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -115,6 +116,7 @@ i2d_handler bonus_list[] = {
     { {"integer_absolute", 16}, i2d_bonus_handler_integer_absolute },
     { {"percent", 7}, i2d_bonus_handler_percent },
     { {"percent_sign", 12}, i2d_bonus_handler_percent_sign },
+    { {"percent_absolute", 16}, i2d_bonus_handler_percent_absolute },
     { {"percent10", 13}, i2d_bonus_handler_percent10 },
     { {"percent100", 14}, i2d_bonus_handler_percent100 },
     { {"ignore", 6}, i2d_bonus_handler_ignore },
@@ -3852,7 +3854,6 @@ static int i2d_bonus_handler_integer(i2d_handler * handler, i2d_script * script,
     long max;
 
     i2d_range_get_range(&node->range, &min, &max);
-
     if( min == max ?
         i2d_buffer_printf(local->buffer, "%ld", min) :
         i2d_buffer_printf(local->buffer, "%ld ~ %ld", min, max) ) {
@@ -3887,7 +3888,6 @@ static int i2d_bonus_handler_integer_absolute(i2d_handler * handler, i2d_script 
     long max;
 
     i2d_range_get_range_absolute(&node->range, &min, &max);
-
     if( min == max ?
         i2d_buffer_printf(local->buffer, "%ld", min) :
         i2d_buffer_printf(local->buffer, "%ld ~ %ld", min, max) ) {
@@ -3925,6 +3925,23 @@ static int i2d_bonus_handler_percent_sign(i2d_handler * handler, i2d_script * sc
     if( min == max ?
         i2d_buffer_printf(local->buffer, "%+ld%%", min) :
         i2d_buffer_printf(local->buffer, "%+ld%% ~ %+ld%%", min, max) ) {
+        status = i2d_panic("failed to write percent range");
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_percent_absolute(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range_absolute(&node->range, &min, &max);
+    if( min == max ?
+        i2d_buffer_printf(local->buffer, "%ld%%", min) :
+        i2d_buffer_printf(local->buffer, "%ld%% ~ %ld%%", min, max) ) {
         status = i2d_panic("failed to write percent range");
     } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
