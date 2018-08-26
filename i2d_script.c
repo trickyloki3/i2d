@@ -1974,7 +1974,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     required = json_object_get(json, "required");
     optional = json_object_get(json, "optional");
     prefixes = json_object_get(json, "prefixes");
-    i2d_constant_get_by_macro_value(constant_db, key, &result->value);
+    i2d_constant_get_by_macro_value(constant_db, key, &result->constant);
 
     if(i2d_string_create(&result->name, key, strlen(key))) {
         status = i2d_panic("failed to copy name string");
@@ -2012,7 +2012,7 @@ void i2d_data_destroy(i2d_data * result) {
 int i2d_data_map_init(i2d_data_map ** result, enum i2d_data_map_type type, json_t * json, i2d_constant_db * constant_db) {
     int status = I2D_OK;
     i2d_data_map * object;
-    i2d_rbt_cmp cmp;
+    i2d_rbt_cmp cmp = NULL;
 
     size_t i = 0;
     const char * key;
@@ -2025,24 +2025,41 @@ int i2d_data_map_init(i2d_data_map ** result, enum i2d_data_map_type type, json_
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            cmp = (type == data_map_by_value) ? i2d_rbt_cmp_long :
-                  (type == data_map_by_name) ? i2d_rbt_cmp_str :
-                  NULL;
+            switch(type) {
+                case data_map_by_constant:
+                    cmp = i2d_rbt_cmp_long;
+                    break;
+                case data_map_by_name:
+                    cmp = i2d_rbt_cmp_str;
+                    break;
+                default:
+                    status = i2d_panic("invalid data map type");
+                    break;
+            }
 
-            if(!cmp || i2d_rbt_init(&object->map, cmp)) {
-                status = i2d_panic("failed to create red black tree object");
-            } else if(i2d_object_get_list(json, sizeof(*object->list), (void **) &object->list, &object->size)) {
-                status = i2d_panic("failed to create data array");
-            } else {
-                json_object_foreach(json, key, value) {
-                    if(i2d_data_create(&object->list[i], key, value, constant_db)) {
-                        status = i2d_panic("failed to create data object");
-                    } else {
-                        if((type == data_map_by_value) ? i2d_rbt_insert(object->map, &object->list[i].value, &object->list[i]) :
-                           (type == data_map_by_name) ? i2d_rbt_insert(object->map, object->list[i].name.string, &object->list[i]) :
-                           1) {
-                            status = i2d_panic("failed to map data object");
+            if(!status) {
+                if(i2d_rbt_init(&object->map, cmp)) {
+                    status = i2d_panic("failed to create red black tree object");
+                } else if(i2d_object_get_list(json, sizeof(*object->list), (void **) &object->list, &object->size)) {
+                    status = i2d_panic("failed to create data array");
+                } else {
+                    json_object_foreach(json, key, value) {
+                        if(i2d_data_create(&object->list[i], key, value, constant_db)) {
+                            status = i2d_panic("failed to create data object");
                         } else {
+                            switch(type) {
+                                case data_map_by_constant:
+                                    if(i2d_rbt_insert(object->map, &object->list[i].constant, &object->list[i]))
+                                        status = i2d_panic("failed to map data object");
+                                    break;
+                                case data_map_by_name:
+                                    if(i2d_rbt_insert(object->map, object->list[i].name.string, &object->list[i]))
+                                        status = i2d_panic("failed to map data object");
+                                    break;
+                                default:
+                                    status = i2d_panic("invalid data map type");
+                                    break;
+                            }
                             i++;
                         }
                     }
@@ -2136,15 +2153,15 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to load ammos");
             } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
                 status = i2d_panic("failed to load functions");
-            } else if(i2d_data_map_init(&object->bonus, data_map_by_value, object->json->bonus, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus, data_map_by_constant, object->json->bonus, object->constant_db)) {
                 status = i2d_panic("failed to load bonus");
-            } else if(i2d_data_map_init(&object->bonus2, data_map_by_value, object->json->bonus2, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus2, data_map_by_constant, object->json->bonus2, object->constant_db)) {
                 status = i2d_panic("failed to load bonus2");
-            } else if(i2d_data_map_init(&object->bonus3, data_map_by_value, object->json->bonus3, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus3, data_map_by_constant, object->json->bonus3, object->constant_db)) {
                 status = i2d_panic("failed to load bonus3");
-            } else if(i2d_data_map_init(&object->bonus4, data_map_by_value, object->json->bonus4, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus4, data_map_by_constant, object->json->bonus4, object->constant_db)) {
                 status = i2d_panic("failed to load bonus4");
-            } else if(i2d_data_map_init(&object->bonus5, data_map_by_value, object->json->bonus5, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus5, data_map_by_constant, object->json->bonus5, object->constant_db)) {
                 status = i2d_panic("failed to load bonus5");
             } else if(i2d_data_map_init(&object->statements, data_map_by_name, object->json->statements, object->constant_db)) {
                 status = i2d_panic("failed to load statements");

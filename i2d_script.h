@@ -289,7 +289,7 @@ int i2d_format_tokenize(const char *, size_t, i2d_token **);
 int i2d_format_write(i2d_format *, i2d_string_stack *, i2d_buffer *);
 
 struct i2d_data {
-    long value;
+    long constant;
     i2d_string name;
     i2d_range range;
     i2d_format description;
@@ -310,7 +310,7 @@ int i2d_data_create(i2d_data *, const char *, json_t *, i2d_constant_db *);
 void i2d_data_destroy(i2d_data *);
 
 enum i2d_data_map_type {
-    data_map_by_value = 1,
+    data_map_by_constant = 1,
     data_map_by_name
 };
 
