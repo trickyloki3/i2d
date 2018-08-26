@@ -3,12 +3,23 @@
 static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
 static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
+typedef int (* i2d_handler_cb)(i2d_script *, i2d_node *, i2d_local *);
+
 struct i2d_handler {
     i2d_string name;
-    int (*handler) (i2d_script *, i2d_node *, i2d_local *);
+    i2d_handler_cb handler;
+    i2d_data * data;
+    struct i2d_handler * next;
+    struct i2d_handler * prev;
 };
 
 typedef struct i2d_handler i2d_handler;
+
+static int i2d_handler_init(i2d_handler **, i2d_data *, i2d_handler_cb);
+static void i2d_handler_deit(i2d_handler **);
+static void i2d_handler_list_deit(i2d_handler **);
+static void i2d_handler_append(i2d_handler *, i2d_handler *);
+static void i2d_handler_remove(i2d_handler *);
 
 static int i2d_handler_general(i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_readparam(i2d_script *, i2d_node *, i2d_local *);
@@ -2981,6 +2992,75 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
     }
 
     return status;
+}
+
+static int i2d_handler_init(i2d_handler ** result, i2d_data * data, i2d_handler_cb handler) {
+    int status = I2D_OK;
+    i2d_handler * object = NULL;
+
+    if(i2d_is_invalid(result) || !data) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            if(i2d_string_create(&object->name, data->name.string, data->name.length)) {
+                status = i2d_panic("failed to copy name string");
+            } else {
+                object->handler = handler;
+                object->data = data;
+                object->next = object;
+                object->prev = object;
+            }
+
+            if(status)
+                i2d_handler_deit(&object);
+            else
+                *result = object;
+        }
+    }
+
+    return status;
+}
+
+static void i2d_handler_deit(i2d_handler ** result) {
+    i2d_handler * object;
+
+    object = *result;
+    i2d_string_destroy(&object->name);
+    i2d_free(object);
+    *result = NULL;
+}
+
+static void i2d_handler_list_deit(i2d_handler ** result) {
+    i2d_handler * object;
+    i2d_handler * token;
+
+    object = *result;
+    if(object) {
+        while(object != object->next) {
+            token = object->next;
+            i2d_handler_remove(token);
+            i2d_handler_deit(&token);
+        }
+        i2d_handler_deit(&object);
+    }
+    *result = NULL;
+}
+
+static void i2d_handler_append(i2d_handler * x, i2d_handler * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+static void i2d_handler_remove(i2d_handler * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
 }
 
 static int i2d_handler_general(i2d_script * script, i2d_node * node, i2d_local * local) {
