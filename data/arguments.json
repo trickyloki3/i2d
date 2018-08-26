@@ -1,5 +1,5 @@
 {
-    "hp" : {
+    "hp_integer" : {
         "argument_type" : [
             "heal_prefix",
             "integer_absolute"
@@ -10,7 +10,7 @@
         ],
         "description" : "{0} {1} HP."
     },
-    "sp" : {
+    "sp_integer" : {
         "argument_type" : [
             "heal_prefix",
             "integer_absolute"

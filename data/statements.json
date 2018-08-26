@@ -66,8 +66,8 @@
     },
     "heal" : {
         "argument_type" : [
-            "hp",
-            "sp",
+            "hp_integer",
+            "sp_integer",
             "ignore"
         ],
         "description" : "{0} {1}",
