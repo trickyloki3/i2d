@@ -2127,6 +2127,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to load bonus5");
             } else if(i2d_data_map_init(&object->statements, data_map_by_name, object->json->statements, object->constant_db)) {
                 status = i2d_panic("failed to load statements");
+            } else if(i2d_data_map_init(&object->arguments, data_map_by_name, object->json->arguments, object->constant_db)) {
+                status = i2d_panic("failed to load arguments");
             } else if(i2d_buffer_cache_init(&object->buffer_cache)) {
                 status = i2d_panic("failed to create buffer cache object");
             } else if(i2d_string_stack_cache_init(&object->stack_cache)) {

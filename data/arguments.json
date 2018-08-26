@@ -1,0 +1,24 @@
+{
+    "hp" : {
+        "argument_type" : [
+            "prefix",
+            "integer"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} {1} HP."
+    },
+    "sp" : {
+        "argument_type" : [
+            "prefix",
+            "integer"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} {1} SP."
+    }
+}
