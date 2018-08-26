@@ -3,7 +3,8 @@
 static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
 static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
-typedef int (* i2d_handler_cb)(i2d_script *, i2d_node *, i2d_local *);
+typedef struct i2d_handler i2d_handler;
+typedef int (* i2d_handler_cb)(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 struct i2d_handler {
     i2d_string name;
@@ -13,7 +14,6 @@ struct i2d_handler {
     struct i2d_handler * prev;
 };
 
-typedef struct i2d_handler i2d_handler;
 
 static int i2d_handler_init(i2d_handler **, i2d_data *, i2d_handler_cb);
 static void i2d_handler_deit(i2d_handler **);
@@ -21,26 +21,26 @@ static void i2d_handler_list_deit(i2d_handler **);
 static void i2d_handler_append(i2d_handler *, i2d_handler *);
 static void i2d_handler_remove(i2d_handler *);
 
-static int i2d_handler_general(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_readparam(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_getskilllv(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_isequipped(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_countitem(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_gettime(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_strcharinfo(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_getequipid(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_getiteminfo(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_getmapflag(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_max(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_min(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_getequiprefinerycnt(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_pow(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_general(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_readparam(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getskilllv(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_isequipped(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_countitem(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_gettime(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_strcharinfo(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getequipid(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getiteminfo(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getmapflag(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_max(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_min(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getequiprefinerycnt(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_pow(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_checkoption_loop(uint64_t, void *);
-static int i2d_handler_checkoption(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_rand(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_callfunc(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_getequipweaponlv(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_handler_getexp2(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_checkoption(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_rand(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_callfunc(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getequipweaponlv(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getexp2(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler function_list[] = {
     { {"getrefine", 9}, i2d_handler_general },
@@ -71,34 +71,34 @@ i2d_handler function_list[] = {
     { {"checkfalcon", 11}, i2d_handler_general }
 };
 
-static int i2d_bonus_handler_expression(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_time(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_regen(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_splash(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_elements(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_races(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_classes(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_integer(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_integer_sign(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_percent(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_percent_sign(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_percent10(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_percent100(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_ignore(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_sizes(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_skill(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_mob(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_effects(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_mob_races(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_weapons(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_zeny(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_item(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_itemgroups(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_bf_type(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_bf_damage(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_atf_target(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_atf_type(i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_script(i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_expression(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_time(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_regen(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_splash(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_elements(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_races(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_classes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_integer(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_integer_sign(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_percent(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_percent_sign(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_percent10(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_percent100(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_ignore(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_sizes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_skill(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_mob(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_effects(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_mob_races(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_weapons(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_zeny(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_item(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_itemgroups(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_bf_type(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_bf_damage(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_atf_target(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_atf_type(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler bonus_list[] = {
     { {"time", 4}, i2d_bonus_handler_time },
@@ -2531,7 +2531,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
                         if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
                             status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
                         } else if(arguments[data->orders[i]]) {
-                            status = handler->handler(script, arguments[data->orders[i]], &local);
+                            status = handler->handler(handler, script, arguments[data->orders[i]], &local);
                         } else {
                             break;
                         }
@@ -2547,7 +2547,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
                     if(i2d_rbt_search(script->bonus_map, types[i].string, (void **) &handler)) {
                         status = i2d_panic("failed to find bonus handler -- %s", types[i].string);
                     } else {
-                        status = handler->handler(script, arguments[i], &local);
+                        status = handler->handler(handler, script, arguments[i], &local);
                     }
                 }
             }
@@ -2720,7 +2720,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
         } else if(i2d_rbt_search(script->function_map, name.string, (void **) &handler)) {
             status = i2d_panic("failed to get function handler -- %s", name.string);
         } else {
-            status = handler->handler(script, node, &local);
+            status = handler->handler(handler, script, node, &local);
         }
         if(i2d_script_local_destroy(script, &local))
             status = i2d_panic("failed to destroy local object");
@@ -3063,7 +3063,7 @@ static void i2d_handler_remove(i2d_handler * x) {
     x->prev = x;
 }
 
-static int i2d_handler_general(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_general(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_string name;
     i2d_data * data;
@@ -3085,7 +3085,7 @@ static int i2d_handler_general(i2d_script * script, i2d_node * node, i2d_local *
     return status;
 }
 
-static int i2d_handler_readparam(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_readparam(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
     long value;
@@ -3106,7 +3106,7 @@ static int i2d_handler_readparam(i2d_script * script, i2d_node * node, i2d_local
     return status;
 }
 
-static int i2d_handler_getskilllv(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_getskilllv(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments;
     long id;
@@ -3136,7 +3136,7 @@ static int i2d_handler_getskilllv(i2d_script * script, i2d_node * node, i2d_loca
     return status;
 }
 
-static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_isequipped(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[I2D_STACK];
     size_t i;
@@ -3168,14 +3168,14 @@ static int i2d_handler_isequipped(i2d_script * script, i2d_node * node, i2d_loca
         if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
             status = i2d_panic("failed to push item list");
         } else {
-            status = i2d_handler_general(script, node, local);
+            status = i2d_handler_general(handler, script, node, local);
         }
     }
 
     return status;
 }
 
-static int i2d_handler_countitem(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_countitem(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments;
     long id;
@@ -3198,14 +3198,14 @@ static int i2d_handler_countitem(i2d_script * script, i2d_node * node, i2d_local
         if(i2d_string_stack_push(local->stack, item->name.string, item->name.length)) {
             status = i2d_panic("failed to push item name");
         } else {
-            status = i2d_handler_general(script, node, local);
+            status = i2d_handler_general(handler, script, node, local);
         }
     }
 
     return status;
 }
 
-static int i2d_handler_gettime(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_gettime(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments;
     long value;
@@ -3224,7 +3224,7 @@ static int i2d_handler_gettime(i2d_script * script, i2d_node * node, i2d_local *
     return status;
 }
 
-static int i2d_handler_strcharinfo(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_strcharinfo(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
     long value;
@@ -3247,7 +3247,7 @@ static int i2d_handler_strcharinfo(i2d_script * script, i2d_node * node, i2d_loc
     return status;
 }
 
-static int i2d_handler_getequipid(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_getequipid(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
     long value;
@@ -3267,14 +3267,14 @@ static int i2d_handler_getequipid(i2d_script * script, i2d_node * node, i2d_loca
                 status = i2d_panic("failed to write equipment slot");
             }
         } else {
-            status = i2d_handler_general(script, node, local);
+            status = i2d_handler_general(handler, script, node, local);
         }
     }
 
     return status;
 }
 
-static int i2d_handler_getiteminfo(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_getiteminfo(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
     long value;
@@ -3308,7 +3308,7 @@ static int i2d_handler_getiteminfo(i2d_script * script, i2d_node * node, i2d_loc
             } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
                 status = i2d_panic("failed to push getiteminfo string");
             } else {
-                status = i2d_handler_general(script, node, local);
+                status = i2d_handler_general(handler, script, node, local);
             }
         }
     }
@@ -3316,7 +3316,7 @@ static int i2d_handler_getiteminfo(i2d_script * script, i2d_node * node, i2d_loc
     return status;
 }
 
-static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_getmapflag(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[3];
     long value;
@@ -3342,7 +3342,7 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_loca
             } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
                 status = i2d_panic("failed to push map flag string");
             } else {
-                status = i2d_handler_general(script, node, local);
+                status = i2d_handler_general(handler, script, node, local);
             }
         }
     }
@@ -3350,7 +3350,7 @@ static int i2d_handler_getmapflag(i2d_script * script, i2d_node * node, i2d_loca
     return status;
 }
 
-static int i2d_handler_max(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_max(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     i2d_node * arguments[2];
@@ -3375,7 +3375,7 @@ static int i2d_handler_max(i2d_script * script, i2d_node * node, i2d_local * loc
     return status;
 }
 
-static int i2d_handler_min(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_min(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     i2d_node * arguments[2];
@@ -3400,7 +3400,7 @@ static int i2d_handler_min(i2d_script * script, i2d_node * node, i2d_local * loc
     return status;
 }
 
-static int i2d_handler_getequiprefinerycnt(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_getequiprefinerycnt(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * argument;
     long value;
@@ -3415,13 +3415,13 @@ static int i2d_handler_getequiprefinerycnt(i2d_script * script, i2d_node * node,
     } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push location string");
     } else {
-        status = i2d_handler_general(script, node, local);
+        status = i2d_handler_general(handler, script, node, local);
     }
 
     return status;
 }
 
-static int i2d_handler_pow(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_pow(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
 
@@ -3466,7 +3466,7 @@ static int i2d_handler_checkoption_loop(uint64_t flag, void * data) {
     return status;
 }
 
-static int i2d_handler_checkoption(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_checkoption(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * argument;
     long flag;
@@ -3488,7 +3488,7 @@ static int i2d_handler_checkoption(i2d_script * script, i2d_node * node, i2d_loc
             if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
                 status = i2d_panic("failed to write option list to stack");
             } else {
-                status = i2d_handler_general(script, node, local);
+                status = i2d_handler_general(handler, script, node, local);
             }
         }
     }
@@ -3496,7 +3496,7 @@ static int i2d_handler_checkoption(i2d_script * script, i2d_node * node, i2d_loc
     return status;
 }
 
-static int i2d_handler_rand(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_rand(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
 
@@ -3507,7 +3507,7 @@ static int i2d_handler_rand(i2d_script * script, i2d_node * node, i2d_local * lo
 
     i2d_zero(arguments);
 
-    if(i2d_handler_general(script, node, local)) {
+    if(i2d_handler_general(handler, script, node, local)) {
         status = i2d_panic("failed to handle rand function");
     } else if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
         status = i2d_panic("failed to rand arguments");
@@ -3530,12 +3530,12 @@ static int i2d_handler_rand(i2d_script * script, i2d_node * node, i2d_local * lo
     return status;
 }
 
-static int i2d_handler_callfunc(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_callfunc(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     /* callfunc is unsupported */
     return I2D_OK;
 }
 
-static int i2d_handler_getequipweaponlv(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_getequipweaponlv(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[2];
     long value;
@@ -3552,13 +3552,13 @@ static int i2d_handler_getequipweaponlv(i2d_script * script, i2d_node * node, i2
     } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push location string");
     } else {
-        status = i2d_handler_general(script, node, local);
+        status = i2d_handler_general(handler, script, node, local);
     }
 
     return status;
 }
 
-static int i2d_handler_getexp2(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_handler_getexp2(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * arguments[3];
 
@@ -3588,7 +3588,7 @@ static int i2d_handler_getexp2(i2d_script * script, i2d_node * node, i2d_local *
             } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
                 status = i2d_panic("failed to push buffer on stack");
             } else {
-                status = i2d_handler_general(script, node, local);
+                status = i2d_handler_general(handler, script, node, local);
             }
         }
     }
@@ -3596,7 +3596,7 @@ static int i2d_handler_getexp2(i2d_script * script, i2d_node * node, i2d_local *
     return status;
 }
 
-static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_expression(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_local predicate;
     i2d_string string;
@@ -3625,7 +3625,7 @@ static int i2d_bonus_handler_expression(i2d_script * script, i2d_node * node, i2
     return status;
 }
 
-static int i2d_bonus_handler_time(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_time(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3659,14 +3659,14 @@ static int i2d_bonus_handler_time(i2d_script * script, i2d_node * node, i2d_loca
         i2d_buffer_printf(local->buffer, "%ld %s%s", min, suffix, min > 1 ? "s" : "") :
         i2d_buffer_printf(local->buffer, "%ld ~ %ld %s%s", min, max, suffix, max > 1 ? "s" : "") ) {
         status = i2d_panic("failed to write time range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_regen(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_regen(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long constant;
 
@@ -3680,7 +3680,7 @@ static int i2d_bonus_handler_regen(i2d_script * script, i2d_node * node, i2d_loc
         }
         if(status) {
             status = i2d_panic("failed to write regen");
-        } else if(i2d_bonus_handler_expression(script, node, local)) {
+        } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
             status = i2d_panic("failed to write expression");
         }
     }
@@ -3688,7 +3688,7 @@ static int i2d_bonus_handler_regen(i2d_script * script, i2d_node * node, i2d_loc
     return status;
 }
 
-static int i2d_bonus_handler_splash(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_splash(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3701,14 +3701,14 @@ static int i2d_bonus_handler_splash(i2d_script * script, i2d_node * node, i2d_lo
         i2d_buffer_printf(local->buffer, "%ld x %ld", min, min) :
         i2d_buffer_printf(local->buffer, "%ld x %ld ~ %ld x %ld", min, min, max, max) ) {
         status = i2d_panic("failed to write splash range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_elements(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
@@ -3724,7 +3724,7 @@ static int i2d_bonus_handler_elements(i2d_script * script, i2d_node * node, i2d_
     return status;
 }
 
-static int i2d_bonus_handler_races(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_races(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
@@ -3740,7 +3740,7 @@ static int i2d_bonus_handler_races(i2d_script * script, i2d_node * node, i2d_loc
     return status;
 }
 
-static int i2d_bonus_handler_classes(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_classes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
@@ -3756,7 +3756,7 @@ static int i2d_bonus_handler_classes(i2d_script * script, i2d_node * node, i2d_l
     return status;
 }
 
-static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_integer(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3767,14 +3767,14 @@ static int i2d_bonus_handler_integer(i2d_script * script, i2d_node * node, i2d_l
         i2d_buffer_printf(local->buffer, "%ld", min) :
         i2d_buffer_printf(local->buffer, "%ld ~ %ld", min, max) ) {
         status = i2d_panic("failed to write integer range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_integer_sign(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_integer_sign(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3784,14 +3784,14 @@ static int i2d_bonus_handler_integer_sign(i2d_script * script, i2d_node * node, 
         i2d_buffer_printf(local->buffer, "%+ld", min) :
         i2d_buffer_printf(local->buffer, "%+ld ~ %+ld", min, max) ) {
         status = i2d_panic("failed to write integer range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_percent(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_percent(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3801,14 +3801,14 @@ static int i2d_bonus_handler_percent(i2d_script * script, i2d_node * node, i2d_l
         i2d_buffer_printf(local->buffer, "%ld%%", min) :
         i2d_buffer_printf(local->buffer, "%ld%% ~ %ld%%", min, max) ) {
         status = i2d_panic("failed to write percent range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_percent_sign(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_percent_sign(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3818,14 +3818,14 @@ static int i2d_bonus_handler_percent_sign(i2d_script * script, i2d_node * node, 
         i2d_buffer_printf(local->buffer, "%+ld%%", min) :
         i2d_buffer_printf(local->buffer, "%+ld%% ~ %+ld%%", min, max) ) {
         status = i2d_panic("failed to write percent range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_percent10(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_percent10(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3839,14 +3839,14 @@ static int i2d_bonus_handler_percent10(i2d_script * script, i2d_node * node, i2d
         i2d_buffer_printf(local->buffer, "%ld%%", min) :
         i2d_buffer_printf(local->buffer, "%ld%% ~ %ld%%", min, max) ) {
         status = i2d_panic("failed to write percent range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_percent100(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_percent100(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;
@@ -3860,14 +3860,14 @@ static int i2d_bonus_handler_percent100(i2d_script * script, i2d_node * node, i2
         i2d_buffer_printf(local->buffer, "%ld%%", min) :
         i2d_buffer_printf(local->buffer, "%ld%% ~ %ld%%", min, max) ) {
         status = i2d_panic("failed to write percent range");
-    } else if(i2d_bonus_handler_expression(script, node, local)) {
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
         status = i2d_panic("failed to write expression");
     }
 
     return status;
 }
 
-static int i2d_bonus_handler_ignore(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_ignore(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     if(i2d_string_stack_push(local->stack, "ignore", 6))
@@ -3876,7 +3876,7 @@ static int i2d_bonus_handler_ignore(i2d_script * script, i2d_node * node, i2d_lo
     return status;
 }
 
-static int i2d_bonus_handler_sizes(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_sizes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
@@ -3892,7 +3892,7 @@ static int i2d_bonus_handler_sizes(i2d_script * script, i2d_node * node, i2d_loc
     return status;
 }
 
-static int i2d_bonus_handler_skill(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_skill(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long id;
     i2d_string name;
@@ -3914,7 +3914,7 @@ static int i2d_bonus_handler_skill(i2d_script * script, i2d_node * node, i2d_loc
     return status;
 }
 
-static int i2d_bonus_handler_mob(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_mob(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long id;
     i2d_mob * mob;
@@ -3935,7 +3935,7 @@ static int i2d_bonus_handler_mob(i2d_script * script, i2d_node * node, i2d_local
     return status;
 }
 
-static int i2d_bonus_handler_effects(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_effects(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
@@ -3951,7 +3951,7 @@ static int i2d_bonus_handler_effects(i2d_script * script, i2d_node * node, i2d_l
     return status;
 }
 
-static int i2d_bonus_handler_mob_races(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_mob_races(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long value;
     i2d_constant * constant;
@@ -3967,7 +3967,7 @@ static int i2d_bonus_handler_mob_races(i2d_script * script, i2d_node * node, i2d
     return status;
 }
 
-static int i2d_bonus_handler_weapons(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_weapons(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long weapon_type;
     i2d_string weapon;
@@ -3983,7 +3983,7 @@ static int i2d_bonus_handler_weapons(i2d_script * script, i2d_node * node, i2d_l
     return status;
 }
 
-static int i2d_bonus_handler_zeny(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_zeny(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     long min;
@@ -4001,7 +4001,7 @@ static int i2d_bonus_handler_zeny(i2d_script * script, i2d_node * node, i2d_loca
                 i2d_buffer_printf(local->buffer, "%ld * Monster Level", min) :
                 i2d_buffer_printf(local->buffer, "(%ld ~ %ld) * Monster Level", min, max) ) {
                 status = i2d_panic("failed to write zeny formula");
-            } else if(i2d_bonus_handler_expression(script, node, local)) {
+            } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
                 status = i2d_panic("failed to write expression");
             }
         }
@@ -4010,7 +4010,7 @@ static int i2d_bonus_handler_zeny(i2d_script * script, i2d_node * node, i2d_loca
             i2d_buffer_printf(local->buffer, "%ld", min) :
             i2d_buffer_printf(local->buffer, "%ld ~ %ld", min, max) ) {
             status = i2d_panic("failed to write zeny range");
-        } else if(i2d_bonus_handler_expression(script, node, local)) {
+        } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
             status = i2d_panic("failed to write expression");
         }
     }
@@ -4018,7 +4018,7 @@ static int i2d_bonus_handler_zeny(i2d_script * script, i2d_node * node, i2d_loca
     return status;
 }
 
-static int i2d_bonus_handler_item(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_item(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long id;
     i2d_item * item;
@@ -4034,7 +4034,7 @@ static int i2d_bonus_handler_item(i2d_script * script, i2d_node * node, i2d_loca
     return status;
 }
 
-static int i2d_bonus_handler_itemgroups(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_itemgroups(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long id;
     i2d_constant * constant;
@@ -4050,7 +4050,7 @@ static int i2d_bonus_handler_itemgroups(i2d_script * script, i2d_node * node, i2
     return status;
 }
 
-static int i2d_bonus_handler_bf_type(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_bf_type(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
     i2d_constant_bf * bf;
@@ -4108,7 +4108,7 @@ static int i2d_bonus_handler_bf_type(i2d_script * script, i2d_node * node, i2d_l
     return status;
 }
 
-static int i2d_bonus_handler_bf_damage(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_bf_damage(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
     i2d_constant_bf * bf;
@@ -4141,7 +4141,7 @@ static int i2d_bonus_handler_bf_damage(i2d_script * script, i2d_node * node, i2d
     return status;
 }
 
-static int i2d_bonus_handler_atf_target(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_atf_target(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
     i2d_constant_atf * atf;
@@ -4169,7 +4169,7 @@ static int i2d_bonus_handler_atf_target(i2d_script * script, i2d_node * node, i2
     return status;
 }
 
-static int i2d_bonus_handler_atf_type(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_atf_type(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
     i2d_constant_atf * atf;
@@ -4219,7 +4219,7 @@ static int i2d_bonus_handler_atf_type(i2d_script * script, i2d_node * node, i2d_
     return status;
 }
 
-static int i2d_bonus_handler_script(i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_script(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_string string;
     i2d_string description;
