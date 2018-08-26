@@ -8,7 +8,8 @@
             0,
             0
         ],
-        "description" : "{0} {1} HP."
+        "description" : "{0} {1} HP.",
+        "empty_description_on_zero" : null
     },
     "sp_integer" : {
         "argument_type" : [
@@ -19,6 +20,7 @@
             0,
             0
         ],
-        "description" : "{0} {1} SP."
+        "description" : "{0} {1} SP.",
+        "empty_description_on_zero" : null
     }
 }

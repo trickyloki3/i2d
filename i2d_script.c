@@ -1964,6 +1964,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * required;
     json_t * optional;
     json_t * prefixes;
+    json_t * empty_description_on_zero;
 
     min = json_object_get(json, "min");
     max = json_object_get(json, "max");
@@ -1974,6 +1975,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     required = json_object_get(json, "required");
     optional = json_object_get(json, "optional");
     prefixes = json_object_get(json, "prefixes");
+    empty_description_on_zero = json_object_get(json, "empty_description_on_zero");
     i2d_constant_get_by_macro_value(constant_db, key, &result->constant);
 
     if(i2d_string_create(&result->name, key, strlen(key))) {
@@ -1994,6 +1996,9 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
         status = i2d_panic("failed to create number");
     } else if(prefixes && i2d_object_get_string_stack(prefixes, &result->prefixes)) {
         status = i2d_panic("failed to create string stack");
+    } else {
+        if(empty_description_on_zero)
+            result->empty_description_on_zero = 1;
     }
 
     return status;
@@ -4328,7 +4333,15 @@ static int i2d_bonus_handler_script(i2d_handler * handler, i2d_script * script, 
 static int i2d_data_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
-    if(i2d_script_statement_evaluate(script, &node, handler->data, local->buffer)) {
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    if(handler->data->empty_description_on_zero && !min && !max) {
+        if(i2d_string_stack_push(local->stack, "", 0))
+            status = i2d_panic("failed to push string on stack");
+    } else if(i2d_script_statement_evaluate(script, &node, handler->data, local->buffer)) {
         status = i2d_panic("failed to evaluate data object");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
         status = i2d_panic("failed to push string on stack");

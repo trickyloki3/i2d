@@ -302,6 +302,7 @@ struct i2d_data {
     long required;
     long optional;
     i2d_string_stack prefixes;
+    int empty_description_on_zero;  /* i2d_data_handler_evaluate */
 };
 
 typedef struct i2d_data i2d_data;
