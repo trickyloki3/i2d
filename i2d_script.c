@@ -1054,7 +1054,6 @@ i2d_statement statements[] = {
     {I2D_PETSKILLATTACK2, {"petskillattack2", 15}},
     {I2D_PETSKILLSUPPORT, {"petskillsupport", 15}},
     {I2D_PETHEAL, {"petheal", 7}},
-    {I2D_GETMAPXY, {"getmapxy", 8}},
     {I2D_SPECIALEFFECT, {"specialeffect", 13}},
     {I2D_SHOWSCRIPT, {"showscript", 10}},
     {I2D_HATEFFECT, {"hateffect", 9}},
