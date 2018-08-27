@@ -106,5 +106,15 @@
         "description" : "Enable Level {1} {0} {2}.",
         "required" : 2,
         "optional" : 1
+    },
+    "itemskill" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "ignore"
+        ],
+        "description" : "Cast Level {1} {0}.",
+        "required" : 2,
+        "optional" : 1
     }
 }
