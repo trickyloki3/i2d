@@ -93,5 +93,18 @@
         "required" : 2,
         "optional" : 1,
         "dump_stack_instead_of_description" : null
+    },
+    "skill" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "skill_flags"
+        ],
+        "argument_default" : [
+            "1"
+        ],
+        "description" : "Enable Level {1} {0} {2}.",
+        "required" : 2,
+        "optional" : 1
     }
 }

@@ -2515,6 +2515,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_HEAL:
         case I2D_PERCENTHEAL:
         case I2D_ITEMHEAL:
+        case I2D_SKILL:
             status = i2d_script_statement_generic(script, block);
             break;
         default:
