@@ -2520,6 +2520,19 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_UNITSKILLUSEID:
             status = i2d_script_statement_generic(script, block);
             break;
+        /* statement without description */
+        case I2D_HATEFFECT:
+        case I2D_SKILLEFFECT:
+        case I2D_SPECIALEFFECT:
+        case I2D_SPECIALEFFECT2:
+        case I2D_SETFONT:
+        case I2D_SETARRAY:
+        case I2D_INPUT:
+        case I2D_END:
+        case I2D_PLAYBGM:
+        case I2D_CALLFUNC:
+        case I2D_SHOWSCRIPT:
+            break;
         default:
             /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
             break;
