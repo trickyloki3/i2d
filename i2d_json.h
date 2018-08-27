@@ -31,6 +31,7 @@ struct i2d_json {
     json_t * constants;
     json_t * arguments;
     json_t * prefixes;
+    json_t * skill_flags;
 };
 
 typedef struct i2d_json i2d_json;

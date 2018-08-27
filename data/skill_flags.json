@@ -1,0 +1,6 @@
+{
+    "0" : "permenant",
+    "1" : "temporary",
+    "2" : "temporary and level stackable",
+    "3" : "permenant after reset and job change"
+}
