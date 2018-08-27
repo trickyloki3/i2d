@@ -36,7 +36,7 @@ int i2d_string_vprintf(i2d_string * result, const char * format, ...) {
     i2d_string output;
 
     va_start(vl, format);
-    if(i2d_buffer_create(&buffer, I2D_SIZE_SMALL)) {
+    if(i2d_buffer_create(&buffer, BUFFER_SIZE_SMALL)) {
         status = i2d_panic("failed to create buffer object");
     } else {
         if(i2d_buffer_vprintf(&buffer, format, vl)) {
@@ -248,7 +248,7 @@ int i2d_buffer_cache_init(i2d_buffer_cache ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_buffer_init(&object->list, I2D_SIZE_SMALL))
+            if(i2d_buffer_init(&object->list, BUFFER_SIZE_SMALL))
                 status = i2d_panic("failed to create buffer object");
 
             if(status)
@@ -280,7 +280,7 @@ int i2d_buffer_cache_get(i2d_buffer_cache * cache, i2d_buffer ** result) {
         i2d_buffer_clear(buffer);
         *result = buffer;
     } else {
-        status = i2d_buffer_init(result, I2D_SIZE_SMALL);
+        status = i2d_buffer_init(result, BUFFER_SIZE_SMALL);
     }
 
     return status;
@@ -522,7 +522,7 @@ int i2d_string_stack_cache_init(i2d_string_stack_cache ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_string_stack_init(&object->list, I2D_SIZE_SMALL))
+            if(i2d_string_stack_init(&object->list, BUFFER_SIZE_SMALL))
                 status = i2d_panic("failed to create stack object");
 
             if(status)
@@ -554,7 +554,7 @@ int i2d_string_stack_cache_get(i2d_string_stack_cache * cache, i2d_string_stack 
         i2d_string_stack_clear(stack);
         *result = stack;
     } else {
-        status = i2d_string_stack_init(result, I2D_SIZE_SMALL);
+        status = i2d_string_stack_init(result, BUFFER_SIZE_SMALL);
     }
 
     return status;

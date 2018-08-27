@@ -1081,7 +1081,7 @@ int i2d_block_init(i2d_block ** result, enum i2d_block_type type, i2d_token * to
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_buffer_create(&object->buffer, I2D_SIZE)) {
+            if(i2d_buffer_create(&object->buffer, BUFFER_SIZE_LARGE)) {
                 status = i2d_panic("failed to create buffer object");
             } else {
                 object->type = type;
@@ -3254,7 +3254,7 @@ static int i2d_handler_getskilllv(i2d_handler * handler, i2d_script * script, i2
 
 static int i2d_handler_isequipped(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
-    i2d_node * arguments[I2D_STACK];
+    i2d_node * arguments[MAX_ARGUMENT];
     size_t i;
     size_t size;
     long id;

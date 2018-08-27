@@ -219,14 +219,14 @@ static int i2d_item_db_load(i2d_item_db * item_db, i2d_string * path) {
     if(0 > fd) {
         status = i2d_panic("failed to open item db -- %s", path->string);
     } else {
-        if(i2d_buffer_create(&buffer, I2D_SIZE * 2)) {
+        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
             status = i2d_panic("failed to create buffer object");
         } else {
-            result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+            result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             while(0 < result && !status) {
                 if(i2d_by_line(&buffer, i2d_item_db_parse, item_db))
                     status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+                result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             }
             if(!status && buffer.offset && i2d_by_line(&buffer, i2d_item_db_parse, item_db))
                 status = i2d_panic("failed to parse buffer");
@@ -574,14 +574,14 @@ static int i2d_item_combo_db_load(i2d_item_combo_db * item_combo_db, i2d_string 
     if(0 > fd) {
         status = i2d_panic("failed to open item combo db -- %s", path->string);
     } else {
-        if(i2d_buffer_create(&buffer, I2D_SIZE * 2)) {
+        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
             status = i2d_panic("failed to create buffer object");
         } else {
-            result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+            result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             while(0 < result && !status) {
                 if(i2d_by_line(&buffer, i2d_item_combo_db_parse, item_combo_db))
                     status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+                result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             }
             if(!status && buffer.offset && i2d_by_line(&buffer, i2d_item_combo_db_parse, item_combo_db))
                 status = i2d_panic("failed to parse buffer");

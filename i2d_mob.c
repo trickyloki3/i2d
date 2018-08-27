@@ -225,14 +225,14 @@ static int i2d_mob_db_load(i2d_mob_db * mob_db, i2d_string * path) {
     if(0 > fd) {
         status = i2d_panic("failed to open mob db -- %s", path->string);
     } else {
-        if(i2d_buffer_create(&buffer, I2D_SIZE * 2)) {
+        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
             status = i2d_panic("failed to create buffer object");
         } else {
-            result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+            result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             while(0 < result && !status) {
                 if(i2d_by_line(&buffer, i2d_mob_db_parse, mob_db))
                     status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+                result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             }
             if(!status && buffer.offset && i2d_by_line(&buffer, i2d_mob_db_parse, mob_db))
                 status = i2d_panic("failed to parse buffer");
@@ -457,14 +457,14 @@ static int i2d_mob_race_db_load(i2d_mob_race_db * mob_race_db, i2d_string * path
     if(0 > fd) {
         status = i2d_panic("failed to open mob race db -- %s", path->string);
     } else {
-        if(i2d_buffer_create(&buffer, I2D_SIZE * 2)) {
+        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
             status = i2d_panic("failed to create buffer object");
         } else {
-            result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+            result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             while(0 < result && !status) {
                 if(i2d_by_line(&buffer, i2d_mob_race_db_parse, mob_race_db))
                     status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, I2D_SIZE, &buffer);
+                result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
             }
             if(!status && buffer.offset && i2d_by_line(&buffer, i2d_mob_race_db_parse, mob_race_db))
                 status = i2d_panic("failed to parse buffer");

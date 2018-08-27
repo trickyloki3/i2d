@@ -9,8 +9,6 @@
 #include "i2d_db.h"
 #include "i2d_json.h"
 
-#define MAX_ARGUMENT 8
-
 enum i2d_token_type {
     I2D_TOKEN,
     I2D_CURLY_OPEN,
