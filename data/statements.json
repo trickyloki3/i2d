@@ -128,5 +128,15 @@
         "description" : "Cast Level {2} {1}.",
         "required" : 3,
         "optional" : 2
+    },
+    "getitem" : {
+        "argument_type" : [
+            "item",
+            "integer",
+            "ignore"
+        ],
+        "description" : "Obtain x{1} {0}.",
+        "required" : 2,
+        "optional" : 1
     }
 }
