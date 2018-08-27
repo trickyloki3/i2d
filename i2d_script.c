@@ -3647,8 +3647,39 @@ static int i2d_handler_rand(i2d_handler * handler, i2d_script * script, i2d_node
 }
 
 static int i2d_handler_callfunc(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    /* callfunc is unsupported */
-    return I2D_OK;
+    int status = I2D_OK;
+    i2d_node * arguments[MAX_ARGUMENT];
+    i2d_string function;
+
+    size_t i;
+    i2d_range result;
+
+    i2d_zero(arguments);
+    i2d_zero(result);
+
+    if(i2d_node_get_arguments(node->left, arguments, 1, MAX_ARGUMENT - 1)) {
+        status = i2d_panic("failed to get callfunc arguments");
+    } else if(i2d_node_get_string(arguments[0], &function)) {
+        status = i2d_panic("failed to get function string");
+    } else if(!strcmp(function.string, "F_Rand")) {
+        for(i = 1; i < MAX_ARGUMENT; i++) {
+            if(!arguments[i]) {
+                break;
+            } else {
+                if(i2d_range_or(&result, &node->range, &arguments[i]->range)) {
+                    status = i2d_panic("failed to or range object");
+                } else {
+                    i2d_range_destroy(&node->range);
+                    node->range = result;
+                    i2d_zero(result);
+                }
+            }
+        }
+    } else {
+        /* unsupported callfunc function */
+    }
+
+    return status;
 }
 
 static int i2d_handler_getequipweaponlv(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
