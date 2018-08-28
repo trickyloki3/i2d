@@ -2580,7 +2580,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
         status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
     } else if(MAX_ARGUMENT <= data->required + data->optional) {
         status = i2d_panic("MAX_ARGUMENT overflow");
-    } else if(i2d_node_get_arguments(block->nodes, arguments, data->required, data->optional)) {
+    } else if(i2d_node_get_arguments(block->nodes->tokens->type == I2D_TOKEN ? block->nodes->left : block->nodes, arguments, data->required, data->optional)) {
         status = i2d_panic("failed to get arguments");
     } else {
         i2d_string_stack_get(&data->argument_default, &list, &size);
