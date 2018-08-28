@@ -4200,15 +4200,37 @@ static int i2d_bonus_handler_zeny(i2d_handler * handler, i2d_script * script, i2
 
 static int i2d_bonus_handler_item(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
-    long id;
+    i2d_string_stack * stack = NULL;
+    i2d_range_node * range = NULL;
+    long i;
     i2d_item * item;
 
-    if(i2d_node_get_constant(node, &id)) {
-        status = i2d_panic("failed to get item id");
-    } else if(i2d_item_db_search_by_id(script->db->item_db, id, &item)) {
-        status = i2d_panic("failed to get item by id -- %ld", id);
-    } else if(i2d_string_stack_push(local->stack, item->name.string, item->name.length)) {
-        status = i2d_panic("failed to push string on stack");
+    if(i2d_string_stack_cache_get(script->stack_cache, &stack)) {
+        status = i2d_panic("failed to create string stack object");
+    } else {
+        if(!node->range.list) {
+            status = i2d_panic("empty range list");
+        } else {
+            range = node->range.list;
+            do {
+                for( i = range->min; i <= range->max; i++) {
+                    if(i2d_item_db_search_by_id(script->db->item_db, i, &item)) {
+                        status = i2d_panic("failed to get item by id -- %ld", i);
+                    } else if(i2d_string_stack_push(stack, item->name.string, item->name.length)) {
+                        status = i2d_panic("failed to push string on stack");
+                    }
+                }
+                range = range->next;
+            } while(range != node->range.list && !status);
+
+            if(!status)
+                if( i2d_string_stack_get_unique(stack, local->buffer) ||
+                    i2d_bonus_handler_expression(handler, script, node, local) )
+                    status = i2d_panic("failed to push buffer on stack");
+        }
+
+        if(i2d_string_stack_cache_put(script->stack_cache, &stack))
+            status = i2d_panic("failed to cache string stack object");
     }
 
     return status;
