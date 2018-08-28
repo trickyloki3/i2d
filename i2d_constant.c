@@ -22,13 +22,12 @@ int i2d_constant_create(i2d_constant * result, const char * key, json_t * json) 
         if(name && i2d_object_get_string(name, &result->name)) {
             status = i2d_panic("failed to copy name string");
         } else {
-            if(min && max && i2d_object_get_range(min, max, &result->range)) {
+            if(!value || i2d_object_get_number(value, &result->value)) {
+                status = i2d_panic("failed to get value number");
+            } else if( (min && max) ?
+                i2d_object_get_range(min, max, &result->range) :
+                i2d_range_create_add(&result->range, result->value, result->value) ) {
                 status = i2d_panic("failed to create range");
-            } else {
-                if(!value || i2d_object_get_number(value, &result->value))
-                    status = i2d_panic("failed to get value number");
-                if(status)
-                    i2d_range_destroy(&result->range);
             }
             if(status)
                 i2d_string_destroy(&result->name);
