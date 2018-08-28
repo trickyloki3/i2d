@@ -115,6 +115,7 @@ static int i2d_bonus_handler_atf_target(i2d_handler *, i2d_script *, i2d_node *,
 static int i2d_bonus_handler_atf_type(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_skill_flags(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_string(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -149,7 +150,8 @@ i2d_handler bonus_list[] = {
     { {"atf_target", 10}, i2d_bonus_handler_atf_target },
     { {"atf_type", 8}, i2d_bonus_handler_atf_type },
     { {"script", 6}, i2d_bonus_handler_script },
-    { {"skill_flags", 11}, i2d_bonus_handler_skill_flags }
+    { {"skill_flags", 11}, i2d_bonus_handler_skill_flags },
+    { {"string", 6}, i2d_bonus_handler_string }
 };
 
 const char * i2d_token_string[] = {
@@ -4508,6 +4510,36 @@ static int i2d_bonus_handler_script(i2d_handler * handler, i2d_script * script, 
     return status;
 }
 
+static int i2d_bonus_handler_skill_flags(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long flag;
+    i2d_string string;
+
+    if(i2d_node_get_constant(node, &flag)) {
+        status = i2d_panic("failed to get skill flag");
+    } else if(i2d_value_map_get(script->skill_flags, &flag, &string)) {
+        status = i2d_panic("failed to get skill_flag by flag -- %ld", flag);
+    } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_string(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_string string;
+
+    if(i2d_node_get_string(node, &string)) {
+        status = i2d_panic("failed to get string object");
+    } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+
+    return status;
+}
+
 static int i2d_data_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
@@ -4549,22 +4581,6 @@ static int i2d_data_handler_prefixes(i2d_handler * handler, i2d_script * script,
             if(i2d_string_stack_push(local->stack, list[1].string, list[1].length))
                 status = i2d_panic("failed to push string on stack");
         }
-    }
-
-    return status;
-}
-
-static int i2d_bonus_handler_skill_flags(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    int status = I2D_OK;
-    long flag;
-    i2d_string string;
-
-    if(i2d_node_get_constant(node, &flag)) {
-        status = i2d_panic("failed to get skill flag");
-    } else if(i2d_value_map_get(script->skill_flags, &flag, &string)) {
-        status = i2d_panic("failed to get skill_flag by flag -- %ld", flag);
-    } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
-        status = i2d_panic("failed to push string on stack");
     }
 
     return status;
