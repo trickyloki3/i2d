@@ -178,5 +178,12 @@
         "required" : 2,
         "optional" : 1,
         "dump_stack_instead_of_description" : null
+    },
+    "guildgetexp" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Gain {0} guild experience.",
+        "required" : 1
     }
 }
