@@ -46,5 +46,19 @@
         ],
         "description" : "{0} {1} SP.",
         "empty_description_on_zero" : null
+    },
+    "base_experience" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Gain {0} base experience.",
+        "empty_description_on_zero" : null
+    },
+    "job_experience" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Gain {0} job experience.",
+        "empty_description_on_zero" : null
     }
 }

@@ -168,5 +168,15 @@
         "description" : "Warp to {0} ({1},{2}).",
         "required" : 3,
         "optional" : 0
+    },
+    "getexp2" : {
+        "argument_type" : [
+            "base_experience",
+            "job_experience",
+            "ignore"
+        ],
+        "required" : 2,
+        "optional" : 1,
+        "dump_stack_instead_of_description" : null
     }
 }

@@ -190,7 +190,7 @@ enum i2d_statement_type {
     I2D_COOKING,
     I2D_MAKERUNE,
     I2D_GUILDGETEXP,
-    I2D_GETEXP,
+    I2D_GETEXP2,
     I2D_MONSTER,
     I2D_HOMEVOLUTION,
     I2D_SETOPTION,

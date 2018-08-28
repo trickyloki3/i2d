@@ -1052,7 +1052,7 @@ i2d_statement statements[] = {
     {I2D_COOKING, {"cooking", 7}},
     {I2D_MAKERUNE, {"makerune", 8}},
     {I2D_GUILDGETEXP, {"guildgetexp", 11}},
-    {I2D_GETEXP, {"getexp", 6}},
+    {I2D_GETEXP2, {"getexp2", 7}},
     {I2D_MONSTER, {"monster", 7}},
     {I2D_HOMEVOLUTION, {"homevolution", 12}},
     {I2D_SETOPTION, {"setoption", 9}},
@@ -2540,6 +2540,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_RENTITEM:
         case I2D_DELITEM:
         case I2D_WARP:
+        case I2D_GETEXP2:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
