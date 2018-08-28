@@ -148,5 +148,15 @@
         "description" : "Rent {0} for {1}.",
         "required" : 2,
         "optional" : 1
+    },
+    "delitem" : {
+        "argument_type" : [
+            "item",
+            "integer",
+            "ignore"
+        ],
+        "description" : "Remove x{1} {0}.",
+        "required" : 2,
+        "optional" : 1
     }
 }
