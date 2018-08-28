@@ -2507,6 +2507,9 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
     int status = I2D_OK;
 
     switch(block->statement->type) {
+        case I2D_SET:
+            status = i2d_script_statement_set(script, block, variables);
+            break;
         case I2D_BONUS:
             status = i2d_script_statement_bonus(script, block, script->bonus, 1);
             break;
@@ -2572,6 +2575,23 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_
         status = i2d_panic("failed to get bonus type data -- %ld", value);
     } else if(i2d_script_statement_evaluate(script, &arguments[1], data, &block->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
+    }
+
+    return status;
+}
+
+int i2d_script_statement_set(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+
+    i2d_zero(arguments);
+
+    if(i2d_node_get_arguments(block->nodes, arguments, i2d_size(arguments), 0)) {
+        status = i2d_panic("failed to get arguments");
+    } else if(i2d_node_copy(arguments[0], arguments[1])) {
+        status = i2d_panic("failed to copy node object");
+    } else if(i2d_rbt_add_variable(variables, arguments[0])) {
+        status = i2d_panic("failed to add variable");
     }
 
     return status;

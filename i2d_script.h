@@ -378,6 +378,7 @@ int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
 int i2d_script_generate(i2d_script *, i2d_block *, i2d_buffer *);
 int i2d_script_statement(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
 int i2d_script_statement_bonus(i2d_script *, i2d_block *, i2d_data_map *, int);
+int i2d_script_statement_set(i2d_script *, i2d_block *, i2d_rbt *);
 int i2d_script_statement_generic(i2d_script *, i2d_block *);
 int i2d_script_statement_evaluate(i2d_script *, i2d_node **, i2d_data *, i2d_buffer *);
 int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_rbt *, i2d_logic *);
