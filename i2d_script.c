@@ -94,7 +94,9 @@ static int i2d_bonus_handler_percent100(i2d_handler *, i2d_script *, i2d_node *,
 static int i2d_bonus_handler_ignore(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_sizes_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_sizes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_skill_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_skill(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_mob_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_mob(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_effects_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_effects(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -4120,47 +4122,55 @@ static int i2d_bonus_handler_sizes(i2d_handler * handler, i2d_script * script, i
     return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_sizes_cb);
 }
 
+static int i2d_bonus_handler_skill_cb(i2d_script * script, i2d_string_stack * stack, long id) {
+    int status = I2D_OK;
+    i2d_skill * skill = NULL;
+
+    if(i2d_skill_db_search_by_id(script->db->skill_db, id, &skill)) {
+        status = i2d_panic("failed to get skill by id -- %ld", id);
+    } else if(i2d_string_stack_push(stack, skill->name.string, skill->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
 static int i2d_bonus_handler_skill(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
-    long id;
     i2d_string name;
     i2d_skill * skill = NULL;
 
-    if(i2d_node_get_constant(node, &id)) {
-        status = i2d_panic("failed to get skill id");
-    } else if(i2d_skill_db_search_by_id(script->db->skill_db, id, &skill)) {
-        if(i2d_node_get_string(node, &name)) {
-            status = i2d_panic("failed to get skill name");
-        } else if(i2d_skill_db_search_by_macro(script->db->skill_db, name.string, &skill)) {
-            status = i2d_panic("failed to get skill by id and name -- %ld %s", id, name.string);
-        }
+    if(i2d_node_get_string(node, &name)) {
+        status = i2d_panic("failed to get skill name");
+    } else if(i2d_skill_db_search_by_macro(script->db->skill_db, name.string, &skill)) {
+        status = i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_skill_cb);
+    } else if(i2d_string_stack_push(local->stack, skill->name.string, skill->name.length)) {
+        status = i2d_panic("failed to push string on stack");
     }
 
-    if(!status && i2d_string_stack_push(local->stack, skill->name.string, skill->name.length))
-        status = i2d_panic("failed to push string on stack");
+    return status;
+}
+
+static int i2d_bonus_handler_mob_cb(i2d_script * script, i2d_string_stack * stack, long id) {
+    int status = I2D_OK;
+    i2d_mob * mob;
+    i2d_constant * constant;
+
+    if(!i2d_mob_db_search_by_id(script->db->mob_db, id, &mob)) {
+        if(i2d_string_stack_push(stack, mob->kro.string, mob->kro.length))
+            status = i2d_panic("failed to push string on stack");
+    } else if(!i2d_constant_get_by_job(script->constant_db, id, &constant)) {
+        if(i2d_string_stack_push(stack, constant->name.string, constant->name.length))
+            status = i2d_panic("failed to push string on stack");
+    } else {
+        status = i2d_panic("failed to get mob or job by id -- %ld", id);
+    }
 
     return status;
 }
 
 static int i2d_bonus_handler_mob(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    int status = I2D_OK;
-    long id;
-    i2d_mob * mob;
-    i2d_constant * constant;
-
-    if(i2d_node_get_constant(node, &id)) {
-        status = i2d_panic("failed to get mob or job id");
-    } else if(i2d_mob_db_search_by_id(script->db->mob_db, id, &mob)) {
-        if(i2d_constant_get_by_job(script->constant_db, id, &constant)) {
-            status = i2d_panic("failed to get mob or job by id -- %ld", id);
-        } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
-            status = i2d_panic("failed to push string on stack");
-        }
-    } else if(i2d_string_stack_push(local->stack, mob->kro.string, mob->kro.length)) {
-        status = i2d_panic("failed to push string on stack");
-    }
-
-    return status;
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_mob_cb);
 }
 
 static int i2d_bonus_handler_effects_cb(i2d_script * script, i2d_string_stack * stack, long id) {
