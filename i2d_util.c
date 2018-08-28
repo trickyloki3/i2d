@@ -522,7 +522,7 @@ int i2d_string_stack_cache_init(i2d_string_stack_cache ** result) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_string_stack_init(&object->list, BUFFER_SIZE_SMALL))
+            if(i2d_string_stack_init(&object->list, MAX_STACK))
                 status = i2d_panic("failed to create stack object");
 
             if(status)
