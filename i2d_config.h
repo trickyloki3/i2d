@@ -3,10 +3,10 @@
 /*
  * maximum number of arguments per statement
  */
-#define MAX_ARGUMENT 8
+#define MAX_ARGUMENT 32
 
 /*
- * maximum number of strings per stack 
+ * maximum number of strings per stack
  */
 #define MAX_STACK 64
 
