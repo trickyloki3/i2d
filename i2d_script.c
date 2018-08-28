@@ -70,6 +70,9 @@ i2d_handler function_list[] = {
     { {"checkfalcon", 11}, i2d_handler_general }
 };
 
+typedef int (*i2d_bonus_handler_range_cb)(i2d_script *, i2d_string_stack *, long);
+static int i2d_bonus_handler_range(i2d_handler *, i2d_script *, i2d_node *, i2d_local *, i2d_bonus_handler_range_cb);
+
 static int i2d_bonus_handler_expression(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_time(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_regen(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -93,6 +96,7 @@ static int i2d_bonus_handler_effects(i2d_handler *, i2d_script *, i2d_node *, i2
 static int i2d_bonus_handler_mob_races(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_weapons(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_zeny(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_item_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_item(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_itemgroups(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_bf_type(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -3743,6 +3747,38 @@ static int i2d_handler_getexp2(i2d_handler * handler, i2d_script * script, i2d_n
     return status;
 }
 
+static int i2d_bonus_handler_range(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local, i2d_bonus_handler_range_cb cb) {
+    int status = I2D_OK;
+    i2d_string_stack * stack = NULL;
+    i2d_range_node * range = NULL;
+    long i;
+
+    if(i2d_string_stack_cache_get(script->stack_cache, &stack)) {
+        status = i2d_panic("failed to create string stack object");
+    } else {
+        if(!node->range.list) {
+            status = i2d_panic("empty range list");
+        } else {
+            range = node->range.list;
+            do {
+                for( i = range->min; i <= range->max && !status; i++)
+                    status = cb(script, stack, i);
+                range = range->next;
+            } while(range != node->range.list && !status);
+
+            if(!status)
+                if( i2d_string_stack_get_unique(stack, local->buffer) ||
+                    i2d_bonus_handler_expression(handler, script, node, local) )
+                    status = i2d_panic("failed to push buffer on stack");
+        }
+
+        if(i2d_string_stack_cache_put(script->stack_cache, &stack))
+            status = i2d_panic("failed to cache string stack object");
+    }
+
+    return status;
+}
+
 static int i2d_bonus_handler_expression(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_local predicate;
@@ -4198,42 +4234,21 @@ static int i2d_bonus_handler_zeny(i2d_handler * handler, i2d_script * script, i2
     return status;
 }
 
-static int i2d_bonus_handler_item(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_item_cb(i2d_script * script, i2d_string_stack * stack, long id) {
     int status = I2D_OK;
-    i2d_string_stack * stack = NULL;
-    i2d_range_node * range = NULL;
-    long i;
     i2d_item * item;
 
-    if(i2d_string_stack_cache_get(script->stack_cache, &stack)) {
-        status = i2d_panic("failed to create string stack object");
-    } else {
-        if(!node->range.list) {
-            status = i2d_panic("empty range list");
-        } else {
-            range = node->range.list;
-            do {
-                for( i = range->min; i <= range->max; i++) {
-                    if(i2d_item_db_search_by_id(script->db->item_db, i, &item)) {
-                        status = i2d_panic("failed to get item by id -- %ld", i);
-                    } else if(i2d_string_stack_push(stack, item->name.string, item->name.length)) {
-                        status = i2d_panic("failed to push string on stack");
-                    }
-                }
-                range = range->next;
-            } while(range != node->range.list && !status);
-
-            if(!status)
-                if( i2d_string_stack_get_unique(stack, local->buffer) ||
-                    i2d_bonus_handler_expression(handler, script, node, local) )
-                    status = i2d_panic("failed to push buffer on stack");
-        }
-
-        if(i2d_string_stack_cache_put(script->stack_cache, &stack))
-            status = i2d_panic("failed to cache string stack object");
+    if(i2d_item_db_search_by_id(script->db->item_db, id, &item)) {
+        status = i2d_panic("failed to get item by id -- %ld", id);
+    } else if(i2d_string_stack_push(stack, item->name.string, item->name.length)) {
+        status = i2d_panic("failed to push string on stack");
     }
 
     return status;
+}
+
+static int i2d_bonus_handler_item(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_item_cb);
 }
 
 static int i2d_bonus_handler_itemgroups(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
