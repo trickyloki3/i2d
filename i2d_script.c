@@ -2582,16 +2582,22 @@ int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_
 
 int i2d_script_statement_set(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
     int status = I2D_OK;
-    i2d_node * arguments[2];
+    i2d_node * node;
 
-    i2d_zero(arguments);
+    node = block->nodes->left;
 
-    if(i2d_node_get_arguments(block->nodes, arguments, i2d_size(arguments), 0)) {
-        status = i2d_panic("failed to get arguments");
-    } else if(i2d_node_copy(arguments[0], arguments[1])) {
+    if(i2d_node_copy(node, node->right)) {
         status = i2d_panic("failed to copy node object");
-    } else if(i2d_rbt_add_variable(variables, arguments[0])) {
+    } else if(i2d_node_copy(node->left, node)) {
+        status = i2d_panic("failed to copy node object");
+    } else if(i2d_rbt_add_variable(variables, node->left)) {
         status = i2d_panic("failed to add variable");
+    } else {
+        /*
+         * assign the expression (node->right) to the variable (node->left)
+         */
+        node->left->left = node->right;
+        node->right = NULL;
     }
 
     return status;
