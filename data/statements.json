@@ -158,5 +158,15 @@
         "description" : "Remove x{1} {0}.",
         "required" : 2,
         "optional" : 1
+    },
+    "warp" : {
+        "argument_type" : [
+            "string",
+            "integer",
+            "integer"
+        ],
+        "description" : "Warp to {0} ({1},{2}).",
+        "required" : 3,
+        "optional" : 0
     }
 }
