@@ -96,12 +96,16 @@ static int i2d_bonus_handler_sizes_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_sizes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_skill(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_mob(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_effects_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_effects(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_mob_races_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_mob_races(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_weapons_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_weapons(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_zeny(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_item_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_item(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_itemgroups_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_itemgroups(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_bf_type(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_bf_damage(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -4159,16 +4163,30 @@ static int i2d_bonus_handler_mob(i2d_handler * handler, i2d_script * script, i2d
     return status;
 }
 
-static int i2d_bonus_handler_effects(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_effects_cb(i2d_script * script, i2d_string_stack * stack, long id) {
     int status = I2D_OK;
-    long value;
     i2d_constant * constant;
 
-    if(i2d_node_get_constant(node, &value)) {
-        status = i2d_panic("failed to get effect value");
-    } else if(i2d_constant_get_by_effect(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get effect -- %ld", value);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+    if(i2d_constant_get_by_effect(script->constant_db, id, &constant)) {
+        status = i2d_panic("failed to get effect -- %ld", id);
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_effects(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_effects_cb);
+}
+
+static int i2d_bonus_handler_mob_races_cb(i2d_script * script, i2d_string_stack * stack, long id) {
+    int status = I2D_OK;
+    i2d_constant * constant;
+
+    if(i2d_constant_get_by_mob_races(script->constant_db, id, &constant)) {
+        status = i2d_panic("failed to get mob race by id -- %ld", id);
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
@@ -4176,15 +4194,16 @@ static int i2d_bonus_handler_effects(i2d_handler * handler, i2d_script * script,
 }
 
 static int i2d_bonus_handler_mob_races(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    int status = I2D_OK;
-    long value;
-    i2d_constant * constant;
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_mob_races_cb);
+}
 
-    if(i2d_node_get_constant(node, &value)) {
-        status = i2d_panic("failed to get mob race id");
-    } else if(i2d_constant_get_by_mob_races(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get mob race by id -- %ld", value);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+static int i2d_bonus_handler_weapons_cb(i2d_script * script, i2d_string_stack * stack, long id) {
+    int status = I2D_OK;
+    i2d_string weapon;
+
+    if(i2d_value_map_get(script->weapons, &id, &weapon)) {
+        status = i2d_panic("failed to get weapon by weapon type -- %ld", id);
+    } else if(i2d_string_stack_push(stack, weapon.string, weapon.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
@@ -4192,19 +4211,7 @@ static int i2d_bonus_handler_mob_races(i2d_handler * handler, i2d_script * scrip
 }
 
 static int i2d_bonus_handler_weapons(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    int status = I2D_OK;
-    long weapon_type;
-    i2d_string weapon;
-
-    if(i2d_node_get_constant(node, &weapon_type)) {
-        status = i2d_panic("failed to get weapon type");
-    } else if(i2d_value_map_get(script->weapons, &weapon_type, &weapon)) {
-        status = i2d_panic("failed to get weapon by weapon type -- %ld", weapon_type);
-    } else if(i2d_string_stack_push(local->stack, weapon.string, weapon.length)) {
-        status = i2d_panic("failed to push string on stack");
-    }
-
-    return status;
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_weapons_cb);
 }
 
 static int i2d_bonus_handler_zeny(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
@@ -4259,20 +4266,21 @@ static int i2d_bonus_handler_item(i2d_handler * handler, i2d_script * script, i2
     return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_item_cb);
 }
 
-static int i2d_bonus_handler_itemgroups(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_itemgroups_cb(i2d_script * script, i2d_string_stack * stack, long id) {
     int status = I2D_OK;
-    long id;
     i2d_constant * constant;
 
-    if(i2d_node_get_constant(node, &id)) {
-        status = i2d_panic("failed to get item group id");
-    } else if(i2d_constant_get_by_itemgroups(script->constant_db, id, &constant)) {
+    if(i2d_constant_get_by_itemgroups(script->constant_db, id, &constant)) {
         status = i2d_panic("failed to get item group by id -- %ld", id);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
     return status;
+}
+
+static int i2d_bonus_handler_itemgroups(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_itemgroups_cb);
 }
 
 static int i2d_bonus_handler_bf_type(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
