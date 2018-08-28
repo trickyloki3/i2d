@@ -77,8 +77,11 @@ static int i2d_bonus_handler_expression(i2d_handler *, i2d_script *, i2d_node *,
 static int i2d_bonus_handler_time(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_regen(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_splash(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_elements_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_elements(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_races_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_races(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_classes_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_classes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_integer(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_integer_sign(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -89,6 +92,7 @@ static int i2d_bonus_handler_percent_absolute(i2d_handler *, i2d_script *, i2d_n
 static int i2d_bonus_handler_percent10(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_percent100(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_ignore(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_sizes_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_sizes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_skill(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_mob(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -3891,16 +3895,30 @@ static int i2d_bonus_handler_splash(i2d_handler * handler, i2d_script * script, 
     return status;
 }
 
-static int i2d_bonus_handler_elements(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_elements_cb(i2d_script * script, i2d_string_stack * stack, long id) {
     int status = I2D_OK;
-    long value;
     i2d_constant * constant;
 
-    if(i2d_node_get_constant(node, &value)) {
-        status = i2d_panic("failed to get element value");
-    } else if(i2d_constant_get_by_element(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get element -- %ld", value);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+    if(i2d_constant_get_by_element(script->constant_db, id, &constant)) {
+        status = i2d_panic("failed to get element -- %ld", id);
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_elements(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_elements_cb);
+}
+
+static int i2d_bonus_handler_races_cb(i2d_script * script, i2d_string_stack * stack, long id) {
+    int status = I2D_OK;
+    i2d_constant * constant;
+
+    if(i2d_constant_get_by_race(script->constant_db, id, &constant)) {
+        status = i2d_panic("failed to get race -- %ld", id);
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
@@ -3908,15 +3926,16 @@ static int i2d_bonus_handler_elements(i2d_handler * handler, i2d_script * script
 }
 
 static int i2d_bonus_handler_races(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_races_cb);
+}
+
+static int i2d_bonus_handler_classes_cb(i2d_script * script, i2d_string_stack * stack, long id) {
     int status = I2D_OK;
-    long value;
     i2d_constant * constant;
 
-    if(i2d_node_get_constant(node, &value)) {
-        status = i2d_panic("failed to get race value");
-    } else if(i2d_constant_get_by_race(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get race -- %ld", value);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+    if(i2d_constant_get_by_class(script->constant_db, id, &constant)) {
+        status = i2d_panic("failed to get class -- %ld", id);
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
@@ -3924,19 +3943,7 @@ static int i2d_bonus_handler_races(i2d_handler * handler, i2d_script * script, i
 }
 
 static int i2d_bonus_handler_classes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    int status = I2D_OK;
-    long value;
-    i2d_constant * constant;
-
-    if(i2d_node_get_constant(node, &value)) {
-        status = i2d_panic("failed to get class value");
-    } else if(i2d_constant_get_by_class(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get class -- %ld", value);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
-        status = i2d_panic("failed to push string on stack");
-    }
-
-    return status;
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_classes_cb);
 }
 
 static int i2d_bonus_handler_integer(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
@@ -4092,20 +4099,21 @@ static int i2d_bonus_handler_ignore(i2d_handler * handler, i2d_script * script, 
     return status;
 }
 
-static int i2d_bonus_handler_sizes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_sizes_cb(i2d_script * script, i2d_string_stack * stack, long id) {
     int status = I2D_OK;
-    long value;
     i2d_constant * constant;
 
-    if(i2d_node_get_constant(node, &value)) {
-        status = i2d_panic("failed to get size value");
-    } else if(i2d_constant_get_by_size(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get size -- %ld", value);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+    if(i2d_constant_get_by_size(script->constant_db, id, &constant)) {
+        status = i2d_panic("failed to get size -- %ld", id);
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
     return status;
+}
+
+static int i2d_bonus_handler_sizes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_sizes_cb);
 }
 
 static int i2d_bonus_handler_skill(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
