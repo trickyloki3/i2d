@@ -239,5 +239,14 @@
         "description" : "Open {0}.",
         "required" : 1,
         "optional" : 2
+    },
+    "mercenary_create" : {
+        "argument_type" : [
+            "mercenary",
+            "time"
+        ],
+        "description" : "Hire {0} for {1}.",
+        "required" : 2,
+        "optional" : 0
     }
 }
