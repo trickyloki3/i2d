@@ -224,5 +224,10 @@
         "description" : "Evolve a homunculus.",
         "required" : 0,
         "optional" : 0
+    },
+    "bpet" : {
+        "description" : "Hatch an egg.",
+        "required" : 0,
+        "optional" : 0
     }
 }
