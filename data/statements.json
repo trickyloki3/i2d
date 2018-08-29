@@ -193,5 +193,14 @@
         "description" : "Reset Status Points.",
         "required" : 0,
         "optional" : 1
+    },
+    "searchstores" : {
+        "argument_type" : [
+            "integer",
+            "searchstore_effect"
+        ],
+        "description" : "Search for a vendor or buying store on the current map and {1}. Usable upto {0} times.",
+        "required" : 2,
+        "optional" : 0
     }
 }
