@@ -210,5 +210,14 @@
         "description" : "Open a buying store with {0} slots.",
         "required" : 1,
         "optional" : 0
+    },
+    "announce" : {
+        "argument_type" : [
+            "ignore",
+            "announce_flag"
+        ],
+        "description" : "Announce a message {1}.",
+        "required" : 2,
+        "optional" : 5
     }
 }

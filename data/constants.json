@@ -1,4 +1,10 @@
 {
+    "announces" : [
+        "BC_ALL",
+        "BC_AREA",
+        "BC_MAP",
+        "BC_SELF"
+    ],
     "classes" : [
         "CLASS_NORMAL",
         "CLASS_GUARDIAN",
@@ -3088,15 +3094,18 @@
             "value" : 9
         },
         "BC_ALL" : {
+            "name" : "to the entire server",
             "value" : 0
         },
         "BC_AREA" : {
+            "name" : "near the area",
             "value" : 2
         },
         "BC_BLUE" : {
             "value" : 16
         },
         "BC_MAP" : {
+            "name" : "to the current map",
             "value" : 1
         },
         "BC_NPC" : {
@@ -3106,6 +3115,7 @@
             "value" : 0
         },
         "BC_SELF" : {
+            "name" : "to yourself",
             "value" : 3
         },
         "BC_WOE" : {

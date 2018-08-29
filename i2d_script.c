@@ -117,6 +117,7 @@ static int i2d_bonus_handler_script(i2d_handler *, i2d_script *, i2d_node *, i2d
 static int i2d_bonus_handler_skill_flags(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_string(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_searchstore_effect(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_announce_flag(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -153,7 +154,8 @@ i2d_handler bonus_list[] = {
     { {"script", 6}, i2d_bonus_handler_script },
     { {"skill_flags", 11}, i2d_bonus_handler_skill_flags },
     { {"string", 6}, i2d_bonus_handler_string },
-    { {"searchstore_effect", 18}, i2d_bonus_handler_searchstore_effect }
+    { {"searchstore_effect", 18}, i2d_bonus_handler_searchstore_effect },
+    { {"announce_flag", 13}, i2d_bonus_handler_announce_flag }
 };
 
 const char * i2d_token_string[] = {
@@ -2551,6 +2553,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_RESETSTATUS:
         case I2D_BUYINGSTORE:
         case I2D_SEARCHSTORES:
+        case I2D_ANNOUNCE:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
@@ -4561,6 +4564,22 @@ static int i2d_bonus_handler_searchstore_effect(i2d_handler * handler, i2d_scrip
     } else if(i2d_value_map_get(script->searchstore_effect, &flag, &string)) {
         status = i2d_panic("failed to get searchstore effect by flag -- %ld", flag);
     } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_announce_flag(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long flag;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &flag)) {
+        status = i2d_panic("failed to get announce flag");
+    } else if(i2d_constant_get_by_announces(script->constant_db, flag, &constant)) {
+        status = i2d_panic("failed to get announce flag by flag -- %ld", flag);
+    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
