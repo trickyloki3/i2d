@@ -2549,6 +2549,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_GETEXP2:
         case I2D_GUILDGETEXP:
         case I2D_RESETSTATUS:
+        case I2D_BUYINGSTORE:
         case I2D_SEARCHSTORES:
             status = i2d_script_statement_generic(script, block);
             break;

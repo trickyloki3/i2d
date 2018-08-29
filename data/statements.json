@@ -202,5 +202,13 @@
         "description" : "Search for a vendor or buying store on the current map and {1}. Usable upto {0} times.",
         "required" : 2,
         "optional" : 0
+    },
+    "buyingstore" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Open a buying store with {0} slots.",
+        "required" : 1,
+        "optional" : 0
     }
 }
