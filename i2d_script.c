@@ -865,7 +865,8 @@ int i2d_node_get_arguments(i2d_node * node, i2d_node ** nodes, size_t required, 
     i2d_node * iter;
 
     if(!node) {
-        status = i2d_panic("failed on empty argument list");
+        if(required)
+            status = i2d_panic("failed on empty argument list");
     } else {
         if(node->type == I2D_NODE)
             node = node->left;
@@ -2542,6 +2543,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_WARP:
         case I2D_GETEXP2:
         case I2D_GUILDGETEXP:
+        case I2D_RESETSTATUS:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */

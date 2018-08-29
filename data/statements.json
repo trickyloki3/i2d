@@ -185,5 +185,13 @@
         ],
         "description" : "Gain {0} guild experience.",
         "required" : 1
+    },
+    "resetstatus" : {
+        "argument_type" : [
+            "ignore"
+        ],
+        "description" : "Reset Status Points.",
+        "required" : 0,
+        "optional" : 1
     }
 }
