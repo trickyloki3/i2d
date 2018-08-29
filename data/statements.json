@@ -229,5 +229,15 @@
         "description" : "Hatch an egg.",
         "required" : 0,
         "optional" : 0
+    },
+    "getgroupitem" : {
+        "argument_type" : [
+            "itemgroups",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "Open {0}.",
+        "required" : 1,
+        "optional" : 2
     }
 }
