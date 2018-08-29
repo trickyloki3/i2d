@@ -60,5 +60,29 @@
         ],
         "description" : "Gain {0} job experience.",
         "empty_description_on_zero" : null
+    },
+    "hp_mercenary" : {
+        "argument_type" : [
+            "heal_prefix",
+            "integer_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} {1} mercenary HP.",
+        "empty_description_on_zero" : null
+    },
+    "sp_mercenary" : {
+        "argument_type" : [
+            "heal_prefix",
+            "integer_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} {1} mercenary SP.",
+        "empty_description_on_zero" : null
     }
 }

@@ -248,5 +248,14 @@
         "description" : "Hire {0} for {1}.",
         "required" : 2,
         "optional" : 0
+    },
+    "mercenary_heal" : {
+        "argument_type" : [
+            "hp_mercenary",
+            "sp_mercenary"
+        ],
+        "required" : 2,
+        "optional" : 0,
+        "dump_stack_instead_of_description" : null
     }
 }
