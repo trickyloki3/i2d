@@ -219,5 +219,10 @@
         "description" : "Announce a message {1}.",
         "required" : 2,
         "optional" : 5
+    },
+    "homevolution" : {
+        "description" : "Evolve a homunculus.",
+        "required" : 0,
+        "optional" : 0
     }
 }
