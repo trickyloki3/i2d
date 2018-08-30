@@ -120,6 +120,8 @@ static int i2d_bonus_handler_searchstore_effect(i2d_handler *, i2d_script *, i2d
 static int i2d_bonus_handler_announce_flag(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_mercenary_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_mercenary(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_bonus_script_flag_cb(uint64_t, void *);
+static int i2d_bonus_handler_bonus_script_flag(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -158,7 +160,8 @@ i2d_handler bonus_list[] = {
     { {"string", 6}, i2d_bonus_handler_string },
     { {"searchstore_effect", 18}, i2d_bonus_handler_searchstore_effect },
     { {"announce_flag", 13}, i2d_bonus_handler_announce_flag },
-    { {"mercenary", 9}, i2d_bonus_handler_mercenary }
+    { {"mercenary", 9}, i2d_bonus_handler_mercenary },
+    { {"bonus_script_flag", 17}, i2d_bonus_handler_bonus_script_flag }
 };
 
 const char * i2d_token_string[] = {
@@ -2190,6 +2193,8 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to load skill_flags");
             } else if(i2d_value_map_init(&object->searchstore_effect, object->json->searchstore_effect)) {
                 status = i2d_panic("failed to load searchstore_effect");
+            } else if(i2d_value_map_init(&object->bonus_script_flag, object->json->bonus_script_flag)) {
+                status = i2d_panic("failed to load bonus_script_flag");
             } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
                 status = i2d_panic("failed to load functions");
             } else if(i2d_data_map_init(&object->bonus, data_map_by_constant, object->json->bonus, object->constant_db)) {
@@ -2296,6 +2301,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->bonus2, i2d_data_map_deit);
     i2d_deit(object->bonus, i2d_data_map_deit);
     i2d_deit(object->functions, i2d_data_map_deit);
+    i2d_deit(object->bonus_script_flag, i2d_value_map_deit);
     i2d_deit(object->searchstore_effect, i2d_value_map_deit);
     i2d_deit(object->skill_flags, i2d_value_map_deit);
     i2d_deit(object->ammos, i2d_value_map_deit);
@@ -2561,6 +2567,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_GETGROUPITEM:
         case I2D_MERCENARY_CREATE:
         case I2D_MERCENARY_HEAL:
+        case I2D_BONUS_SCRIPT:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
@@ -4608,6 +4615,67 @@ static int i2d_bonus_handler_mercenary_cb(i2d_script * script, i2d_string_stack 
 
 static int i2d_bonus_handler_mercenary(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_mercenary_cb);
+}
+
+struct i2d_bonus_script {
+    i2d_script * script;
+    i2d_string_stack * stack;
+};
+
+typedef struct i2d_bonus_script i2d_bonus_script;
+
+static int i2d_bonus_handler_bonus_script_flag_cb(uint64_t bit, void * data) {
+    int status = I2D_OK;
+    i2d_bonus_script * context = data;
+    long flag = (long) bit;
+    i2d_string string;
+
+    i2d_zero(string);
+
+    if(i2d_value_map_get(context->script->bonus_script_flag, &flag, &string)) {
+        status = i2d_panic("failed to get bonus script by flag -- %ld", flag);
+    } else if(i2d_string_stack_push(context->stack, string.string, string.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_bonus_script_flag(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long flag;
+    i2d_string_stack * stack = NULL;
+    i2d_bonus_script context;
+    i2d_string * list;
+    size_t size;
+    size_t i;
+
+    if(i2d_node_get_constant(node, &flag)) {
+        status = i2d_panic("failed to get bonus script flag");
+    } else if(i2d_string_stack_cache_get(script->stack_cache, &stack)) {
+        status = i2d_panic("failed to create string stack object");
+    } else {
+        context.script = script;
+        context.stack = stack;
+        if(i2d_by_bit64(flag, i2d_bonus_handler_bonus_script_flag_cb, &context)) {
+            status = i2d_panic("failed to get bonus script by flag -- %ld", flag);
+        } else if(i2d_string_stack_get(stack, &list, &size)) {
+            status = i2d_panic("failed to get string stack");
+        } else {
+            for(i = 0; i < size && !status; i++)
+                if(list[i].length && i2d_buffer_printf(local->buffer, "%s\n", list[i].string))
+                    status = i2d_panic("failed to write buffer object");
+
+            if(!status && i2d_string_stack_push_buffer(local->stack, local->buffer))
+                status = i2d_panic("failed to push string on stack");
+        }
+
+        if(i2d_string_stack_cache_put(script->stack_cache, &stack))
+            status = i2d_panic("failed to cache string stack object");
+    }
+
+
+    return status;
 }
 
 static int i2d_data_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {

@@ -257,5 +257,21 @@
         "required" : 2,
         "optional" : 0,
         "dump_stack_instead_of_description" : null
+    },
+    "bonus_script" : {
+        "argument_type" : [
+            "script",
+            "time",
+            "bonus_script_flag",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "argument_default" : [
+            "0"
+        ],
+        "description" : "[Bonus Script {1} Duration]\n{0}{2}",
+        "required" : 2,
+        "optional" : 4
     }
 }
