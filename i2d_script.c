@@ -2001,6 +2001,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * optional;
     json_t * prefixes;
     json_t * empty_description_on_zero;
+    json_t * empty_description_on_empty_string;
     json_t * dump_stack_instead_of_description;
 
     min = json_object_get(json, "min");
@@ -2013,6 +2014,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     optional = json_object_get(json, "optional");
     prefixes = json_object_get(json, "prefixes");
     empty_description_on_zero = json_object_get(json, "empty_description_on_zero");
+    empty_description_on_empty_string = json_object_get(json, "empty_description_on_empty_string");
     dump_stack_instead_of_description = json_object_get(json, "dump_stack_instead_of_description");
     i2d_constant_get_by_macro_value(constant_db, key, &result->constant);
 
@@ -2037,6 +2039,8 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     } else {
         if(empty_description_on_zero)
             result->empty_description_on_zero = 1;
+        if(empty_description_on_empty_string)
+            result->empty_description_on_empty_string = 1;
         if(dump_stack_instead_of_description)
             result->dump_stack_instead_of_description = 1;
     }
@@ -2694,6 +2698,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
     size_t size;
     i2d_string * list;
     i2d_handler * handler;
+    int is_empty;
 
     i2d_zero(local);
 
@@ -2748,6 +2753,18 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
                             i2d_buffer_printf(buffer, "%s", list[i].string) )
                             status = i2d_panic("failed to write buffer object");
                     }
+            }
+        } else if(data->empty_description_on_empty_string) {
+            if(i2d_string_stack_get(local.stack, &list, &size)) {
+                status = i2d_panic("failed to get argument stack array");
+            } else {
+                is_empty = I2D_OK;
+                for(i = 0; i < size && !status && !is_empty; i++)
+                    if(!list[i].length)
+                        is_empty = I2D_FAIL;
+
+                if(!is_empty && i2d_format_write(&data->description, local.stack, buffer))
+                    status = i2d_panic("failed to write bonus type description");
             }
         } else if(!status && i2d_format_write(&data->description, local.stack, buffer)) {
             status = i2d_panic("failed to write bonus type description");
