@@ -124,6 +124,8 @@ static int i2d_bonus_handler_bonus_script_flag_cb(uint64_t, void *);
 static int i2d_bonus_handler_bonus_script_flag(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_pet_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_pet(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_pet_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_pet_loyal_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -164,7 +166,9 @@ i2d_handler bonus_list[] = {
     { {"announce_flag", 13}, i2d_bonus_handler_announce_flag },
     { {"mercenary", 9}, i2d_bonus_handler_mercenary },
     { {"bonus_script_flag", 17}, i2d_bonus_handler_bonus_script_flag },
-    { {"pet", 3}, i2d_bonus_handler_pet }
+    { {"pet", 3}, i2d_bonus_handler_pet },
+    { {"pet_script", 10}, i2d_bonus_handler_pet_script },
+    { {"pet_loyal_script", 16}, i2d_bonus_handler_pet_loyal_script }
 };
 
 const char * i2d_token_string[] = {
@@ -4698,6 +4702,52 @@ static int i2d_bonus_handler_pet_cb(i2d_script * script, i2d_string_stack * stac
 
 static int i2d_bonus_handler_pet(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_pet_cb);
+}
+
+static int i2d_bonus_handler_pet_script(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long id;
+    i2d_pet * pet;
+    i2d_string pet_script;
+
+    i2d_zero(pet_script);
+
+    if(i2d_node_get_constant(node, &id)) {
+        status = i2d_panic("failed to get pet id");
+    } else if(i2d_pet_db_search_by_id(script->db->pet_db, id, &pet)) {
+        status = i2d_panic("failed to get pet by id -- %ld", id);
+    } else if(i2d_script_compile(script, &pet->pet_script, &pet_script)) {
+        status = i2d_panic("failed to compile script -- %s", pet->pet_script.string);
+    } else {
+        if(i2d_string_stack_push(local->stack, pet_script.string, pet_script.length))
+            status = i2d_panic("failed to push string on stack");
+        i2d_string_destroy(&pet_script);
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_pet_loyal_script(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long id;
+    i2d_pet * pet;
+    i2d_string loyal_script;
+
+    i2d_zero(loyal_script);
+
+    if(i2d_node_get_constant(node, &id)) {
+        status = i2d_panic("failed to get pet id");
+    } else if(i2d_pet_db_search_by_id(script->db->pet_db, id, &pet)) {
+        status = i2d_panic("failed to get pet by id -- %ld", id);
+    } else if(i2d_script_compile(script, &pet->loyal_script, &loyal_script)) {
+        status = i2d_panic("failed to compile script -- %s", pet->loyal_script.string);
+    } else {
+        if(i2d_string_stack_push(local->stack, loyal_script.string, loyal_script.length))
+            status = i2d_panic("failed to push string on stack");
+        i2d_string_destroy(&loyal_script);
+    }
+
+    return status;
 }
 
 static int i2d_data_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {

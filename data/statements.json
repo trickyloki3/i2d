@@ -285,10 +285,17 @@
     },
     "pet" : {
         "argument_type" : [
-            "pet"
+            "pet_tame",
+            "pet_script_print",
+            "pet_loyal_script_print"
         ],
-        "description" : "Tame a {0}.",
+        "argument_order" : [
+            0,
+            0,
+            0
+        ],
         "required" : 1,
-        "optional" : 0
+        "optional" : 0,
+        "dump_stack_instead_of_description" : null
     }
 }
