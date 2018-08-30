@@ -84,5 +84,12 @@
         ],
         "description" : "{0} {1} mercenary SP.",
         "empty_description_on_zero" : null
+    },
+    "makerune_success_bonus" : {
+        "argument_type" : [
+            "percent"
+        ],
+        "description" : "Add {0} success rate.",
+        "empty_description_on_zero" : null
     }
 }

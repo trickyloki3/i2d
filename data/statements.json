@@ -273,5 +273,14 @@
         "description" : "[Bonus Script {1} Duration]\n{0}{2}",
         "required" : 2,
         "optional" : 4
+    },
+    "makerune" : {
+        "argument_type" : [
+            "makerune_success_bonus",
+            "ignore"
+        ],
+        "description" : "Craft runes. {0}",
+        "required" : 1,
+        "optional" : 1
     }
 }
