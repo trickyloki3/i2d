@@ -282,5 +282,13 @@
         "description" : "Craft runes. {0}",
         "required" : 1,
         "optional" : 1
+    },
+    "pet" : {
+        "argument_type" : [
+            "pet"
+        ],
+        "description" : "Tame a {0}.",
+        "required" : 1,
+        "optional" : 0
     }
 }

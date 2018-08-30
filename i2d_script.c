@@ -122,6 +122,8 @@ static int i2d_bonus_handler_mercenary_cb(i2d_script *, i2d_string_stack *, long
 static int i2d_bonus_handler_mercenary(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_bonus_script_flag_cb(uint64_t, void *);
 static int i2d_bonus_handler_bonus_script_flag(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_pet_cb(i2d_script *, i2d_string_stack *, long);
+static int i2d_bonus_handler_pet(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -161,7 +163,8 @@ i2d_handler bonus_list[] = {
     { {"searchstore_effect", 18}, i2d_bonus_handler_searchstore_effect },
     { {"announce_flag", 13}, i2d_bonus_handler_announce_flag },
     { {"mercenary", 9}, i2d_bonus_handler_mercenary },
-    { {"bonus_script_flag", 17}, i2d_bonus_handler_bonus_script_flag }
+    { {"bonus_script_flag", 17}, i2d_bonus_handler_bonus_script_flag },
+    { {"pet", 3}, i2d_bonus_handler_pet }
 };
 
 const char * i2d_token_string[] = {
@@ -2569,6 +2572,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_MERCENARY_HEAL:
         case I2D_BONUS_SCRIPT:
         case I2D_MAKERUNE:
+        case I2D_PET:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
@@ -4677,6 +4681,23 @@ static int i2d_bonus_handler_bonus_script_flag(i2d_handler * handler, i2d_script
 
 
     return status;
+}
+
+static int i2d_bonus_handler_pet_cb(i2d_script * script, i2d_string_stack * stack, long id) {
+    int status = I2D_OK;
+    i2d_pet * pet;
+
+    if(i2d_pet_db_search_by_id(script->db->pet_db, id, &pet)) {
+        status = i2d_panic("failed to get pet by id -- %ld", id);
+    } else if(i2d_string_stack_push(stack, pet->jname.string, pet->jname.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_pet(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    return i2d_bonus_handler_range(handler, script, node, local, i2d_bonus_handler_pet_cb);
 }
 
 static int i2d_data_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
