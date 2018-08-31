@@ -330,7 +330,7 @@
             "percent",
             "percent"
         ],
-        "description" : "Cast Level {1} {0} every {2} seconds when HP is below {3} and SP is below {4}.",
+        "description" : "Cast level {1} {0} every {2} seconds when HP is below {3} and SP is below {4}.",
         "required" : 5,
         "optional" : 0
     },
@@ -342,8 +342,19 @@
             "percent",
             "percent"
         ],
-        "description" : "Add a {3}/{4} chance to cast {0} and deal {1} damage.",
+        "description" : "Add a {3} (+{4} when loyal) chance to cast {0} and deal {1} damage.",
         "required" : 5,
+        "optional" : 0
+    },
+    "petskillattack" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "percent",
+            "percent"
+        ],
+        "description" : "Add a {2} (+{3} when loyal) chance to cast level {1} {0}.",
+        "required" : 4,
         "optional" : 0
     }
 }
