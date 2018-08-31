@@ -371,5 +371,19 @@
         "description" : "Obtain x{1} from {0}.",
         "required" : 1,
         "optional" : 4
+    },
+    "transform" : {
+        "argument_type" : [
+            "mob",
+            "time",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "Transform into a {0} for {1}.",
+        "required" : 2,
+        "optional" : 5
     }
 }
