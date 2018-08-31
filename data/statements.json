@@ -333,5 +333,17 @@
         "description" : "Cast Level {1} {0} every {2} seconds when HP is below {3} and SP is below {4}.",
         "required" : 5,
         "optional" : 0
+    },
+    "petskillattack2" : {
+        "argument_type" : [
+            "skill",
+            "integer",
+            "integer",
+            "percent",
+            "percent"
+        ],
+        "description" : "Add a {3}/{4} chance to cast {0} and deal {1} damage.",
+        "required" : 5,
+        "optional" : 0
     }
 }
