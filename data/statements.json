@@ -305,5 +305,13 @@
         "required" : 1,
         "optional" : 0,
         "dump_stack_instead_of_description" : null
+    },
+    "cooking" : {
+        "argument_type" : [
+            "produce"
+        ],
+        "required" : 1,
+        "optional" : 0,
+        "dump_stack_instead_of_description" : null
     }
 }

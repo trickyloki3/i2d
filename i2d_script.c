@@ -2584,6 +2584,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_MAKERUNE:
         case I2D_PET:
         case I2D_PRODUCE:
+        case I2D_COOKING:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
@@ -4793,13 +4794,17 @@ static int i2d_bonus_handler_produce(i2d_handler * handler, i2d_script * script,
         status = i2d_panic("failed to get produce list by item level -- %ld", item_level);
     } else {
         for(i = 0; i < produce_list->size && !status; i++) {
+            item = NULL;
+            skill = NULL;
             produce = produce_list->list[i];
             if(i2d_item_db_search_by_id(script->db->item_db, produce->item_id, &item)) {
                 status = i2d_panic("failed to get item by id -- %ld", produce->item_id);
-            } else if(i2d_skill_db_search_by_id(script->db->skill_db, produce->skill_id, &skill)) {
+            } else if(produce->skill_id && i2d_skill_db_search_by_id(script->db->skill_db, produce->skill_id, &skill)) {
                 status = i2d_panic("failed to get skill by id -- %ld", produce->skill_id);
             } else {
-                if(i2d_buffer_printf(local->buffer, "[%s - Level %ld %s]\n", item->name.string, produce->skill_level, skill->name.string)) {
+                if( skill ?
+                    i2d_buffer_printf(local->buffer, "[%s - Level %ld %s]\n", item->name.string, produce->skill_level, skill->name.string) :
+                    i2d_buffer_printf(local->buffer, "[%s]\n", item->name.string) ) {
                     status = i2d_panic("failed to write buffer object");
                 } else {
                     for(j = 0; j < produce->material_count && !status; j += 2) {
