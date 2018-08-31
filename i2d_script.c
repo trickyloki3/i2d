@@ -126,6 +126,7 @@ static int i2d_bonus_handler_pet_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_bonus_handler_pet(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_pet_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_pet_loyal_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_produce(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -168,7 +169,8 @@ i2d_handler bonus_list[] = {
     { {"bonus_script_flag", 17}, i2d_bonus_handler_bonus_script_flag },
     { {"pet", 3}, i2d_bonus_handler_pet },
     { {"pet_script", 10}, i2d_bonus_handler_pet_script },
-    { {"pet_loyal_script", 16}, i2d_bonus_handler_pet_loyal_script }
+    { {"pet_loyal_script", 16}, i2d_bonus_handler_pet_loyal_script },
+    { {"produce", 7}, i2d_bonus_handler_produce }
 };
 
 const char * i2d_token_string[] = {
@@ -2581,6 +2583,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_BONUS_SCRIPT:
         case I2D_MAKERUNE:
         case I2D_PET:
+        case I2D_PRODUCE:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
@@ -4766,6 +4769,53 @@ static int i2d_bonus_handler_pet_loyal_script(i2d_handler * handler, i2d_script 
         if(i2d_string_stack_push(local->stack, loyal_script.string, loyal_script.length))
             status = i2d_panic("failed to push string on stack");
         i2d_string_destroy(&loyal_script);
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_produce(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long item_level;
+    i2d_produce_list * produce_list;
+    i2d_produce * produce;
+    size_t i;
+    i2d_item * item;
+    i2d_skill * skill;
+    size_t j;
+    long item_id;
+    long item_amount;
+    i2d_item * material;
+
+    if(i2d_node_get_constant(node, &item_level)) {
+        status = i2d_panic("failed to get item level");
+    } else if(i2d_produce_db_search_by_item_level(script->db->produce_db, item_level, &produce_list)) {
+        status = i2d_panic("failed to get produce list by item level -- %ld", item_level);
+    } else {
+        for(i = 0; i < produce_list->size && !status; i++) {
+            produce = produce_list->list[i];
+            if(i2d_item_db_search_by_id(script->db->item_db, produce->item_id, &item)) {
+                status = i2d_panic("failed to get item by id -- %ld", produce->item_id);
+            } else if(i2d_skill_db_search_by_id(script->db->skill_db, produce->skill_id, &skill)) {
+                status = i2d_panic("failed to get skill by id -- %ld", produce->skill_id);
+            } else {
+                if(i2d_buffer_printf(local->buffer, "[%s - Level %ld %s]\n", item->name.string, produce->skill_level, skill->name.string)) {
+                    status = i2d_panic("failed to write buffer object");
+                } else {
+                    for(j = 0; j < produce->material_count && !status; j += 2) {
+                        item_id = produce->materials[j];
+                        item_amount = produce->materials[j + 1];
+                        if(i2d_item_db_search_by_id(script->db->item_db, item_id, &material)) {
+                            status = i2d_panic("failed to get item by id -- %ld", item_id);
+                        } else if(i2d_buffer_printf(local->buffer, "x%ld %s\n", item_amount, material->name.string)) {
+                            status = i2d_panic("failed to write buffer object");
+                        }
+                    }
+                }
+            }
+        }
+        if(!status && i2d_string_stack_push_buffer(local->stack, local->buffer))
+            status = i2d_panic("failed to push string on stack");
     }
 
     return status;
