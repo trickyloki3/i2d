@@ -2586,6 +2586,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_PRODUCE:
         case I2D_COOKING:
         case I2D_PETLOOT:
+        case I2D_PETSKILLSUPPORT:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
