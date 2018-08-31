@@ -356,5 +356,20 @@
         "description" : "Add a {2} (+{3} when loyal) chance to cast level {1} {0}.",
         "required" : 4,
         "optional" : 0
+    },
+    "getrandgroupitem" : {
+        "argument_type" : [
+            "itemgroups",
+            "integer",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "argument_default" : [
+            "0"
+        ],
+        "description" : "Obtain x{1} from {0}.",
+        "required" : 1,
+        "optional" : 4
     }
 }
