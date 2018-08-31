@@ -313,5 +313,13 @@
         "required" : 1,
         "optional" : 0,
         "dump_stack_instead_of_description" : null
+    },
+    "petloot" : {
+        "argument_type" : [
+            "integer"
+        ],
+        "description" : "Pet loot with an item capacity of {0}.",
+        "required" : 1,
+        "optional" : 0
     }
 }
