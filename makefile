@@ -4,12 +4,7 @@ else
 CFLAGS+=-O1
 endif
 
-ifeq ($(shell uname -s),Darwin)
 LDLIBS+=-ljansson
-else
-CFLAGS+=$(shell pkg-config jansson --cflags)
-LDLIBS+=$(shell pkg-config jansson --libs)
-endif
 LDLIBS+=-lm
 
 OBJECT:=i2d_util.o
