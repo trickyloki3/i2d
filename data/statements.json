@@ -407,5 +407,21 @@
         "description" : "{0} madogear.",
         "required" : 0,
         "optional" : 2
+    },
+    "monster" : {
+        "argument_type" : [
+            "string",
+            "integer",
+            "integer",
+            "string",
+            "integer",
+            "integer",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "Summon {5} monster(s).",
+        "required" : 6,
+        "optional" : 3
     }
 }
