@@ -326,11 +326,11 @@
         "argument_type" : [
             "skill",
             "integer",
-            "integer",
+            "seconds",
             "percent",
             "percent"
         ],
-        "description" : "Cast level {1} {0} every {2} seconds when HP is below {3} and SP is below {4}.",
+        "description" : "Cast level {1} {0} every {2} when HP is below {3} and SP is below {4}.",
         "required" : 5,
         "optional" : 0
     },
@@ -428,10 +428,10 @@
         "argument_type" : [
             "bonus",
             "ignore",
-            "integer",
-            "integer"
+            "seconds",
+            "seconds"
         ],
-        "description" : "[Bonus lasting {2} seconds for every {3} seconds]\n{0}",
+        "description" : "[Bonus lasting {2} for every {3}]\n{0}",
         "required" : 4,
         "optional" : 0
     }

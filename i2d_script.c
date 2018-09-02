@@ -81,6 +81,7 @@ static int i2d_bonus_handler_range(i2d_handler *, i2d_script *, i2d_node *, i2d_
 
 static int i2d_bonus_handler_expression(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_milliseconds(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_seconds(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_regen(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_splash(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_elements_cb(i2d_script *, i2d_string_stack *, long);
@@ -139,6 +140,7 @@ static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2
 
 i2d_handler bonus_list[] = {
     { {"milliseconds", 12}, i2d_bonus_handler_milliseconds },
+    { {"seconds", 7}, i2d_bonus_handler_seconds },
     { {"regen", 5}, i2d_bonus_handler_regen },
     { {"splash", 6}, i2d_bonus_handler_splash },
     { {"elements", 8}, i2d_bonus_handler_elements },
@@ -2687,9 +2689,9 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_PRODUCE:
         case I2D_COOKING:
         case I2D_PETLOOT:
-        case I2D_PETSKILLSUPPORT:
         case I2D_PETSKILLATTACK2:
         case I2D_PETSKILLATTACK:
+        case I2D_PETSKILLSUPPORT:
         case I2D_PETSKILLBONUS:
         case I2D_GETRANDGROUPITEM:
         case I2D_TRANSFORM:
@@ -4056,6 +4058,44 @@ static int i2d_bonus_handler_milliseconds(i2d_handler * handler, i2d_script * sc
         unit = 1000;
     } else {
         suffix = "millisecond";
+        unit = 1;
+    }
+
+    min /= unit;
+    max /= unit;
+
+    if( min == max ?
+        i2d_buffer_printf(local->buffer, "%ld %s%s", min, suffix, min > 1 ? "s" : "") :
+        i2d_buffer_printf(local->buffer, "%ld ~ %ld %s%s", min, max, suffix, max > 1 ? "s" : "") ) {
+        status = i2d_panic("failed to write time range");
+    } else if(i2d_bonus_handler_expression(handler, script, node, local)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_seconds(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    char * suffix = NULL;
+    long unit = 0;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    if (min / 86400 > 0) {
+        suffix = "day";
+        unit = 86400;
+    } else if (min / 3600 > 0) {
+        suffix = "hour";
+        unit = 3600;
+    } else if (min / 60 > 0) {
+        suffix = "minute";
+        unit = 60;
+    } else {
+        suffix = "second";
         unit = 1;
     }
 
