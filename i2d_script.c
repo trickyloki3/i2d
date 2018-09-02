@@ -4946,8 +4946,15 @@ static int i2d_data_handler_prefixes(i2d_handler * handler, i2d_script * script,
 
     if(i2d_string_stack_get(&handler->data->prefixes, &list, &size)) {
         status = i2d_panic("failed to get string stack");
+    } else if(size < 2) {
+        status = i2d_panic("invalid prefix array size -- %s (%zu)", handler->data->name.string, size);
     } else {
-        if(min >= 0) {
+        if(min == 0 && max == 0) {
+            if( size == 3 ?
+                    i2d_string_stack_push(local->stack, list[2].string, list[2].length) :
+                    i2d_string_stack_push(local->stack, list[0].string, list[0].length) )
+                status = i2d_panic("failed to push string on stack");
+        } else if(min > 0) {
             if(i2d_string_stack_push(local->stack, list[0].string, list[0].length))
                 status = i2d_panic("failed to push string on stack");
         } else {
