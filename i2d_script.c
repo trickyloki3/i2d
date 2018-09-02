@@ -2645,20 +2645,10 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
             status = i2d_script_statement_set(script, block, variables);
             break;
         case I2D_BONUS:
-            status = i2d_script_statement_bonus(script, block, script->bonus, 1);
-            break;
         case I2D_BONUS2:
-            status = i2d_script_statement_bonus(script, block, script->bonus2, 2);
-            break;
         case I2D_BONUS3:
-            status = i2d_script_statement_bonus(script, block, script->bonus3, 3);
-            break;
         case I2D_BONUS4:
-            status = i2d_script_statement_bonus(script, block, script->bonus4, 4);
-            break;
         case I2D_BONUS5:
-            status = i2d_script_statement_bonus(script, block, script->bonus5, 5);
-            break;
         case I2D_AUTOBONUS:
         case I2D_AUTOBONUS2:
         case I2D_AUTOBONUS3:
@@ -2716,27 +2706,6 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         default:
             /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
             break;
-    }
-
-    return status;
-}
-
-int i2d_script_statement_bonus(i2d_script * script, i2d_block * block, i2d_data_map * bonus_map, int argc) {
-    int status = I2D_OK;
-    i2d_node * arguments[MAX_ARGUMENT];
-    long value;
-    i2d_data * data;
-
-    i2d_zero(arguments);
-
-    if(i2d_node_get_arguments(block->nodes, arguments, 1, argc)) {
-        status = i2d_panic("failed to get arguments");
-    } else if(i2d_node_get_constant(arguments[0], &value)) {
-        status = i2d_panic("failed to get bonus type");
-    } else if(i2d_data_map_get(bonus_map, &value, &data)) {
-        status = i2d_panic("failed to get bonus type data -- %ld", value);
-    } else if(i2d_script_statement_evaluate(script, &arguments[1], data, &block->buffer)) {
-        status = i2d_panic("failed to handle bonus arguments");
     }
 
     return status;

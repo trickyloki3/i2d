@@ -1,4 +1,59 @@
 {
+    "bonus" : {
+        "argument_type" : [
+            "bonus",
+            "ignore"
+        ],
+        "description" : "{0}",
+        "required" : 1,
+        "optional" : 1
+    },
+    "bonus2" : {
+        "argument_type" : [
+            "bonus2",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "{0}",
+        "required" : 3,
+        "optional" : 0
+    },
+    "bonus3" : {
+        "argument_type" : [
+            "bonus3",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "{0}",
+        "required" : 4,
+        "optional" : 0
+    },
+    "bonus4" : {
+        "argument_type" : [
+            "bonus4",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "{0}",
+        "required" : 5,
+        "optional" : 0
+    },
+    "bonus5" : {
+        "argument_type" : [
+            "bonus5",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "{0}",
+        "required" : 6,
+        "optional" : 0
+    },
     "autobonus" : {
         "argument_type" : [
             "script",
