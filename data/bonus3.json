@@ -103,7 +103,7 @@
         "argument_type" : [
             "races",
             "percent100",
-            "time"
+            "milliseconds"
         ],
         "description" : "Add a {1} chance of disabling HP and SP recovery of {0} enemies for {2} on each normal attack."
     },

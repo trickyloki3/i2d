@@ -6,7 +6,7 @@
             "percent100",
             "atf_target",
             "atf_type",
-            "time"
+            "milliseconds"
         ],
         "argument_order" : [
             0,

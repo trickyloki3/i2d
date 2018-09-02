@@ -223,7 +223,7 @@
     },
     "bFixedCast" : {
         "argument_type" : [
-            "time"
+            "milliseconds"
         ],
         "description" : "Increase fixed cast time by {0} of all skills."
     },
@@ -679,7 +679,7 @@
     },
     "bVariableCast" : {
         "argument_type" : [
-            "time"
+            "milliseconds"
         ],
         "description" : "Increase variable cast time by {0} of all skills."
     },

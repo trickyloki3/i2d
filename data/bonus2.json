@@ -212,14 +212,14 @@
     "bHPLossRate" : {
         "argument_type" : [
             "integer",
-            "time"
+            "milliseconds"
         ],
         "description" : "Lose {0} HP every {1}."
     },
     "bHPRegenRate" : {
         "argument_type" : [
             "integer",
-            "time"
+            "milliseconds"
         ],
         "description" : "Heal {0} HP every {1}."
     },
@@ -317,14 +317,14 @@
     "bRegenPercentHP" : {
         "argument_type" : [
             "percent",
-            "time"
+            "milliseconds"
         ],
         "description" : "Heal {0} of Max HP every {1}."
     },
     "bRegenPercentSP" : {
         "argument_type" : [
             "percent",
-            "time"
+            "milliseconds"
         ],
         "description" : "Heal {0} of Max SP every {1}."
     },
@@ -359,14 +359,14 @@
     "bSPLossRate" : {
         "argument_type" : [
             "integer",
-            "time"
+            "milliseconds"
         ],
         "description" : "Lose {0} SP every {1}."
     },
     "bSPRegenRate" : {
         "argument_type" : [
             "integer",
-            "time"
+            "milliseconds"
         ],
         "description" : "Heal {0} SP every {1}."
     },
@@ -387,14 +387,14 @@
     "bSkillCooldown" : {
         "argument_type" : [
             "skill",
-            "time"
+            "milliseconds"
         ],
         "description" : "Increase cooldown of {0} by {1}."
     },
     "bSkillFixedCast" : {
         "argument_type" : [
             "skill",
-            "time"
+            "milliseconds"
         ],
         "description" : "Increase fixed cast time of {0} by {1}."
     },
@@ -429,7 +429,7 @@
     "bSkillVariableCast" : {
         "argument_type" : [
             "skill",
-            "time"
+            "milliseconds"
         ],
         "description" : "Increase variable cast time of {0} by {1}."
     },

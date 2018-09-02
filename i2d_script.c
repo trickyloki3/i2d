@@ -80,7 +80,7 @@ typedef int (*i2d_bonus_handler_range_cb)(i2d_script *, i2d_string_stack *, long
 static int i2d_bonus_handler_range(i2d_handler *, i2d_script *, i2d_node *, i2d_local *, i2d_bonus_handler_range_cb);
 
 static int i2d_bonus_handler_expression(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
-static int i2d_bonus_handler_time(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_milliseconds(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_regen(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_splash(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_elements_cb(i2d_script *, i2d_string_stack *, long);
@@ -138,7 +138,7 @@ static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 i2d_handler bonus_list[] = {
-    { {"time", 4}, i2d_bonus_handler_time },
+    { {"milliseconds", 12}, i2d_bonus_handler_milliseconds },
     { {"regen", 5}, i2d_bonus_handler_regen },
     { {"splash", 6}, i2d_bonus_handler_splash },
     { {"elements", 8}, i2d_bonus_handler_elements },
@@ -4032,7 +4032,7 @@ static int i2d_bonus_handler_expression(i2d_handler * handler, i2d_script * scri
     return status;
 }
 
-static int i2d_bonus_handler_time(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+static int i2d_bonus_handler_milliseconds(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
     long max;

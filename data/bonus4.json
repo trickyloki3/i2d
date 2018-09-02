@@ -3,7 +3,7 @@
         "argument_type" : [
             "races",
             "percent",
-            "time",
+            "milliseconds",
             "integer"
         ],
         "description" : "Add a {1} chance to set DEF to {3} for {2} on each normal attack against {0} enemies."
@@ -12,7 +12,7 @@
         "argument_type" : [
             "races",
             "percent",
-            "time",
+            "milliseconds",
             "integer"
         ],
         "description" : "Add a {1} chance to set MDEF to {3} for {2} on each normal attack against {0} enemies."
@@ -23,7 +23,7 @@
             "percent100",
             "atf_target",
             "atf_type",
-            "time"
+            "milliseconds"
         ],
         "argument_order" : [
             0,
@@ -40,7 +40,7 @@
             "percent100",
             "atf_target",
             "atf_type",
-            "time"
+            "milliseconds"
         ],
         "argument_order" : [
             0,
