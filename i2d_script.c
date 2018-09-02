@@ -4567,13 +4567,22 @@ static int i2d_bonus_handler_script(i2d_handler * handler, i2d_script * script, 
 
     if(i2d_node_get_string(node, &string)) {
         status = i2d_panic("failed to get script");
-    } else if(i2d_script_compile(script, &string, &description)) {
-        status = i2d_panic("failed to compile script -- %s", string.string);
     } else {
-        if(i2d_string_stack_push(local->stack, description.string, description.length))
-            status = i2d_panic("failed to push string on stack");
+        if( string.string[0] != '{' ?
+            i2d_buffer_printf(local->buffer, "{%s}", string.string) :
+            i2d_buffer_printf(local->buffer, "%s", string.string) ) {
+            status = i2d_panic("failed to write buffer object");
+        } else {
+            i2d_buffer_get(local->buffer, &string.string, &string.length);
+            if(i2d_script_compile(script, &string, &description)) {
+                status = i2d_panic("failed to compile script -- %s", string.string);
+            } else {
+                if(i2d_string_stack_push(local->stack, description.string, description.length))
+                    status = i2d_panic("failed to push string on stack");
 
-        i2d_string_destroy(&description);
+                i2d_string_destroy(&description);
+            }
+        }
     }
 
     return status;
