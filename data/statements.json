@@ -423,5 +423,16 @@
         "description" : "Summon {5} monster(s).",
         "required" : 6,
         "optional" : 3
+    },
+    "petskillbonus" : {
+        "argument_type" : [
+            "bonus",
+            "ignore",
+            "integer",
+            "integer"
+        ],
+        "description" : "[Bonus lasting {2} seconds for every {3} seconds]\n{0}",
+        "required" : 4,
+        "optional" : 0
     }
 }

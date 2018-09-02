@@ -337,6 +337,7 @@ enum {
 };
 
 typedef struct i2d_handler i2d_handler;
+typedef struct i2d_handler_list i2d_handler_list;
 
 struct i2d_script {
     i2d_db * db;
@@ -364,6 +365,7 @@ struct i2d_script {
     i2d_string_stack_cache * stack_cache;
     i2d_rbt * function_map;
     i2d_rbt * bonus_map;
+    i2d_rbt * bonus_list_map;
     i2d_handler * handlers;
 };
 
