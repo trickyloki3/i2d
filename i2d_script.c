@@ -299,6 +299,69 @@ int i2d_token_precedence[] = {
     2  /* -- */
 };
 
+int i2d_token_right_to_left[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1, /* += */
+    1, /* -= */
+    1, /* *= */
+    1, /* /= */
+    1, /* %= */
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1, /* >>= */
+    1, /* <<= */
+    1, /* &= */
+    1, /* |= */
+    1, /* ^= */
+    0,
+    0,
+    0,
+    0,
+    0,
+    1, /* = */
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
 int i2d_token_init(i2d_token ** result, enum i2d_token_type type) {
     int status = I2D_OK;
     i2d_token * object = NULL;
@@ -1811,14 +1874,23 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                         }
                     }
                 } else {
-                    if(I2D_UNARY == node->type) {
-                        node->right = root;
-                        root = node;
-                    } else if(I2D_BINARY == node->type) {
-                        node->left = root;
-                        root = node;
+                    iter = root;
+                    while(iter->right && i2d_token_right_to_left[iter->right->tokens->type])
+                        iter = iter->right;
+
+                    if(i2d_token_right_to_left[iter->tokens->type]) {
+                        node->left = iter->right;
+                        iter->right = node;
                     } else {
-                        status = i2d_panic("operand without operator");
+                        if(I2D_UNARY == node->type) {
+                            node->right = root;
+                            root = node;
+                        } else if(I2D_BINARY == node->type) {
+                            node->left = root;
+                            root = node;
+                        } else {
+                            status = i2d_panic("operand without operator");
+                        }
                     }
                 }
 
