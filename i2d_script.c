@@ -1138,7 +1138,6 @@ i2d_statement statements[] = {
     {I2D_GETEXP2, {"getexp2", 7}},
     {I2D_MONSTER, {"monster", 7}},
     {I2D_HOMEVOLUTION, {"homevolution", 12}},
-    {I2D_SETOPTION, {"setoption", 9}},
     {I2D_SETFALCON, {"setfalcon", 9}},
     {I2D_GETGROUPITEM, {"getgroupitem", 12}},
     {I2D_RESETSTATUS, {"resetstatus", 11}},
