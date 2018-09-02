@@ -4,5 +4,12 @@
             "Recover",
             "Drain"
         ]
+    },
+    "setfalcon_prefix" : {
+        "prefixes" : [
+            "Summon",
+            "Summon",
+            "Release"
+        ]
     }
 }

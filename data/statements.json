@@ -385,5 +385,16 @@
         "description" : "Transform into a {0} for {1}.",
         "required" : 2,
         "optional" : 5
+    },
+    "setfalcon" : {
+        "argument_type" : [
+            "setfalcon_prefix"
+        ],
+        "argument_default" : [
+            "0"
+        ],
+        "description" : "{0} falcon.",
+        "required" : 0,
+        "optional" : 2
     }
 }

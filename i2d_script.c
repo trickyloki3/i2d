@@ -2663,6 +2663,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_PETSKILLATTACK:
         case I2D_GETRANDGROUPITEM:
         case I2D_TRANSFORM:
+        case I2D_SETFALCON:
             status = i2d_script_statement_generic(script, block);
             break;
         /* statement without description */
