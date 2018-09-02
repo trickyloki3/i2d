@@ -388,12 +388,23 @@
     },
     "setfalcon" : {
         "argument_type" : [
-            "setfalcon_prefix"
+            "setmount_prefix"
         ],
         "argument_default" : [
             "0"
         ],
         "description" : "{0} falcon.",
+        "required" : 0,
+        "optional" : 2
+    },
+    "setmadogear" : {
+        "argument_type" : [
+            "setmount_prefix"
+        ],
+        "argument_default" : [
+            "0"
+        ],
+        "description" : "{0} madogear.",
         "required" : 0,
         "optional" : 2
     }
