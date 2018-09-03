@@ -2690,6 +2690,13 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_MONSTER:
             status = i2d_script_statement_generic(script, block);
             break;
+        /* to-do */
+        case I2D_SC_START:
+        case I2D_MERCENARY_SC_START:
+        case I2D_SC_START2:
+        case I2D_SC_START4:
+        case I2D_SC_END:
+        case I2D_PETRECOVERY:
         /* statement without description */
         case I2D_HATEFFECT:
         case I2D_SKILLEFFECT:
