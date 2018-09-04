@@ -61,6 +61,7 @@ struct i2d_constant_db {
     i2d_rbt * itemgroups;
     i2d_rbt * options;
     i2d_rbt * announces;
+    i2d_rbt * sc_end;
     i2d_rbt * mob_races;
 
     i2d_constant_bf bf;
@@ -87,5 +88,6 @@ int i2d_constant_get_by_effect(i2d_constant_db *, const long, i2d_constant **);
 int i2d_constant_get_by_itemgroups(i2d_constant_db *, const long, i2d_constant **);
 int i2d_constant_get_by_options(i2d_constant_db *, const long, i2d_constant **);
 int i2d_constant_get_by_announces(i2d_constant_db *, const long, i2d_constant **);
+int i2d_constant_get_by_sc_end(i2d_constant_db *, const long, i2d_constant **);
 int i2d_constant_get_by_mob_races(i2d_constant_db *, const long, i2d_constant **);
 #endif

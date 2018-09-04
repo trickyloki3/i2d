@@ -19,7 +19,6 @@ struct i2d_handler_list {
     i2d_handler_list_cb handler;
 };
 
-
 static int i2d_handler_init(i2d_handler **, i2d_data *, i2d_handler_cb);
 static void i2d_handler_deit(i2d_handler **);
 static void i2d_handler_list_deit(i2d_handler **);
@@ -134,6 +133,7 @@ static int i2d_bonus_handler_pet(i2d_handler *, i2d_script *, i2d_node *, i2d_lo
 static int i2d_bonus_handler_pet_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_pet_loyal_script(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_bonus_handler_produce(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_bonus_handler_sc_end(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
 static int i2d_data_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_data_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -178,7 +178,8 @@ i2d_handler bonus_list[] = {
     { {"pet", 3}, i2d_bonus_handler_pet },
     { {"pet_script", 10}, i2d_bonus_handler_pet_script },
     { {"pet_loyal_script", 16}, i2d_bonus_handler_pet_loyal_script },
-    { {"produce", 7}, i2d_bonus_handler_produce }
+    { {"produce", 7}, i2d_bonus_handler_produce },
+    { {"sc_end", 6}, i2d_bonus_handler_sc_end }
 };
 
 static int i2d_bonus_handler_list_bonus(i2d_handler_list *, i2d_script *, i2d_node **, i2d_local *);
@@ -2688,6 +2689,8 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_SETFALCON:
         case I2D_SETMADOGEAR:
         case I2D_MONSTER:
+        case I2D_SC_END:
+        case I2D_PETRECOVERY:
             status = i2d_script_statement_generic(script, block);
             break;
         /* to-do */
@@ -2695,8 +2698,6 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_MERCENARY_SC_START:
         case I2D_SC_START2:
         case I2D_SC_START4:
-        case I2D_SC_END:
-        case I2D_PETRECOVERY:
         /* statement without description */
         case I2D_HATEFFECT:
         case I2D_SKILLEFFECT:
@@ -4968,6 +4969,22 @@ static int i2d_bonus_handler_produce(i2d_handler * handler, i2d_script * script,
         }
         if(!status && i2d_string_stack_push_buffer(local->stack, local->buffer))
             status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
+static int i2d_bonus_handler_sc_end(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long id;
+    i2d_constant * constant;
+
+    if(i2d_node_get_constant(node, &id)) {
+        status = i2d_panic("failed to get status id");
+    } else if(i2d_constant_get_by_sc_end(script->constant_db, id, &constant)) {
+        status = i2d_panic("failed to get status by id -- %ld", id);
+    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
     }
 
     return status;

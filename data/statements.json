@@ -489,5 +489,23 @@
         "description" : "[Bonus lasting {2} for every {3}]\n{0}",
         "required" : 4,
         "optional" : 0
+    },
+    "petrecovery" : {
+        "argument_type" : [
+            "sc_end",
+            "seconds"
+        ],
+        "description" : "Remove {0} every {1}.",
+        "required" : 2,
+        "optional" : 0
+    },
+    "sc_end" : {
+        "argument_type" : [
+            "sc_end",
+            "ignore"
+        ],
+        "description" : "Remove {0}.",
+        "required" : 1,
+        "optional" : 1
     }
 }

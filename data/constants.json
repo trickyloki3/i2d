@@ -11722,6 +11722,7 @@
             "value" : 353
         },
         "SC_ANGELUS" : {
+            "name" : "Angelus",
             "value" : 29
         },
         "SC_ANGEL_PROTECT" : {
@@ -11812,6 +11813,7 @@
             "value" : 87
         },
         "SC_AUTOGUARD" : {
+            "name" : "Autoguard",
             "value" : 76
         },
         "SC_AUTOSPELL" : {
@@ -11878,12 +11880,14 @@
             "value" : 495
         },
         "SC_BLEEDING" : {
+            "name" : "Bleeding",
             "value" : 9
         },
         "SC_BLESSING" : {
             "value" : 30
         },
         "SC_BLIND" : {
+            "name" : "Blind",
             "value" : 8
         },
         "SC_BLOODLUST" : {
@@ -11929,6 +11933,7 @@
             "value" : 242
         },
         "SC_CHANGEUNDEAD" : {
+            "name" : "Change Undead",
             "value" : 128
         },
         "SC_CHASEWALK" : {
@@ -11959,6 +11964,7 @@
             "value" : 658
         },
         "SC_CLOAKING" : {
+            "name" : "Cloaking",
             "value" : 25
         },
         "SC_CLOAKINGEXCEED" : {
@@ -11992,6 +11998,7 @@
             "value" : 110
         },
         "SC_CONFUSION" : {
+            "name" : "Confusion",
             "value" : 7
         },
         "SC_COOLER" : {
@@ -12031,6 +12038,7 @@
             "value" : 388
         },
         "SC_CURSE" : {
+            "name" : "Curse",
             "value" : 5
         },
         "SC_CURSEDCIRCLE_ATKER" : {
@@ -12067,6 +12075,7 @@
             "value" : 372
         },
         "SC_DECORATION_OF_MUSIC" : {
+            "name" : "Decoration of Music",
             "value" : 588
         },
         "SC_DECREASEAGI" : {
@@ -12124,6 +12133,7 @@
             "value" : 154
         },
         "SC_DPOISON" : {
+            "name" : "Deathly Poison",
             "value" : 10
         },
         "SC_DRESSUP" : {
@@ -12172,6 +12182,7 @@
             "value" : 26
         },
         "SC_ENDURE" : {
+            "name" : "Endure",
             "value" : 21
         },
         "SC_ENERGYCOAT" : {
@@ -12283,6 +12294,7 @@
             "value" : 180
         },
         "SC_FREEZE" : {
+            "name" : "Freeze",
             "value" : 1
         },
         "SC_FREEZE_SP" : {
@@ -12298,6 +12310,7 @@
             "value" : 565
         },
         "SC_FSTONE" : {
+            "name" : "Stone",
             "value" : 644
         },
         "SC_FULL_SWING_K" : {
@@ -12412,6 +12425,7 @@
             "value" : 651
         },
         "SC_HALLUCINATION" : {
+            "name" : "Hallucination",
             "value" : 52
         },
         "SC_HALLUCINATIONWALK" : {
@@ -12430,6 +12444,7 @@
             "value" : 398
         },
         "SC_HAT_EFFECT" : {
+            "name" : "Hat Effect",
             "value" : 642
         },
         "SC_HAWKEYES" : {
@@ -12451,6 +12466,7 @@
             "value" : 158
         },
         "SC_HIDING" : {
+            "name" : "Hiding",
             "value" : 24
         },
         "SC_HISS" : {
@@ -12664,6 +12680,7 @@
             "value" : 548
         },
         "SC_LJOSALFAR" : {
+            "name" : "Ljosal Far",
             "value" : 640
         },
         "SC_LONGING" : {
@@ -12727,6 +12744,7 @@
             "value" : 301
         },
         "SC_MAPLE_FALLS" : {
+            "name" : "Maple Falls",
             "value" : 646
         },
         "SC_MARIONETTE" : {
@@ -12796,6 +12814,7 @@
             "value" : 281
         },
         "SC_MERMAID_LONGING" : {
+            "name" : "Mermaid Longing",
             "value" : 641
         },
         "SC_MILLENNIUMSHIELD" : {
@@ -12820,6 +12839,7 @@
             "value" : 395
         },
         "SC_MOONSTAR" : {
+            "name" : "Moon Star",
             "value" : 570
         },
         "SC_MOON_COMFORT" : {
@@ -12913,6 +12933,7 @@
             "value" : 326
         },
         "SC_ORCISH" : {
+            "name" : "Orcish",
             "value" : 137
         },
         "SC_OVERED_BOOST" : {
@@ -12955,6 +12976,7 @@
             "value" : 175
         },
         "SC_POISON" : {
+            "name" : "Poison",
             "value" : 4
         },
         "SC_POISONINGWEAPON" : {
@@ -13138,6 +13160,7 @@
             "value" : 396
         },
         "SC_RUWACH" : {
+            "name" : "Ruwach",
             "value" : 90
         },
         "SC_SACRIFICE" : {
@@ -13192,6 +13215,7 @@
             "value" : 172
         },
         "SC_SIGHT" : {
+            "name" : "Sight",
             "value" : 88
         },
         "SC_SIGHTBLASTER" : {
@@ -13204,6 +13228,7 @@
             "value" : 31
         },
         "SC_SILENCE" : {
+            "name" : "Silence",
             "value" : 6
         },
         "SC_SIRCLEOFNATURE" : {
@@ -13225,6 +13250,7 @@
             "value" : 221
         },
         "SC_SLEEP" : {
+            "name" : "Sleep",
             "value" : 3
         },
         "SC_SLOWCAST" : {
@@ -13264,6 +13290,7 @@
             "value" : 245
         },
         "SC_SPEEDUP0" : {
+            "name" : "Speedup",
             "value" : 59
         },
         "SC_SPEEDUP1" : {
@@ -13351,6 +13378,7 @@
             "value" : 427
         },
         "SC_STONE" : {
+            "name" : "Stone",
             "value" : 0
         },
         "SC_STONEHARDSKIN" : {
@@ -13369,6 +13397,7 @@
             "value" : 321
         },
         "SC_STRANGELIGHTS" : {
+            "name" : "Strange Lights",
             "value" : 587
         },
         "SC_STRFOOD" : {
@@ -13390,6 +13419,7 @@
             "value" : 68
         },
         "SC_STUN" : {
+            "name" : "Stun",
             "value" : 2
         },
         "SC_STYLE_CHANGE" : {
@@ -13405,12 +13435,14 @@
             "value" : 236
         },
         "SC_SUMMER" : {
+            "name" : "Summer",
             "value" : 256
         },
         "SC_SUN_COMFORT" : {
             "value" : 217
         },
         "SC_SUPER_STAR" : {
+            "name" : "Super Star",
             "value" : 571
         },
         "SC_SU_STOOP" : {
@@ -13459,6 +13491,7 @@
             "value" : 505
         },
         "SC_TIME_ACCESSORY" : {
+            "name" : "Time Accessory",
             "value" : 647
         },
         "SC_TINDER_BREAKER" : {
@@ -19040,6 +19073,41 @@
         "bUnstripableHelm",
         "BaseClass",
         "bDefEle"
+    ],
+    "sc_end" : [
+        "SC_STRANGELIGHTS",
+        "SC_MERMAID_LONGING",
+        "SC_HIDING",
+        "SC_MOONSTAR",
+        "SC_SUPER_STAR",
+        "SC_CURSE",
+        "SC_TIME_ACCESSORY",
+        "SC_SUMMER",
+        "SC_SPEEDUP0",
+        "SC_CHANGEUNDEAD",
+        "SC_DECORATION_OF_MUSIC",
+        "SC_SIGHT",
+        "SC_ORCISH",
+        "SC_BLIND",
+        "SC_LJOSALFAR",
+        "SC_STONE",
+        "SC_DPOISON",
+        "SC_AUTOGUARD",
+        "SC_MAPLE_FALLS",
+        "SC_HALLUCINATION",
+        "SC_POISON",
+        "SC_CLOAKING",
+        "SC_ANGELUS",
+        "SC_BLEEDING",
+        "SC_CONFUSION",
+        "SC_SLEEP",
+        "SC_ENDURE",
+        "SC_HAT_EFFECT",
+        "SC_STUN",
+        "SC_SILENCE",
+        "SC_FREEZE",
+        "SC_RUWACH",
+        "SC_FSTONE"
     ],
     "sizes" : [
         "Size_Small",
