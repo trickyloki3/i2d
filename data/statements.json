@@ -507,5 +507,19 @@
         "description" : "Remove {0}.",
         "required" : 1,
         "optional" : 1
+    },
+    "active_transform" : {
+        "argument_type" : [
+            "mob",
+            "milliseconds",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "description" : "Transform into a {0} for {1}.",
+        "required" : 2,
+        "optional" : 5
     }
 }

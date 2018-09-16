@@ -2686,6 +2686,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_PETSKILLBONUS:
         case I2D_GETRANDGROUPITEM:
         case I2D_TRANSFORM:
+        case I2D_ACTIVE_TRANSFORM:
         case I2D_SETFALCON:
         case I2D_SETMADOGEAR:
         case I2D_MONSTER:
@@ -2712,7 +2713,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_SHOWSCRIPT:
             break;
         default:
-            /*status = i2d_panic("invalid statement type -- %d", block->statement->type);*/
+            status = i2d_panic("invalid statement type -- %d", block->statement->type);
             break;
     }
 
