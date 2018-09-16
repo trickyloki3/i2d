@@ -26,6 +26,8 @@ struct i2d_handler_list {
     i2d_handler_list_cb handler;
 };
 
+static int i2d_script_add_handler(i2d_script *, i2d_rbt *, i2d_data *, i2d_handler_cb);
+
 static int i2d_handler_general(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_readparam(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getskilllv(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
@@ -2261,12 +2263,31 @@ static int i2d_rbt_get_variable(i2d_rbt * variables, i2d_node * key, i2d_node **
     return i2d_rbt_search(variables, key, (void **) result);
 }
 
+static int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data, i2d_handler_cb cb) {
+    int status = I2D_OK;
+    i2d_handler * handler = NULL;
+
+    if(i2d_handler_init(&handler, data, cb)) {
+        status = i2d_panic("failed to create handler object");
+    } else {
+        if(!script->handlers) {
+            script->handlers = handler;
+        } else {
+            i2d_handler_append(handler, script->handlers);
+        }
+
+        if(i2d_rbt_insert(index, handler->name.string, handler))
+            status = i2d_panic("failed to map handler object");
+    }
+
+    return status;
+}
+
 int i2d_script_init(i2d_script ** result, i2d_option * option) {
     int status = I2D_OK;
     i2d_script * object;
     size_t i;
     size_t size;
-    i2d_handler * handler;
 
     if(i2d_is_invalid(result) || !option) {
         status = i2d_panic("invalid paramater");
@@ -2323,69 +2344,35 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                 status = i2d_panic("failed to create buffer cache object");
             } else if(i2d_string_stack_cache_init(&object->stack_cache)) {
                 status = i2d_panic("failed to create string stack cache object");
+            } else if(i2d_rbt_init(&object->function_handlers, i2d_rbt_cmp_str)) {
+                status = i2d_panic("failed to create read black tree object");
+            } else if(i2d_rbt_init(&object->argument_handlers, i2d_rbt_cmp_str)) {
+                status = i2d_panic("failed to create read black tree object");
+            } else if(i2d_rbt_init(&object->argument_list_handlers, i2d_rbt_cmp_str)) {
+                status = i2d_panic("failed to create read black tree object");
             } else {
-                if(i2d_rbt_init(&object->function_handlers, i2d_rbt_cmp_str)) {
-                    status = i2d_panic("failed to create read black tree object");
-                } else {
-                    size = i2d_size(function_handlers);
-                    for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->function_handlers, function_handlers[i].name.string, &function_handlers[i]))
-                            status = i2d_panic("failed to map handler object");
-                }
+                size = i2d_size(function_handlers);
+                for(i = 0; i < size && !status; i++)
+                    if(i2d_rbt_insert(object->function_handlers, function_handlers[i].name.string, &function_handlers[i]))
+                        status = i2d_panic("failed to map handler object");
 
-                if(i2d_rbt_init(&object->argument_handlers, i2d_rbt_cmp_str)) {
-                    status = i2d_panic("failed to create read black tree object");
-                } else {
-                    size = i2d_size(argument_handlers);
-                    for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name.string, &argument_handlers[i]))
-                            status = i2d_panic("failed to map handler object");
+                size = i2d_size(argument_handlers);
+                for(i = 0; i < size && !status; i++)
+                    if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name.string, &argument_handlers[i]))
+                        status = i2d_panic("failed to map handler object");
 
-                    for(i = 0; i < object->arguments->size && !status; i++) {
-                        handler = NULL;
-                        if(i2d_handler_init(&handler, &object->arguments->list[i], i2d_handler_evaluate)) {
-                            status = i2d_panic("failed to create handler object");
-                        } else {
-                            if(!object->handlers) {
-                                object->handlers = handler;
-                            } else {
-                                i2d_handler_append(handler, object->handlers);
-                            }
-                        }
-                    }
+                size = i2d_size(argument_list_handlers);
+                for(i = 0; i < size && !status; i++)
+                    if(i2d_rbt_insert(object->argument_list_handlers, argument_list_handlers[i].name.string, &argument_list_handlers[i]))
+                        status = i2d_panic("failed to map handler object");
 
-                    for(i = 0; i < object->prefixes->size && !status; i++) {
-                        handler = NULL;
-                        if(i2d_handler_init(&handler, &object->prefixes->list[i], i2d_handler_prefixes)) {
-                            status = i2d_panic("failed to create handler object");
-                        } else {
-                            if(!object->handlers) {
-                                object->handlers = handler;
-                            } else {
-                                i2d_handler_append(handler, object->handlers);
-                            }
-                        }
-                    }
+                for(i = 0; i < object->arguments->size && !status; i++) 
+                    if(i2d_script_add_handler(object, object->argument_handlers, &object->arguments->list[i], i2d_handler_evaluate))
+                        status = i2d_panic("failed to add handler");
 
-                    if(object->handlers) {
-                        handler = object->handlers;
-                        do {
-                            if(i2d_rbt_insert(object->argument_handlers, handler->name.string, handler))
-                                status = i2d_panic("failed to map handler object");
-
-                            handler = handler->next;
-                        } while(handler != object->handlers && !status);
-                    }
-                }
-
-                if(i2d_rbt_init(&object->argument_list_handlers, i2d_rbt_cmp_str)) {
-                    status = i2d_panic("failed to create read black tree object");
-                } else {
-                    size = i2d_size(argument_list_handlers);
-                    for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->argument_list_handlers, argument_list_handlers[i].name.string, &argument_list_handlers[i]))
-                            status = i2d_panic("failed to map handler object");
-                }
+                for(i = 0; i < object->prefixes->size && !status; i++) 
+                    if(i2d_script_add_handler(object, object->argument_handlers, &object->prefixes->list[i], i2d_handler_prefixes))
+                        status = i2d_panic("failed to add handler");
             }
 
             if(status)
