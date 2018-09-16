@@ -2,13 +2,11 @@
 
 static int i2d_item_parse_optional(long *, long *, char *, size_t);
 static int i2d_item_parse(i2d_item *, char *, size_t);
-static int i2d_item_db_load(i2d_item_db *, i2d_string *);
 static int i2d_item_db_parse(char *, size_t, void *);
 static int i2d_item_db_index(i2d_item_db *);
 
 static int i2d_item_combo_parse_list(i2d_item_combo *, char *, size_t);
 static int i2d_item_combo_parse(i2d_item_combo *, char *, size_t);
-static int i2d_item_combo_db_load(i2d_item_combo_db *, i2d_string *);
 static int i2d_item_combo_db_parse(char *, size_t, void *);
 static int i2d_item_combo_db_index(i2d_item_combo_db *);
 static int i2d_item_combo_db_create_combo_list(i2d_item_combo_db *, long, i2d_item_combo_list **);
@@ -173,7 +171,7 @@ int i2d_item_db_init(i2d_item_db ** result, i2d_string * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_item_db_load(object, path)) {
+            if(i2d_fd_load(path, i2d_item_db_parse, object)) {
                 status = i2d_panic("failed to load item db");
             } else if(i2d_item_db_index(object)) {
                 status = i2d_panic("failed to index item db");
@@ -206,36 +204,6 @@ void i2d_item_db_deit(i2d_item_db ** result) {
     }
     i2d_free(object);
     *result = NULL;
-}
-
-static int i2d_item_db_load(i2d_item_db * item_db, i2d_string * path) {
-    int status = I2D_OK;
-
-    int fd;
-    i2d_buffer buffer;
-    int result;
-
-    fd = open(path->string, O_RDONLY);
-    if(0 > fd) {
-        status = i2d_panic("failed to open item db -- %s", path->string);
-    } else {
-        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
-            status = i2d_panic("failed to create buffer object");
-        } else {
-            result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
-            while(0 < result && !status) {
-                if(i2d_by_line(&buffer, i2d_item_db_parse, item_db))
-                    status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
-            }
-            if(!status && buffer.offset && i2d_by_line(&buffer, i2d_item_db_parse, item_db))
-                status = i2d_panic("failed to parse buffer");
-            i2d_buffer_destroy(&buffer);
-        }
-        close(fd);
-    }
-
-    return status;
 }
 
 static int i2d_item_db_parse(char * string, size_t length, void * data) {
@@ -520,7 +488,7 @@ int i2d_item_combo_db_init(i2d_item_combo_db ** result, i2d_string * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_item_combo_db_load(object, path)) {
+            if(i2d_fd_load(path, i2d_item_combo_db_parse, object)) {
                 status = i2d_panic("failed to load item combo db");
             } else if(i2d_item_combo_db_index(object)) {
                 status = i2d_panic("failed to index item combo db");
@@ -561,36 +529,6 @@ void i2d_item_combo_db_deit(i2d_item_combo_db ** result) {
     }
     i2d_free(object);
     *result = NULL;
-}
-
-static int i2d_item_combo_db_load(i2d_item_combo_db * item_combo_db, i2d_string * path) {
-    int status = I2D_OK;
-
-    int fd;
-    i2d_buffer buffer;
-    int result;
-
-    fd = open(path->string, O_RDONLY);
-    if(0 > fd) {
-        status = i2d_panic("failed to open item combo db -- %s", path->string);
-    } else {
-        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
-            status = i2d_panic("failed to create buffer object");
-        } else {
-            result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
-            while(0 < result && !status) {
-                if(i2d_by_line(&buffer, i2d_item_combo_db_parse, item_combo_db))
-                    status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
-            }
-            if(!status && buffer.offset && i2d_by_line(&buffer, i2d_item_combo_db_parse, item_combo_db))
-                status = i2d_panic("failed to parse buffer");
-            i2d_buffer_destroy(&buffer);
-        }
-        close(fd);
-    }
-
-    return status;
 }
 
 static int i2d_item_combo_db_parse(char * string, size_t length, void * data) {

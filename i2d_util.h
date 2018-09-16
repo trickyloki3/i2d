@@ -132,6 +132,7 @@ int i2d_strtoul(unsigned long *, const char *, size_t, int);
 
 typedef int (* i2d_by_line_cb) (char *, size_t, void *);
 
+int i2d_fd_load(i2d_string *, i2d_by_line_cb, void *);
 int i2d_fd_read(int, size_t, i2d_buffer *);
 int i2d_by_line(i2d_buffer *, i2d_by_line_cb, void *);
 

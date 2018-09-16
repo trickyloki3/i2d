@@ -2,7 +2,6 @@
 
 static int i2d_skill_parse_list(long **, size_t *, char *, size_t);
 static int i2d_skill_parse(i2d_skill *, char *, size_t);
-static int i2d_skill_db_load(i2d_skill_db *, i2d_string *);
 static int i2d_skill_db_parse(char *, size_t, void *);
 static int i2d_skill_db_index(i2d_skill_db *);
 
@@ -205,7 +204,7 @@ int i2d_skill_db_init(i2d_skill_db ** result, i2d_string * path) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_skill_db_load(object, path)) {
+            if(i2d_fd_load(path, i2d_skill_db_parse, object)) {
                 status = i2d_panic("failed to load skill db");
             } else if(i2d_skill_db_index(object)) {
                 status = i2d_panic("failed to index skill db");
@@ -238,36 +237,6 @@ void i2d_skill_db_deit(i2d_skill_db ** result) {
     }
     i2d_free(object);
     *result = NULL;
-}
-
-static int i2d_skill_db_load(i2d_skill_db * skill_db, i2d_string * path) {
-    int status = I2D_OK;
-
-    int fd;
-    i2d_buffer buffer;
-    int result;
-
-    fd = open(path->string, O_RDONLY);
-    if(0 > fd) {
-        status = i2d_panic("failed to open skill db -- %s", path->string);
-    } else {
-        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
-            status = i2d_panic("failed to create buffer object");
-        } else {
-            result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
-            while(0 < result && !status) {
-                if(i2d_by_line(&buffer, i2d_skill_db_parse, skill_db))
-                    status = i2d_panic("failed to parse buffer");
-                result = i2d_fd_read(fd, BUFFER_SIZE_LARGE, &buffer);
-            }
-            if(!status && buffer.offset && i2d_by_line(&buffer, i2d_skill_db_parse, skill_db))
-                status = i2d_panic("failed to parse buffer");
-            i2d_buffer_destroy(&buffer);
-        }
-        close(fd);
-    }
-
-    return status;
 }
 
 static int i2d_skill_db_parse(char * string, size_t length, void * data) {
