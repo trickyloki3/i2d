@@ -363,9 +363,9 @@ struct i2d_script {
     i2d_data_map * prefixes;
     i2d_buffer_cache * buffer_cache;
     i2d_string_stack_cache * stack_cache;
-    i2d_rbt * function_map;
-    i2d_rbt * bonus_map;
-    i2d_rbt * bonus_list_map;
+    i2d_rbt * function_handlers;
+    i2d_rbt * argument_handlers;
+    i2d_rbt * argument_list_handlers;
     i2d_handler * handlers;
 };
 

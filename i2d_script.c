@@ -47,7 +47,7 @@ static int i2d_handler_callfunc(i2d_handler *, i2d_script *, i2d_node *, i2d_loc
 static int i2d_handler_getequipweaponlv(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_getexp2(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
-i2d_handler function_list[] = {
+i2d_handler function_handlers[] = {
     { {"getrefine", 9}, i2d_handler_general },
     { {"readparam", 9}, i2d_handler_readparam },
     { {"getskilllv", 10}, i2d_handler_getskilllv },
@@ -137,7 +137,7 @@ static int i2d_handler_sc_end(i2d_handler *, i2d_script *, i2d_node *, i2d_local
 static int i2d_handler_evaluate(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_prefixes(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 
-i2d_handler bonus_list[] = {
+i2d_handler argument_handlers[] = {
     { {"milliseconds", 12}, i2d_handler_milliseconds },
     { {"seconds", 7}, i2d_handler_seconds },
     { {"regen", 5}, i2d_handler_regen },
@@ -187,7 +187,7 @@ static int i2d_handler_list_bonus3(i2d_handler_list *, i2d_script *, i2d_node **
 static int i2d_handler_list_bonus4(i2d_handler_list *, i2d_script *, i2d_node **, i2d_local *);
 static int i2d_handler_list_bonus5(i2d_handler_list *, i2d_script *, i2d_node **, i2d_local *);
 
-i2d_handler_list bonus_handler_list[] = {
+i2d_handler_list argument_list_handlers[] = {
     { {"bonus", 5}, i2d_handler_list_bonus },
     { {"bonus2", 6}, i2d_handler_list_bonus2 },
     { {"bonus3", 6}, i2d_handler_list_bonus3 },
@@ -2324,21 +2324,21 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
             } else if(i2d_string_stack_cache_init(&object->stack_cache)) {
                 status = i2d_panic("failed to create string stack cache object");
             } else {
-                if(i2d_rbt_init(&object->function_map, i2d_rbt_cmp_str)) {
+                if(i2d_rbt_init(&object->function_handlers, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create read black tree object");
                 } else {
-                    size = i2d_size(function_list);
+                    size = i2d_size(function_handlers);
                     for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->function_map, function_list[i].name.string, &function_list[i]))
+                        if(i2d_rbt_insert(object->function_handlers, function_handlers[i].name.string, &function_handlers[i]))
                             status = i2d_panic("failed to map handler object");
                 }
 
-                if(i2d_rbt_init(&object->bonus_map, i2d_rbt_cmp_str)) {
+                if(i2d_rbt_init(&object->argument_handlers, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create read black tree object");
                 } else {
-                    size = i2d_size(bonus_list);
+                    size = i2d_size(argument_handlers);
                     for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->bonus_map, bonus_list[i].name.string, &bonus_list[i]))
+                        if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name.string, &argument_handlers[i]))
                             status = i2d_panic("failed to map handler object");
 
                     for(i = 0; i < object->arguments->size && !status; i++) {
@@ -2370,7 +2370,7 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                     if(object->handlers) {
                         handler = object->handlers;
                         do {
-                            if(i2d_rbt_insert(object->bonus_map, handler->name.string, handler))
+                            if(i2d_rbt_insert(object->argument_handlers, handler->name.string, handler))
                                 status = i2d_panic("failed to map handler object");
 
                             handler = handler->next;
@@ -2378,12 +2378,12 @@ int i2d_script_init(i2d_script ** result, i2d_option * option) {
                     }
                 }
 
-                if(i2d_rbt_init(&object->bonus_list_map, i2d_rbt_cmp_str)) {
+                if(i2d_rbt_init(&object->argument_list_handlers, i2d_rbt_cmp_str)) {
                     status = i2d_panic("failed to create read black tree object");
                 } else {
-                    size = i2d_size(bonus_handler_list);
+                    size = i2d_size(argument_list_handlers);
                     for(i = 0; i < size && !status; i++)
-                        if(i2d_rbt_insert(object->bonus_list_map, bonus_handler_list[i].name.string, &bonus_handler_list[i]))
+                        if(i2d_rbt_insert(object->argument_list_handlers, argument_list_handlers[i].name.string, &argument_list_handlers[i]))
                             status = i2d_panic("failed to map handler object");
                 }
             }
@@ -2403,9 +2403,9 @@ void i2d_script_deit(i2d_script ** result) {
 
     object = *result;
     i2d_deit(object->handlers, i2d_handler_list_deit);
-    i2d_deit(object->bonus_list_map, i2d_rbt_deit);
-    i2d_deit(object->bonus_map, i2d_rbt_deit);
-    i2d_deit(object->function_map, i2d_rbt_deit);
+    i2d_deit(object->argument_list_handlers, i2d_rbt_deit);
+    i2d_deit(object->argument_handlers, i2d_rbt_deit);
+    i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
     i2d_deit(object->buffer_cache, i2d_buffer_cache_deit);
     i2d_deit(object->prefixes, i2d_data_map_deit);
@@ -2814,8 +2814,8 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
                     for(i = 0; i < size && !status; i++) {
                         i2d_buffer_clear(local.buffer);
 
-                        if(i2d_rbt_search(script->bonus_map, list[i].string, (void **) &handler)) {
-                            if(i2d_rbt_search(script->bonus_list_map, list[i].string, (void **) &handler_list)) {
+                        if(i2d_rbt_search(script->argument_handlers, list[i].string, (void **) &handler)) {
+                            if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler_list)) {
                                 status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
                             } else if(arguments[data->argument_order.list[i]]) {
                                 status = handler_list->handler(handler_list, script, &arguments[data->argument_order.list[i]], &local);
@@ -2836,8 +2836,8 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_node ** arguments, i2
                 for(i = 0; i < size && arguments[i] && !status; i++) {
                     i2d_buffer_clear(local.buffer);
 
-                    if(i2d_rbt_search(script->bonus_map, list[i].string, (void **) &handler)) {
-                        if(i2d_rbt_search(script->bonus_list_map, list[i].string, (void **) &handler_list)) {
+                    if(i2d_rbt_search(script->argument_handlers, list[i].string, (void **) &handler)) {
+                        if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler_list)) {
                             status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
                         } else {
                             status = handler_list->handler(handler_list, script, &arguments[i], &local);
@@ -3040,7 +3040,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
     } else {
         if(i2d_node_get_string(node, &name)) {
             status = i2d_panic("failed to get function string");
-        } else if(i2d_rbt_search(script->function_map, name.string, (void **) &handler)) {
+        } else if(i2d_rbt_search(script->function_handlers, name.string, (void **) &handler)) {
             status = i2d_panic("failed to get function handler -- %s", name.string);
         } else {
             status = handler->handler(handler, script, node, &local);
