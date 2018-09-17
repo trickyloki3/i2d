@@ -613,6 +613,7 @@ int i2d_strtoul(unsigned long * result, const char * string, size_t length, int 
     return status;
 }
 
+#ifndef _WIN32
 int i2d_fd_load(i2d_string * path, i2d_by_line_cb cb, void * data) {
     int status = I2D_OK;
 
@@ -642,7 +643,39 @@ int i2d_fd_load(i2d_string * path, i2d_by_line_cb cb, void * data) {
 
     return status;
 }
+#else
+int i2d_fd_load(i2d_string * path, i2d_by_line_cb cb, void * data) {
+    int status = I2D_OK;
 
+    HANDLE hFile;
+    i2d_buffer buffer;
+    int result;
+
+    hFile = CreateFile(path->string, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if(INVALID_HANDLE_VALUE == hFile) {
+        status = i2d_panic("failed to open file -- %s", path->string);
+    } else {
+        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE * 2)) {
+            status = i2d_panic("failed to create buffer object");
+        } else {
+            result = i2d_fd_read(hFile, BUFFER_SIZE_LARGE, &buffer);
+            while(0 < result && !status) {
+                if(i2d_by_line(&buffer, cb, data))
+                    status = i2d_panic("failed to parse buffer");
+                result = i2d_fd_read(hFile, BUFFER_SIZE_LARGE, &buffer);
+            }
+            if(!status && buffer.offset && i2d_by_line(&buffer, cb, data))
+                status = i2d_panic("failed to parse buffer");
+            i2d_buffer_destroy(&buffer);
+        }
+        CloseHandle(hFile);
+    }
+
+    return status;
+}
+#endif
+
+#ifndef _WIN32
 int i2d_fd_read(int fd, size_t size, i2d_buffer * buffer) {
     int status = I2D_OK;
     ssize_t result;
@@ -661,6 +694,25 @@ int i2d_fd_read(int fd, size_t size, i2d_buffer * buffer) {
 
     return status ? -1 : result;
 }
+#else
+int i2d_fd_read(HANDLE hFile, size_t size, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    DWORD dwBytes;
+
+    if(i2d_buffer_adapt(buffer, size + 1)) {
+        status = I2D_FAIL;
+    } else {
+        if(!ReadFile(hFile, buffer->buffer + buffer->offset, size, &dwBytes, NULL) || size != dwBytes) {
+            status = i2d_panic("failed on read");   
+        } else {
+            buffer->offset += size;
+            buffer->buffer[buffer->offset] = 0;
+        }
+    }
+
+    return status;
+}
+#endif
 
 int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
     int status = I2D_OK;

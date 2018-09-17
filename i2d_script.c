@@ -856,7 +856,11 @@ int i2d_rbt_cmp_node(const void * left, const void * right) {
     i2d_string r;
 
     if(!i2d_node_get_string((i2d_node *) left, &l) && !i2d_node_get_string((i2d_node *) right, &r))
+#ifndef _WIN32
         status = strcasecmp(l.string, r.string);
+#else
+        status = _stricmp(l.string, r.string);
+#endif
 
     return status;
 }

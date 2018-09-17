@@ -1,5 +1,6 @@
 #include "i2d_opt.h"
 
+#ifndef _WIN32
 #include "getopt.h"
 
 static const char * i2d_short_options = "rs:i:d:";
@@ -10,12 +11,15 @@ static struct option i2d_long_options[] = {
     { "data_path", required_argument, NULL, 'd' },
     { "item_id", required_argument, NULL, 'i' }
 };
+#endif
 
 int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
     int status = I2D_OK;
     i2d_option * object;
 
+#ifndef _WIN32
     int opt;
+#endif
 
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
@@ -24,6 +28,7 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
+#ifndef _WIN32
             opt = getopt_long(argc, argv, i2d_short_options, i2d_long_options, NULL);
             while(-1 < opt && !status) {
                 switch(opt) {
@@ -43,6 +48,24 @@ int i2d_option_init(i2d_option ** result, int argc, char ** argv) {
                 }
                 opt = getopt_long(argc, argv, i2d_short_options, i2d_long_options, NULL);
             }
+#else
+            if(argc < 4) {
+                status = i2d_panic("invalid argument count");
+            } else if(i2d_string_create(&object->source_path, argv[1], strlen(argv[1]))) {
+                status = i2d_panic("failed on source directory path argument -- %s", argv[1]);
+            } else if(i2d_string_create(&object->data_path, argv[2], strlen(argv[2]))) {
+                status = i2d_panic("failed on data directory path argument -- %s", argv[2]);
+            } else {
+                if(!strcmp(argv[3], "prerenewal")) {
+                    object->renewal = 0;
+                } else if(!strcmp(argv[3], "renewal")) {
+                    object->renewal = 1;
+                } else {
+                    status = i2d_panic("invalid mode -- %s", argv[3]);
+                }
+                object->renewal = 1;
+            }
+#endif
 
             if(status)
                 i2d_option_deit(&object);

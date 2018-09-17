@@ -138,7 +138,11 @@ int i2d_rbt_cmp_long(const void * left, const void * right) {
 }
 
 int i2d_rbt_cmp_str(const void * left, const void * right) {
+#ifndef _WIN32
     return strcasecmp(left, right);
+#else
+    return _stricmp(left, right);
+#endif
 }
 
 int i2d_rbt_init(i2d_rbt ** result, i2d_rbt_cmp compare) {
