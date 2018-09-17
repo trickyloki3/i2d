@@ -697,6 +697,7 @@ int i2d_fd_read(int fd, size_t size, i2d_buffer * buffer) {
 #else
 int i2d_fd_read(HANDLE hFile, size_t size, i2d_buffer * buffer) {
     int status = I2D_OK;
+    int result;
     DWORD dwBytes;
 
     if(i2d_buffer_adapt(buffer, size + 1)) {
@@ -707,10 +708,19 @@ int i2d_fd_read(HANDLE hFile, size_t size, i2d_buffer * buffer) {
         } else {
             buffer->offset += dwBytes;
             buffer->buffer[buffer->offset] = 0;
+
+            /*
+             * check integer limit before downcasting
+             */
+            if(dwBytes > INT_MAX) {
+                status = i2d_panic("integer overflow");
+            } else {
+                result = (int) dwBytes;
+            }
         }
     }
 
-    return status;
+    return status ? -1 : result;
 }
 #endif
 
