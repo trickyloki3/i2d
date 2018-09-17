@@ -702,10 +702,10 @@ int i2d_fd_read(HANDLE hFile, size_t size, i2d_buffer * buffer) {
     if(i2d_buffer_adapt(buffer, size + 1)) {
         status = I2D_FAIL;
     } else {
-        if(!ReadFile(hFile, buffer->buffer + buffer->offset, size, &dwBytes, NULL) || size != dwBytes) {
+        if(!ReadFile(hFile, buffer->buffer + buffer->offset, size, &dwBytes, NULL)) {
             status = i2d_panic("failed on read");   
         } else {
-            buffer->offset += size;
+            buffer->offset += dwBytes;
             buffer->buffer[buffer->offset] = 0;
         }
     }
@@ -737,6 +737,12 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
          */
         if(delimit > anchor) {
             length = (size_t) delimit - (size_t) anchor;
+
+            /*
+             * trim whitespace
+             */
+            while(isspace(anchor[length - 1]))
+                anchor[length--] = 0;
 
             /*
              * skip comments
