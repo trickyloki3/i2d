@@ -1470,7 +1470,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
     int status = I2D_OK;
     i2d_block * root;
     i2d_block * block;
-    i2d_block * state;
+    i2d_block * state = NULL;
     i2d_token * anchor;
     i2d_token * token = NULL;
     i2d_string string;
@@ -3421,7 +3421,7 @@ static int i2d_handler_getskilllv(i2d_handler * handler, i2d_script * script, i2
     i2d_node * arguments;
     long id;
     i2d_string name;
-    i2d_skill * skill;
+    i2d_skill * skill = NULL;
 
     if(i2d_node_get_arguments(node->left, &arguments, 1, 0)) {
         status = i2d_panic("failed to get getskilllv arguments");
@@ -3490,7 +3490,7 @@ static int i2d_handler_countitem(i2d_handler * handler, i2d_script * script, i2d
     i2d_node * arguments;
     long id;
     i2d_string name;
-    i2d_item * item;
+    i2d_item * item = NULL;
 
     if(i2d_node_get_arguments(node->left, &arguments, 1, 0)) {
         status = i2d_panic("failed to get countitem arguments");
@@ -3745,7 +3745,7 @@ static int i2d_handler_pow(i2d_handler * handler, i2d_script * script, i2d_node 
     } else {
         i2d_range_get_range(&arguments[0]->range, &min, &max);
         i2d_range_get_range(&arguments[1]->range, &pow_min, &pow_max);
-        if(i2d_range_create_add(&node->range, pow(min, pow_min), pow(max, pow_max))) {
+        if(i2d_range_create_add(&node->range, (long) pow(min, pow_min), (long) pow(max, pow_max))) {
             status = i2d_panic("failed to create range object");
         } else if(i2d_script_expression_variable_predicate(script, node, node->left)) {
             status = i2d_panic("failed to copy predicate list");
@@ -3767,7 +3767,7 @@ static int i2d_handler_checkoption_loop(uint64_t flag, void * data) {
     i2d_checkoption * context = data;
     i2d_constant * constant = NULL;
 
-    if(i2d_constant_get_by_options(context->script->constant_db, flag, &constant)) {
+    if(i2d_constant_get_by_options(context->script->constant_db, (long) flag, &constant)) {
         status = i2d_panic("failed to get option by value -- %" PRIu64, flag);
     } else if(i2d_string_stack_push(context->local->stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push on stack");

@@ -645,20 +645,9 @@ int i2d_fd_load(i2d_string * path, i2d_by_line_cb cb, void * data) {
 
 int i2d_fd_read(int fd, size_t size, i2d_buffer * buffer) {
     int status = I2D_OK;
-
-    fd_set set;
-    struct timeval timeout;
     ssize_t result;
 
-    FD_ZERO(&set);
-    FD_SET(fd, &set);
-
-    timeout.tv_sec = 5;
-    timeout.tv_usec = 0;
-
-    if(0 >= select(fd + 1, &set, NULL, NULL, &timeout) || !FD_ISSET(fd, &set)) {
-        status = i2d_panic("failed on select error or timeout");
-    } else if(i2d_buffer_adapt(buffer, size + 1)) {
+    if(i2d_buffer_adapt(buffer, size + 1)) {
         status = I2D_FAIL;
     } else {
         result = read(fd, buffer->buffer + buffer->offset, size);
