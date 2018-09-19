@@ -112,11 +112,17 @@ int i2d_object_get_number_array(json_t * json, long ** result, size_t * result_s
 
 int i2d_object_get_number(json_t * json, long * result) {
     int status = I2D_OK;
+    json_int_t value;
 
     if(!json_is_number(json)) {
         status = i2d_panic("invalid number object");
     } else {
-        *result = json_integer_value(json);
+        value = json_integer_value(json);
+        if(value < LONG_MIN || value > LONG_MAX) {
+            status = i2d_panic("integer underflow or overflow");
+        } else {
+            *result = (long) value;
+        }
     }
 
     return status;

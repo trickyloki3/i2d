@@ -79,7 +79,7 @@ static int i2d_produce_parse(i2d_produce * produce, char * string, size_t length
 
     int field = 0;
 
-    int material_index = 0;
+    size_t material_index = 0;
 
     anchor = string;
     for(i = 0; i < length && !status; i++) {

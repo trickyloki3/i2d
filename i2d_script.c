@@ -2074,7 +2074,7 @@ int i2d_format_write(i2d_format * format, i2d_string_stack * stack, i2d_buffer *
                 case I2D_POSITION:
                     if(i2d_token_get_constant(token, &position)) {
                         status = i2d_panic("failed to get token constant");
-                    } else if(position >= size || position < 0) {
+                    } else if(position < 0 || (size_t) position >= size) {
                         status = i2d_panic("invalid position on string stack");
                     } else if(i2d_buffer_printf(buffer, "%s", list[position].string)) {
                         status = i2d_panic("failed to write buffer");
@@ -2738,7 +2738,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
     i2d_node * arguments[MAX_ARGUMENT];
     i2d_data * data = NULL;
 
-    long i;
+    size_t i;
     i2d_string * list;
     size_t size;
     i2d_node * defaults[MAX_ARGUMENT];
@@ -2754,7 +2754,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
         status = i2d_panic("failed to get arguments");
     } else {
         i2d_string_stack_get(&data->argument_default, &list, &size);
-        for(i = 0; i < data->optional && i < size; i++) {
+        for(i = 0; i < (size_t) data->optional && i < size; i++) {
             if(!arguments[i + data->required]) {
                 if(i2d_script_default_node(script, list[i].string, &defaults[i])) {
                     status = i2d_panic("failed to create default node object");
@@ -2767,7 +2767,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
         if(i2d_script_statement_evaluate(script, arguments, data, &block->buffer))
             status = i2d_panic("failed to handle statement arguments");
 
-        for(i = 0; i < data->optional && i < size; i++)
+        for(i = 0; i < (size_t) data->optional && i < size; i++)
             if(defaults[i])
                 i2d_parser_node_reset(script->parser, script->lexer, &defaults[i]);
     }
