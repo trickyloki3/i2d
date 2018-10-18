@@ -2,3 +2,7 @@
 *.o
 i2d
 i2d_test
+
+vs/.vs/
+vs/Debug
+vs/Release
