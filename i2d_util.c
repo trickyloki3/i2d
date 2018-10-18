@@ -613,6 +613,26 @@ int i2d_strtoul(unsigned long * result, const char * string, size_t length, int 
     return status;
 }
 
+int i2d_strtod(double * result, const char * string, size_t length) {
+    int status = I2D_OK;
+
+    unsigned long number;
+    char * end = NULL;
+
+    if(!length) {
+        *result = 0;
+    } else {
+        number = strtod(string, &end);
+        if(string + length != end) {
+            status = i2d_panic("invalid string '%s' in '%s'", end, string);
+        } else {
+            *result = number;
+        }
+    }
+
+    return status;
+}
+
 #ifndef _WIN32
 int i2d_fd_load(i2d_string * path, i2d_by_line_cb cb, void * data) {
     int status = I2D_OK;

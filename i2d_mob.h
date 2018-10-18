@@ -35,7 +35,7 @@ struct i2d_mob {
     long adelay;
     long amotion;
     long dmotion;
-    long mexp;
+    double mexp;
     long mvp_drop_id[3];
     long mvp_drop_pre[3];
     long drop_id[9];

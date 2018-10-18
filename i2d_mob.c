@@ -104,7 +104,7 @@ static int i2d_mob_parse(i2d_mob * mob, char * string, size_t length) {
                     case 27: status = i2d_strtol(&mob->adelay, anchor, extent, 10); break;
                     case 28: status = i2d_strtol(&mob->amotion, anchor, extent, 10); break;
                     case 29: status = i2d_strtol(&mob->dmotion, anchor, extent, 10); break;
-                    case 30: status = i2d_strtol(&mob->mexp, anchor, extent, 10); break;
+                    case 30: status = i2d_strtod(&mob->mexp, anchor, extent); break;
                     case 31: status = i2d_strtol(&mob->mvp_drop_id[0], anchor, extent, 10); break;
                     case 32: status = i2d_strtol(&mob->mvp_drop_pre[0], anchor, extent, 10); break;
                     case 33: status = i2d_strtol(&mob->mvp_drop_id[1], anchor, extent, 10); break;
