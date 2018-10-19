@@ -296,6 +296,7 @@ static int i2d_mob_race_parse(i2d_mob_race * mob_race, char * string, size_t len
     int status = I2D_OK;
 
     size_t i;
+    size_t comma_count = 0;
     int quote_depth = 0;
     int brace_depth = 0;
 
@@ -303,50 +304,63 @@ static int i2d_mob_race_parse(i2d_mob_race * mob_race, char * string, size_t len
     size_t extent;
 
     int field = 0;
+    int last = 0;
 
-    for(i = 0; i < length && !status; i++)
+    for(i = 0; i < length; i++)
         if(',' == string[i])
-            mob_race->size++;
+            comma_count++;
 
-    if(!mob_race->size) {
-        status = i2d_panic("empty mob id list");
+    if(!comma_count) {
+        status = i2d_panic("empty list of mob id");
     } else {
-        mob_race->list = calloc(mob_race->size, sizeof(*mob_race->list));
+        mob_race->list = calloc(comma_count, sizeof(*mob_race->list));
         if(!mob_race->list) {
             status = i2d_panic("out of memory");
         } else {
             anchor = string;
-            for(i = 0; i < length && !status; i++) {
-                if('"' == string[i]) {
-                    quote_depth = !quote_depth;
-                } else if('{' == string[i]) {
-                    brace_depth++;
-                } else if('}' == string[i]) {
-                    brace_depth--;
-                } else if(',' == string[i] && !quote_depth && !brace_depth) {
-                    string[i] = 0;
+            for(i = 0; i < length && !status && !last; i++) {
+                switch(string[i]) {
+                    case '"': quote_depth = !quote_depth; break;
+                    case '{': brace_depth++; break;
+                    case '}': brace_depth--; break;
+                    default:
+                        /*
+                         * check for \t, \r, \n, space
+                         */
+                        if(isspace(string[i])) 
+                            last = 1;
 
-                    if((string + i) < anchor) {
-                        status = i2d_panic("line overflow");
-                    } else {
-                        extent = (size_t) (string + i) - (size_t) anchor;
-                        switch(field) {
-                            case 0: status = i2d_string_create(&mob_race->macro, anchor, extent); break;
-                            default: status = i2d_strtol(&mob_race->list[field - 1], anchor, extent, 10); break;
+                        /*
+                         * check for line comments
+                         */
+                        if('/' == string[i] && i > 0 && '/' == string[i - 1]) {
+                            i -= 1;
+                            last = 1;
                         }
-                        field++;
-                    }
+                        
+                        if((',' == string[i] || last) && !quote_depth && !brace_depth) {
+                            string[i] = 0;
 
-                    anchor = (string + i + 1);
-                }
-            }
+                            if(string + i < anchor) {
+                                status = i2d_panic("line overflow");
+                            } else {
+                                extent = (size_t) (string + i) - (size_t) anchor;
+                                switch(field) {
+                                    case 0: status = i2d_string_create(&mob_race->macro, anchor, extent); break;
+                                    default: 
+                                        if(mob_race->size >= comma_count) {
+                                            status = i2d_panic("list overflow");
+                                        } else {
+                                            status = i2d_strtol(&mob_race->list[mob_race->size], anchor, extent, 10); 
+                                            mob_race->size++;
+                                        }
+                                        break;
+                                }
+                                field++;
+                            }
 
-            if(!status) {
-                if(&string[i] < anchor) {
-                    status = i2d_panic("line overflow");
-                } else {
-                    extent = (size_t) &string[i] - (size_t) anchor;
-                    status = i2d_strtol(&mob_race->list[field - 1], anchor, extent, 10);
+                            anchor = (string + i + 1);
+                        }
                 }
             }
         }
