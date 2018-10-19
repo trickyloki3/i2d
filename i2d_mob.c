@@ -76,7 +76,7 @@ static int i2d_mob_parse(i2d_mob * mob, char * string, size_t length) {
         if(',' == string[i] || last) {
             string[i] = 0;
 
-            if((string + i) < anchor) {
+            if(string + i < anchor) {
                 status = i2d_panic("line overflow");
             } else {
                 extent = (size_t) (string + i) - (size_t) anchor;

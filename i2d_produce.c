@@ -78,15 +78,30 @@ static int i2d_produce_parse(i2d_produce * produce, char * string, size_t length
     size_t extent;
 
     int field = 0;
+    int last = 0;
 
     size_t material_index = 0;
 
     anchor = string;
-    for(i = 0; i < length && !status; i++) {
-        if(',' == string[i]) {
+    for(i = 0; i < length && !status && !last; i++) {
+        /*
+         * check for \t, \r, \n (include space)
+         */
+        if(isspace(string[i])) 
+            last = 1;
+
+        /*
+         * check for line comments
+         */
+        if('/' == string[i] && i > 0 && '/' == string[i - 1]) {
+            i -= 1;
+            last = 1;
+        }
+
+        if(',' == string[i] || last) {
             string[i] = 0;
 
-            if((string + i) < anchor) {
+            if(string + i < anchor) {
                 status = i2d_panic("line overflow");
             } else {
                 extent = (size_t) (string + i) - (size_t) anchor;
@@ -112,23 +127,10 @@ static int i2d_produce_parse(i2d_produce * produce, char * string, size_t length
         }
     }
 
-    if(!status) {
-        if(5 > field) {
-            status = i2d_panic("row is missing columns");
-        } else if(&string[i] < anchor) {
-            status = i2d_panic("line overflow");
-        } else {
-            extent = (size_t) &string[i] - (size_t) anchor;
-            if(material_index >= produce->material_count) {
-                status = i2d_panic("material overflow");
-            } else {
-                status = i2d_strtol(&produce->materials[material_index], anchor, extent, 10);
-                material_index++;
-            }
-
-            if(material_index != produce->material_count)
-                status = i2d_panic("produce is missing material item id and amount");
-        }
+    if(!status && 5 > field) {
+        status = i2d_panic("row is missing columns");
+    } else if(material_index != produce->material_count) {
+        status = i2d_panic("invalid material item id or count list");
     }
 
     return status;
