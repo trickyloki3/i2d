@@ -5037,12 +5037,17 @@ static int i2d_handler_prefixes(i2d_handler * handler, i2d_script * script, i2d_
 static int i2d_handler_list_bonus(i2d_handler_list * handler_list, i2d_script * script, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
+    i2d_string bonus_name;
     i2d_data * data;
 
     if(i2d_node_get_constant(nodes[0], &bonus_type)) {
         status = i2d_panic("failed to get bonus type");
     } else if(i2d_data_map_get(script->bonus, &bonus_type, &data)) {
-        status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        if(i2d_node_get_string(nodes[0], &bonus_name)) {
+            status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        } else {
+            status = i2d_panic("failed to get bonus by type -- %ld (%s)", bonus_type, bonus_name.string);
+        }
     } else if(i2d_script_statement_evaluate(script, &nodes[1], data, local->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
@@ -5055,12 +5060,17 @@ static int i2d_handler_list_bonus(i2d_handler_list * handler_list, i2d_script * 
 static int i2d_handler_list_bonus2(i2d_handler_list * handler_list, i2d_script * script, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
+    i2d_string bonus_name;
     i2d_data * data;
 
     if(i2d_node_get_constant(nodes[0], &bonus_type)) {
         status = i2d_panic("failed to get bonus type");
     } else if(i2d_data_map_get(script->bonus2, &bonus_type, &data)) {
-        status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        if(i2d_node_get_string(nodes[0], &bonus_name)) {
+            status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        } else {
+            status = i2d_panic("failed to get bonus by type -- %ld (%s)", bonus_type, bonus_name.string);
+        }
     } else if(i2d_script_statement_evaluate(script, &nodes[1], data, local->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
@@ -5073,12 +5083,17 @@ static int i2d_handler_list_bonus2(i2d_handler_list * handler_list, i2d_script *
 static int i2d_handler_list_bonus3(i2d_handler_list * handler_list, i2d_script * script, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
+    i2d_string bonus_name;
     i2d_data * data;
 
     if(i2d_node_get_constant(nodes[0], &bonus_type)) {
         status = i2d_panic("failed to get bonus type");
     } else if(i2d_data_map_get(script->bonus3, &bonus_type, &data)) {
-        status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        if(i2d_node_get_string(nodes[0], &bonus_name)) {
+            status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        } else {
+            status = i2d_panic("failed to get bonus by type -- %ld (%s)", bonus_type, bonus_name.string);
+        }
     } else if(i2d_script_statement_evaluate(script, &nodes[1], data, local->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
@@ -5091,12 +5106,17 @@ static int i2d_handler_list_bonus3(i2d_handler_list * handler_list, i2d_script *
 static int i2d_handler_list_bonus4(i2d_handler_list * handler_list, i2d_script * script, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
+    i2d_string bonus_name;
     i2d_data * data;
 
     if(i2d_node_get_constant(nodes[0], &bonus_type)) {
         status = i2d_panic("failed to get bonus type");
     } else if(i2d_data_map_get(script->bonus4, &bonus_type, &data)) {
-        status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        if(i2d_node_get_string(nodes[0], &bonus_name)) {
+            status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        } else {
+            status = i2d_panic("failed to get bonus by type -- %ld (%s)", bonus_type, bonus_name.string);
+        }
     } else if(i2d_script_statement_evaluate(script, &nodes[1], data, local->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
@@ -5109,12 +5129,17 @@ static int i2d_handler_list_bonus4(i2d_handler_list * handler_list, i2d_script *
 static int i2d_handler_list_bonus5(i2d_handler_list * handler_list, i2d_script * script, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
+    i2d_string bonus_name;
     i2d_data * data;
 
     if(i2d_node_get_constant(nodes[0], &bonus_type)) {
         status = i2d_panic("failed to get bonus type");
     } else if(i2d_data_map_get(script->bonus5, &bonus_type, &data)) {
-        status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        if(i2d_node_get_string(nodes[0], &bonus_name)) {
+            status = i2d_panic("failed to get bonus by type -- %ld", bonus_type);
+        } else {
+            status = i2d_panic("failed to get bonus by type -- %ld (%s)", bonus_type, bonus_name.string);
+        }
     } else if(i2d_script_statement_evaluate(script, &nodes[1], data, local->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
