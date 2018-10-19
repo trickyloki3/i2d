@@ -754,8 +754,6 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
     anchor = (char *) buffer->buffer;
     delimit = strchr(anchor, '\n');
     while(delimit && !status) {
-        *delimit = 0;
-
         /*
          * skip initial whitespace
          */
@@ -766,7 +764,7 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
          * skip empty lines
          */
         if(delimit > anchor) {
-            length = (size_t) delimit - (size_t) anchor;
+            length = (size_t) delimit - (size_t) anchor + 1;
 
             /*
              * skip comments
