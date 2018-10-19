@@ -807,3 +807,17 @@ int i2d_by_bit64(uint64_t flag, i2d_by_bit_cb cb, void * context) {
 
     return status;
 }
+
+int i2d_is_number(i2d_string * string) {
+    int status = I2D_OK;
+    size_t i = 0;
+
+    if(!strncmp("0x", string->string, 2))
+        i = 2;
+
+    for(; i < string->length && !status; i++)
+        if(!isdigit(string->string[i]))
+            status = I2D_FAIL;
+
+    return status;
+}

@@ -3001,7 +3001,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt
     } else if(i2d_node_get_string(node, &name)) {
         status = i2d_panic("failed to get variable string");
     } else {
-        if(isdigit(name.string[0]) && !i2d_token_get_constant(node->tokens, &number)) {
+        if(!i2d_is_number(&name) && !i2d_token_get_constant(node->tokens, &number)) {
             node->type = I2D_NUMBER;
             if(i2d_range_create_add(&node->range, number, number))
                 status = i2d_panic("failed to create range object");
