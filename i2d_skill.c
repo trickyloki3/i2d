@@ -122,18 +122,36 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
     size_t extent;
 
     int field = 0;
+    int last = 0;
 
     anchor = string;
-    for(i = 0; i < length && !status; i++) {
-        if(',' == string[i]) {
+    for(i = 0; i < length && !status && !last; i++) {
+        /*
+         * check for \t, \r, \n (exclude space and tab)
+         */
+        if(isspace(string[i]) && '\t' != string[i] && ' ' != string[i]) 
+            last = 1;
+
+        /*
+         * check for line comments
+         */
+        if('/' == string[i] && i > 0 && '/' == string[i - 1]) {
+            i -= 1;
+            last = 1;
+        }
+
+        if(',' == string[i] || last) {
             string[i] = 0;
 
-            if((string + i) < anchor) {
+            if(string + i < anchor) {
                 status = i2d_panic("line overflow");
             } else {
                 extent = (size_t) (string + i) - (size_t) anchor;
 
-                while(extent && isspace(*anchor)) {
+                /*
+                 * remove initial space and tab character
+                 */
+                while(extent && ('\t' == *anchor || ' ' == *anchor)) {
                     anchor++;
                     extent--;
                 }
@@ -156,6 +174,7 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
                     case 14: status = i2d_skill_parse_list(&skill->blow_count, &skill->blow_count_size, anchor, extent); break;
                     case 15: status = i2d_strtol(&skill->inf3, anchor, extent, 16); break;
                     case 16: status = i2d_string_create(&skill->macro, anchor, extent); break;
+                    case 17: status = i2d_string_create(&skill->name, anchor, extent); break;
                     default: status = i2d_panic("row has too many columns"); break;
                 }
                 field++;
@@ -165,16 +184,8 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
         }
     }
 
-    if(!status) {
-        if(17 != field) {
-            status = i2d_panic("row is missing columns");
-        } else if(&string[i] < anchor) {
-            status = i2d_panic("line overflow");
-        } else {
-            extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_string_create(&skill->name, anchor, extent);
-        }
-    }
+    if(!status && 18 != field)
+        status = i2d_panic("row is missing columns");
 
     return status;
 }
