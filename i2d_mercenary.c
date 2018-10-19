@@ -51,13 +51,28 @@ static int i2d_mercenary_parse(i2d_mercenary * mercenary, char * string, size_t 
     size_t extent;
 
     int field = 0;
+    int last = 0;
 
     anchor = string;
-    for(i = 0; i < length && !status; i++) {
-        if(',' == string[i]) {
+    for(i = 0; i < length && !status && !last; i++) {
+        /*
+         * check for \t, \r, \n (exclude space)
+         */
+        if(isspace(string[i]) && ' ' != string[i]) 
+            last = 1;
+
+        /*
+         * check for line comments
+         */
+        if('/' == string[i] && i > 0 && '/' == string[i - 1]) {
+            i -= 1;
+            last = 1;
+        }
+
+        if(',' == string[i] || last) {
             string[i] = 0;
 
-            if((string + i) < anchor) {
+            if(string + i < anchor) {
                 status = i2d_panic("line overflow");
             } else {
                 extent = (size_t) (string + i) - (size_t) anchor;
@@ -87,6 +102,7 @@ static int i2d_mercenary_parse(i2d_mercenary * mercenary, char * string, size_t 
                     case 22: status = i2d_strtol(&mercenary->speed, anchor, extent, 10); break;
                     case 23: status = i2d_strtol(&mercenary->adelay, anchor, extent, 10); break;
                     case 24: status = i2d_strtol(&mercenary->amotion, anchor, extent, 10); break;
+                    case 25: status = i2d_strtol(&mercenary->dmotion, anchor, extent, 10); break;
                     default: status = i2d_panic("row has too many columns"); break;
                 }
                 field++;
@@ -96,16 +112,8 @@ static int i2d_mercenary_parse(i2d_mercenary * mercenary, char * string, size_t 
         }
     }
 
-    if(!status) {
-        if(25 != field) {
-            status = i2d_panic("row is missing columns");
-        } else if(&string[i] < anchor) {
-            status = i2d_panic("line overflow");
-        } else {
-            extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_strtol(&mercenary->dmotion, anchor, extent, 10);
-        }
-    }
+    if(!status && 26 != field)
+        status = i2d_panic("row is missing columns");
 
     return status;
 }
