@@ -616,7 +616,7 @@ int i2d_strtoul(unsigned long * result, const char * string, size_t length, int 
 int i2d_strtod(double * result, const char * string, size_t length) {
     int status = I2D_OK;
 
-    unsigned long number;
+    double number;
     char * end = NULL;
 
     if(!length) {
@@ -767,12 +767,6 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
          */
         if(delimit > anchor) {
             length = (size_t) delimit - (size_t) anchor;
-
-            /*
-             * trim whitespace
-             */
-            while(isspace(anchor[length - 1]))
-                anchor[length--] = 0;
 
             /*
              * skip comments
