@@ -13,6 +13,12 @@
         "CLASS_ALL"
     ],
     "constants" : {
+        "#CASHPOINTS" : {
+            "value" : 131
+        },
+        "#KAFRAPOINTS" : {
+            "value" : 132
+        },
         "1_ETC_01" : {
             "value" : 46
         },
@@ -472,6 +478,18 @@
         "4_DULLAHAN" : {
             "value" : 10178
         },
+        "4_ED_FENCE" : {
+            "value" : 10309
+        },
+        "4_ED_ORB" : {
+            "value" : 10308
+        },
+        "4_ED_OSCAR" : {
+            "value" : 10307
+        },
+        "4_ED_SCHMIDT" : {
+            "value" : 10306
+        },
         "4_ELDER" : {
             "value" : 10205
         },
@@ -561,6 +579,27 @@
         },
         "4_EP16_WOLF" : {
             "value" : 10128
+        },
+        "4_EP17_AS" : {
+            "value" : 10300
+        },
+        "4_EP17_ELYUMINA" : {
+            "value" : 10301
+        },
+        "4_EP17_KAYA" : {
+            "value" : 10299
+        },
+        "4_EP17_MIGUEL" : {
+            "value" : 10303
+        },
+        "4_EP17_MIGUEL_D" : {
+            "value" : 10305
+        },
+        "4_EP17_MORNING" : {
+            "value" : 10302
+        },
+        "4_EP17_NIHIL_K" : {
+            "value" : 10304
         },
         "4_EREMES" : {
             "value" : 595
@@ -1129,6 +1168,9 @@
         "4_F_SCIENCE" : {
             "value" : 982
         },
+        "4_F_SE_SUN" : {
+            "value" : 10296
+        },
         "4_F_SHABBY" : {
             "value" : 919
         },
@@ -1299,6 +1341,9 @@
         },
         "4_HARWORD" : {
             "value" : 600
+        },
+        "4_HEN" : {
+            "value" : 10285
         },
         "4_HUMAN_GERUTOO" : {
             "value" : 493
@@ -2407,6 +2452,12 @@
         "4_M_SEIREN_UC" : {
             "value" : 10194
         },
+        "4_M_SE_MOON" : {
+            "value" : 10297
+        },
+        "4_M_SE_STAR" : {
+            "value" : 10298
+        },
         "4_M_SHADOWCHASER" : {
             "value" : 481
         },
@@ -2433,6 +2484,9 @@
         },
         "4_M_SOCCER9" : {
             "value" : 913
+        },
+        "4_M_SOULREAPER" : {
+            "value" : 10295
         },
         "4_M_SURA" : {
             "value" : 483
@@ -3170,6 +3224,27 @@
         "BG_WOS" : {
             "value" : 26
         },
+        "BL_ELEM" : {
+            "value" : 512
+        },
+        "BL_HOM" : {
+            "value" : 8
+        },
+        "BL_MER" : {
+            "value" : 16
+        },
+        "BL_MOB" : {
+            "value" : 2
+        },
+        "BL_NPC" : {
+            "value" : 128
+        },
+        "BL_PC" : {
+            "value" : 1
+        },
+        "BL_PET" : {
+            "value" : 4
+        },
         "BOUND_ACCOUNT" : {
             "value" : 1
         },
@@ -3395,6 +3470,9 @@
         "CLEAR_NPC" : {
             "value" : 844
         },
+        "COOK_MASTERY" : {
+            "value" : 134
+        },
         "CharMoves" : {
             "name" : "Moving",
             "value" : 124
@@ -3481,6 +3559,9 @@
             "min" : 0,
             "name" : "Year",
             "value" : 7
+        },
+        "DT_YYYYMMDD" : {
+            "value" : 9
         },
         "DUEL" : {
             "value" : 22
@@ -3625,6 +3706,12 @@
         },
         "EAJ_BABY_SOUL_LINKER" : {
             "value" : 8711
+        },
+        "EAJ_BABY_SOUL_REAPER" : {
+            "value" : 25095
+        },
+        "EAJ_BABY_STAR_EMPEROR" : {
+            "value" : 24839
         },
         "EAJ_BABY_STAR_GLADIATOR" : {
             "value" : 8455
@@ -3803,8 +3890,14 @@
         "EAJ_SOUL_LINKER" : {
             "value" : 519
         },
+        "EAJ_SOUL_REAPER" : {
+            "value" : 16903
+        },
         "EAJ_STALKER" : {
             "value" : 4614
+        },
+        "EAJ_STAR_EMPEROR" : {
+            "value" : 16647
         },
         "EAJ_STAR_GLADIATOR" : {
             "value" : 263
@@ -3865,6 +3958,3108 @@
         },
         "EFFECTLAUNCHER" : {
             "value" : 104
+        },
+        "EFST_2011RWC" : {
+            "value" : 650
+        },
+        "EFST_2011RWC_SCROLL" : {
+            "value" : 664
+        },
+        "EFST_2013_VALENTINE1" : {
+            "value" : 731
+        },
+        "EFST_2013_VALENTINE2" : {
+            "value" : 732
+        },
+        "EFST_2013_VALENTINE3" : {
+            "value" : 733
+        },
+        "EFST_ABUNDANCE" : {
+            "value" : 323
+        },
+        "EFST_ABYSS_001" : {
+            "value" : 1066
+        },
+        "EFST_ABYSS_002" : {
+            "value" : 1067
+        },
+        "EFST_ABYSS_003" : {
+            "value" : 1068
+        },
+        "EFST_ABYSS_004" : {
+            "value" : 1069
+        },
+        "EFST_ABYSS_005" : {
+            "value" : 1070
+        },
+        "EFST_ABYSS_006" : {
+            "value" : 1071
+        },
+        "EFST_ABYSS_007" : {
+            "value" : 1072
+        },
+        "EFST_ABYSS_008" : {
+            "value" : 1073
+        },
+        "EFST_AB_SECRAMENT" : {
+            "value" : 472
+        },
+        "EFST_ACARAJE" : {
+            "value" : 414
+        },
+        "EFST_ACCELERATION" : {
+            "value" : 361
+        },
+        "EFST_ACTIVATE" : {
+            "value" : 471
+        },
+        "EFST_ACTIVE_MONSTER_TRANSFORM" : {
+            "value" : 665
+        },
+        "EFST_ACUO_MINT_GUM" : {
+            "value" : 799
+        },
+        "EFST_ADAPTATION" : {
+            "value" : 1089
+        },
+        "EFST_ADORAMUS" : {
+            "value" : 401
+        },
+        "EFST_ADRENALINE" : {
+            "value" : 23
+        },
+        "EFST_ADRENALINE2" : {
+            "value" : 147
+        },
+        "EFST_AGIUP" : {
+            "value" : 99
+        },
+        "EFST_AID_PERIOD_ADDSTOREITEMCOUNT" : {
+            "value" : 942
+        },
+        "EFST_AID_PERIOD_DEADPENALTY" : {
+            "value" : 941
+        },
+        "EFST_AID_PERIOD_PLUSEXP" : {
+            "value" : 939
+        },
+        "EFST_AID_PERIOD_PLUSEXP_2ND" : {
+            "value" : 984
+        },
+        "EFST_AID_PERIOD_PLUSJOBEXP" : {
+            "value" : 940
+        },
+        "EFST_AID_PERIOD_PLUSJOBEXP_2ND" : {
+            "value" : 985
+        },
+        "EFST_AID_PERIOD_RECEIVEITEM" : {
+            "value" : 938
+        },
+        "EFST_AID_PERIOD_RECEIVEITEM_2ND" : {
+            "value" : 983
+        },
+        "EFST_AKAITSUKI" : {
+            "value" : 660
+        },
+        "EFST_ALL_LIGHTGUARD" : {
+            "value" : 791
+        },
+        "EFST_ALL_LIGHTGUARD_COOL_TIME" : {
+            "value" : 792
+        },
+        "EFST_ALL_NIFLHEIM_RECALL" : {
+            "value" : 858
+        },
+        "EFST_ALL_RIDING" : {
+            "value" : 613
+        },
+        "EFST_ALL_RIDING_REUSE_LIMIT" : {
+            "value" : 614
+        },
+        "EFST_ALL_STAT_DOWN" : {
+            "value" : 1013
+        },
+        "EFST_ALMIGHTY" : {
+            "value" : 685
+        },
+        "EFST_ANALYZE" : {
+            "value" : 450
+        },
+        "EFST_ANCILLA" : {
+            "value" : 1095
+        },
+        "EFST_ANGELUS" : {
+            "value" : 9
+        },
+        "EFST_ANGEL_PROTECT" : {
+            "value" : 314
+        },
+        "EFST_ANGRIFFS_MODUS" : {
+            "value" : 599
+        },
+        "EFST_ANKLESNARE" : {
+            "value" : 45
+        },
+        "EFST_ANTIMAGIC" : {
+            "value" : 285
+        },
+        "EFST_ANTI_M_BLAST" : {
+            "value" : 760
+        },
+        "EFST_APPLEIDUN" : {
+            "value" : 73
+        },
+        "EFST_AQUAPLAY" : {
+            "value" : 545
+        },
+        "EFST_AQUAPLAY_OPTION" : {
+            "value" : 546
+        },
+        "EFST_ARCLOUSEDASH" : {
+            "value" : 918
+        },
+        "EFST_ARCWANDCLAN" : {
+            "value" : 763
+        },
+        "EFST_ARMORSCROLL" : {
+            "value" : 512
+        },
+        "EFST_ARMOR_PROPERTY" : {
+            "value" : 302
+        },
+        "EFST_ASPD_POPCORN" : {
+            "value" : 1033
+        },
+        "EFST_ASPERSIO" : {
+            "value" : 17
+        },
+        "EFST_ASSASSINCROSS" : {
+            "value" : 71
+        },
+        "EFST_ASSUMPTIO" : {
+            "value" : 110
+        },
+        "EFST_ASSUMPTIO2" : {
+            "value" : 473
+        },
+        "EFST_AS_RAGGED_GOLEM_CARD" : {
+            "value" : 1000
+        },
+        "EFST_ATKER_ASPD" : {
+            "value" : 297
+        },
+        "EFST_ATKER_BLOOD" : {
+            "value" : 300
+        },
+        "EFST_ATKER_MOVESPEED" : {
+            "value" : 299
+        },
+        "EFST_ATK_POPCORN" : {
+            "value" : 1031
+        },
+        "EFST_ATTACK_PROPERTY_DARKNESS" : {
+            "value" : 904
+        },
+        "EFST_ATTACK_PROPERTY_FIRE" : {
+            "value" : 900
+        },
+        "EFST_ATTACK_PROPERTY_GROUND" : {
+            "value" : 899
+        },
+        "EFST_ATTACK_PROPERTY_NOTHING" : {
+            "value" : 897
+        },
+        "EFST_ATTACK_PROPERTY_POISON" : {
+            "value" : 902
+        },
+        "EFST_ATTACK_PROPERTY_SAINT" : {
+            "value" : 903
+        },
+        "EFST_ATTACK_PROPERTY_TELEKINESIS" : {
+            "value" : 905
+        },
+        "EFST_ATTACK_PROPERTY_UNDEAD" : {
+            "value" : 906
+        },
+        "EFST_ATTACK_PROPERTY_WATER" : {
+            "value" : 898
+        },
+        "EFST_ATTACK_PROPERTY_WIND" : {
+            "value" : 901
+        },
+        "EFST_ATTHASTE_CASH" : {
+            "value" : 647
+        },
+        "EFST_ATTHASTE_INFINITY" : {
+            "value" : 40
+        },
+        "EFST_ATTHASTE_POTION1" : {
+            "value" : 37
+        },
+        "EFST_ATTHASTE_POTION2" : {
+            "value" : 38
+        },
+        "EFST_ATTHASTE_POTION3" : {
+            "value" : 39
+        },
+        "EFST_AURABLADE" : {
+            "value" : 103
+        },
+        "EFST_AUTOBERSERK" : {
+            "value" : 132
+        },
+        "EFST_AUTOCOUNTER" : {
+            "value" : 43
+        },
+        "EFST_AUTOGUARD" : {
+            "value" : 58
+        },
+        "EFST_AUTOSHADOWSPELL" : {
+            "value" : 393
+        },
+        "EFST_AUTOSPELL" : {
+            "value" : 65
+        },
+        "EFST_BANANA_BOMB" : {
+            "value" : 497
+        },
+        "EFST_BANANA_BOMB_SITDOWN_POSTDELAY" : {
+            "value" : 479
+        },
+        "EFST_BANDING" : {
+            "value" : 405
+        },
+        "EFST_BANDING_DEFENCE" : {
+            "value" : 505
+        },
+        "EFST_BARRIER" : {
+            "value" : 49
+        },
+        "EFST_BASILICA" : {
+            "value" : 111
+        },
+        "EFST_BATTLESCROLL" : {
+            "value" : 511
+        },
+        "EFST_BDPLAYING" : {
+            "value" : 69
+        },
+        "EFST_BEEF_RIB_STEW" : {
+            "value" : 783
+        },
+        "EFST_BEER_BOTTLE_CAP" : {
+            "value" : 617
+        },
+        "EFST_BENEDICTIO" : {
+            "value" : 18
+        },
+        "EFST_BERSERK" : {
+            "value" : 107
+        },
+        "EFST_BEYOND_OF_WARCRY" : {
+            "value" : 453
+        },
+        "EFST_BITESCAR" : {
+            "value" : 917
+        },
+        "EFST_BLADESTOP" : {
+            "value" : 85
+        },
+        "EFST_BLANK" : {
+            "value" : -1
+        },
+        "EFST_BLAST" : {
+            "value" : 553
+        },
+        "EFST_BLAST_OPTION" : {
+            "value" : 554
+        },
+        "EFST_BLAZE_BEAD" : {
+            "value" : 979
+        },
+        "EFST_BLESSING" : {
+            "value" : 10
+        },
+        "EFST_BLOCKING_PLAY" : {
+            "value" : 469
+        },
+        "EFST_BLOODING" : {
+            "value" : 124
+        },
+        "EFST_BLOODYLUST" : {
+            "value" : 428
+        },
+        "EFST_BLOOD_SUCKER" : {
+            "value" : 464
+        },
+        "EFST_BODYPAINT" : {
+            "value" : 399
+        },
+        "EFST_BODYSTATE_BURNNING" : {
+            "value" : 881
+        },
+        "EFST_BODYSTATE_FREEZING" : {
+            "value" : 876
+        },
+        "EFST_BODYSTATE_IMPRISON" : {
+            "value" : 882
+        },
+        "EFST_BODYSTATE_SLEEP" : {
+            "value" : 878
+        },
+        "EFST_BODYSTATE_STONECURSE" : {
+            "value" : 875
+        },
+        "EFST_BODYSTATE_STONECURSE_ING" : {
+            "value" : 880
+        },
+        "EFST_BODYSTATE_STUN" : {
+            "value" : 877
+        },
+        "EFST_BODYSTATE_UNDEAD" : {
+            "value" : 879
+        },
+        "EFST_BOOST500" : {
+            "value" : 485
+        },
+        "EFST_BOW_ATK_POWER" : {
+            "value" : 1111
+        },
+        "EFST_BREEZE_BEAD" : {
+            "value" : 981
+        },
+        "EFST_BROKENARMOR" : {
+            "value" : 32
+        },
+        "EFST_BROKENWEAPON" : {
+            "value" : 33
+        },
+        "EFST_BS_REPAIRWEAPON_OPERATOR" : {
+            "value" : 813
+        },
+        "EFST_BUCHEDENOEL" : {
+            "value" : 392
+        },
+        "EFST_BURNT" : {
+            "value" : 737
+        },
+        "EFST_B_TRAP" : {
+            "value" : 752
+        },
+        "EFST_CAMOUFLAGE" : {
+            "value" : 360
+        },
+        "EFST_CARTBOOST" : {
+            "value" : 118
+        },
+        "EFST_CASH_BOSS_ALARM" : {
+            "value" : 253
+        },
+        "EFST_CASH_DEATHPENALTY" : {
+            "value" : 251
+        },
+        "EFST_CASH_PLUSEXP" : {
+            "value" : 250
+        },
+        "EFST_CASH_PLUSONLYJOBEXP" : {
+            "value" : 312
+        },
+        "EFST_CASH_RECEIVEITEM" : {
+            "value" : 252
+        },
+        "EFST_CAST_TIME" : {
+            "value" : 1113
+        },
+        "EFST_CATNIPPOWDER" : {
+            "value" : 894
+        },
+        "EFST_CBC" : {
+            "value" : 602
+        },
+        "EFST_CBC_POSTDELAY" : {
+            "value" : 603
+        },
+        "EFST_CHASEWALK" : {
+            "value" : 119
+        },
+        "EFST_CHASEWALK2" : {
+            "value" : 182
+        },
+        "EFST_CHATTERING" : {
+            "value" : 953
+        },
+        "EFST_CHEERUP" : {
+            "value" : 992
+        },
+        "EFST_CHERRY_BLOSSOM_CAKE" : {
+            "value" : 892
+        },
+        "EFST_CHILL" : {
+            "value" : 736
+        },
+        "EFST_CHILLY_AIR" : {
+            "value" : 549
+        },
+        "EFST_CHILLY_AIR_OPTION" : {
+            "value" : 550
+        },
+        "EFST_CHUSEOK_FRIDAY" : {
+            "value" : 789
+        },
+        "EFST_CHUSEOK_MONDAY" : {
+            "value" : 785
+        },
+        "EFST_CHUSEOK_THURSDAY" : {
+            "value" : 788
+        },
+        "EFST_CHUSEOK_TUESDAY" : {
+            "value" : 786
+        },
+        "EFST_CHUSEOK_WEDNESDAY" : {
+            "value" : 787
+        },
+        "EFST_CHUSEOK_WEEKEND" : {
+            "value" : 790
+        },
+        "EFST_CIRCLE_OF_FIRE" : {
+            "value" : 515
+        },
+        "EFST_CIRCLE_OF_FIRE_OPTION" : {
+            "value" : 516
+        },
+        "EFST_CLAIRVOYANCE" : {
+            "value" : 184
+        },
+        "EFST_CLAN_INFO" : {
+            "value" : 696
+        },
+        "EFST_CLIENT_ONLY_EQUIP_ARROW" : {
+            "value" : 695
+        },
+        "EFST_CLOAKING" : {
+            "value" : 5
+        },
+        "EFST_CLOAKINGEXCEED" : {
+            "value" : 333
+        },
+        "EFST_CLOUD_KILL" : {
+            "value" : 440
+        },
+        "EFST_CLOWN_N_GYPSY_CARD" : {
+            "value" : 781
+        },
+        "EFST_COCKTAIL_WARG_BLOOD" : {
+            "value" : 492
+        },
+        "EFST_COLD" : {
+            "value" : 437
+        },
+        "EFST_COMBOATTACK" : {
+            "value" : 89
+        },
+        "EFST_CONCENTRATION" : {
+            "value" : 3
+        },
+        "EFST_COOLER" : {
+            "value" : 547
+        },
+        "EFST_COOLER_OPTION" : {
+            "value" : 548
+        },
+        "EFST_COUNTER_ON" : {
+            "value" : 141
+        },
+        "EFST_COUNTER_READY" : {
+            "value" : 142
+        },
+        "EFST_CREATINGSTAR" : {
+            "value" : 1047
+        },
+        "EFST_CRESCENTELBOW" : {
+            "value" : 419
+        },
+        "EFST_CRITICALPERCENT" : {
+            "value" : 295
+        },
+        "EFST_CRITICALWOUND" : {
+            "value" : 286
+        },
+        "EFST_CRI_DAMAGE" : {
+            "value" : 1108
+        },
+        "EFST_CROSSBOWCLAN" : {
+            "value" : 765
+        },
+        "EFST_CRUCIS" : {
+            "value" : 11
+        },
+        "EFST_CRUSHSTRIKE" : {
+            "value" : 620
+        },
+        "EFST_CRYSTAL" : {
+            "value" : 266
+        },
+        "EFST_CR_SHRINK" : {
+            "value" : 197
+        },
+        "EFST_CUP_OF_BOZA" : {
+            "value" : 751
+        },
+        "EFST_CURSEDCIRCLE_ATKER" : {
+            "value" : 416
+        },
+        "EFST_CURSEDCIRCLE_TARGET" : {
+            "value" : 417
+        },
+        "EFST_CURSED_SOIL" : {
+            "value" : 559
+        },
+        "EFST_CURSED_SOIL_OPTION" : {
+            "value" : 560
+        },
+        "EFST_C_MARKER" : {
+            "value" : 755
+        },
+        "EFST_DACCEL" : {
+            "value" : 239
+        },
+        "EFST_DAILYSENDMAILCNT" : {
+            "value" : 824
+        },
+        "EFST_DAMAGE_HEAL" : {
+            "value" : 1015
+        },
+        "EFST_DANCE_WITH_WUG" : {
+            "value" : 441
+        },
+        "EFST_DARKCROW" : {
+            "value" : 730
+        },
+        "EFST_DAURA" : {
+            "value" : 232
+        },
+        "EFST_DA_BLACK" : {
+            "value" : 264
+        },
+        "EFST_DA_CONTRACT" : {
+            "value" : 263
+        },
+        "EFST_DA_DARKPOWER" : {
+            "value" : 261
+        },
+        "EFST_DA_EARPLUG" : {
+            "value" : 262
+        },
+        "EFST_DA_EDARKNESS" : {
+            "value" : 268
+        },
+        "EFST_DA_EGUARDIAN" : {
+            "value" : 269
+        },
+        "EFST_DA_ENERGY" : {
+            "value" : 254
+        },
+        "EFST_DA_FIRSTSLOT" : {
+            "value" : 255
+        },
+        "EFST_DA_HEADDEF" : {
+            "value" : 256
+        },
+        "EFST_DA_ILLUSION" : {
+            "value" : 260
+        },
+        "EFST_DA_ITEMREBUILD" : {
+            "value" : 259
+        },
+        "EFST_DA_MAGICCART" : {
+            "value" : 265
+        },
+        "EFST_DA_REBUILD" : {
+            "value" : 267
+        },
+        "EFST_DA_SPACE" : {
+            "value" : 257
+        },
+        "EFST_DA_TIMEOUT" : {
+            "value" : 270
+        },
+        "EFST_DA_TRANSFORM" : {
+            "value" : 258
+        },
+        "EFST_DBARRIER" : {
+            "value" : 235
+        },
+        "EFST_DBLOCK" : {
+            "value" : 240
+        },
+        "EFST_DC_WINKCHARM" : {
+            "value" : 199
+        },
+        "EFST_DEADLYINFECT" : {
+            "value" : 404
+        },
+        "EFST_DEATHBOUND" : {
+            "value" : 317
+        },
+        "EFST_DEATHHURT" : {
+            "value" : 346
+        },
+        "EFST_DECORATION_OF_MUSIC" : {
+            "value" : 779
+        },
+        "EFST_DEC_AGI" : {
+            "value" : 13
+        },
+        "EFST_DEFENCE" : {
+            "value" : 179
+        },
+        "EFST_DEFENDER" : {
+            "value" : 62
+        },
+        "EFST_DEF_IGNORE" : {
+            "value" : 1110
+        },
+        "EFST_DEF_POWER" : {
+            "value" : 1109
+        },
+        "EFST_DEMONIC_FIRE" : {
+            "value" : 466
+        },
+        "EFST_DENERGY" : {
+            "value" : 227
+        },
+        "EFST_DEVIL1" : {
+            "value" : 152
+        },
+        "EFST_DEVOTION" : {
+            "value" : 60
+        },
+        "EFST_DFREEZER" : {
+            "value" : 233
+        },
+        "EFST_DGAUGE" : {
+            "value" : 238
+        },
+        "EFST_DIMENSION" : {
+            "value" : 1044
+        },
+        "EFST_DIMENSION1" : {
+            "value" : 1045
+        },
+        "EFST_DIMENSION2" : {
+            "value" : 1046
+        },
+        "EFST_DISABLEMOVE" : {
+            "value" : 202
+        },
+        "EFST_DISTRUCTIONSCROLL" : {
+            "value" : 507
+        },
+        "EFST_DODGE_ON" : {
+            "value" : 143
+        },
+        "EFST_DODGE_READY" : {
+            "value" : 144
+        },
+        "EFST_DONTFORGETME" : {
+            "value" : 75
+        },
+        "EFST_DORAM_BUF_01" : {
+            "value" : 935
+        },
+        "EFST_DORAM_BUF_02" : {
+            "value" : 936
+        },
+        "EFST_DOUBLECASTING" : {
+            "value" : 186
+        },
+        "EFST_DOWNKICK_ON" : {
+            "value" : 137
+        },
+        "EFST_DOWNKICK_READY" : {
+            "value" : 138
+        },
+        "EFST_DPUNISH" : {
+            "value" : 234
+        },
+        "EFST_DRACULA_CARD" : {
+            "value" : 865
+        },
+        "EFST_DRESS_UP" : {
+            "value" : 856
+        },
+        "EFST_DRIFT" : {
+            "value" : 218
+        },
+        "EFST_DROCERA_HERB_STEAMED" : {
+            "value" : 495
+        },
+        "EFST_DRUMBATTLEFIELD" : {
+            "value" : 80
+        },
+        "EFST_DUPLELIGHT" : {
+            "value" : 350
+        },
+        "EFST_DWARNING" : {
+            "value" : 236
+        },
+        "EFST_EARTHDRIVE" : {
+            "value" : 406
+        },
+        "EFST_EARTHSCROLL" : {
+            "value" : 205
+        },
+        "EFST_EARTH_INSIGNIA" : {
+            "value" : 570
+        },
+        "EFST_ECHOSONG" : {
+            "value" : 443
+        },
+        "EFST_ECLAGE_RECALL" : {
+            "value" : 667
+        },
+        "EFST_EDP" : {
+            "value" : 114
+        },
+        "EFST_ELECTRICSHOCKER" : {
+            "value" : 353
+        },
+        "EFST_ELEMENTAL_AGGRESSIVE" : {
+            "value" : 503
+        },
+        "EFST_EL_COST" : {
+            "value" : 538
+        },
+        "EFST_EL_DEFENSIVE" : {
+            "value" : 536
+        },
+        "EFST_EL_OFFENSIVE" : {
+            "value" : 537
+        },
+        "EFST_EL_PASSIVE" : {
+            "value" : 535
+        },
+        "EFST_EL_WAIT" : {
+            "value" : 534
+        },
+        "EFST_EMOTION" : {
+            "value" : 168
+        },
+        "EFST_ENCHANTBLADE" : {
+            "value" : 316
+        },
+        "EFST_ENCHANTPOISON" : {
+            "value" : 6
+        },
+        "EFST_ENDURE" : {
+            "value" : 1
+        },
+        "EFST_ENDURE_MDEF" : {
+            "value" : 315
+        },
+        "EFST_ENERGYCOAT" : {
+            "value" : 31
+        },
+        "EFST_ENERGY_DRINK_RESERCH" : {
+            "value" : 481
+        },
+        "EFST_ENERVATION" : {
+            "value" : 408
+        },
+        "EFST_ENSEMBLEFATIGUE" : {
+            "value" : 1088
+        },
+        "EFST_ENTRY_QUEUE_APPLY_DELAY" : {
+            "value" : 668
+        },
+        "EFST_ENTRY_QUEUE_NOTIFY_ADMISSION_TIME_OUT" : {
+            "value" : 671
+        },
+        "EFST_EP16_2_BUFF_AC" : {
+            "value" : 965
+        },
+        "EFST_EP16_2_BUFF_SC" : {
+            "value" : 964
+        },
+        "EFST_EP16_2_BUFF_SS" : {
+            "value" : 963
+        },
+        "EFST_EP16_DEF" : {
+            "value" : 873
+        },
+        "EFST_EPICLESIS" : {
+            "value" : 329
+        },
+        "EFST_EQC" : {
+            "value" : 604
+        },
+        "EFST_EQUIPED_FLOOR" : {
+            "value" : 571
+        },
+        "EFST_EQUIPPED_DIVINE_ARMOR" : {
+            "value" : 648
+        },
+        "EFST_EQUIPPED_HOLY_ARMOR" : {
+            "value" : 649
+        },
+        "EFST_ESSENCE_OF_TIME" : {
+            "value" : 844
+        },
+        "EFST_ETERNALCHAOS" : {
+            "value" : 79
+        },
+        "EFST_EXCLUSIVE_PLUSEXP" : {
+            "value" : 1120
+        },
+        "EFST_EXCLUSIVE_RECEIVEITEM" : {
+            "value" : 1119
+        },
+        "EFST_EXEEDBREAK" : {
+            "value" : 400
+        },
+        "EFST_EXPDROPUP" : {
+            "value" : 1086
+        },
+        "EFST_EXPIATIO" : {
+            "value" : 340
+        },
+        "EFST_EXPLOSIONSPIRITS" : {
+            "value" : 86
+        },
+        "EFST_EXPMEMORY" : {
+            "value" : 214
+        },
+        "EFST_EXPUP" : {
+            "value" : 172
+        },
+        "EFST_EXTRACT_SALAMINE_JUICE" : {
+            "value" : 484
+        },
+        "EFST_EXTRACT_WHITE_POTION_Z" : {
+            "value" : 482
+        },
+        "EFST_EXTREMITYFIST" : {
+            "value" : 88
+        },
+        "EFST_E_CHAIN" : {
+            "value" : 753
+        },
+        "EFST_E_QD_SHOT_READY" : {
+            "value" : 754
+        },
+        "EFST_FALCON" : {
+            "value" : 28
+        },
+        "EFST_FALLENEMPIRE" : {
+            "value" : 424
+        },
+        "EFST_FALLEN_ANGEL" : {
+            "value" : 976
+        },
+        "EFST_FALLINGSTAR" : {
+            "value" : 1048
+        },
+        "EFST_FEARBREEZE" : {
+            "value" : 352
+        },
+        "EFST_FENRIR_CARD" : {
+            "value" : 711
+        },
+        "EFST_FESTIVE_ENERGY" : {
+            "value" : 1104
+        },
+        "EFST_FIGHTINGSPIRIT" : {
+            "value" : 322
+        },
+        "EFST_FIRE_CLOAK" : {
+            "value" : 517
+        },
+        "EFST_FIRE_CLOAK_OPTION" : {
+            "value" : 518
+        },
+        "EFST_FIRE_EXPANSION_SMOKE_POWDER" : {
+            "value" : 467
+        },
+        "EFST_FIRE_EXPANSION_TEAR_GAS" : {
+            "value" : 468
+        },
+        "EFST_FIRE_INSIGNIA" : {
+            "value" : 567
+        },
+        "EFST_FIXEDCASTINGTM_REDUCE" : {
+            "value" : 462
+        },
+        "EFST_FLASHCOMBO" : {
+            "value" : 740
+        },
+        "EFST_FLASHKICK" : {
+            "value" : 1041
+        },
+        "EFST_FLOWERSMOKE" : {
+            "value" : 822
+        },
+        "EFST_FLOWER_LEAF" : {
+            "value" : 675
+        },
+        "EFST_FOGWALL" : {
+            "value" : 128
+        },
+        "EFST_FOLLOWER_NPC_SKILL_POSTDELAY" : {
+            "value" : 684
+        },
+        "EFST_FOOD_AGI" : {
+            "value" : 242
+        },
+        "EFST_FOOD_AGI_CASH" : {
+            "value" : 272
+        },
+        "EFST_FOOD_BASICAVOIDANCE" : {
+            "value" : 247
+        },
+        "EFST_FOOD_BASICHIT" : {
+            "value" : 248
+        },
+        "EFST_FOOD_CRITICALSUCCESSVALUE" : {
+            "value" : 249
+        },
+        "EFST_FOOD_DEX" : {
+            "value" : 244
+        },
+        "EFST_FOOD_DEX_CASH" : {
+            "value" : 274
+        },
+        "EFST_FOOD_INT" : {
+            "value" : 245
+        },
+        "EFST_FOOD_INT_CASH" : {
+            "value" : 275
+        },
+        "EFST_FOOD_LUK" : {
+            "value" : 246
+        },
+        "EFST_FOOD_LUK_CASH" : {
+            "value" : 276
+        },
+        "EFST_FOOD_STR" : {
+            "value" : 241
+        },
+        "EFST_FOOD_STR_CASH" : {
+            "value" : 271
+        },
+        "EFST_FOOD_VIT" : {
+            "value" : 243
+        },
+        "EFST_FOOD_VIT_CASH" : {
+            "value" : 273
+        },
+        "EFST_FORCEOFVANGUARD" : {
+            "value" : 391
+        },
+        "EFST_FORTUNEKISS" : {
+            "value" : 76
+        },
+        "EFST_FREEZE_SP" : {
+            "value" : 458
+        },
+        "EFST_FRESHSHRIMP" : {
+            "value" : 921
+        },
+        "EFST_FREYJASCROLL" : {
+            "value" : 513
+        },
+        "EFST_FRIEND" : {
+            "value" : 162
+        },
+        "EFST_FRIENDUP" : {
+            "value" : 163
+        },
+        "EFST_FRIGG_SONG" : {
+            "value" : 715
+        },
+        "EFST_FROSTMISTY" : {
+            "value" : 351
+        },
+        "EFST_FROZEN_BEAD" : {
+            "value" : 980
+        },
+        "EFST_FSTONE" : {
+            "value" : 823
+        },
+        "EFST_FULL_SWING_K" : {
+            "value" : 486
+        },
+        "EFST_FULL_THROTTLE" : {
+            "value" : 720
+        },
+        "EFST_GAIN" : {
+            "value" : 216
+        },
+        "EFST_GC_POISONINGWEAPON_OPERATOR" : {
+            "value" : 811
+        },
+        "EFST_GDSKILL_BATTLEORDER" : {
+            "value" : 173
+        },
+        "EFST_GDSKILL_POSTDELAY" : {
+            "value" : 175
+        },
+        "EFST_GDSKILL_REGENERATION" : {
+            "value" : 174
+        },
+        "EFST_GEFFEN_MAGIC1" : {
+            "value" : 702
+        },
+        "EFST_GEFFEN_MAGIC2" : {
+            "value" : 703
+        },
+        "EFST_GEFFEN_MAGIC3" : {
+            "value" : 704
+        },
+        "EFST_GENSOU" : {
+            "value" : 659
+        },
+        "EFST_GENTLETOUCH_CHANGE" : {
+            "value" : 426
+        },
+        "EFST_GENTLETOUCH_ENERGYGAIN" : {
+            "value" : 425
+        },
+        "EFST_GENTLETOUCH_REVITALIZE" : {
+            "value" : 427
+        },
+        "EFST_GIANTGROWTH" : {
+            "value" : 319
+        },
+        "EFST_GIFT_OF_SNOW" : {
+            "value" : 868
+        },
+        "EFST_GLASTHEIM_ATK" : {
+            "value" : 677
+        },
+        "EFST_GLASTHEIM_DEF" : {
+            "value" : 678
+        },
+        "EFST_GLASTHEIM_HEAL" : {
+            "value" : 679
+        },
+        "EFST_GLASTHEIM_HIDDEN" : {
+            "value" : 680
+        },
+        "EFST_GLASTHEIM_HPSP" : {
+            "value" : 683
+        },
+        "EFST_GLASTHEIM_ITEMDEF" : {
+            "value" : 682
+        },
+        "EFST_GLASTHEIM_STATE" : {
+            "value" : 681
+        },
+        "EFST_GLASTHEIM_TRANS" : {
+            "value" : 776
+        },
+        "EFST_GLOOMYDAY" : {
+            "value" : 438
+        },
+        "EFST_GLOOM_CARD" : {
+            "value" : 988
+        },
+        "EFST_GLORIA" : {
+            "value" : 21
+        },
+        "EFST_GLORY_OF_RETURN" : {
+            "value" : 1030
+        },
+        "EFST_GM_BATTLE" : {
+            "value" : 662
+        },
+        "EFST_GM_BATTLE2" : {
+            "value" : 663
+        },
+        "EFST_GN_CARTBOOST" : {
+            "value" : 461
+        },
+        "EFST_GN_CHANGEMATERIAL_OPERATOR" : {
+            "value" : 803
+        },
+        "EFST_GN_MAKEBOMB_OPERATOR" : {
+            "value" : 805
+        },
+        "EFST_GN_MIX_COOKING_OPERATOR" : {
+            "value" : 804
+        },
+        "EFST_GN_REMODELING_CART" : {
+            "value" : 460
+        },
+        "EFST_GN_S_PHARMACY_OPERATOR" : {
+            "value" : 806
+        },
+        "EFST_GN_TRAINING_SWORD" : {
+            "value" : 459
+        },
+        "EFST_GOLDENE_FERSE" : {
+            "value" : 598
+        },
+        "EFST_GOLDENMACECLAN" : {
+            "value" : 764
+        },
+        "EFST_GOSPEL" : {
+            "value" : 109
+        },
+        "EFST_GRADUAL_GRAVITY" : {
+            "value" : 1014
+        },
+        "EFST_GRANITIC_ARMOR" : {
+            "value" : 606
+        },
+        "EFST_GRAVITATION" : {
+            "value" : 187
+        },
+        "EFST_GRAVITYCONTROL" : {
+            "value" : 1050
+        },
+        "EFST_GRIFFON" : {
+            "value" : 217
+        },
+        "EFST_GROOMING" : {
+            "value" : 961
+        },
+        "EFST_GROOMY" : {
+            "value" : 409
+        },
+        "EFST_GROUNDMAGIC" : {
+            "value" : 112
+        },
+        "EFST_GS_ACCURACY" : {
+            "value" : 210
+        },
+        "EFST_GS_ADJUSTMENT" : {
+            "value" : 209
+        },
+        "EFST_GS_GATLINGFEVER" : {
+            "value" : 204
+        },
+        "EFST_GS_MADNESSCANCEL" : {
+            "value" : 203
+        },
+        "EFST_GS_MAGICAL_BULLET" : {
+            "value" : 966
+        },
+        "EFST_GUARDIAN_RECALL" : {
+            "value" : 572
+        },
+        "EFST_GUILD_STORAGE" : {
+            "value" : 810
+        },
+        "EFST_GUST" : {
+            "value" : 551
+        },
+        "EFST_GUST_OPTION" : {
+            "value" : 552
+        },
+        "EFST_GVG_BLIND" : {
+            "value" : 694
+        },
+        "EFST_GVG_CURSE" : {
+            "value" : 692
+        },
+        "EFST_GVG_FREEZ" : {
+            "value" : 690
+        },
+        "EFST_GVG_GIANT" : {
+            "value" : 686
+        },
+        "EFST_GVG_GOLEM" : {
+            "value" : 687
+        },
+        "EFST_GVG_SILENCE" : {
+            "value" : 693
+        },
+        "EFST_GVG_SLEEP" : {
+            "value" : 691
+        },
+        "EFST_GVG_STONE" : {
+            "value" : 689
+        },
+        "EFST_GVG_STUN" : {
+            "value" : 688
+        },
+        "EFST_G_LIFEPOTION" : {
+            "value" : 578
+        },
+        "EFST_HALLUCINATIONWALK" : {
+            "value" : 334
+        },
+        "EFST_HALLUCINATIONWALK_POSTDELAY" : {
+            "value" : 335
+        },
+        "EFST_HAMI_BLOODLUST" : {
+            "value" : 196
+        },
+        "EFST_HANDICAPSTATE_DEEP_SLEEP" : {
+            "value" : 435
+        },
+        "EFST_HANDICAPSTATE_NORECOVER" : {
+            "value" : 637
+        },
+        "EFST_HANDICAPTOLERANCE_LEVELGAP" : {
+            "value" : 817
+        },
+        "EFST_HAPPINESS_STAR" : {
+            "value" : 849
+        },
+        "EFST_HARMONIZE" : {
+            "value" : 444
+        },
+        "EFST_HAT_EFFECT" : {
+            "value" : 674
+        },
+        "EFST_HEAD_EQUIPMENT_EFFECT" : {
+            "value" : 895
+        },
+        "EFST_HEALPLUS" : {
+            "value" : 292
+        },
+        "EFST_HEALTHSTATE_ANGELUS" : {
+            "value" : 888
+        },
+        "EFST_HEALTHSTATE_BLIND" : {
+            "value" : 887
+        },
+        "EFST_HEALTHSTATE_BLOODING" : {
+            "value" : 889
+        },
+        "EFST_HEALTHSTATE_CONFUSION" : {
+            "value" : 886
+        },
+        "EFST_HEALTHSTATE_CURSE" : {
+            "value" : 884
+        },
+        "EFST_HEALTHSTATE_FEAR" : {
+            "value" : 891
+        },
+        "EFST_HEALTHSTATE_HEAVYPOISON" : {
+            "value" : 890
+        },
+        "EFST_HEALTHSTATE_POISON" : {
+            "value" : 883
+        },
+        "EFST_HEALTHSTATE_SILENCE" : {
+            "value" : 885
+        },
+        "EFST_HEATER" : {
+            "value" : 541
+        },
+        "EFST_HEATER_OPTION" : {
+            "value" : 542
+        },
+        "EFST_HEAT_BARREL" : {
+            "value" : 759
+        },
+        "EFST_HEAT_BARREL_AFTER" : {
+            "value" : 778
+        },
+        "EFST_HELLPOWER" : {
+            "value" : 304
+        },
+        "EFST_HELM_ASIR" : {
+            "value" : 931
+        },
+        "EFST_HELM_HAGALAS" : {
+            "value" : 929
+        },
+        "EFST_HELM_ISIA" : {
+            "value" : 930
+        },
+        "EFST_HELM_RHYDO" : {
+            "value" : 927
+        },
+        "EFST_HELM_TURISUS" : {
+            "value" : 928
+        },
+        "EFST_HELM_URJ" : {
+            "value" : 932
+        },
+        "EFST_HELM_VERKANA" : {
+            "value" : 926
+        },
+        "EFST_HERMODE" : {
+            "value" : 190
+        },
+        "EFST_HFLI_FLEET" : {
+            "value" : 193
+        },
+        "EFST_HFLI_SPEED" : {
+            "value" : 194
+        },
+        "EFST_HIDING" : {
+            "value" : 4
+        },
+        "EFST_HIGH_RANKER" : {
+            "value" : 729
+        },
+        "EFST_HISS" : {
+            "value" : 950
+        },
+        "EFST_HLIF_AVOID" : {
+            "value" : 192
+        },
+        "EFST_HLIF_CHANGE" : {
+            "value" : 195
+        },
+        "EFST_HOVERING" : {
+            "value" : 362
+        },
+        "EFST_HUMMING" : {
+            "value" : 74
+        },
+        "EFST_HUNTING_EVENT" : {
+            "value" : 1083
+        },
+        "EFST_H_MINE" : {
+            "value" : 756
+        },
+        "EFST_H_MINE_SPLASH" : {
+            "value" : 757
+        },
+        "EFST_IGNORANCE" : {
+            "value" : 411
+        },
+        "EFST_ILLUSION" : {
+            "value" : 34
+        },
+        "EFST_ILLUSIONDOPING" : {
+            "value" : 734
+        },
+        "EFST_IMMUNE_PROPERTY_DARKNESS" : {
+            "value" : 1023
+        },
+        "EFST_IMMUNE_PROPERTY_FIRE" : {
+            "value" : 1019
+        },
+        "EFST_IMMUNE_PROPERTY_GROUND" : {
+            "value" : 1018
+        },
+        "EFST_IMMUNE_PROPERTY_NOTHING" : {
+            "value" : 1016
+        },
+        "EFST_IMMUNE_PROPERTY_POISON" : {
+            "value" : 1021
+        },
+        "EFST_IMMUNE_PROPERTY_SAINT" : {
+            "value" : 1022
+        },
+        "EFST_IMMUNE_PROPERTY_TELEKINESIS" : {
+            "value" : 1024
+        },
+        "EFST_IMMUNE_PROPERTY_UNDEAD" : {
+            "value" : 1025
+        },
+        "EFST_IMMUNE_PROPERTY_WATER" : {
+            "value" : 1017
+        },
+        "EFST_IMMUNE_PROPERTY_WIND" : {
+            "value" : 1020
+        },
+        "EFST_IMMUNITYSCROLL" : {
+            "value" : 509
+        },
+        "EFST_IMPOSITIO" : {
+            "value" : 15
+        },
+        "EFST_IMPOSSIBLEPICKUP" : {
+            "value" : 48
+        },
+        "EFST_INC_AGI" : {
+            "value" : 12
+        },
+        "EFST_INFINITY_DRINK" : {
+            "value" : 1065
+        },
+        "EFST_INFRAREDSCAN" : {
+            "value" : 375
+        },
+        "EFST_INSPIRATION" : {
+            "value" : 407
+        },
+        "EFST_INTOABYSS" : {
+            "value" : 83
+        },
+        "EFST_INT_SCROLL" : {
+            "value" : 389
+        },
+        "EFST_INVINCIBLE" : {
+            "value" : 311
+        },
+        "EFST_INVISIBILITY" : {
+            "value" : 403
+        },
+        "EFST_INVISIBLE" : {
+            "value" : 101
+        },
+        "EFST_ITEM_ATKMAX" : {
+            "value" : 724
+        },
+        "EFST_ITEM_ATKMIN" : {
+            "value" : 725
+        },
+        "EFST_ITEM_MATKMAX" : {
+            "value" : 726
+        },
+        "EFST_ITEM_MATKMIN" : {
+            "value" : 727
+        },
+        "EFST_IZAYOI" : {
+            "value" : 652
+        },
+        "EFST_JITTER_BUFF1" : {
+            "value" : 741
+        },
+        "EFST_JITTER_BUFF10" : {
+            "value" : 750
+        },
+        "EFST_JITTER_BUFF2" : {
+            "value" : 742
+        },
+        "EFST_JITTER_BUFF3" : {
+            "value" : 743
+        },
+        "EFST_JITTER_BUFF4" : {
+            "value" : 744
+        },
+        "EFST_JITTER_BUFF5" : {
+            "value" : 745
+        },
+        "EFST_JITTER_BUFF6" : {
+            "value" : 746
+        },
+        "EFST_JITTER_BUFF7" : {
+            "value" : 747
+        },
+        "EFST_JITTER_BUFF8" : {
+            "value" : 748
+        },
+        "EFST_JITTER_BUFF9" : {
+            "value" : 749
+        },
+        "EFST_JOINTBEAT" : {
+            "value" : 125
+        },
+        "EFST_JP_EVENT01" : {
+            "value" : 697
+        },
+        "EFST_JP_EVENT02" : {
+            "value" : 698
+        },
+        "EFST_JP_EVENT03" : {
+            "value" : 699
+        },
+        "EFST_JP_EVENT04" : {
+            "value" : 700
+        },
+        "EFST_JP_OTP" : {
+            "value" : 816
+        },
+        "EFST_JUMPINGCLAN" : {
+            "value" : 815
+        },
+        "EFST_KAAHI" : {
+            "value" : 157
+        },
+        "EFST_KAGEMUSYA" : {
+            "value" : 656
+        },
+        "EFST_KAITE" : {
+            "value" : 153
+        },
+        "EFST_KAIZEL" : {
+            "value" : 156
+        },
+        "EFST_KAUPE" : {
+            "value" : 158
+        },
+        "EFST_KG_KAGEHUMI" : {
+            "value" : 654
+        },
+        "EFST_KIEL_CARD" : {
+            "value" : 990
+        },
+        "EFST_KINGS_GRACE" : {
+            "value" : 723
+        },
+        "EFST_KO_JYUMONJIKIRI" : {
+            "value" : 645
+        },
+        "EFST_KYOMU" : {
+            "value" : 655
+        },
+        "EFST_KYOUGAKU" : {
+            "value" : 651
+        },
+        "EFST_KYRIE" : {
+            "value" : 19
+        },
+        "EFST_LAUDAAGNUS" : {
+            "value" : 331
+        },
+        "EFST_LAUDARAMUS" : {
+            "value" : 332
+        },
+        "EFST_LAZINESS" : {
+            "value" : 412
+        },
+        "EFST_LEECHESEND" : {
+            "value" : 349
+        },
+        "EFST_LERADS_DEW" : {
+            "value" : 451
+        },
+        "EFST_LEXAETERNA" : {
+            "value" : 22
+        },
+        "EFST_LG_REFLECTDAMAGE" : {
+            "value" : 390
+        },
+        "EFST_LHZ_DUN_N1" : {
+            "value" : 1001
+        },
+        "EFST_LHZ_DUN_N2" : {
+            "value" : 1002
+        },
+        "EFST_LHZ_DUN_N3" : {
+            "value" : 1003
+        },
+        "EFST_LHZ_DUN_N4" : {
+            "value" : 1004
+        },
+        "EFST_LIFE_FORCE_F" : {
+            "value" : 489
+        },
+        "EFST_LIGHTNINGWALK" : {
+            "value" : 413
+        },
+        "EFST_LIGHTOFMOON" : {
+            "value" : 1035
+        },
+        "EFST_LIGHTOFSTAR" : {
+            "value" : 1037
+        },
+        "EFST_LIGHTOFSUN" : {
+            "value" : 1036
+        },
+        "EFST_LIGHT_OF_REGENE" : {
+            "value" : 580
+        },
+        "EFST_LIMIT_ODINS_RECALL" : {
+            "value" : 475
+        },
+        "EFST_LIMIT_POWER_BOOSTER" : {
+            "value" : 867
+        },
+        "EFST_LJOSALFAR" : {
+            "value" : 826
+        },
+        "EFST_LKCONCENTRATION" : {
+            "value" : 105
+        },
+        "EFST_LONGING" : {
+            "value" : 189
+        },
+        "EFST_LUNARSTANCE" : {
+            "value" : 1038
+        },
+        "EFST_L_LIFEPOTION" : {
+            "value" : 294
+        },
+        "EFST_MACRO" : {
+            "value" : 615
+        },
+        "EFST_MACRO_PERMIT" : {
+            "value" : 630
+        },
+        "EFST_MACRO_PLAY" : {
+            "value" : 631
+        },
+        "EFST_MACRO_POSTDELAY" : {
+            "value" : 616
+        },
+        "EFST_MAGICAL_FEATHER" : {
+            "value" : 864
+        },
+        "EFST_MAGICATTACK" : {
+            "value" : 94
+        },
+        "EFST_MAGICMIRROR" : {
+            "value" : 283
+        },
+        "EFST_MAGICMUSHROOM" : {
+            "value" : 345
+        },
+        "EFST_MAGICPOWER" : {
+            "value" : 113
+        },
+        "EFST_MAGICROD" : {
+            "value" : 63
+        },
+        "EFST_MAGICSTONE_OF_GRACE_SET" : {
+            "value" : 948
+        },
+        "EFST_MAGIC_CANDY" : {
+            "value" : 611
+        },
+        "EFST_MAGMA_FLOW" : {
+            "value" : 605
+        },
+        "EFST_MAGNETICFIELD" : {
+            "value" : 376
+        },
+        "EFST_MAGNIFICAT" : {
+            "value" : 20
+        },
+        "EFST_MANA_PLUS" : {
+            "value" : 487
+        },
+        "EFST_MANDRAGORA" : {
+            "value" : 470
+        },
+        "EFST_MANHOLE" : {
+            "value" : 422
+        },
+        "EFST_MANU_ATK" : {
+            "value" : 381
+        },
+        "EFST_MANU_DEF" : {
+            "value" : 382
+        },
+        "EFST_MANU_MATK" : {
+            "value" : 386
+        },
+        "EFST_MAPLE_FALLS" : {
+            "value" : 857
+        },
+        "EFST_MARIONETTE" : {
+            "value" : 122
+        },
+        "EFST_MARIONETTE_MASTER" : {
+            "value" : 121
+        },
+        "EFST_MARSHOFABYSS" : {
+            "value" : 354
+        },
+        "EFST_MASK" : {
+            "value" : 67
+        },
+        "EFST_MATK_POPCORN" : {
+            "value" : 1032
+        },
+        "EFST_MAX" : {
+            "value" : 1124
+        },
+        "EFST_MAXHPPERCENT" : {
+            "value" : 177
+        },
+        "EFST_MAXIMIZE" : {
+            "value" : 26
+        },
+        "EFST_MAXPAIN" : {
+            "value" : 713
+        },
+        "EFST_MAXSPPERCENT" : {
+            "value" : 178
+        },
+        "EFST_MEIKYOUSISUI" : {
+            "value" : 646
+        },
+        "EFST_MELODYOFSINK" : {
+            "value" : 452
+        },
+        "EFST_MELON_BOMB" : {
+            "value" : 478
+        },
+        "EFST_MELTDOWN" : {
+            "value" : 117
+        },
+        "EFST_MEMORIZE" : {
+            "value" : 127
+        },
+        "EFST_MENTAL" : {
+            "value" : 213
+        },
+        "EFST_MERMAID_LONGING" : {
+            "value" : 863
+        },
+        "EFST_MER_ATK" : {
+            "value" : 278
+        },
+        "EFST_MER_FLEE" : {
+            "value" : 277
+        },
+        "EFST_MER_HIT" : {
+            "value" : 281
+        },
+        "EFST_MER_HP" : {
+            "value" : 279
+        },
+        "EFST_MER_SP" : {
+            "value" : 280
+        },
+        "EFST_MIDNIGHT_FRENZY_POSTDELAY" : {
+            "value" : 597
+        },
+        "EFST_MINDBREAKER" : {
+            "value" : 126
+        },
+        "EFST_MINIGAME_BRONZE_POINT" : {
+            "value" : 848
+        },
+        "EFST_MINIGAME_GOLD_POINT" : {
+            "value" : 846
+        },
+        "EFST_MINIGAME_ROULETTE" : {
+            "value" : 845
+        },
+        "EFST_MINIGAME_ROULETTE_BONUS_ITEM" : {
+            "value" : 855
+        },
+        "EFST_MINIGAME_SILVER_POINT" : {
+            "value" : 847
+        },
+        "EFST_MINOR_BBQ" : {
+            "value" : 493
+        },
+        "EFST_MONSTER_TRANSFORM" : {
+            "value" : 621
+        },
+        "EFST_MOON" : {
+            "value" : 123
+        },
+        "EFST_MOONLIT_SERENADE" : {
+            "value" : 447
+        },
+        "EFST_MOONSTAR" : {
+            "value" : 718
+        },
+        "EFST_MOON_COMFORT" : {
+            "value" : 170
+        },
+        "EFST_MORA_BUFF" : {
+            "value" : 573
+        },
+        "EFST_MOUSEWHEEL" : {
+            "value" : 237
+        },
+        "EFST_MOVESLOW_POTION" : {
+            "value" : 185
+        },
+        "EFST_MOVHASTE_HORSE" : {
+            "value" : 289
+        },
+        "EFST_MOVHASTE_INFINITY" : {
+            "value" : 42
+        },
+        "EFST_MOVHASTE_POTION" : {
+            "value" : 41
+        },
+        "EFST_MTF_ASPD" : {
+            "value" : 624
+        },
+        "EFST_MTF_ASPD2" : {
+            "value" : 819
+        },
+        "EFST_MTF_CRIDAMAGE" : {
+            "value" : 628
+        },
+        "EFST_MTF_CRIDAMAGE2" : {
+            "value" : 797
+        },
+        "EFST_MTF_CRUISER" : {
+            "value" : 862
+        },
+        "EFST_MTF_HITFLEE" : {
+            "value" : 796
+        },
+        "EFST_MTF_LUDE" : {
+            "value" : 861
+        },
+        "EFST_MTF_MARIONETTE" : {
+            "value" : 860
+        },
+        "EFST_MTF_MATK" : {
+            "value" : 626
+        },
+        "EFST_MTF_MATK2" : {
+            "value" : 820
+        },
+        "EFST_MTF_MHP" : {
+            "value" : 793
+        },
+        "EFST_MTF_MLEATKED" : {
+            "value" : 627
+        },
+        "EFST_MTF_MSP" : {
+            "value" : 794
+        },
+        "EFST_MTF_PUMPKIN" : {
+            "value" : 795
+        },
+        "EFST_MTF_RANGEATK" : {
+            "value" : 625
+        },
+        "EFST_MTF_RANGEATK2" : {
+            "value" : 818
+        },
+        "EFST_MTF_SPDRAIN" : {
+            "value" : 798
+        },
+        "EFST_MUSTLE_M" : {
+            "value" : 488
+        },
+        "EFST_MVPCARD_MISTRESS" : {
+            "value" : 369
+        },
+        "EFST_MVPCARD_ORCHERO" : {
+            "value" : 370
+        },
+        "EFST_MVPCARD_ORCLORD" : {
+            "value" : 371
+        },
+        "EFST_MVPCARD_TAOGUNKA" : {
+            "value" : 368
+        },
+        "EFST_MYSTERIOUS_POWDER" : {
+            "value" : 477
+        },
+        "EFST_MYSTICPOWDER" : {
+            "value" : 666
+        },
+        "EFST_MYSTICSCROLL" : {
+            "value" : 510
+        },
+        "EFST_M_DEFSCROLL" : {
+            "value" : 996
+        },
+        "EFST_M_LIFEPOTION" : {
+            "value" : 670
+        },
+        "EFST_NC_MAGICDECOY_OPERATOR" : {
+            "value" : 809
+        },
+        "EFST_NEEDLE_OF_PARALYZE" : {
+            "value" : 576
+        },
+        "EFST_NETHERWORLD" : {
+            "value" : 433
+        },
+        "EFST_NEUTRALBARRIER" : {
+            "value" : 377
+        },
+        "EFST_NEUTRALBARRIER_MASTER" : {
+            "value" : 378
+        },
+        "EFST_NEWMOON" : {
+            "value" : 1042
+        },
+        "EFST_NJ_BUNSINJYUTSU" : {
+            "value" : 207
+        },
+        "EFST_NJ_NEN" : {
+            "value" : 208
+        },
+        "EFST_NJ_SUITON" : {
+            "value" : 211
+        },
+        "EFST_NJ_UTSUSEMI" : {
+            "value" : 206
+        },
+        "EFST_NOACTION" : {
+            "value" : 47
+        },
+        "EFST_NOACTION_WAIT" : {
+            "value" : 288
+        },
+        "EFST_NOEQUIPACCESSARY" : {
+            "value" : 420
+        },
+        "EFST_NOEQUIPARMOR" : {
+            "value" : 52
+        },
+        "EFST_NOEQUIPHELM" : {
+            "value" : 53
+        },
+        "EFST_NOEQUIPSHIELD" : {
+            "value" : 51
+        },
+        "EFST_NOEQUIPWEAPON" : {
+            "value" : 50
+        },
+        "EFST_NORMAL_ATKED_SP" : {
+            "value" : 874
+        },
+        "EFST_NOT_EXTREMITYFIST" : {
+            "value" : 183
+        },
+        "EFST_NOVAEXPLOSING" : {
+            "value" : 1049
+        },
+        "EFST_NPC_DEFENDER" : {
+            "value" : 287
+        },
+        "EFST_NPC_ICEEXPLO" : {
+            "value" : 710
+        },
+        "EFST_NYANGGRASS" : {
+            "value" : 952
+        },
+        "EFST_OBLIVIONCURSE" : {
+            "value" : 348
+        },
+        "EFST_ODINS_POWER" : {
+            "value" : 583
+        },
+        "EFST_OFFERTORIUM" : {
+            "value" : 716
+        },
+        "EFST_ONAIR" : {
+            "value" : 623
+        },
+        "EFST_ONEHANDQUICKEN" : {
+            "value" : 161
+        },
+        "EFST_ON_PUSH_CART" : {
+            "value" : 673
+        },
+        "EFST_OPEN_NPC_MARKET" : {
+            "value" : 782
+        },
+        "EFST_ORATIO" : {
+            "value" : 330
+        },
+        "EFST_OVERED_BOOST" : {
+            "value" : 581
+        },
+        "EFST_OVERHEAT" : {
+            "value" : 373
+        },
+        "EFST_OVERHEAT_LIMITPOINT" : {
+            "value" : 372
+        },
+        "EFST_OVERLAPEXPUP" : {
+            "value" : 618
+        },
+        "EFST_OVERLAPEXPUP2" : {
+            "value" : 1123
+        },
+        "EFST_OVERSEAEXPUP" : {
+            "value" : 780
+        },
+        "EFST_OVERTHRUST" : {
+            "value" : 25
+        },
+        "EFST_OVERTHRUSTMAX" : {
+            "value" : 188
+        },
+        "EFST_PACKING_ENVELOPE1" : {
+            "value" : 766
+        },
+        "EFST_PACKING_ENVELOPE10" : {
+            "value" : 775
+        },
+        "EFST_PACKING_ENVELOPE2" : {
+            "value" : 767
+        },
+        "EFST_PACKING_ENVELOPE3" : {
+            "value" : 768
+        },
+        "EFST_PACKING_ENVELOPE4" : {
+            "value" : 769
+        },
+        "EFST_PACKING_ENVELOPE5" : {
+            "value" : 770
+        },
+        "EFST_PACKING_ENVELOPE6" : {
+            "value" : 771
+        },
+        "EFST_PACKING_ENVELOPE7" : {
+            "value" : 772
+        },
+        "EFST_PACKING_ENVELOPE8" : {
+            "value" : 773
+        },
+        "EFST_PACKING_ENVELOPE9" : {
+            "value" : 774
+        },
+        "EFST_PAD_READER_ALCHEMIST" : {
+            "value" : 830
+        },
+        "EFST_PAD_READER_ASSASSIN" : {
+            "value" : 831
+        },
+        "EFST_PAD_READER_BARD" : {
+            "value" : 838
+        },
+        "EFST_PAD_READER_BLACKSMITH" : {
+            "value" : 829
+        },
+        "EFST_PAD_READER_CRUSADER" : {
+            "value" : 828
+        },
+        "EFST_PAD_READER_DANCER" : {
+            "value" : 839
+        },
+        "EFST_PAD_READER_GUNSLINGER" : {
+            "value" : 842
+        },
+        "EFST_PAD_READER_HUNTER" : {
+            "value" : 837
+        },
+        "EFST_PAD_READER_KNIGHT" : {
+            "value" : 827
+        },
+        "EFST_PAD_READER_MONK" : {
+            "value" : 836
+        },
+        "EFST_PAD_READER_NINJA" : {
+            "value" : 841
+        },
+        "EFST_PAD_READER_PRIEST" : {
+            "value" : 835
+        },
+        "EFST_PAD_READER_ROGUE" : {
+            "value" : 832
+        },
+        "EFST_PAD_READER_SAGE" : {
+            "value" : 834
+        },
+        "EFST_PAD_READER_SUPERNOVICE" : {
+            "value" : 843
+        },
+        "EFST_PAD_READER_TAEKWON" : {
+            "value" : 840
+        },
+        "EFST_PAD_READER_WIZARD" : {
+            "value" : 833
+        },
+        "EFST_PAIN_KILLER" : {
+            "value" : 577
+        },
+        "EFST_PARALYSE" : {
+            "value" : 343
+        },
+        "EFST_PARRYING" : {
+            "value" : 104
+        },
+        "EFST_PARTYBOOKING_REGISTER_DELAY" : {
+            "value" : 643
+        },
+        "EFST_PARTYBOOKING_SEARCH_DELAY" : {
+            "value" : 642
+        },
+        "EFST_PARTYFLEE" : {
+            "value" : 313
+        },
+        "EFST_PATTACK" : {
+            "value" : 221
+        },
+        "EFST_PCCAFE_PLAY_TIME" : {
+            "value" : 738
+        },
+        "EFST_PCRITICAL" : {
+            "value" : 224
+        },
+        "EFST_PC_IZ_DUN05" : {
+            "value" : 619
+        },
+        "EFST_PC_STOP" : {
+            "value" : 714
+        },
+        "EFST_PDEFENSE" : {
+            "value" : 223
+        },
+        "EFST_PERFORMANCE" : {
+            "value" : 215
+        },
+        "EFST_PERIOD_PLUSEXP" : {
+            "value" : 923
+        },
+        "EFST_PERIOD_PLUSEXP_2ND" : {
+            "value" : 1085
+        },
+        "EFST_PERIOD_PLUSJOBEXP" : {
+            "value" : 924
+        },
+        "EFST_PERIOD_RECEIVEITEM" : {
+            "value" : 922
+        },
+        "EFST_PERIOD_RECEIVEITEM_2ND" : {
+            "value" : 1084
+        },
+        "EFST_PERIOD_TIME_CHECK_DETECT_SKILL" : {
+            "value" : 644
+        },
+        "EFST_PET" : {
+            "value" : 212
+        },
+        "EFST_PETROLOGY" : {
+            "value" : 557
+        },
+        "EFST_PETROLOGY_OPTION" : {
+            "value" : 558
+        },
+        "EFST_PHARAOH_CARD" : {
+            "value" : 989
+        },
+        "EFST_PHI_DEMON" : {
+            "value" : 658
+        },
+        "EFST_PLAYTIME_STATISTICS" : {
+            "value" : 802
+        },
+        "EFST_PLUSATTACKPOWER" : {
+            "value" : 150
+        },
+        "EFST_PLUSAVOIDVALUE" : {
+            "value" : 296
+        },
+        "EFST_PLUSMAGICPOWER" : {
+            "value" : 151
+        },
+        "EFST_POEMBRAGI" : {
+            "value" : 72
+        },
+        "EFST_POISONINGWEAPON" : {
+            "value" : 341
+        },
+        "EFST_POISONREACT" : {
+            "value" : 7
+        },
+        "EFST_POPECOOKIE" : {
+            "value" : 423
+        },
+        "EFST_PORK_RIB_STEW" : {
+            "value" : 784
+        },
+        "EFST_POSTDELAY" : {
+            "value" : 46
+        },
+        "EFST_POWERUP" : {
+            "value" : 98
+        },
+        "EFST_POWER_OF_GAIA" : {
+            "value" : 533
+        },
+        "EFST_PRESERVE" : {
+            "value" : 181
+        },
+        "EFST_PRESTIGE" : {
+            "value" : 402
+        },
+        "EFST_PROMOTE_HEALTH_RESERCH" : {
+            "value" : 480
+        },
+        "EFST_PRONTERA_JP" : {
+            "value" : 986
+        },
+        "EFST_PROPERTYDARK" : {
+            "value" : 146
+        },
+        "EFST_PROPERTYFIRE" : {
+            "value" : 90
+        },
+        "EFST_PROPERTYGROUND" : {
+            "value" : 93
+        },
+        "EFST_PROPERTYTELEKINESIS" : {
+            "value" : 148
+        },
+        "EFST_PROPERTYUNDEAD" : {
+            "value" : 97
+        },
+        "EFST_PROPERTYWALK" : {
+            "value" : 431
+        },
+        "EFST_PROPERTYWATER" : {
+            "value" : 91
+        },
+        "EFST_PROPERTYWIND" : {
+            "value" : 92
+        },
+        "EFST_PROTECTARMOR" : {
+            "value" : 56
+        },
+        "EFST_PROTECTEXP" : {
+            "value" : 130
+        },
+        "EFST_PROTECTHELM" : {
+            "value" : 57
+        },
+        "EFST_PROTECTIONOFSHRIMP" : {
+            "value" : 962
+        },
+        "EFST_PROTECTSHIELD" : {
+            "value" : 55
+        },
+        "EFST_PROTECTWEAPON" : {
+            "value" : 54
+        },
+        "EFST_PROTECT_DEF" : {
+            "value" : 290
+        },
+        "EFST_PROTECT_MDEF" : {
+            "value" : 291
+        },
+        "EFST_PROVIDENCE" : {
+            "value" : 61
+        },
+        "EFST_PROVOKE" : {
+            "value" : 0
+        },
+        "EFST_PSPEED" : {
+            "value" : 222
+        },
+        "EFST_PTRIPLE" : {
+            "value" : 226
+        },
+        "EFST_PUTTI_TAILS_NOODLES" : {
+            "value" : 496
+        },
+        "EFST_PYREXIA" : {
+            "value" : 347
+        },
+        "EFST_PYROCLASTIC" : {
+            "value" : 607
+        },
+        "EFST_PYROTECHNIC" : {
+            "value" : 539
+        },
+        "EFST_PYROTECHNIC_OPTION" : {
+            "value" : 540
+        },
+        "EFST_P_ALTER" : {
+            "value" : 758
+        },
+        "EFST_QSCARABA" : {
+            "value" : 825
+        },
+        "EFST_QUAGMIRE" : {
+            "value" : 8
+        },
+        "EFST_QUEST_BUFF1" : {
+            "value" : 705
+        },
+        "EFST_QUEST_BUFF2" : {
+            "value" : 706
+        },
+        "EFST_QUEST_BUFF3" : {
+            "value" : 707
+        },
+        "EFST_RAID" : {
+            "value" : 395
+        },
+        "EFST_RAISINGDRAGON" : {
+            "value" : 410
+        },
+        "EFST_RANKING" : {
+            "value" : 225
+        },
+        "EFST_RAY_OF_PROTECTION" : {
+            "value" : 676
+        },
+        "EFST_REBOUND" : {
+            "value" : 721
+        },
+        "EFST_RECOGNIZEDSPELL" : {
+            "value" : 355
+        },
+        "EFST_RED_ORG_POTION" : {
+            "value" : 1112
+        },
+        "EFST_REFLECTSHIELD" : {
+            "value" : 59
+        },
+        "EFST_REFRESH" : {
+            "value" : 318
+        },
+        "EFST_REINCARNATION" : {
+            "value" : 220
+        },
+        "EFST_RENOVATIO" : {
+            "value" : 336
+        },
+        "EFST_REPRODUCE" : {
+            "value" : 385
+        },
+        "EFST_RESISTHANDICAP" : {
+            "value" : 176
+        },
+        "EFST_RESIST_PROPERTY_DARKNESS" : {
+            "value" : 914
+        },
+        "EFST_RESIST_PROPERTY_FIRE" : {
+            "value" : 910
+        },
+        "EFST_RESIST_PROPERTY_GROUND" : {
+            "value" : 909
+        },
+        "EFST_RESIST_PROPERTY_NOTHING" : {
+            "value" : 907
+        },
+        "EFST_RESIST_PROPERTY_POISON" : {
+            "value" : 912
+        },
+        "EFST_RESIST_PROPERTY_SAINT" : {
+            "value" : 913
+        },
+        "EFST_RESIST_PROPERTY_TELEKINESIS" : {
+            "value" : 915
+        },
+        "EFST_RESIST_PROPERTY_UNDEAD" : {
+            "value" : 916
+        },
+        "EFST_RESIST_PROPERTY_WATER" : {
+            "value" : 908
+        },
+        "EFST_RESIST_PROPERTY_WIND" : {
+            "value" : 911
+        },
+        "EFST_RETURN_TO_ELDICASTES" : {
+            "value" : 504
+        },
+        "EFST_REUSE_CRUSHSTRIKE" : {
+            "value" : 325
+        },
+        "EFST_REUSE_LIMIT_A" : {
+            "value" : 303
+        },
+        "EFST_REUSE_LIMIT_ASPD_POTION" : {
+            "value" : 712
+        },
+        "EFST_REUSE_LIMIT_B" : {
+            "value" : 306
+        },
+        "EFST_REUSE_LIMIT_C" : {
+            "value" : 307
+        },
+        "EFST_REUSE_LIMIT_D" : {
+            "value" : 308
+        },
+        "EFST_REUSE_LIMIT_E" : {
+            "value" : 309
+        },
+        "EFST_REUSE_LIMIT_ECL" : {
+            "value" : 669
+        },
+        "EFST_REUSE_LIMIT_F" : {
+            "value" : 310
+        },
+        "EFST_REUSE_LIMIT_G" : {
+            "value" : 574
+        },
+        "EFST_REUSE_LIMIT_H" : {
+            "value" : 575
+        },
+        "EFST_REUSE_LIMIT_MTF" : {
+            "value" : 629
+        },
+        "EFST_REUSE_LIMIT_NP" : {
+            "value" : 1026
+        },
+        "EFST_REUSE_LIMIT_RECALL" : {
+            "value" : 708
+        },
+        "EFST_REUSE_LIMIT_S_HEAL_POTION" : {
+            "value" : 801
+        },
+        "EFST_REUSE_MILLENNIUMSHIELD" : {
+            "value" : 324
+        },
+        "EFST_REUSE_REFRESH" : {
+            "value" : 326
+        },
+        "EFST_REUSE_STORMBLAST" : {
+            "value" : 327
+        },
+        "EFST_REWARD_PLUSONLYJOBEXP" : {
+            "value" : 636
+        },
+        "EFST_RG_CCONFINE_M" : {
+            "value" : 200
+        },
+        "EFST_RG_CCONFINE_S" : {
+            "value" : 201
+        },
+        "EFST_RICHMANKIM" : {
+            "value" : 78
+        },
+        "EFST_RIDING" : {
+            "value" : 27
+        },
+        "EFST_RINGNIBELUNGEN" : {
+            "value" : 81
+        },
+        "EFST_ROCK_CRUSHER" : {
+            "value" : 565
+        },
+        "EFST_ROCK_CRUSHER_ATK" : {
+            "value" : 566
+        },
+        "EFST_ROKISWEIL" : {
+            "value" : 82
+        },
+        "EFST_ROLLINGCUTTER" : {
+            "value" : 339
+        },
+        "EFST_ROYALSCROLL" : {
+            "value" : 508
+        },
+        "EFST_RUN" : {
+            "value" : 133
+        },
+        "EFST_RUNEHELM" : {
+            "value" : 925
+        },
+        "EFST_RUSH_WINDMILL" : {
+            "value" : 442
+        },
+        "EFST_SACRIFICE" : {
+            "value" : 108
+        },
+        "EFST_SATURDAY_NIGHT_FEVER" : {
+            "value" : 448
+        },
+        "EFST_SAVAGE_STEAK" : {
+            "value" : 491
+        },
+        "EFST_SAVEPOSITION" : {
+            "value" : 709
+        },
+        "EFST_SEARCH_STORE_INFO" : {
+            "value" : 612
+        },
+        "EFST_SERVICEFORYOU" : {
+            "value" : 77
+        },
+        "EFST_SET_NUM_DEF" : {
+            "value" : 638
+        },
+        "EFST_SET_NUM_MDEF" : {
+            "value" : 639
+        },
+        "EFST_SET_PER_DEF" : {
+            "value" : 640
+        },
+        "EFST_SET_PER_MDEF" : {
+            "value" : 641
+        },
+        "EFST_SG_MOON_WARM" : {
+            "value" : 166
+        },
+        "EFST_SG_STAR_WARM" : {
+            "value" : 167
+        },
+        "EFST_SG_SUN_WARM" : {
+            "value" : 165
+        },
+        "EFST_SG_WARM" : {
+            "value" : 164
+        },
+        "EFST_SHADOWFORM" : {
+            "value" : 394
+        },
+        "EFST_SHAPESHIFT" : {
+            "value" : 374
+        },
+        "EFST_SHIELDSPELL_DEF" : {
+            "value" : 396
+        },
+        "EFST_SHIELDSPELL_MDEF" : {
+            "value" : 397
+        },
+        "EFST_SHIELDSPELL_REF" : {
+            "value" : 398
+        },
+        "EFST_SHOUT" : {
+            "value" : 30
+        },
+        "EFST_SHOW_NPCHPBAR" : {
+            "value" : 821
+        },
+        "EFST_SHRIMP" : {
+            "value" : 920
+        },
+        "EFST_SIEGEMODE" : {
+            "value" : 100
+        },
+        "EFST_SIEGFRIED" : {
+            "value" : 84
+        },
+        "EFST_SILENT_BREEZE" : {
+            "value" : 582
+        },
+        "EFST_SILVERVEIN_RUSH_POSTDELAY" : {
+            "value" : 596
+        },
+        "EFST_SIRCLEOFNATURE" : {
+            "value" : 436
+        },
+        "EFST_SIREN" : {
+            "value" : 434
+        },
+        "EFST_SIROMA_ICE_TEA" : {
+            "value" : 494
+        },
+        "EFST_SIT" : {
+            "value" : 622
+        },
+        "EFST_SITDOWN_FORCE" : {
+            "value" : 449
+        },
+        "EFST_SKE" : {
+            "value" : 160
+        },
+        "EFST_SKELSCROLL" : {
+            "value" : 506
+        },
+        "EFST_SKF_ASPD" : {
+            "value" : 633
+        },
+        "EFST_SKF_ATK" : {
+            "value" : 634
+        },
+        "EFST_SKF_CAST" : {
+            "value" : 632
+        },
+        "EFST_SKF_MATK" : {
+            "value" : 635
+        },
+        "EFST_SLOWCAST" : {
+            "value" : 282
+        },
+        "EFST_SLOWDOWN" : {
+            "value" : 180
+        },
+        "EFST_SLOWPOISON" : {
+            "value" : 14
+        },
+        "EFST_SLUGSHOT" : {
+            "value" : 761
+        },
+        "EFST_SMA_READY" : {
+            "value" : 159
+        },
+        "EFST_SOLID_SKIN" : {
+            "value" : 529
+        },
+        "EFST_SOLID_SKIN_OPTION" : {
+            "value" : 530
+        },
+        "EFST_SONG_OF_MANA" : {
+            "value" : 439
+        },
+        "EFST_SONIC_CLAW_POSTDELAY" : {
+            "value" : 585
+        },
+        "EFST_SOULCOLLECT" : {
+            "value" : 1053
+        },
+        "EFST_SOULDIVISION" : {
+            "value" : 1060
+        },
+        "EFST_SOULENERGY" : {
+            "value" : 1061
+        },
+        "EFST_SOULFAIRY" : {
+            "value" : 1057
+        },
+        "EFST_SOULFALCON" : {
+            "value" : 1058
+        },
+        "EFST_SOULGOLEM" : {
+            "value" : 1059
+        },
+        "EFST_SOULLINK" : {
+            "value" : 149
+        },
+        "EFST_SOULREAPER" : {
+            "value" : 1054
+        },
+        "EFST_SOULSCROLL" : {
+            "value" : 514
+        },
+        "EFST_SOULSHADOW" : {
+            "value" : 1056
+        },
+        "EFST_SOULUNITY" : {
+            "value" : 1055
+        },
+        "EFST_SO_EL_ANALYSIS_COMBINATION_OPERATOR" : {
+            "value" : 808
+        },
+        "EFST_SO_EL_ANALYSIS_DISASSEMBLY_OPERATOR" : {
+            "value" : 807
+        },
+        "EFST_SPEARQUICKEN" : {
+            "value" : 68
+        },
+        "EFST_SPECIALCOOKIE" : {
+            "value" : 1027
+        },
+        "EFST_SPECIALZONE" : {
+            "value" : 66
+        },
+        "EFST_SPELLBOOK1" : {
+            "value" : 455
+        },
+        "EFST_SPELLBOOK2" : {
+            "value" : 456
+        },
+        "EFST_SPELLBOOK3" : {
+            "value" : 457
+        },
+        "EFST_SPELLBOOK4" : {
+            "value" : 499
+        },
+        "EFST_SPELLBOOK5" : {
+            "value" : 500
+        },
+        "EFST_SPELLBOOK6" : {
+            "value" : 501
+        },
+        "EFST_SPELLBOOK7" : {
+            "value" : 502
+        },
+        "EFST_SPELLFIST" : {
+            "value" : 432
+        },
+        "EFST_SPIDERWEB" : {
+            "value" : 129
+        },
+        "EFST_SPIRITS_SAVEINFO1" : {
+            "value" : 609
+        },
+        "EFST_SPIRITS_SAVEINFO2" : {
+            "value" : 610
+        },
+        "EFST_SPLASHER" : {
+            "value" : 44
+        },
+        "EFST_SPL_ATK" : {
+            "value" : 383
+        },
+        "EFST_SPL_DEF" : {
+            "value" : 384
+        },
+        "EFST_SPL_MATK" : {
+            "value" : 387
+        },
+        "EFST_SPORE_EXPLOSION" : {
+            "value" : 465
+        },
+        "EFST_SPRITEMABLE" : {
+            "value" : 937
+        },
+        "EFST_SP_SHA" : {
+            "value" : 1064
+        },
+        "EFST_STAR2" : {
+            "value" : 155
+        },
+        "EFST_STARSTANCE" : {
+            "value" : 1043
+        },
+        "EFST_STAR_COMFORT" : {
+            "value" : 171
+        },
+        "EFST_STASIS" : {
+            "value" : 356
+        },
+        "EFST_STATUSONE" : {
+            "value" : 102
+        },
+        "EFST_STEALTHFIELD" : {
+            "value" : 379
+        },
+        "EFST_STEALTHFIELD_MASTER" : {
+            "value" : 380
+        },
+        "EFST_STEAMPACK" : {
+            "value" : 305
+        },
+        "EFST_STEELBODY" : {
+            "value" : 87
+        },
+        "EFST_STOMACHACHE" : {
+            "value" : 476
+        },
+        "EFST_STONEHARDSKIN" : {
+            "value" : 320
+        },
+        "EFST_STONESKIN" : {
+            "value" : 284
+        },
+        "EFST_STONE_SHIELD" : {
+            "value" : 531
+        },
+        "EFST_STONE_SHIELD_OPTION" : {
+            "value" : 532
+        },
+        "EFST_STOP" : {
+            "value" : 95
+        },
+        "EFST_STORMKICK_ON" : {
+            "value" : 135
+        },
+        "EFST_STORMKICK_READY" : {
+            "value" : 136
+        },
+        "EFST_STRANGELIGHTS" : {
+            "value" : 719
+        },
+        "EFST_STRIKING" : {
+            "value" : 445
+        },
+        "EFST_STRIPACCESSARY" : {
+            "value" : 421
+        },
+        "EFST_STRUP" : {
+            "value" : 145
+        },
+        "EFST_STR_SCROLL" : {
+            "value" : 388
+        },
+        "EFST_STYLE_CHANGE" : {
+            "value" : 584
+        },
+        "EFST_SUB_WEAPONPROPERTY" : {
+            "value" : 131
+        },
+        "EFST_SUFFRAGIUM" : {
+            "value" : 16
+        },
+        "EFST_SUHIDE" : {
+            "value" : 933
+        },
+        "EFST_SUMMEREVENT01" : {
+            "value" : 850
+        },
+        "EFST_SUMMEREVENT02" : {
+            "value" : 851
+        },
+        "EFST_SUMMEREVENT03" : {
+            "value" : 852
+        },
+        "EFST_SUMMEREVENT04" : {
+            "value" : 853
+        },
+        "EFST_SUMMEREVENT05" : {
+            "value" : 854
+        },
+        "EFST_SUMMON1" : {
+            "value" : 363
+        },
+        "EFST_SUMMON2" : {
+            "value" : 364
+        },
+        "EFST_SUMMON3" : {
+            "value" : 365
+        },
+        "EFST_SUMMON4" : {
+            "value" : 366
+        },
+        "EFST_SUMMON5" : {
+            "value" : 367
+        },
+        "EFST_SUNSTANCE" : {
+            "value" : 1040
+        },
+        "EFST_SUN_COMFORT" : {
+            "value" : 169
+        },
+        "EFST_SUPER_STAR" : {
+            "value" : 728
+        },
+        "EFST_SU_STOOP" : {
+            "value" : 893
+        },
+        "EFST_SV_ROOTTWIST" : {
+            "value" : 896
+        },
+        "EFST_SWING" : {
+            "value" : 429
+        },
+        "EFST_SWOO" : {
+            "value" : 154
+        },
+        "EFST_SWORDCLAN" : {
+            "value" : 762
+        },
+        "EFST_SWORDREJECT" : {
+            "value" : 120
+        },
+        "EFST_SYMPHONY_LOVE" : {
+            "value" : 430
+        },
+        "EFST_S_HEALPOTION" : {
+            "value" : 800
+        },
+        "EFST_S_LIFEPOTION" : {
+            "value" : 293
+        },
+        "EFST_S_MANAPOTION" : {
+            "value" : 995
+        },
+        "EFST_TARGET_ASPD" : {
+            "value" : 298
+        },
+        "EFST_TARGET_BLOOD" : {
+            "value" : 301
+        },
+        "EFST_TAROTCARD" : {
+            "value" : 191
+        },
+        "EFST_TELEKINESIS_INTENSE" : {
+            "value" : 717
+        },
+        "EFST_TELEPORT_FIXEDCASTINGDELAY" : {
+            "value" : 701
+        },
+        "EFST_TENSIONRELAX" : {
+            "value" : 106
+        },
+        "EFST_TETANY" : {
+            "value" : 661
+        },
+        "EFST_THORNS_TRAP" : {
+            "value" : 463
+        },
+        "EFST_TIDAL_WEAPON" : {
+            "value" : 563
+        },
+        "EFST_TIDAL_WEAPON_OPTION" : {
+            "value" : 564
+        },
+        "EFST_TIME_ACCESSORY" : {
+            "value" : 872
+        },
+        "EFST_TINDER_BREAKER" : {
+            "value" : 600
+        },
+        "EFST_TINDER_BREAKER_POSTDELAY" : {
+            "value" : 601
+        },
+        "EFST_TING" : {
+            "value" : 134
+        },
+        "EFST_TK_SEVENWIND" : {
+            "value" : 474
+        },
+        "EFST_TOXIN" : {
+            "value" : 342
+        },
+        "EFST_TRICKDEAD" : {
+            "value" : 29
+        },
+        "EFST_TROPIC" : {
+            "value" : 543
+        },
+        "EFST_TROPIC_OPTION" : {
+            "value" : 544
+        },
+        "EFST_TRUESIGHT" : {
+            "value" : 115
+        },
+        "EFST_TUNAPARTY" : {
+            "value" : 919
+        },
+        "EFST_TURNKICK_ON" : {
+            "value" : 139
+        },
+        "EFST_TURNKICK_READY" : {
+            "value" : 140
+        },
+        "EFST_TWISTED_TIME" : {
+            "value" : 739
+        },
+        "EFST_TWOHANDQUICKEN" : {
+            "value" : 2
+        },
+        "EFST_TW_NEWYEAR_EVENT" : {
+            "value" : 1087
+        },
+        "EFST_ULTIMATECOOK" : {
+            "value" : 1034
+        },
+        "EFST_UNIVERSESTANCE" : {
+            "value" : 1039
+        },
+        "EFST_UNKNOWN_NAME" : {
+            "value" : 672
+        },
+        "EFST_UNLIMIT" : {
+            "value" : 722
+        },
+        "EFST_UNLIMITED_HUMMING_VOICE" : {
+            "value" : 454
+        },
+        "EFST_UNLUCKY" : {
+            "value" : 415
+        },
+        "EFST_UNREADMAIL_CHECK" : {
+            "value" : 814
+        },
+        "EFST_UPHEAVAL" : {
+            "value" : 561
+        },
+        "EFST_UPHEAVAL_OPTION" : {
+            "value" : 562
+        },
+        "EFST_USE_SKILL_SP_SHA" : {
+            "value" : 1063
+        },
+        "EFST_USE_SKILL_SP_SPA" : {
+            "value" : 1062
+        },
+        "EFST_VACUUM_EXTREME" : {
+            "value" : 490
+        },
+        "EFST_VENOMBLEED" : {
+            "value" : 344
+        },
+        "EFST_VENOMIMPRESS" : {
+            "value" : 328
+        },
+        "EFST_VITALITYACTIVATION" : {
+            "value" : 321
+        },
+        "EFST_VITALIZE_POTION" : {
+            "value" : 579
+        },
+        "EFST_VITATA_500" : {
+            "value" : 483
+        },
+        "EFST_VOLCANIC_ASH" : {
+            "value" : 608
+        },
+        "EFST_WALLSHIFT" : {
+            "value" : 219
+        },
+        "EFST_WARMER" : {
+            "value" : 446
+        },
+        "EFST_WATER_BARRIER" : {
+            "value" : 527
+        },
+        "EFST_WATER_DROP" : {
+            "value" : 521
+        },
+        "EFST_WATER_DROP_OPTION" : {
+            "value" : 522
+        },
+        "EFST_WATER_INSIGNIA" : {
+            "value" : 568
+        },
+        "EFST_WATER_SCREEN" : {
+            "value" : 519
+        },
+        "EFST_WATER_SCREEN_OPTION" : {
+            "value" : 520
+        },
+        "EFST_WAVE1" : {
+            "value" : 228
+        },
+        "EFST_WAVE2" : {
+            "value" : 229
+        },
+        "EFST_WAVE3" : {
+            "value" : 230
+        },
+        "EFST_WAVE4" : {
+            "value" : 231
+        },
+        "EFST_WEAKNESS" : {
+            "value" : 418
+        },
+        "EFST_WEAPONBLOCKING" : {
+            "value" : 337
+        },
+        "EFST_WEAPONBLOCKING_POSTDELAY" : {
+            "value" : 338
+        },
+        "EFST_WEAPONBLOCK_ON" : {
+            "value" : 1107
+        },
+        "EFST_WEAPONBRAKER" : {
+            "value" : 96
+        },
+        "EFST_WEAPONPERFECT" : {
+            "value" : 24
+        },
+        "EFST_WEAPONPROPERTY" : {
+            "value" : 64
+        },
+        "EFST_WEIGHTOVER50" : {
+            "value" : 35
+        },
+        "EFST_WEIGHTOVER90" : {
+            "value" : 36
+        },
+        "EFST_WHISTLE" : {
+            "value" : 70
+        },
+        "EFST_WIDEWEB" : {
+            "value" : 735
+        },
+        "EFST_WILD_STORM" : {
+            "value" : 555
+        },
+        "EFST_WILD_STORM_OPTION" : {
+            "value" : 556
+        },
+        "EFST_WINDWALK" : {
+            "value" : 116
+        },
+        "EFST_WIND_CURTAIN" : {
+            "value" : 525
+        },
+        "EFST_WIND_CURTAIN_OPTION" : {
+            "value" : 526
+        },
+        "EFST_WIND_INSIGNIA" : {
+            "value" : 569
+        },
+        "EFST_WIND_STEP" : {
+            "value" : 523
+        },
+        "EFST_WIND_STEP_OPTION" : {
+            "value" : 524
+        },
+        "EFST_WS_WEAPONREFINE_OPERATOR" : {
+            "value" : 812
+        },
+        "EFST_WUGBITE" : {
+            "value" : 359
+        },
+        "EFST_WUGDASH" : {
+            "value" : 358
+        },
+        "EFST_WUGRIDER" : {
+            "value" : 357
+        },
+        "EFST_WZ_SIGHTBLASTER" : {
+            "value" : 198
+        },
+        "EFST_YGGDRASIL_BLESS" : {
+            "value" : 1081
+        },
+        "EFST_ZANGETSU" : {
+            "value" : 657
+        },
+        "EFST_ZENKAI" : {
+            "value" : 653
+        },
+        "EFST_ZEPHYR" : {
+            "value" : 528
+        },
+        "EFST_ZONGZI_POUCH_TRANS" : {
+            "value" : 777
         },
         "EF_05VAL" : {
             "value" : 509
@@ -7267,6 +10462,9 @@
             "name" : "Top Headgear",
             "value" : 6
         },
+        "EQI_MAX" : {
+            "value" : 21
+        },
         "EQI_SHADOW_ACC_L" : {
             "name" : "Left Shadow Accessory",
             "value" : 20
@@ -7628,6 +10826,270 @@
         "ET_YUT7" : {
             "value" : 87
         },
+        "E_ABS" : {
+            "value" : 75
+        },
+        "E_AG" : {
+            "value" : 7
+        },
+        "E_AN" : {
+            "value" : 6
+        },
+        "E_ANTENNA1" : {
+            "value" : 71
+        },
+        "E_ANTENNA2" : {
+            "value" : 72
+        },
+        "E_ANTENNA3" : {
+            "value" : 73
+        },
+        "E_AWSM" : {
+            "value" : 38
+        },
+        "E_BRAZIL" : {
+            "value" : 51
+        },
+        "E_BZZ" : {
+            "value" : 36
+        },
+        "E_CASH" : {
+            "value" : 8
+        },
+        "E_CHINESE" : {
+            "value" : 70
+        },
+        "E_COM" : {
+            "value" : 44
+        },
+        "E_DICE1" : {
+            "value" : 58
+        },
+        "E_DICE2" : {
+            "value" : 59
+        },
+        "E_DICE3" : {
+            "value" : 60
+        },
+        "E_DICE4" : {
+            "value" : 61
+        },
+        "E_DICE5" : {
+            "value" : 62
+        },
+        "E_DICE6" : {
+            "value" : 63
+        },
+        "E_DOTS" : {
+            "value" : 9
+        },
+        "E_DUM" : {
+            "value" : 55
+        },
+        "E_ENE" : {
+            "value" : 78
+        },
+        "E_FLASH" : {
+            "value" : 52
+        },
+        "E_GASP" : {
+            "value" : 0
+        },
+        "E_GG" : {
+            "value" : 29
+        },
+        "E_GO" : {
+            "value" : 27
+        },
+        "E_GRAT" : {
+            "value" : 46
+        },
+        "E_HEH" : {
+            "value" : 18
+        },
+        "E_HLP" : {
+            "value" : 26
+        },
+        "E_HMM" : {
+            "value" : 20
+        },
+        "E_HO" : {
+            "value" : 2
+        },
+        "E_HP" : {
+            "value" : 47
+        },
+        "E_HUM" : {
+            "value" : 74
+        },
+        "E_IC" : {
+            "value" : 5
+        },
+        "E_INDIA" : {
+            "value" : 64
+        },
+        "E_INDONESIA" : {
+            "value" : 35
+        },
+        "E_KIS" : {
+            "value" : 30
+        },
+        "E_KIS2" : {
+            "value" : 31
+        },
+        "E_KOREA" : {
+            "value" : 13
+        },
+        "E_LOUD" : {
+            "value" : 56
+        },
+        "E_LUV" : {
+            "value" : 65
+        },
+        "E_LV" : {
+            "value" : 3
+        },
+        "E_LV2" : {
+            "value" : 14
+        },
+        "E_MAIL" : {
+            "value" : 69
+        },
+        "E_MALAYSIA" : {
+            "value" : 49
+        },
+        "E_MEH" : {
+            "value" : 39
+        },
+        "E_MOBILE" : {
+            "value" : 68
+        },
+        "E_MP" : {
+            "value" : 42
+        },
+        "E_MUTE" : {
+            "value" : 34
+        },
+        "E_NO" : {
+            "value" : 22
+        },
+        "E_NO1" : {
+            "value" : 21
+        },
+        "E_OH" : {
+            "value" : 24
+        },
+        "E_OK" : {
+            "value" : 33
+        },
+        "E_OMG" : {
+            "value" : 23
+        },
+        "E_OOPS" : {
+            "value" : 76
+        },
+        "E_OTL" : {
+            "value" : 57
+        },
+        "E_PANIC" : {
+            "value" : 79
+        },
+        "E_PAPER" : {
+            "value" : 12
+        },
+        "E_PAT" : {
+            "value" : 41
+        },
+        "E_PHILIPPINES" : {
+            "value" : 48
+        },
+        "E_PIF" : {
+            "value" : 32
+        },
+        "E_RICE" : {
+            "value" : 37
+        },
+        "E_ROCK" : {
+            "value" : 11
+        },
+        "E_RUSSIA" : {
+            "value" : 66
+        },
+        "E_SCISSORS" : {
+            "value" : 10
+        },
+        "E_SHY" : {
+            "value" : 40
+        },
+        "E_SIGH" : {
+            "value" : 54
+        },
+        "E_SINGAPORE" : {
+            "value" : 50
+        },
+        "E_SLUR" : {
+            "value" : 43
+        },
+        "E_SOB" : {
+            "value" : 28
+        },
+        "E_SPIN" : {
+            "value" : 53
+        },
+        "E_SPIT" : {
+            "value" : 77
+        },
+        "E_SRY" : {
+            "value" : 17
+        },
+        "E_SWT" : {
+            "value" : 4
+        },
+        "E_SWT2" : {
+            "value" : 19
+        },
+        "E_THX" : {
+            "value" : 15
+        },
+        "E_VIRGIN" : {
+            "value" : 67
+        },
+        "E_WAH" : {
+            "value" : 16
+        },
+        "E_WHAT" : {
+            "value" : 1
+        },
+        "E_WHISP" : {
+            "value" : 80
+        },
+        "E_X" : {
+            "value" : 25
+        },
+        "E_YAWN" : {
+            "value" : 45
+        },
+        "E_YUT1" : {
+            "value" : 81
+        },
+        "E_YUT2" : {
+            "value" : 82
+        },
+        "E_YUT3" : {
+            "value" : 83
+        },
+        "E_YUT4" : {
+            "value" : 84
+        },
+        "E_YUT5" : {
+            "value" : 85
+        },
+        "E_YUT6" : {
+            "value" : 86
+        },
+        "E_YUT7" : {
+            "value" : 87
+        },
         "Eff_Bleeding" : {
             "name" : "Bleeding",
             "value" : 9
@@ -7724,8 +11186,35 @@
             "name" : "Font",
             "value" : 126
         },
+        "GSTORAGE_ALREADY_OPEN" : {
+            "value" : 2
+        },
+        "GSTORAGE_NO_GUILD" : {
+            "value" : 3
+        },
+        "GSTORAGE_NO_PERMISSION" : {
+            "value" : 5
+        },
+        "GSTORAGE_NO_STORAGE" : {
+            "value" : 4
+        },
+        "GSTORAGE_OPEN" : {
+            "value" : 0
+        },
+        "GSTORAGE_STORAGE_ALREADY_OPEN" : {
+            "value" : 1
+        },
         "GUILD" : {
             "value" : 15
+        },
+        "GUILDSTORAGE_LOG_EMPTY" : {
+            "value" : 2
+        },
+        "GUILDSTORAGE_LOG_FAILED" : {
+            "value" : 3
+        },
+        "GUILDSTORAGE_LOG_FINAL_SUCCESS" : {
+            "value" : 1
         },
         "GUILD_AREA" : {
             "value" : 19
@@ -7738,6 +11227,18 @@
         },
         "GUILD_NOBG" : {
             "value" : 21
+        },
+        "GUILD_PERM_ALL" : {
+            "value" : 273
+        },
+        "GUILD_PERM_EXPEL" : {
+            "value" : 16
+        },
+        "GUILD_PERM_INVITE" : {
+            "value" : 1
+        },
+        "GUILD_PERM_STORAGE" : {
+            "value" : 256
         },
         "GUILD_SAMEMAP" : {
             "value" : 17
@@ -7787,8 +11288,14 @@
         "HAT_EF_CLOUD2" : {
             "value" : 38
         },
+        "HAT_EF_C_BLESSINGS_OF_SOUL" : {
+            "value" : 80
+        },
         "HAT_EF_C_FLUTTERBUTTERFLY_BL" : {
             "value" : 53
+        },
+        "HAT_EF_C_SHINING_ANGEL_WING" : {
+            "value" : 85
         },
         "HAT_EF_DEMONSTRATION" : {
             "value" : 11
@@ -7931,6 +11438,9 @@
         "HAT_EF_MAKEBLUR" : {
             "value" : 7
         },
+        "HAT_EF_MANYSTARS" : {
+            "value" : 81
+        },
         "HAT_EF_MERMAID_LONGING" : {
             "value" : 2
         },
@@ -7960,6 +11470,15 @@
         },
         "HAT_EF_STRANGELIGHTS" : {
             "value" : 33
+        },
+        "HAT_EF_SUBJECT_AURA_GOLD" : {
+            "value" : 82
+        },
+        "HAT_EF_SUBJECT_AURA_RED" : {
+            "value" : 84
+        },
+        "HAT_EF_SUBJECT_AURA_WHITE" : {
+            "value" : 83
         },
         "HAT_EF_TALK_FROSTJOKE" : {
             "value" : 10
@@ -9321,6 +12840,12 @@
             "name" : "Potion",
             "value" : 37
         },
+        "IG_PRIVATE_AIRSHIP" : {
+            "value" : 491
+        },
+        "IG_PRIZEOFHERO" : {
+            "value" : 490
+        },
         "IG_PR_RESET_STONE_BOX" : {
             "name" : "PR Reset Stone Box",
             "value" : 240
@@ -9516,6 +13041,9 @@
         "IG_SHAPESHIFTER_COSTUME" : {
             "name" : "Shapeshifter Costume",
             "value" : 464
+        },
+        "IG_SHINING_EGG" : {
+            "value" : 473
         },
         "IG_SILVERVINE_FRUIT_BOX10" : {
             "name" : "Silvervine Fruit Box10",
@@ -10245,6 +13773,15 @@
             "name" : "Baby Soul Linker",
             "value" : 4227
         },
+        "JOB_BABY_SOUL_REAPER" : {
+            "value" : 4242
+        },
+        "JOB_BABY_STAR_EMPEROR" : {
+            "value" : 4241
+        },
+        "JOB_BABY_STAR_EMPEROR2" : {
+            "value" : 4244
+        },
         "JOB_BABY_STAR_GLADIATOR" : {
             "name" : "Baby Star Gladiator",
             "value" : 4226
@@ -10553,9 +14090,18 @@
             "name" : "Soul Linker",
             "value" : 4049
         },
+        "JOB_SOUL_REAPER" : {
+            "value" : 4240
+        },
         "JOB_STALKER" : {
             "name" : "Stalker",
             "value" : 4018
+        },
+        "JOB_STAR_EMPEROR" : {
+            "value" : 4239
+        },
+        "JOB_STAR_EMPEROR2" : {
+            "value" : 4243
         },
         "JOB_STAR_GLADIATOR" : {
             "name" : "Star Gladiator",
@@ -10568,6 +14114,9 @@
         "JOB_SUMMER" : {
             "name" : "Summer",
             "value" : 27
+        },
+        "JOB_SUMMER2" : {
+            "value" : 30
         },
         "JOB_SUMMONER" : {
             "name" : "Summoner",
@@ -11009,6 +14558,9 @@
             "name" : "No Drop",
             "value" : 38
         },
+        "MF_NOEXP" : {
+            "value" : 66
+        },
         "MF_NOEXPPENALTY" : {
             "name" : "No Experience Penalty",
             "value" : 44
@@ -11032,6 +14584,12 @@
         "MF_NOLOCKON" : {
             "name" : "No Lock On",
             "value" : 58
+        },
+        "MF_NOLOOT" : {
+            "value" : 65
+        },
+        "MF_NOMAPCHANNELAUTOJOIN" : {
+            "value" : 53
         },
         "MF_NOMEMO" : {
             "name" : "No Memo",
@@ -11064,6 +14622,9 @@
         "MF_NOSKILL" : {
             "name" : "No Skill",
             "value" : 12
+        },
+        "MF_NOSUNMOONSTARMIRACLE" : {
+            "value" : 56
         },
         "MF_NOTELEPORT" : {
             "name" : "No Teleport",
@@ -11101,9 +14662,18 @@
             "name" : "Party Lock",
             "value" : 14
         },
+        "MF_PRIVATEAIRSHIP_DESTINATION" : {
+            "value" : 68
+        },
+        "MF_PRIVATEAIRSHIP_SOURCE" : {
+            "value" : 67
+        },
         "MF_PVP" : {
             "name" : "PVP",
             "value" : 6
+        },
+        "MF_PVP_NIGHTMAREDROP" : {
+            "value" : 35
         },
         "MF_PVP_NOCALCRANK" : {
             "name" : "PVP No Calculate Rank",
@@ -11162,6 +14732,9 @@
         },
         "MOBG_Red_Pouch_Of_Surprise" : {
             "value" : 3
+        },
+        "MOBG_Taekwon_Mission" : {
+            "value" : 5
         },
         "MOB_AGI" : {
             "value" : 10
@@ -11427,11 +15000,20 @@
         "PASSWD_LENGTH" : {
             "value" : 33
         },
+        "PC_DIE_COUNTER" : {
+            "value" : 133
+        },
         "PETINFO_BLOCKID" : {
             "value" : 7
         },
         "PETINFO_CLASS" : {
             "value" : 1
+        },
+        "PETINFO_EGGID" : {
+            "value" : 8
+        },
+        "PETINFO_FOODID" : {
+            "value" : 9
         },
         "PETINFO_HUNGRY" : {
             "value" : 4
@@ -11484,17 +15066,32 @@
         "PORTAL" : {
             "value" : 10007
         },
+        "QTYPE_CLICKME" : {
+            "value" : 6
+        },
+        "QTYPE_DAILYQUEST" : {
+            "value" : 7
+        },
         "QTYPE_EVENT" : {
             "value" : 4
         },
         "QTYPE_EVENT2" : {
             "value" : 5
         },
+        "QTYPE_EVENT3" : {
+            "value" : 8
+        },
         "QTYPE_JOB" : {
             "value" : 2
         },
         "QTYPE_JOB2" : {
             "value" : 3
+        },
+        "QTYPE_JOBQUEST" : {
+            "value" : 9
+        },
+        "QTYPE_JUMPING_PORING" : {
+            "value" : 10
         },
         "QTYPE_NONE" : {
             "value" : 9999
@@ -11514,6 +15111,18 @@
         "RC2_BATTLEFIELD" : {
             "name" : "Battlefield",
             "value" : 8
+        },
+        "RC2_BIO5_ACOLYTE_MERCHANT" : {
+            "value" : 17
+        },
+        "RC2_BIO5_MAGE_ARCHER" : {
+            "value" : 18
+        },
+        "RC2_BIO5_MVP" : {
+            "value" : 19
+        },
+        "RC2_BIO5_SWORDMAN_THIEF" : {
+            "value" : 16
         },
         "RC2_BIOLAB" : {
             "value" : 10
@@ -11550,6 +15159,12 @@
         },
         "RC2_NONE" : {
             "value" : 0
+        },
+        "RC2_OGH_ATK_DEF" : {
+            "value" : 14
+        },
+        "RC2_OGH_HIDDEN" : {
+            "value" : 15
         },
         "RC2_ORC" : {
             "name" : "Orc",
@@ -11625,6 +15240,9 @@
         "REFINE_COST_HD" : {
             "value" : 2
         },
+        "REFINE_COST_HOLINK" : {
+            "value" : 5
+        },
         "REFINE_COST_MAX" : {
             "value" : 5
         },
@@ -11636,6 +15254,15 @@
         },
         "REFINE_COST_OVER10_HD" : {
             "value" : 4
+        },
+        "REFINE_COST_WAGJAK" : {
+            "value" : 6
+        },
+        "REFINE_MATERIAL_ID" : {
+            "value" : 0
+        },
+        "REFINE_ZENY_COST" : {
+            "value" : 1
         },
         "ROA_ID" : {
             "value" : 0
@@ -11720,6 +15347,9 @@
         },
         "SC_ANALYZE" : {
             "value" : 353
+        },
+        "SC_ANCILLA" : {
+            "value" : 698
         },
         "SC_ANGELUS" : {
             "name" : "Angelus",
@@ -12346,6 +15976,27 @@
         "SC_GIANTGROWTH" : {
             "value" : 318
         },
+        "SC_GLASTHEIM_ATK" : {
+            "value" : 687
+        },
+        "SC_GLASTHEIM_DEF" : {
+            "value" : 688
+        },
+        "SC_GLASTHEIM_HEAL" : {
+            "value" : 689
+        },
+        "SC_GLASTHEIM_HIDDEN" : {
+            "value" : 690
+        },
+        "SC_GLASTHEIM_HPSP" : {
+            "value" : 693
+        },
+        "SC_GLASTHEIM_ITEMDEF" : {
+            "value" : 692
+        },
+        "SC_GLASTHEIM_STATE" : {
+            "value" : 691
+        },
         "SC_GLOOMYDAY" : {
             "value" : 402
         },
@@ -12666,6 +16317,18 @@
         },
         "SC_LERADSDEW" : {
             "value" : 407
+        },
+        "SC_LHZ_DUN_N1" : {
+            "value" : 694
+        },
+        "SC_LHZ_DUN_N2" : {
+            "value" : 695
+        },
+        "SC_LHZ_DUN_N3" : {
+            "value" : 696
+        },
+        "SC_LHZ_DUN_N4" : {
+            "value" : 697
         },
         "SC_LIFEINSURANCE" : {
             "value" : 260
@@ -16269,6 +19932,24 @@
         "SI_ZONGZI_POUCH_TRANS" : {
             "value" : 777
         },
+        "SKILLDMG_BOSS" : {
+            "value" : 2
+        },
+        "SKILLDMG_CASTER" : {
+            "value" : 5
+        },
+        "SKILLDMG_MAX" : {
+            "value" : 4
+        },
+        "SKILLDMG_MOB" : {
+            "value" : 1
+        },
+        "SKILLDMG_OTHER" : {
+            "value" : 3
+        },
+        "SKILLDMG_PC" : {
+            "value" : 0
+        },
         "SKILL_PERM" : {
             "value" : 0
         },
@@ -17252,6 +20933,9 @@
         "XMAS_SMOKEY_Y" : {
             "value" : 609
         },
+        "XXX_EFST_SM_ELEMENTAL" : {
+            "value" : 498
+        },
         "Zeny" : {
             "name" : "Zeny",
             "value" : 20
@@ -17819,6 +21503,9 @@
         "bSkillCooldown" : {
             "value" : 2050
         },
+        "bSkillDelay" : {
+            "value" : 2091
+        },
         "bSkillFixedCast" : {
             "value" : 2051
         },
@@ -17973,6 +21660,9 @@
         "false" : {
             "value" : 0
         },
+        "killedgid" : {
+            "value" : 118
+        },
         "killedrid" : {
             "name" : "Killed RID",
             "value" : 122
@@ -17981,9 +21671,15 @@
             "name" : "Killer RID",
             "value" : 121
         },
+        "mf_nightmaredrop" : {
+            "value" : 35
+        },
         "mf_nomapchannelautojoin" : {
             "name" : "No Map Channel Auto Join",
             "value" : 53
+        },
+        "mf_sumstarmiracle" : {
+            "value" : 56
         },
         "true" : {
             "value" : 1
