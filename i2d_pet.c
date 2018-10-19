@@ -54,61 +54,70 @@ static int i2d_pet_parse(i2d_pet * pet, char * string, size_t length) {
     size_t extent;
 
     int field = 0;
+    int last = 0;
 
     anchor = string;
-    for(i = 0; i < length && !status; i++) {
-        if('{' == string[i]) {
-            brace_depth++;
-        } else if('}' == string[i]) {
-            brace_depth--;
-        } else if(',' == string[i] && !brace_depth) {
-            string[i] = 0;
+    for(i = 0; i < length && !status && !last; i++) {
+        switch(string[i]) {
+            case '{': brace_depth++; break;
+            case '}': brace_depth--; break;
+            default:
+                /*
+                 * check for \t, \r, \n (exclude space)
+                 */
+                if(isspace(string[i]) && ' ' != string[i]) 
+                    last = 1;
 
-            if((string + i) < anchor) {
-                status = i2d_panic("line overflow");
-            } else {
-                extent = (size_t) (string + i) - (size_t) anchor;
-                switch(field) {
-                    case 0: status = i2d_strtol(&pet->id, anchor, extent, 10); break;
-                    case 1: status = i2d_string_create(&pet->name, anchor, extent); break;
-                    case 2: status = i2d_string_create(&pet->jname, anchor, extent); break;
-                    case 3: status = i2d_strtol(&pet->lure_id, anchor, extent, 10); break;
-                    case 4: status = i2d_strtol(&pet->egg_id, anchor, extent, 10); break;
-                    case 5: status = i2d_strtol(&pet->equip_id, anchor, extent, 10); break;
-                    case 6: status = i2d_strtol(&pet->food_id, anchor, extent, 10); break;
-                    case 7: status = i2d_strtol(&pet->fullness, anchor, extent, 10); break;
-                    case 8: status = i2d_strtol(&pet->hungry_delay, anchor, extent, 10); break;
-                    case 9: status = i2d_strtol(&pet->r_hungry, anchor, extent, 10); break;
-                    case 10: status = i2d_strtol(&pet->r_full, anchor, extent, 10); break;
-                    case 11: status = i2d_strtol(&pet->intimate, anchor, extent, 10); break;
-                    case 12: status = i2d_strtol(&pet->die, anchor, extent, 10); break;
-                    case 13: status = i2d_strtol(&pet->capture, anchor, extent, 10); break;
-                    case 14: status = i2d_strtol(&pet->speed, anchor, extent, 10); break;
-                    case 15: status = i2d_strtol(&pet->s_performance, anchor, extent, 10); break;
-                    case 16: status = i2d_strtol(&pet->talk_convert_class, anchor, extent, 10); break;
-                    case 17: status = i2d_strtol(&pet->attack_rate, anchor, extent, 10); break;
-                    case 18: status = i2d_strtol(&pet->defence_attack_rate, anchor, extent, 10); break;
-                    case 19: status = i2d_strtol(&pet->change_target_rate, anchor, extent, 10); break;
-                    case 20: status = i2d_string_create(&pet->pet_script, anchor, extent); break;
-                    default: status = i2d_panic("row has too many columns"); break;
+                /*
+                 * check for line comments
+                 */
+                if('/' == string[i] && i > 0 && '/' == string[i - 1]) {
+                    i -= 1;
+                    last = 1;
                 }
-                field++;
-            }
 
-            anchor = (string + i + 1);
+                if((',' == string[i] || last) && !brace_depth) {
+                    string[i] = 0;
+
+                    if(string + i < anchor) {
+                        status = i2d_panic("line overflow");
+                    } else {
+                        extent = (size_t) (string + i) - (size_t) anchor;
+                        switch(field) {
+                            case 0: status = i2d_strtol(&pet->id, anchor, extent, 10); break;
+                            case 1: status = i2d_string_create(&pet->name, anchor, extent); break;
+                            case 2: status = i2d_string_create(&pet->jname, anchor, extent); break;
+                            case 3: status = i2d_strtol(&pet->lure_id, anchor, extent, 10); break;
+                            case 4: status = i2d_strtol(&pet->egg_id, anchor, extent, 10); break;
+                            case 5: status = i2d_strtol(&pet->equip_id, anchor, extent, 10); break;
+                            case 6: status = i2d_strtol(&pet->food_id, anchor, extent, 10); break;
+                            case 7: status = i2d_strtol(&pet->fullness, anchor, extent, 10); break;
+                            case 8: status = i2d_strtol(&pet->hungry_delay, anchor, extent, 10); break;
+                            case 9: status = i2d_strtol(&pet->r_hungry, anchor, extent, 10); break;
+                            case 10: status = i2d_strtol(&pet->r_full, anchor, extent, 10); break;
+                            case 11: status = i2d_strtol(&pet->intimate, anchor, extent, 10); break;
+                            case 12: status = i2d_strtol(&pet->die, anchor, extent, 10); break;
+                            case 13: status = i2d_strtol(&pet->capture, anchor, extent, 10); break;
+                            case 14: status = i2d_strtol(&pet->speed, anchor, extent, 10); break;
+                            case 15: status = i2d_strtol(&pet->s_performance, anchor, extent, 10); break;
+                            case 16: status = i2d_strtol(&pet->talk_convert_class, anchor, extent, 10); break;
+                            case 17: status = i2d_strtol(&pet->attack_rate, anchor, extent, 10); break;
+                            case 18: status = i2d_strtol(&pet->defence_attack_rate, anchor, extent, 10); break;
+                            case 19: status = i2d_strtol(&pet->change_target_rate, anchor, extent, 10); break;
+                            case 20: status = i2d_string_create(&pet->pet_script, anchor, extent); break;
+                            case 21: status = i2d_string_create(&pet->loyal_script, anchor, extent); break;
+                            default: status = i2d_panic("row has too many columns"); break;
+                        }
+                        field++;
+                    }
+
+                    anchor = (string + i + 1);
+                }
         }
     }
 
-    if(!status) {
-        if(21 != field) {
-            status = i2d_panic("row is missing columns");
-        } else if(&string[i] < anchor) {
-            status = i2d_panic("line overflow");
-        } else {
-            extent = (size_t) &string[i] - (size_t) anchor;
-            status = i2d_string_create(&pet->loyal_script, anchor, extent);
-        }
-    }
+    if(!status && 22 != field)
+        status = i2d_panic("row is missing columns");
 
     return status;
 }
