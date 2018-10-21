@@ -3961,8 +3961,7 @@ static int i2d_handler_range(i2d_handler * handler, i2d_script * script, i2d_nod
             } while(range != node->range.list && !status);
 
             if(!status)
-                if( i2d_string_stack_get_unique(stack, local->buffer) ||
-                    i2d_handler_expression(handler, script, node, local) )
+                if(i2d_string_stack_get_unique(stack, local->buffer))
                     status = i2d_panic("failed to push buffer on stack");
         }
 
@@ -4137,7 +4136,8 @@ static int i2d_handler_elements_cb(i2d_script * script, i2d_string_stack * stack
 }
 
 static int i2d_handler_elements(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_elements_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_elements_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_races_cb(i2d_script * script, i2d_string_stack * stack, long id) {
@@ -4154,7 +4154,8 @@ static int i2d_handler_races_cb(i2d_script * script, i2d_string_stack * stack, l
 }
 
 static int i2d_handler_races(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_races_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_races_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_classes_cb(i2d_script * script, i2d_string_stack * stack, long id) {
@@ -4171,7 +4172,8 @@ static int i2d_handler_classes_cb(i2d_script * script, i2d_string_stack * stack,
 }
 
 static int i2d_handler_classes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_classes_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_classes_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_integer(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
@@ -4341,7 +4343,8 @@ static int i2d_handler_sizes_cb(i2d_script * script, i2d_string_stack * stack, l
 }
 
 static int i2d_handler_sizes(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_sizes_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_sizes_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_skill_cb(i2d_script * script, i2d_string_stack * stack, long id) {
@@ -4365,7 +4368,8 @@ static int i2d_handler_skill(i2d_handler * handler, i2d_script * script, i2d_nod
     if(i2d_node_get_string(node, &name)) {
         status = i2d_panic("failed to get skill name");
     } else if(i2d_skill_db_search_by_macro(script->db->skill_db, name.string, &skill)) {
-        status = i2d_handler_range(handler, script, node, local, i2d_handler_skill_cb);
+        status =    i2d_handler_range(handler, script, node, local, i2d_handler_skill_cb) ||
+                    i2d_handler_expression(handler, script, node, local);
     } else if(i2d_string_stack_push(local->stack, skill->name.string, skill->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
@@ -4392,7 +4396,8 @@ static int i2d_handler_mob_cb(i2d_script * script, i2d_string_stack * stack, lon
 }
 
 static int i2d_handler_mob(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_mob_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_mob_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_effects_cb(i2d_script * script, i2d_string_stack * stack, long id) {
@@ -4409,7 +4414,8 @@ static int i2d_handler_effects_cb(i2d_script * script, i2d_string_stack * stack,
 }
 
 static int i2d_handler_effects(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_effects_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_effects_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_mob_races_cb(i2d_script * script, i2d_string_stack * stack, long id) {
@@ -4426,7 +4432,8 @@ static int i2d_handler_mob_races_cb(i2d_script * script, i2d_string_stack * stac
 }
 
 static int i2d_handler_mob_races(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_mob_races_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_mob_races_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_weapons_cb(i2d_script * script, i2d_string_stack * stack, long id) {
@@ -4443,7 +4450,8 @@ static int i2d_handler_weapons_cb(i2d_script * script, i2d_string_stack * stack,
 }
 
 static int i2d_handler_weapons(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_weapons_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_weapons_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_zeny(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
@@ -4495,7 +4503,8 @@ static int i2d_handler_item_cb(i2d_script * script, i2d_string_stack * stack, lo
 }
 
 static int i2d_handler_item(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_item_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_item_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_itemgroups_cb(i2d_script * script, i2d_string_stack * stack, long id) {
@@ -4512,7 +4521,8 @@ static int i2d_handler_itemgroups_cb(i2d_script * script, i2d_string_stack * sta
 }
 
 static int i2d_handler_itemgroups(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_itemgroups_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_itemgroups_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_bf_type(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
@@ -4787,7 +4797,8 @@ static int i2d_handler_mercenary_cb(i2d_script * script, i2d_string_stack * stac
 }
 
 static int i2d_handler_mercenary(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_mercenary_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_mercenary_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 struct i2d_bonus_script {
@@ -4865,7 +4876,8 @@ static int i2d_handler_pet_cb(i2d_script * script, i2d_string_stack * stack, lon
 }
 
 static int i2d_handler_pet(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
-    return i2d_handler_range(handler, script, node, local, i2d_handler_pet_cb);
+    return  i2d_handler_range(handler, script, node, local, i2d_handler_pet_cb) ||
+            i2d_handler_expression(handler, script, node, local);
 }
 
 static int i2d_handler_pet_script(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
