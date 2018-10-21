@@ -40,6 +40,7 @@ static int i2d_handler_getiteminfo(i2d_handler *, i2d_script *, i2d_node *, i2d_
 static int i2d_handler_getmapflag(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_max(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_min(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
+static int i2d_handler_getequiprefinerycnt_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_handler_getequiprefinerycnt(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_pow(i2d_handler *, i2d_script *, i2d_node *, i2d_local *);
 static int i2d_handler_checkoption_loop(uint64_t, void *);
@@ -3714,20 +3715,29 @@ static int i2d_handler_min(i2d_handler * handler, i2d_script * script, i2d_node 
     return status;
 }
 
+static int i2d_handler_getequiprefinerycnt_cb(i2d_script * script, i2d_string_stack * stack, long location) {
+    int status = I2D_OK;
+    i2d_constant * constant;
+
+    if(i2d_constant_get_by_location(script->constant_db, location, &constant)) {
+        status = i2d_panic("failed to get location -- %ld", location);
+    } else if(i2d_string_stack_push(stack, constant->name.string, constant->name.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
 static int i2d_handler_getequiprefinerycnt(i2d_handler * handler, i2d_script * script, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     i2d_node * argument;
-    long value;
-    i2d_constant * constant;
 
     if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
         status = i2d_panic("failed to getequiprefinerycnt argument");
-    } else if(i2d_node_get_constant(argument, &value)) {
-        status = i2d_panic("failed to get location value");
-    } else if(i2d_constant_get_by_location(script->constant_db, value, &constant)) {
-        status = i2d_panic("failed to get location by value -- %ld", value);
-    } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
-        status = i2d_panic("failed to push location string");
+    } else if(i2d_handler_range(handler, script, argument, local, i2d_handler_getequiprefinerycnt_cb)) {
+        status = i2d_panic("failed to resolve location range");
+    } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+        status = i2d_panic("failed to write location list to stack");
     } else {
         status = i2d_handler_general(handler, script, node, local);
     }
