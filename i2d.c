@@ -9,7 +9,9 @@ int main(int argc, char * argv[]) {
     i2d_script * script = NULL;
     i2d_item * item;
 
-    if(i2d_string_vprintf(&path, "G:\\Repositories\\i2d\\config.json")) {
+    if(argc < 2) {
+        status = i2d_panic("%s <config.json>", argv[0]);
+    } else if(i2d_string_vprintf(&path, argv[1])) {
         status = i2d_panic("failed to create string object");
     } else {
         if(i2d_config_init(&config, &path)) {
