@@ -36,25 +36,16 @@ int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_string * path) {
                         status = i2d_panic("invalid db type -- %d", type);
                 }
 
-                if(!status) {
-                    if(i2d_db_load_item_db(object)) {
-                        status = i2d_panic("failed to load item db");
-                    } else if(i2d_db_load_skill_db(object)) {
-                        status = i2d_panic("failed to load skill db");
-                    } else if(i2d_db_load_mob_db(object)) {
-                        status = i2d_panic("failed to load mob db");
-                    } else if(i2d_db_load_mob_race_db(object)) {
-                        status = i2d_panic("failed to load mob race db");
-                    } else if(i2d_db_load_produce_db(object)) {
-                        status = i2d_panic("failed to load produce db");
-                    } else if(i2d_db_load_mercenary_db(object)) {
-                        status = i2d_panic("failed to load mercenary db");
-                    } else if(i2d_db_load_pet_db(object)) {
-                        status = i2d_panic("failed to load pet db");
-                    } else if(i2d_db_load_item_combo_db(object)) {
-                        status = i2d_panic("failed to load item combo db");
-                    }
-                }
+                if(!status)
+                    if( i2d_db_load_item_db(object) ||
+                        i2d_db_load_skill_db(object) ||
+                        i2d_db_load_mob_db(object) ||
+                        i2d_db_load_mob_race_db(object) ||
+                        i2d_db_load_produce_db(object) ||
+                        i2d_db_load_mercenary_db(object) ||
+                        i2d_db_load_pet_db(object) ||
+                        i2d_db_load_item_combo_db(object) )
+                        status = i2d_panic("failed to load database object");
             }
 
             if(status)
