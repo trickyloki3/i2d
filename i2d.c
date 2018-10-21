@@ -62,7 +62,14 @@ static int i2d_item_compile_script(i2d_script * script, i2d_item * item) {
             if(i2d_script_compile(script, &item->onunequip_script, &onunequip_script)) {
                 status = i2d_panic("failed to translate onunequip script for item %ld", item->id);
             } else {
-
+                fprintf(stdout, "%ld (%s)\n", item->id, item->name.string);
+                if(normal_script.length) 
+                    fprintf(stdout, "[script]\n%s", normal_script.string);
+                if(onequip_script.length) 
+                    fprintf(stdout, "[onequip]\n%s", onequip_script.string);
+                if(onunequip_script.length) 
+                    fprintf(stdout, "[onunequip]\n%s", onunequip_script.string);
+				fprintf(stdout, "~\n");
                 i2d_string_destroy(&onunequip_script);
             }
             i2d_string_destroy(&onequip_script);
