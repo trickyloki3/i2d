@@ -320,11 +320,11 @@ void i2d_value_map_deit(i2d_value_map ** result) {
     *result = NULL;
 }
 
-int i2d_value_map_get(i2d_value_map * value_map, long * key, i2d_string * result) {
+int i2d_value_map_get(i2d_value_map * value_map, long key, i2d_string * result) {
     int status = I2D_OK;
     i2d_value * value;
 
-    if(!i2d_rbt_search(value_map->map, key, (void **) &value))
+    if(!i2d_rbt_search(value_map->map, &key, (void **) &value))
         *result = value->name;
 
     return status;
