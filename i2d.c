@@ -1,6 +1,7 @@
 #include "i2d_script.h"
 
 static int i2d_item_compile_script(i2d_script *, i2d_item *);
+static int i2d_item_compile_combo_script(i2d_script *, i2d_item *);
 
 int main(int argc, char * argv[]) {
     int status = I2D_OK;
@@ -69,12 +70,44 @@ static int i2d_item_compile_script(i2d_script * script, i2d_item * item) {
                     fprintf(stdout, "[onequip]\n%s", onequip_script.string);
                 if(onunequip_script.length) 
                     fprintf(stdout, "[onunequip]\n%s", onunequip_script.string);
-				fprintf(stdout, "~\n");
+                if(i2d_item_compile_combo_script(script, item))
+                    status = i2d_panic("failed to translate item combo script(s) for item %ld", item->id);
+                fprintf(stdout, "~\n");
                 i2d_string_destroy(&onunequip_script);
             }
             i2d_string_destroy(&onequip_script);
         }
         i2d_string_destroy(&normal_script);
+    }
+
+    return status;
+}
+
+static int i2d_item_compile_combo_script(i2d_script * script, i2d_item * item) {
+    int status = I2D_OK;
+    i2d_item_combo_list * item_combo_list;
+    i2d_item_combo * item_combo;
+
+    size_t i;
+    i2d_string description;
+    i2d_string item_list;
+
+    if(!i2d_item_combo_db_search_by_id(script->db->item_combo_db, item->id, &item_combo_list)) {
+        for(i = 0; i < item_combo_list->size && !status; i++) {
+            item_combo = item_combo_list->list[i];
+            if(i2d_script_compile(script, &item_combo->script, &description)) {
+                status = i2d_panic("failed to translate item combo script for item %ld", item->id);
+            } else {
+                if(i2d_item_combo_get_string(item_combo, script->db->item_db, &item_list)) {
+                    status = i2d_panic("failed to get item combo list");
+                } else {
+                    if(description.length) 
+                        fprintf(stdout, "[%s Combo]\n%s", item_list.string, description.string);
+                    i2d_string_destroy(&item_list);
+                }
+                i2d_string_destroy(&description);
+            }
+        }
     }
 
     return status;

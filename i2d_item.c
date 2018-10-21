@@ -494,6 +494,47 @@ void i2d_item_combo_remove(i2d_item_combo * x) {
     x->prev = x;
 }
 
+int i2d_item_combo_get_string(i2d_item_combo * item_combo, i2d_item_db * item_db, i2d_string * result) {
+    int status = I2D_OK;
+
+    i2d_string_stack * stack = NULL;
+    i2d_buffer * buffer = NULL;
+
+    size_t i;
+    i2d_item * item;
+    i2d_string list;
+
+    if(i2d_string_stack_init(&stack, item_combo->size)) {
+        status = i2d_panic("failed to create string stack object");
+    } else {
+        if(i2d_buffer_init(&buffer, BUFFER_SIZE_LARGE)) {
+            status = i2d_panic("failed to create buffer object");
+        } else {
+            for(i = 0; i < item_combo->size && !status; i++) {
+                if(i2d_item_db_search_by_id(item_db, item_combo->list[i], &item)) {
+                    status = i2d_panic("failed to get item by id -- %ld", item_combo->list[i]);
+                } else if(i2d_string_stack_push(stack, item->name.string, item->name.length)) {
+                    status = i2d_panic("failed to push string stack object");
+                }
+            }
+
+            if(!status) {
+                if(i2d_string_stack_get_unique(stack, buffer)) {
+                    status = i2d_panic("failed to get item list");
+                } else {
+                    i2d_buffer_get(buffer, &list.string, &list.length);
+                    if(i2d_string_create(result, list.string, list.length))
+                        status = i2d_panic("failed to create string object");
+                }
+            }
+            i2d_buffer_deit(&buffer);
+        }
+        i2d_string_stack_deit(&stack);
+    }
+
+    return status;
+}
+
 int i2d_item_combo_db_init(i2d_item_combo_db ** result, i2d_string * path) {
     int status = I2D_OK;
     i2d_item_combo_db * object;

@@ -68,6 +68,7 @@ int i2d_item_combo_init(i2d_item_combo **, char *, size_t);
 void i2d_item_combo_deit(i2d_item_combo **);
 void i2d_item_combo_append(i2d_item_combo *, i2d_item_combo *);
 void i2d_item_combo_remove(i2d_item_combo *);
+int i2d_item_combo_get_string(i2d_item_combo *, i2d_item_db *, i2d_string *);
 
 struct i2d_item_combo_list {
     long item_id;
