@@ -14,7 +14,8 @@ enum i2d_db_type {
 };
 
 struct i2d_db {
-    enum i2d_db_type type;
+    i2d_string db_path;
+    i2d_string re_path;
     i2d_item_db * item_db;
     i2d_skill_db * skill_db;
     i2d_mob_db * mob_db;
