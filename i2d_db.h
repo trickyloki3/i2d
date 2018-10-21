@@ -17,13 +17,13 @@ struct i2d_db {
     i2d_string db_path;
     i2d_string re_path;
     i2d_item_db * item_db;
+    i2d_item_combo_db * item_combo_db;
     i2d_skill_db * skill_db;
     i2d_mob_db * mob_db;
     i2d_mob_race_db * mob_race_db;
     i2d_produce_db * produce_db;
     i2d_mercenary_db * mercenary_db;
     i2d_pet_db * pet_db;
-    i2d_item_combo_db * item_combo_db;
 };
 
 typedef struct i2d_db i2d_db;

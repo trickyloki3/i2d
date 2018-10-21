@@ -38,13 +38,13 @@ int i2d_db_init(i2d_db ** result, enum i2d_db_type type, i2d_string * path) {
 
                 if(!status)
                     if( i2d_db_load_item_db(object) ||
+                        i2d_db_load_item_combo_db(object) ||
                         i2d_db_load_skill_db(object) ||
                         i2d_db_load_mob_db(object) ||
                         i2d_db_load_mob_race_db(object) ||
                         i2d_db_load_produce_db(object) ||
                         i2d_db_load_mercenary_db(object) ||
-                        i2d_db_load_pet_db(object) ||
-                        i2d_db_load_item_combo_db(object) )
+                        i2d_db_load_pet_db(object) )
                         status = i2d_panic("failed to load database object");
             }
 
@@ -62,13 +62,13 @@ void i2d_db_deit(i2d_db ** result) {
     i2d_db * object;
 
     object = *result;
-    i2d_deit(object->item_combo_db, i2d_item_combo_db_deit);
     i2d_deit(object->pet_db, i2d_pet_db_deit);
     i2d_deit(object->mercenary_db, i2d_mercenary_db_deit);
     i2d_deit(object->produce_db, i2d_produce_db_deit);
     i2d_deit(object->mob_race_db, i2d_mob_race_db_deit);
     i2d_deit(object->mob_db, i2d_mob_db_deit);
     i2d_deit(object->skill_db, i2d_skill_db_deit);
+    i2d_deit(object->item_combo_db, i2d_item_combo_db_deit);
     i2d_deit(object->item_db, i2d_item_db_deit);
     i2d_string_destroy(&object->re_path);
     i2d_string_destroy(&object->db_path);
