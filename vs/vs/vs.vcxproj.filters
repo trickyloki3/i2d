@@ -39,9 +39,6 @@
     <ClCompile Include="..\..\i2d_mob.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\i2d_opt.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\i2d_pet.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -87,9 +84,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\i2d_mob.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\i2d_opt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\i2d_pet.h">

@@ -4,32 +4,38 @@ static int i2d_item_compile_script(i2d_script *, i2d_item *);
 
 int main(int argc, char * argv[]) {
     int status = I2D_OK;
-    i2d_option * option = NULL;
+    i2d_string path;
+    i2d_config * config = NULL;
     i2d_script * script = NULL;
     i2d_item * item;
 
-    if(i2d_option_init(&option, argc, argv)) {
-        status = i2d_panic("failed to create option object");
+    if(i2d_string_vprintf(&path, "G:\\Repositories\\i2d\\config.json")) {
+        status = i2d_panic("failed to create string object");
     } else {
-        if(i2d_script_init(&script, option)) {
-            status = i2d_panic("failed to create script object");
+        if(i2d_config_init(&config, &path)) {
+            status = i2d_panic("failed to create config object");
         } else {
-            if(option->item_id) {
-                if(i2d_item_db_search_by_id(script->db->item_db, option->item_id, &item)) {
-                    status = i2d_panic("failed to find item id -- %ld", option->item_id);
-                } else {
-                    i2d_item_compile_script(script, item);
-                }
+            if(i2d_script_init(&script, config)) {
+                status = i2d_panic("failed to create script object");
             } else {
-                item = script->db->item_db->list;
-                do {
-                    i2d_item_compile_script(script, item);
-                    item = item->next;
-                } while(item != script->db->item_db->list);
+                if(config->item_id) {
+                    if(i2d_item_db_search_by_id(script->db->item_db, config->item_id, &item)) {
+                        status = i2d_panic("failed to find item id -- %ld", config->item_id);
+                    } else {
+                        i2d_item_compile_script(script, item);
+                    }
+                } else {
+                    item = script->db->item_db->list;
+                    do {
+                        i2d_item_compile_script(script, item);
+                        item = item->next;
+                    } while(item != script->db->item_db->list);
+                }
+                i2d_script_deit(&script);
             }
-            i2d_script_deit(&script);
+            i2d_config_deit(&config);
         }
-        i2d_option_deit(&option);
+        i2d_string_destroy(&path);
     }
 
     return status;
@@ -54,7 +60,7 @@ static int i2d_item_compile_script(i2d_script * script, i2d_item * item) {
             if(i2d_script_compile(script, &item->onunequip_script, &onunequip_script)) {
                 status = i2d_panic("failed to translate onunequip script for item %ld", item->id);
             } else {
-                
+
                 i2d_string_destroy(&onunequip_script);
             }
             i2d_string_destroy(&onequip_script);

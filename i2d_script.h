@@ -4,7 +4,6 @@
 #include "i2d_util.h"
 #include "i2d_range.h"
 #include "i2d_logic.h"
-#include "i2d_opt.h"
 #include "i2d_constant.h"
 #include "i2d_db.h"
 #include "i2d_json.h"
@@ -371,7 +370,7 @@ struct i2d_script {
 
 typedef struct i2d_script i2d_script;
 
-int i2d_script_init(i2d_script **, i2d_option *);
+int i2d_script_init(i2d_script **, i2d_config *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_local_create(i2d_script *, i2d_local *);
 int i2d_script_local_destroy(i2d_script *, i2d_local *);

@@ -2287,22 +2287,22 @@ static int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data
     return status;
 }
 
-int i2d_script_init(i2d_script ** result, i2d_option * option) {
+int i2d_script_init(i2d_script ** result, i2d_config * config) {
     int status = I2D_OK;
     i2d_script * object;
     size_t i;
     size_t size;
 
-    if(i2d_is_invalid(result) || !option) {
+    if(i2d_is_invalid(result) || !config) {
         status = i2d_panic("invalid paramater");
     } else {
         object = calloc(1, sizeof(*object));
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_db_init(&object->db, option->renewal ? i2d_renewal : i2d_pre_renewal, &option->source_path)) {
+            if(i2d_db_init(&object->db, config->renewal ? i2d_renewal : i2d_pre_renewal, &config->source_path)) {
                 status = i2d_panic("failed to create database object");
-            } else if(i2d_json_init(&object->json, &option->data_path)) {
+            } else if(i2d_json_init(&object->json, &config->data_path)) {
                 status = i2d_panic("failed to create json object");
             } else if(i2d_lexer_init(&object->lexer)) {
                 status = i2d_panic("failed to create lexer object");

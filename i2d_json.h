@@ -59,4 +59,16 @@ typedef struct i2d_value_map i2d_value_map;
 int i2d_value_map_init(i2d_value_map **, json_t *);
 void i2d_value_map_deit(i2d_value_map **);
 int i2d_value_map_get(i2d_value_map *, long, i2d_string *);
+
+struct i2d_config {
+    int renewal;
+    i2d_string source_path;
+    i2d_string data_path;
+    long item_id;
+};
+
+typedef struct i2d_config i2d_config;
+
+int i2d_config_init(i2d_config **, i2d_string *);
+void i2d_config_deit(i2d_config  **);
 #endif
