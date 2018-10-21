@@ -37,25 +37,29 @@ int main(int argc, char * argv[]) {
 
 static int i2d_item_compile_script(i2d_script * script, i2d_item * item) {
     int status = I2D_OK;
-    i2d_string description;
-    i2d_zero(description);
+    i2d_string normal_script;
+    i2d_string onequip_script;
+    i2d_string onunequip_script;
 
-    if(i2d_script_compile(script, &item->script, &description)) {
+    i2d_zero(normal_script);
+    i2d_zero(onequip_script);
+    i2d_zero(onunequip_script);
+
+    if(i2d_script_compile(script, &item->script, &normal_script)) {
         status = i2d_panic("failed to translate script for item %ld", item->id);
     } else {
-        i2d_string_destroy(&description);
-    }
-
-    if(i2d_script_compile(script, &item->onequip_script, &description)) {
-        status = i2d_panic("failed to translate script for item %ld", item->id);
-    } else {
-        i2d_string_destroy(&description);
-    }
-
-    if(i2d_script_compile(script, &item->onunequip_script, &description)) {
-        status = i2d_panic("failed to translate script for item %ld", item->id);
-    } else {
-        i2d_string_destroy(&description);
+        if(i2d_script_compile(script, &item->onequip_script, &onequip_script)) {
+            status = i2d_panic("failed to translate onequip script for item %ld", item->id);
+        } else {
+            if(i2d_script_compile(script, &item->onunequip_script, &onunequip_script)) {
+                status = i2d_panic("failed to translate onunequip script for item %ld", item->id);
+            } else {
+                
+                i2d_string_destroy(&onunequip_script);
+            }
+            i2d_string_destroy(&onequip_script);
+        }
+        i2d_string_destroy(&normal_script);
     }
 
     return status;
