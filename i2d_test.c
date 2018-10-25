@@ -2,7 +2,6 @@
 #include "i2d_range.h"
 #include "i2d_logic.h"
 #include "i2d_rbt.h"
-#include "i2d_opt.h"
 #include "i2d_item.h"
 #include "i2d_skill.h"
 #include "i2d_constant.h"
@@ -30,7 +29,7 @@ static void i2d_format_test(void) {
     i2d_string_stack stack;
     i2d_format format;
 
-    assert(!i2d_buffer_create(&buffer, I2D_SIZE));
+    assert(!i2d_buffer_create(&buffer, BUFFER_SIZE_SMALL));
     assert(!i2d_string_stack_create(&stack, 16));
     assert(!i2d_string_stack_push(&stack, "Hello", 5));
     assert(!i2d_string_stack_push(&stack, "World", 5));
