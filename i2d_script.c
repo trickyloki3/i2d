@@ -4720,7 +4720,7 @@ static int i2d_handler_script(i2d_handler * handler, i2d_script * script, i2d_rb
             status = i2d_panic("failed to write buffer object");
         } else {
             i2d_buffer_get(local->buffer, &string.string, &string.length);
-            if(i2d_script_compile(script, &string, &description, NULL)) {
+            if(i2d_script_compile(script, &string, &description, variables)) {
                 status = i2d_panic("failed to compile script -- %s", string.string);
             } else {
                 if(i2d_string_stack_push(local->stack, description.string, description.length))
@@ -4904,7 +4904,7 @@ static int i2d_handler_pet_script(i2d_handler * handler, i2d_script * script, i2
         status = i2d_panic("failed to get pet id");
     } else if(i2d_pet_db_search_by_id(script->db->pet_db, id, &pet)) {
         status = i2d_panic("failed to get pet by id -- %ld", id);
-    } else if(i2d_script_compile(script, &pet->pet_script, &pet_script, NULL)) {
+    } else if(i2d_script_compile(script, &pet->pet_script, &pet_script, variables)) {
         status = i2d_panic("failed to compile script -- %s", pet->pet_script.string);
     } else {
         if(i2d_string_stack_push(local->stack, pet_script.string, pet_script.length))
@@ -4927,7 +4927,7 @@ static int i2d_handler_pet_loyal_script(i2d_handler * handler, i2d_script * scri
         status = i2d_panic("failed to get pet id");
     } else if(i2d_pet_db_search_by_id(script->db->pet_db, id, &pet)) {
         status = i2d_panic("failed to get pet by id -- %ld", id);
-    } else if(i2d_script_compile(script, &pet->loyal_script, &loyal_script, NULL)) {
+    } else if(i2d_script_compile(script, &pet->loyal_script, &loyal_script, variables)) {
         status = i2d_panic("failed to compile script -- %s", pet->loyal_script.string);
     } else {
         if(i2d_string_stack_push(local->stack, loyal_script.string, loyal_script.length))
