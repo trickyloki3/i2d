@@ -175,23 +175,19 @@ int i2d_rbt_init(i2d_rbt ** result, i2d_rbt_cmp compare) {
 
 void i2d_rbt_deit(i2d_rbt ** result) {
     i2d_rbt * object;
-
-
-    object = *result;
-    if(object)
-        i2d_rbt_clear(object);
-    i2d_free(object);
-    *result = NULL;
-}
-
-void i2d_rbt_clear(i2d_rbt * tree) {
     i2d_rbt_node * node;
 
-    while(tree->root) {
-        node = tree->root;
-        i2d_rbt_node_delete(tree, node);
-        i2d_rbt_node_deit(&node);
+    object = *result;
+    if(object->root) {
+        while(object->root != object->root->next) {
+            node = object->root->next;
+            i2d_rbt_node_remove(node);
+            i2d_rbt_node_deit(&node);
+        }
+        i2d_rbt_node_deit(&object->root);
     }
+    i2d_free(object);
+    *result = NULL;
 }
 
 int i2d_rbt_insert(i2d_rbt * tree, void * key, void * value) {
