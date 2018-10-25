@@ -190,6 +190,32 @@ void i2d_rbt_deit(i2d_rbt ** result) {
     *result = NULL;
 }
 
+int i2d_rbt_copy(i2d_rbt ** result, i2d_rbt * tree) {
+    int status = I2D_OK;
+    i2d_rbt * object = NULL;
+    i2d_rbt_node * node;
+
+    if(i2d_rbt_init(&object, tree->compare)) {
+        status = i2d_panic("failed ot create red black tree object");
+    } else {
+        if(tree->root) {
+            node = tree->root;
+            do {
+                if(i2d_rbt_insert(object, node->key, node->val))
+                    status = i2d_panic("failed to insert node object");
+                node = node->next;
+            } while(node != tree->root && !status);
+        }
+
+        if(status)
+            i2d_rbt_deit(&object);
+        else
+            *result = object;
+    }
+
+    return status;
+}
+
 int i2d_rbt_insert(i2d_rbt * tree, void * key, void * value) {
     int status = I2D_OK;
     i2d_rbt_node * node = NULL;
