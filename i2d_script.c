@@ -2685,7 +2685,7 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
         case I2D_MONSTER:
         case I2D_SC_END:
         case I2D_PETRECOVERY:
-            status = i2d_script_statement_generic(script, block);
+            status = i2d_script_statement_generic(script, block, variables);
             break;
         /* to-do */
         case I2D_SC_START:
@@ -2736,7 +2736,7 @@ int i2d_script_statement_set(i2d_script * script, i2d_block * block, i2d_rbt * v
     return status;
 }
 
-int i2d_script_statement_generic(i2d_script * script, i2d_block * block) {
+int i2d_script_statement_generic(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
     int status = I2D_OK;
     i2d_node * arguments[MAX_ARGUMENT];
     i2d_data * data = NULL;
@@ -2899,7 +2899,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rb
                     status = i2d_script_expression_variable(script, node, variables, logics);
                     break;
                 case I2D_FUNCTION:
-                    status = i2d_script_expression_function(script, node);
+                    status = i2d_script_expression_function(script, node, variables);
                     break;
                 case I2D_INDEX:
                     /* index node is unsupported */
@@ -3021,7 +3021,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt
 }
 
 
-int i2d_script_expression_function(i2d_script * script, i2d_node * node) {
+int i2d_script_expression_function(i2d_script * script, i2d_node * node, i2d_rbt * variables) {
     int status = I2D_OK;
     i2d_string name;
     i2d_handler * handler;
