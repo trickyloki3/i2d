@@ -7,6 +7,8 @@ struct i2d_rbt_node {
     struct i2d_rbt_node * l;    /* left */
     struct i2d_rbt_node * r;    /* right */
     struct i2d_rbt_node * p;    /* parent */
+    struct i2d_rbt_node * next;
+    struct i2d_rbt_node * prev;
 };
 
 typedef struct i2d_rbt_node i2d_rbt_node;
@@ -29,6 +31,8 @@ static void left_rotate(i2d_rbt *, i2d_rbt_node *);
 static void change_parent(i2d_rbt *, i2d_rbt_node *, i2d_rbt_node *);
 static int i2d_rbt_node_init(i2d_rbt_node **, void *, void *);
 static void i2d_rbt_node_deit(i2d_rbt_node **);
+static void i2d_rbt_node_append(i2d_rbt_node *, i2d_rbt_node *);
+static void i2d_rbt_node_remove(i2d_rbt_node *);
 static int i2d_rbt_node_insert(i2d_rbt *, i2d_rbt_node *);
 static int i2d_rbt_node_delete(i2d_rbt *, i2d_rbt_node *);
 static int i2d_rbt_node_search(i2d_rbt *, i2d_rbt_node **, const void *);
@@ -252,7 +256,9 @@ static int i2d_rbt_node_init(i2d_rbt_node ** result, void * key, void * val) {
         } else {
             object->key = key;
             object->val = val;
-            object->c   = red;
+            object->c = red;
+            object->next = object;
+            object->prev = object;
 
             if(status)
                 i2d_rbt_node_deit(&object);
@@ -270,6 +276,20 @@ static void i2d_rbt_node_deit(i2d_rbt_node ** result) {
     object = *result;
     i2d_free(object);
     *result = NULL;
+}
+
+static void i2d_rbt_node_append(i2d_rbt_node * x, i2d_rbt_node * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+static void i2d_rbt_node_remove(i2d_rbt_node * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
 }
 
 static int i2d_rbt_node_insert(i2d_rbt * tree, i2d_rbt_node * x) {
@@ -292,8 +312,10 @@ static int i2d_rbt_node_insert(i2d_rbt * tree, i2d_rbt_node * x) {
     } else {
         if(0 > tree->compare(x->key, p->key)) {
             p->l = x;
+            i2d_rbt_node_append(x, p);
         } else {
             p->r = x;
+            i2d_rbt_node_append(p, x);
         }
     }
 
@@ -464,8 +486,9 @@ static int i2d_rbt_node_delete(i2d_rbt * tree, i2d_rbt_node * x) {
             z->c = black;
     }
 
-    (x)->l = NULL;
-    (x)->r = NULL;
+    i2d_rbt_node_remove(x);
+    x->l = NULL;
+    x->r = NULL;
     return I2D_OK;
 }
 
