@@ -375,7 +375,7 @@ void i2d_script_deit(i2d_script **);
 int i2d_script_local_create(i2d_script *, i2d_local *);
 int i2d_script_local_destroy(i2d_script *, i2d_local *);
 int i2d_script_default_node(i2d_script *, const char *, i2d_node **);
-int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *);
+int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *, i2d_rbt *);
 int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
 int i2d_script_generate(i2d_script *, i2d_block *, i2d_buffer *);
 int i2d_script_statement(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);

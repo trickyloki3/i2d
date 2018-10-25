@@ -54,13 +54,13 @@ static int i2d_item_compile_script(i2d_script * script, i2d_item * item) {
     i2d_zero(onequip_script);
     i2d_zero(onunequip_script);
 
-    if(i2d_script_compile(script, &item->script, &normal_script)) {
+    if(i2d_script_compile(script, &item->script, &normal_script, NULL)) {
         status = i2d_panic("failed to translate script for item %ld", item->id);
     } else {
-        if(i2d_script_compile(script, &item->onequip_script, &onequip_script)) {
+        if(i2d_script_compile(script, &item->onequip_script, &onequip_script, NULL)) {
             status = i2d_panic("failed to translate onequip script for item %ld", item->id);
         } else {
-            if(i2d_script_compile(script, &item->onunequip_script, &onunequip_script)) {
+            if(i2d_script_compile(script, &item->onunequip_script, &onunequip_script, NULL)) {
                 status = i2d_panic("failed to translate onunequip script for item %ld", item->id);
             } else {
                 fprintf(stdout, "%ld - %s\n", item->id, item->name.string);
@@ -95,7 +95,7 @@ static int i2d_item_compile_combo_script(i2d_script * script, i2d_item * item) {
     if(!i2d_item_combo_db_search_by_id(script->db->item_combo_db, item->id, &item_combo_list)) {
         for(i = 0; i < item_combo_list->size && !status; i++) {
             item_combo = item_combo_list->list[i];
-            if(i2d_script_compile(script, &item_combo->script, &description)) {
+            if(i2d_script_compile(script, &item_combo->script, &description, NULL)) {
                 status = i2d_panic("failed to translate item combo script for item %ld", item->id);
             } else {
                 if(i2d_item_combo_get_string(item_combo, script->db->item_db, &item_list)) {
