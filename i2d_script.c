@@ -2532,42 +2532,6 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     return status;
 }
 
-int i2d_script_generate(i2d_script * script, i2d_block * blocks, i2d_buffer * buffer) {
-    int status = I2D_OK;
-
-    i2d_block * block;
-    i2d_string string;
-
-    if(blocks) {
-        block = blocks;
-        do {
-            switch(block->type) {
-                case I2D_BLOCK:
-                    status = i2d_script_generate(script, block->child, buffer);
-                    break;
-                case I2D_STATEMENT:
-                    i2d_buffer_get(&block->buffer, &string.string, &string.length);
-                    if(string.length && i2d_buffer_printf(buffer, "%s\n", string.string))
-                        status = i2d_panic("failed to write buffer object");
-                    break;
-                case I2D_IF:
-                case I2D_ELSE:
-                    status = i2d_script_generate(script, block->child, buffer);
-                    break;
-                case I2D_FOR:
-                    /* for is unsupported */
-                    break;
-                default:
-                    status = i2d_panic("invalid block type -- %d", block->type);
-                    break;
-            }
-            block = block->next;
-        } while(block != blocks && !status);
-    }
-
-    return status;
-}
-
 int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
     i2d_block * block;
@@ -2616,6 +2580,42 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
                     } else {
                         status = i2d_script_translate(script, block->child, variables, logics);
                     }
+                    break;
+                case I2D_FOR:
+                    /* for is unsupported */
+                    break;
+                default:
+                    status = i2d_panic("invalid block type -- %d", block->type);
+                    break;
+            }
+            block = block->next;
+        } while(block != blocks && !status);
+    }
+
+    return status;
+}
+
+int i2d_script_generate(i2d_script * script, i2d_block * blocks, i2d_buffer * buffer) {
+    int status = I2D_OK;
+
+    i2d_block * block;
+    i2d_string string;
+
+    if(blocks) {
+        block = blocks;
+        do {
+            switch(block->type) {
+                case I2D_BLOCK:
+                    status = i2d_script_generate(script, block->child, buffer);
+                    break;
+                case I2D_STATEMENT:
+                    i2d_buffer_get(&block->buffer, &string.string, &string.length);
+                    if(string.length && i2d_buffer_printf(buffer, "%s\n", string.string))
+                        status = i2d_panic("failed to write buffer object");
+                    break;
+                case I2D_IF:
+                case I2D_ELSE:
+                    status = i2d_script_generate(script, block->child, buffer);
                     break;
                 case I2D_FOR:
                     /* for is unsupported */
