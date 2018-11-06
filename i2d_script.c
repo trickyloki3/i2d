@@ -2508,26 +2508,26 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
         } else {
             if(i2d_lexer_tokenize(script->lexer, source, &tokens)) {
                 status = i2d_panic("failed to tokenize -- %s", source->string);
-            } else if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
-                status = i2d_panic("failed to parse -- %s", source->string);
-            } else if(i2d_script_translate(script, blocks, variables, NULL)) {
-                status = i2d_panic("failed to translate -- %s", source->string);
-            } else if(i2d_script_generate(script, blocks, &blocks->buffer)) {
-                status = i2d_panic("failed to generate -- %s", source->string);
             } else {
-                i2d_buffer_get(&blocks->buffer, &description.string, &description.length);
-                if(i2d_string_create(target, description.string, description.length))
-                    status = i2d_panic("failed to create string object");
+                if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
+                    status = i2d_panic("failed to parse -- %s", source->string);
+                } else {
+                    if(i2d_script_translate(script, blocks, variables, NULL)) {
+                        status = i2d_panic("failed to translate -- %s", source->string);
+                    } else if(i2d_script_generate(script, blocks, &blocks->buffer)) {
+                        status = i2d_panic("failed to generate -- %s", source->string);
+                    } else {
+                        i2d_buffer_get(&blocks->buffer, &description.string, &description.length);
+                        if(i2d_string_create(target, description.string, description.length))
+                            status = i2d_panic("failed to create string object");
+                    }
+                    i2d_parser_reset(script->parser, script->lexer, &blocks);
+                }
+                i2d_lexer_reset(script->lexer, &tokens);
             }
             i2d_rbt_deit(&variables);
         }
     }
-
-    if(tokens)
-        i2d_lexer_reset(script->lexer, &tokens);
-
-    if(blocks)
-        i2d_parser_reset(script->parser, script->lexer, &blocks);
 
     return status;
 }
