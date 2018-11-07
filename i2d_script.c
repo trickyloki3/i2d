@@ -2636,7 +2636,14 @@ int i2d_script_generate(i2d_script * script, i2d_block * blocks, i2d_buffer * bu
                     break;
                 case I2D_IF:
                 case I2D_ELSE:
-                    status = i2d_script_generate(script, block->child, buffer);
+                    if(block->nodes && block->nodes->logic) {
+                        status = i2d_buffer_printf(buffer, "[") ||
+                                 i2d_script_generate_or(script, block->nodes->logic, buffer) ||
+                                 i2d_buffer_printf(buffer, "]\n") ||
+                                 i2d_script_generate(script, block->child, buffer);
+                    } else {
+                        status = i2d_script_generate(script, block->child, buffer);
+                    }
                     break;
                 case I2D_FOR:
                     /* for is unsupported */
@@ -2648,6 +2655,61 @@ int i2d_script_generate(i2d_script * script, i2d_block * blocks, i2d_buffer * bu
             block = block->next;
         } while(block != blocks && !status);
     }
+
+    return status;
+}
+
+int i2d_script_generate_or(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
+    int status = I2D_OK;
+
+    switch(logic->type) {
+        case or:
+            status = i2d_script_generate_or(script, logic->left, buffer) ||
+                     i2d_buffer_printf(buffer, " or ") ||
+                     i2d_script_generate_or(script, logic->right, buffer);
+            break;
+        case and:
+            status = i2d_script_generate_and(script, logic, buffer);
+            break;
+        case var:
+            status = i2d_script_generate_var(script, logic, buffer);
+            break;
+        default:
+            status = i2d_panic("invalid logic type");
+            break;
+    }
+
+    return status;
+}
+
+int i2d_script_generate_and(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
+    int status = I2D_OK;
+
+    switch(logic->type) {
+        case and:
+            status = i2d_script_generate_and(script, logic->left, buffer) ||
+                     i2d_buffer_printf(buffer, " and ") ||
+                     i2d_script_generate_and(script, logic->right, buffer);
+            break;
+        case var:
+            status = i2d_script_generate_var(script, logic, buffer);
+            break;
+        default:
+            status = i2d_panic("invalid logic type");
+            break;
+    }
+
+    return status;
+}
+
+int i2d_script_generate_var(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&logic->range, &min, &max);
+    if(i2d_buffer_printf(buffer, "%s is %ld - %ld", logic->name.string, min, max))
+        status = i2d_panic("failed to write buffer object");
 
     return status;
 }
