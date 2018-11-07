@@ -896,6 +896,7 @@ void i2d_node_deit(i2d_node ** result) {
     object = *result;
     i2d_deit(object->right, i2d_node_deit);
     i2d_deit(object->left, i2d_node_deit);
+    i2d_deit(object->index, i2d_node_deit);
     i2d_deit(object->tokens, i2d_token_list_deit);
     i2d_deit(object->logic, i2d_logic_deit);
     i2d_range_destroy(&object->range);
@@ -1402,6 +1403,8 @@ void i2d_parser_node_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_node ** r
     node->right = node;
     if(node->left)
         i2d_parser_node_reset(parser, lexer, &node->left);
+    if(node->index)
+        i2d_parser_node_reset(parser, lexer, &node->index);
     node->left = node;
     if(node->tokens)
         i2d_lexer_reset(lexer, &node->tokens);
@@ -1762,7 +1765,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                             iter = iter->right;
 
                         if(I2D_VARIABLE == iter->type) {
-                            iter->left = node;
+                            iter->index = node;
                             iter->type = I2D_INDEX;
                             node = NULL;
                         }
