@@ -853,15 +853,33 @@ const char * i2d_node_string[] = {
 
 int i2d_rbt_cmp_node(const void * left, const void * right) {
     int status = I2D_OK;
-    i2d_string l;
-    i2d_string r;
+    i2d_node * l_node = (i2d_node *) left;
+    i2d_node * r_node = (i2d_node *) right;
+    i2d_string l_name;
+    i2d_string r_name;
+    long l_min;
+    long l_max;
+    long r_min;
+    long r_max;
 
-    if(!i2d_node_get_string((i2d_node *) left, &l) && !i2d_node_get_string((i2d_node *) right, &r))
+    if(!i2d_node_get_string(l_node, &l_name) && !i2d_node_get_string(r_node, &r_name))
 #ifndef _WIN32
-        status = strcasecmp(l.string, r.string);
+        status = strcasecmp(l_name.string, r_name.string);
 #else
-        status = _stricmp(l.string, r.string);
+        status = _stricmp(l_name.string, r_name.string);
 #endif
+
+    if(!status && l_node->type == I2D_INDEX && r_node->type == I2D_INDEX) {
+        i2d_range_get_range(&l_node->index->range, &l_min, &l_max);
+        i2d_range_get_range(&r_node->index->range, &r_min, &r_max);
+        if(l_min == r_min && l_max == r_max) {
+            status = 0;
+        } else if(l_max < r_max) {
+            status = -1;
+        } else {
+            status = 1;
+        }
+    }
 
     return status;
 }
@@ -2253,7 +2271,7 @@ static int i2d_rbt_add_variable(i2d_rbt * variables, i2d_node * node) {
     int status = I2D_OK;
     i2d_node * last;
 
-    if(I2D_VARIABLE != node->type) {
+    if(I2D_VARIABLE != node->type && I2D_INDEX != node->type) {
         status = i2d_panic("invalid node type -- %d", node->type);
     } else {
         if(!i2d_rbt_search(variables, node, (void **) &last) &&
