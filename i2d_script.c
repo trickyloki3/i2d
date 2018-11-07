@@ -1250,6 +1250,7 @@ void i2d_block_deit(i2d_block ** result) {
 
     object = *result;
     i2d_deit(object->child, i2d_block_list_deit);
+    i2d_deit(object->logics, i2d_logic_deit);
     i2d_deit(object->nodes, i2d_node_deit);
     i2d_deit(object->tokens, i2d_token_list_deit);
     i2d_buffer_destroy(&object->buffer);
@@ -1401,6 +1402,8 @@ void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** resul
         block->parent = NULL;
         i2d_buffer_clear(&block->buffer);
         block->statement = NULL;
+        if(block->logics)
+            i2d_logic_deit(&block->logics);
         if(block->nodes)
             i2d_parser_node_reset(parser, lexer, &block->nodes);
         if(block->tokens)
@@ -2556,7 +2559,6 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
 int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
     i2d_block * block;
-    i2d_logic * logic = NULL;
 
     if(blocks) {
         block = blocks;
@@ -2575,32 +2577,27 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
                 case I2D_IF:
                     if(i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables, logics)) {
                         status = i2d_panic("failed to evaluate expression");
-                    } else if(!block->nodes->logic) {
-                        status = i2d_script_translate(script, block->child, variables, logics);
-                    } else if(!logics) {
-                        status = i2d_script_translate(script, block->child, variables, block->nodes->logic);
                     } else {
-                        if(i2d_logic_or(&logic, block->nodes->logic, logics)) {
-                            status = i2d_panic("failed to or logic object");
-                        } else {
-                            status = i2d_script_translate(script, block->child, variables, logic);
-
-                            i2d_logic_deit(&logic);
+                        if(!block->nodes->logic && logics) {
+                            if(i2d_logic_copy(&block->logics, logics))
+                                status = i2d_panic("failed to copy logic object");
+                        } else if(block->nodes->logic && !logics) {
+                            if(i2d_logic_copy(&block->logics, block->nodes->logic))
+                                status = i2d_panic("failed to copy logic object");
+                        } else if(block->nodes->logic && logics) {
+                            if(i2d_logic_or(&block->logics, block->nodes->logic, logics))
+                                status = i2d_panic("failed to or logic object");
                         }
+                        if(!status)
+                            status = i2d_script_translate(script, block->child, variables, block->logics);
                     }
                     break;
                 case I2D_ELSE:
-                    if(logics) {
-                        if(i2d_logic_not(&logic, logics)) {
+                    if(logics && i2d_logic_not(&block->logics, logics))
                             status = i2d_panic("failed to not logic object");
-                        } else {
-                            status = i2d_script_translate(script, block->child, variables, logic);
 
-                            i2d_logic_deit(&logic);
-                        }
-                    } else {
-                        status = i2d_script_translate(script, block->child, variables, logics);
-                    }
+                    if(!status)
+                        status = i2d_script_translate(script, block->child, variables, block->logics);
                     break;
                 case I2D_FOR:
                     /* for is unsupported */
@@ -2636,9 +2633,9 @@ int i2d_script_generate(i2d_script * script, i2d_block * blocks, i2d_buffer * bu
                     break;
                 case I2D_IF:
                 case I2D_ELSE:
-                    if(block->nodes && block->nodes->logic) {
+                    if(block->logics) {
                         status = i2d_buffer_printf(buffer, "[") ||
-                                 i2d_script_generate_or(script, block->nodes->logic, buffer) ||
+                                 i2d_script_generate_or(script, block->logics, buffer) ||
                                  i2d_buffer_printf(buffer, "]\n") ||
                                  i2d_script_generate(script, block->child, buffer);
                     } else {
