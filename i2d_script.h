@@ -121,6 +121,7 @@ struct i2d_node {
     i2d_range range;
     i2d_logic * logic;
     i2d_token * tokens;
+    struct i2d_node * index;
     struct i2d_node * left;
     struct i2d_node * right;
 };
