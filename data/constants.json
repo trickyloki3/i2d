@@ -3313,7 +3313,7 @@
             "value" : 119
         },
         "BaseLevel" : {
-            "max" : 99,
+            "max" : 150,
             "min" : 0,
             "name" : "Base Level",
             "value" : 11
@@ -21018,7 +21018,7 @@
             "value" : 1070
         },
         "bAgi" : {
-            "max" : 99,
+            "max" : 150,
             "min" : 0,
             "name" : "AGI",
             "value" : 14
@@ -21147,7 +21147,7 @@
             "value" : 1083
         },
         "bDex" : {
-            "max" : 99,
+            "max" : 150,
             "min" : 0,
             "name" : "DEX",
             "value" : 17
@@ -21282,7 +21282,7 @@
             "value" : 1086
         },
         "bInt" : {
-            "max" : 99,
+            "max" : 150,
             "min" : 0,
             "name" : "INT",
             "value" : 16
@@ -21304,7 +21304,7 @@
             "value" : 1064
         },
         "bLuk" : {
-            "max" : 99,
+            "max" : 150,
             "min" : 0,
             "name" : "LUK",
             "value" : 18
@@ -21544,7 +21544,7 @@
             "value" : 2079
         },
         "bStr" : {
-            "max" : 99,
+            "max" : 150,
             "min" : 0,
             "name" : "STR",
             "value" : 13
@@ -21631,7 +21631,7 @@
             "value" : 2054
         },
         "bVit" : {
-            "max" : 99,
+            "max" : 150,
             "min" : 0,
             "name" : "VIT",
             "value" : 15
