@@ -372,10 +372,14 @@ struct i2d_script {
 
 typedef struct i2d_script i2d_script;
 
+typedef int (* i2d_handler_cb)(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+typedef int (* i2d_handler_list_cb)(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+
 int i2d_script_init(i2d_script **, i2d_config *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_local_create(i2d_script *, i2d_local *);
 int i2d_script_local_destroy(i2d_script *, i2d_local *);
+int i2d_script_add_handler(i2d_script *, i2d_rbt *, i2d_data *, i2d_handler_cb);
 int i2d_script_default_node(i2d_script *, const char *, i2d_node **);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *, i2d_rbt *);
 int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);

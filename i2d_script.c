@@ -3,8 +3,6 @@
 static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
 static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
-typedef int (* i2d_handler_cb)(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
-
 struct i2d_handler {
     i2d_string name;
     i2d_handler_cb handler;
@@ -19,14 +17,10 @@ static void i2d_handler_list_deit(i2d_handler **);
 static void i2d_handler_append(i2d_handler *, i2d_handler *);
 static void i2d_handler_remove(i2d_handler *);
 
-typedef int (* i2d_handler_list_cb)(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-
 struct i2d_handler_list {
     i2d_string name;
     i2d_handler_list_cb handler;
 };
-
-static int i2d_script_add_handler(i2d_script *, i2d_rbt *, i2d_data *, i2d_handler_cb);
 
 static int i2d_handler_general(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_readparam(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
@@ -2292,26 +2286,6 @@ static int i2d_rbt_get_variable(i2d_rbt * variables, i2d_node * key, i2d_node **
     return i2d_rbt_search(variables, key, (void **) result);
 }
 
-static int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data, i2d_handler_cb cb) {
-    int status = I2D_OK;
-    i2d_handler * handler = NULL;
-
-    if(i2d_handler_init(&handler, data, cb)) {
-        status = i2d_panic("failed to create handler object");
-    } else {
-        if(!script->handlers) {
-            script->handlers = handler;
-        } else {
-            i2d_handler_append(handler, script->handlers);
-        }
-
-        if(i2d_rbt_insert(index, handler->name.string, handler))
-            status = i2d_panic("failed to map handler object");
-    }
-
-    return status;
-}
-
 int i2d_script_init(i2d_script ** result, i2d_config * config) {
     int status = I2D_OK;
     i2d_script * object;
@@ -2468,6 +2442,26 @@ int i2d_script_local_destroy(i2d_script * script, i2d_local * result) {
         status = i2d_panic("failed to cache string stack object");
     } else if(i2d_buffer_cache_put(script->buffer_cache, &result->buffer)) {
         status = i2d_panic("failed to cache buffer object");
+    }
+
+    return status;
+}
+
+int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data, i2d_handler_cb cb) {
+    int status = I2D_OK;
+    i2d_handler * handler = NULL;
+
+    if(i2d_handler_init(&handler, data, cb)) {
+        status = i2d_panic("failed to create handler object");
+    } else {
+        if(!script->handlers) {
+            script->handlers = handler;
+        } else {
+            i2d_handler_append(handler, script->handlers);
+        }
+
+        if(i2d_rbt_insert(index, handler->name.string, handler))
+            status = i2d_panic("failed to map handler object");
     }
 
     return status;
