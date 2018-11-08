@@ -17,23 +17,25 @@ int i2d_object_get_range(json_t *, json_t *, i2d_range *);
 int i2d_object_get_list(json_t *, size_t, void **, size_t *);
 
 struct i2d_json {
+    json_t * statements;
+    json_t * functions;
+    json_t * constants;
+    json_t * arguments;
+    json_t * prefixes;
+    json_t * bonus_file;
     json_t * bonus;
     json_t * bonus2;
     json_t * bonus3;
     json_t * bonus4;
     json_t * bonus5;
-    json_t * statements;
-    json_t * getiteminfo;
-    json_t * strcharinfo;
-    json_t * ammos;
-    json_t * weapons;
-    json_t * functions;
-    json_t * constants;
-    json_t * arguments;
-    json_t * prefixes;
-    json_t * skill_flags;
-    json_t * searchstore_effect;
+    json_t * data_file;
+    json_t * ammo_type;
     json_t * bonus_script_flag;
+    json_t * getiteminfo_type;
+    json_t * searchstore_effect;
+    json_t * skill_flag;
+    json_t * strcharinfo_type;
+    json_t * weapon_type;
 };
 
 typedef struct i2d_json i2d_json;

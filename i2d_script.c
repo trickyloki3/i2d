@@ -2337,15 +2337,15 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to create constant db object");
             } else if(i2d_constant_index_mob_races(object->constant_db, object->db->mob_race_db)) {
                 status = i2d_panic("failed to index mob race db");
-            } else if(i2d_value_map_init(&object->getiteminfo, object->json->getiteminfo)) {
+            } else if(i2d_value_map_init(&object->getiteminfo, object->json->getiteminfo_type)) {
                 status = i2d_panic("failed to load getiteminfo");
-            } else if(i2d_value_map_init(&object->strcharinfo, object->json->strcharinfo)) {
+            } else if(i2d_value_map_init(&object->strcharinfo, object->json->strcharinfo_type)) {
                 status = i2d_panic("failed to load strcharinfo");
-            } else if(i2d_value_map_init(&object->weapons, object->json->weapons)) {
+            } else if(i2d_value_map_init(&object->weapons, object->json->weapon_type)) {
                 status = i2d_panic("failed to load weapons");
-            } else if(i2d_value_map_init(&object->ammos, object->json->ammos)) {
+            } else if(i2d_value_map_init(&object->ammos, object->json->ammo_type)) {
                 status = i2d_panic("failed to load ammos");
-            } else if(i2d_value_map_init(&object->skill_flags, object->json->skill_flags)) {
+            } else if(i2d_value_map_init(&object->skill_flags, object->json->skill_flag)) {
                 status = i2d_panic("failed to load skill_flags");
             } else if(i2d_value_map_init(&object->searchstore_effect, object->json->searchstore_effect)) {
                 status = i2d_panic("failed to load searchstore_effect");
