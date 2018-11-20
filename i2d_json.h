@@ -15,6 +15,7 @@ int i2d_object_get_number_array(json_t *, long **, size_t *);
 int i2d_object_get_number(json_t *, long *);
 int i2d_object_get_range(json_t *, json_t *, i2d_range *);
 int i2d_object_get_list(json_t *, size_t, void **, size_t *);
+int i2d_object_get_boolean(json_t *, int *);
 
 struct i2d_json {
     json_t * statements;

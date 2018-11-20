@@ -166,6 +166,18 @@ int i2d_object_get_list(json_t * json, size_t element, void ** result_list, size
     return status;
 }
 
+int i2d_object_get_boolean(json_t * json, int * result) {
+    int status = I2D_OK;
+
+    if(!json_is_boolean(json)) {
+        status = i2d_panic("invalid boolean object");
+    } else {
+        *result = json_is_true(json) ? 1 : 0;
+    }
+
+    return status;
+}
+
 static int i2d_json_load_file(json_t ** json, i2d_string * directory, const char * file) {
     int status = I2D_OK;
     i2d_string path;

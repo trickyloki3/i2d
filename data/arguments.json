@@ -9,7 +9,7 @@
             0
         ],
         "description" : "{0} {1} HP.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "sp_integer" : {
         "argument_type" : [
@@ -21,7 +21,7 @@
             0
         ],
         "description" : "{0} {1} SP.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "hp_percent" : {
         "argument_type" : [
@@ -33,7 +33,7 @@
             0
         ],
         "description" : "{0} {1} HP.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "sp_percent" : {
         "argument_type" : [
@@ -45,21 +45,21 @@
             0
         ],
         "description" : "{0} {1} SP.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "base_experience" : {
         "argument_type" : [
             "integer"
         ],
         "description" : "Gain {0} base experience.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "job_experience" : {
         "argument_type" : [
             "integer"
         ],
         "description" : "Gain {0} job experience.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "hp_mercenary" : {
         "argument_type" : [
@@ -71,7 +71,7 @@
             0
         ],
         "description" : "{0} {1} mercenary HP.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "sp_mercenary" : {
         "argument_type" : [
@@ -83,14 +83,14 @@
             0
         ],
         "description" : "{0} {1} mercenary SP.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "makerune_success_bonus" : {
         "argument_type" : [
             "percent"
         ],
         "description" : "Add {0} success rate.",
-        "empty_description_on_zero" : null
+        "empty_description_on_zero" : true
     },
     "pet_tame" : {
         "argument_type" : [
@@ -103,13 +103,13 @@
             "pet_script"
         ],
         "description" : "[Pet Script]\n{0}",
-        "empty_description_on_empty_string" : null
+        "empty_description_on_empty_string" : true
     },
     "pet_loyal_script_print" : {
         "argument_type" : [
             "pet_loyal_script"
         ],
         "description" : "[Loyal Script]\n{0}",
-        "empty_description_on_empty_string" : null
+        "empty_description_on_empty_string" : true
     }
 }

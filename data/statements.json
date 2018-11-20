@@ -127,7 +127,7 @@
         ],
         "required" : 2,
         "optional" : 1,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "percentheal" : {
         "argument_type" : [
@@ -137,7 +137,7 @@
         ],
         "required" : 2,
         "optional" : 1,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "itemheal" : {
         "argument_type" : [
@@ -147,7 +147,7 @@
         ],
         "required" : 2,
         "optional" : 1,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "skill" : {
         "argument_type" : [
@@ -232,7 +232,7 @@
         ],
         "required" : 2,
         "optional" : 1,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "guildgetexp" : {
         "argument_type" : [
@@ -311,7 +311,7 @@
         ],
         "required" : 2,
         "optional" : 0,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "bonus_script" : {
         "argument_type" : [
@@ -351,7 +351,7 @@
         ],
         "required" : 1,
         "optional" : 0,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "produce" : {
         "argument_type" : [
@@ -359,7 +359,7 @@
         ],
         "required" : 1,
         "optional" : 0,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "cooking" : {
         "argument_type" : [
@@ -367,7 +367,7 @@
         ],
         "required" : 1,
         "optional" : 0,
-        "dump_stack_instead_of_description" : null
+        "dump_stack_instead_of_description" : true
     },
     "petloot" : {
         "argument_type" : [

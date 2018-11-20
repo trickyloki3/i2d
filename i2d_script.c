@@ -2211,13 +2211,12 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
         status = i2d_panic("failed to create number");
     } else if(prefixes && i2d_object_get_string_stack(prefixes, &result->prefixes)) {
         status = i2d_panic("failed to create string stack");
-    } else {
-        if(empty_description_on_zero)
-            result->empty_description_on_zero = 1;
-        if(empty_description_on_empty_string)
-            result->empty_description_on_empty_string = 1;
-        if(dump_stack_instead_of_description)
-            result->dump_stack_instead_of_description = 1;
+    } else if(empty_description_on_zero && i2d_object_get_boolean(empty_description_on_zero, &result->empty_description_on_zero)) {
+        status = i2d_panic("failed to create boolean");
+    } else if(empty_description_on_empty_string && i2d_object_get_boolean(empty_description_on_empty_string, &result->empty_description_on_empty_string)) {
+        status = i2d_panic("failed to create boolean");
+    } else if(dump_stack_instead_of_description && i2d_object_get_boolean(dump_stack_instead_of_description, &result->dump_stack_instead_of_description)) {
+        status = i2d_panic("failed to create boolean");
     }
 
     return status;
