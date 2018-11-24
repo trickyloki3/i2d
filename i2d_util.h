@@ -46,6 +46,8 @@ int i2d_panic_print(const char *, ...);
 #define max(x, y) ((x < y) ? y : x)
 #endif
 
+int i2d_string_copy(char **, const char *, size_t);
+
 struct i2d_string {
     char * string;
     size_t length;

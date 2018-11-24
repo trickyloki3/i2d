@@ -10,16 +10,29 @@ int i2d_panic_print(const char * format, ...) {
     return I2D_FAIL;
 }
 
+int i2d_string_copy(char ** result, const char * string, size_t length) {
+    int status = I2D_OK;
+    char * buffer;
+
+    buffer = calloc(length + 1, sizeof(*string));
+    if(!buffer) {
+        status = i2d_panic("out of memory");
+    } else {
+        memcpy(buffer, string, length);
+        buffer[length] = 0;
+        *result = buffer;
+    }
+
+    return status;
+}
+
 int i2d_string_create(i2d_string * result, const char * string, size_t length) {
     int status = I2D_OK;
 
-    result->length = length;
-    result->string = malloc(sizeof(*result->string) * (result->length + 1));
-    if(!result->string) {
-        status = i2d_panic("out of memory");
+    if(i2d_string_copy(&result->string, string, length)) {
+        status = i2d_panic("failed to copy string object");
     } else {
-        memcpy(result->string, string, length);
-        result->string[result->length] = 0;
+        result->length = length;
     }
 
     return status;
