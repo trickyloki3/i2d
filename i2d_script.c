@@ -4,7 +4,7 @@ static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
 static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
 struct i2d_handler {
-    i2d_string name;
+    char * name;
     i2d_handler_cb handler;
     i2d_data * data;
     struct i2d_handler * next;
@@ -45,32 +45,32 @@ static int i2d_handler_getequipweaponlv(i2d_handler *, i2d_script *, i2d_rbt *, 
 static int i2d_handler_getexp2(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 
 i2d_handler function_handlers[] = {
-    { {"getrefine", 9}, i2d_handler_general },
-    { {"readparam", 9}, i2d_handler_readparam },
-    { {"getskilllv", 10}, i2d_handler_getskilllv },
-    { {"isequipped", 10}, i2d_handler_isequipped },
-    { {"getpartnerid", 12}, i2d_handler_general },
-    { {"checkmadogear", 12}, i2d_handler_general },
-    { {"eaclass", 7}, i2d_handler_general },
-    { {"countitem", 9}, i2d_handler_countitem },
-    { {"gettime", 7}, i2d_handler_gettime },
-    { {"strcharinfo", 11}, i2d_handler_strcharinfo },
-    { {"getequipid", 10}, i2d_handler_getequipid },
-    { {"getiteminfo", 11}, i2d_handler_getiteminfo },
-    { {"getmapflag", 10}, i2d_handler_getmapflag },
-    { {"max", 3}, i2d_handler_max },
-    { {"min", 3}, i2d_handler_min },
-    { {"getequiprefinerycnt", 19}, i2d_handler_getequiprefinerycnt },
-    { {"pow", 3}, i2d_handler_pow },
-    { {"checkoption", 11}, i2d_handler_checkoption },
-    { {"rand", 4}, i2d_handler_rand },
-    { {"callfunc", 8}, i2d_handler_callfunc },
-    { {"ismounting", 10}, i2d_handler_general },
-    { {"setmounting", 11}, i2d_handler_general },
-    { {"getequipweaponlv", 16}, i2d_handler_getequipweaponlv },
-    { {"getexp2", 7}, i2d_handler_getexp2 },
-    { {"getcharid", 9}, i2d_handler_general },
-    { {"checkfalcon", 11}, i2d_handler_general }
+    { "getrefine", i2d_handler_general },
+    { "readparam", i2d_handler_readparam },
+    { "getskilllv", i2d_handler_getskilllv },
+    { "isequipped", i2d_handler_isequipped },
+    { "getpartnerid", i2d_handler_general },
+    { "checkmadogear", i2d_handler_general },
+    { "eaclass", i2d_handler_general },
+    { "countitem", i2d_handler_countitem },
+    { "gettime", i2d_handler_gettime },
+    { "strcharinfo", i2d_handler_strcharinfo },
+    { "getequipid", i2d_handler_getequipid },
+    { "getiteminfo", i2d_handler_getiteminfo },
+    { "getmapflag", i2d_handler_getmapflag },
+    { "max", i2d_handler_max },
+    { "min", i2d_handler_min },
+    { "getequiprefinerycnt", i2d_handler_getequiprefinerycnt },
+    { "pow", i2d_handler_pow },
+    { "checkoption", i2d_handler_checkoption },
+    { "rand", i2d_handler_rand },
+    { "callfunc", i2d_handler_callfunc },
+    { "ismounting", i2d_handler_general },
+    { "setmounting", i2d_handler_general },
+    { "getequipweaponlv", i2d_handler_getequipweaponlv },
+    { "getexp2", i2d_handler_getexp2 },
+    { "getcharid", i2d_handler_general },
+    { "checkfalcon", i2d_handler_general }
 };
 
 typedef int (*i2d_handler_range_cb)(i2d_script *, i2d_string_stack *, long);
@@ -135,47 +135,47 @@ static int i2d_handler_evaluate(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node
 static int i2d_handler_prefixes(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 
 i2d_handler argument_handlers[] = {
-    { {"milliseconds", 12}, i2d_handler_milliseconds },
-    { {"seconds", 7}, i2d_handler_seconds },
-    { {"regen", 5}, i2d_handler_regen },
-    { {"splash", 6}, i2d_handler_splash },
-    { {"elements", 8}, i2d_handler_elements },
-    { {"races", 4}, i2d_handler_races },
-    { {"classes", 7}, i2d_handler_classes },
-    { {"integer", 7}, i2d_handler_integer },
-    { {"integer_sign", 12}, i2d_handler_integer_sign },
-    { {"integer_absolute", 16}, i2d_handler_integer_absolute },
-    { {"percent", 7}, i2d_handler_percent },
-    { {"percent_sign", 12}, i2d_handler_percent_sign },
-    { {"percent_absolute", 16}, i2d_handler_percent_absolute },
-    { {"percent10", 13}, i2d_handler_percent10 },
-    { {"percent100", 14}, i2d_handler_percent100 },
-    { {"ignore", 6}, i2d_handler_ignore },
-    { {"sizes", 4}, i2d_handler_sizes },
-    { {"skill", 5}, i2d_handler_skill },
-    { {"mob", 3}, i2d_handler_mob },
-    { {"effects", 7}, i2d_handler_effects },
-    { {"mob_races", 9}, i2d_handler_mob_races },
-    { {"weapons", 7}, i2d_handler_weapons },
-    { {"zeny", 4}, i2d_handler_zeny },
-    { {"item", 4}, i2d_handler_item },
-    { {"itemgroups", 10}, i2d_handler_itemgroups },
-    { {"bf_type", 7}, i2d_handler_bf_type },
-    { {"bf_damage", 9}, i2d_handler_bf_damage },
-    { {"atf_target", 10}, i2d_handler_atf_target },
-    { {"atf_type", 8}, i2d_handler_atf_type },
-    { {"script", 6}, i2d_handler_script },
-    { {"skill_flags", 11}, i2d_handler_skill_flags },
-    { {"string", 6}, i2d_handler_string },
-    { {"searchstore_effect", 18}, i2d_handler_searchstore_effect },
-    { {"announce_flag", 13}, i2d_handler_announce_flag },
-    { {"mercenary", 9}, i2d_handler_mercenary },
-    { {"bonus_script_flag", 17}, i2d_handler_bonus_script_flag },
-    { {"pet", 3}, i2d_handler_pet },
-    { {"pet_script", 10}, i2d_handler_pet_script },
-    { {"pet_loyal_script", 16}, i2d_handler_pet_loyal_script },
-    { {"produce", 7}, i2d_handler_produce },
-    { {"sc_end", 6}, i2d_handler_sc_end }
+    { "milliseconds", i2d_handler_milliseconds },
+    { "seconds", i2d_handler_seconds },
+    { "regen", i2d_handler_regen },
+    { "splash", i2d_handler_splash },
+    { "elements", i2d_handler_elements },
+    { "races", i2d_handler_races },
+    { "classes", i2d_handler_classes },
+    { "integer", i2d_handler_integer },
+    { "integer_sign", i2d_handler_integer_sign },
+    { "integer_absolute", i2d_handler_integer_absolute },
+    { "percent", i2d_handler_percent },
+    { "percent_sign", i2d_handler_percent_sign },
+    { "percent_absolute", i2d_handler_percent_absolute },
+    { "percent10", i2d_handler_percent10 },
+    { "percent100", i2d_handler_percent100 },
+    { "ignore", i2d_handler_ignore },
+    { "sizes", i2d_handler_sizes },
+    { "skill", i2d_handler_skill },
+    { "mob", i2d_handler_mob },
+    { "effects", i2d_handler_effects },
+    { "mob_races", i2d_handler_mob_races },
+    { "weapons", i2d_handler_weapons },
+    { "zeny", i2d_handler_zeny },
+    { "item", i2d_handler_item },
+    { "itemgroups", i2d_handler_itemgroups },
+    { "bf_type", i2d_handler_bf_type },
+    { "bf_damage", i2d_handler_bf_damage },
+    { "atf_target", i2d_handler_atf_target },
+    { "atf_type", i2d_handler_atf_type },
+    { "script", i2d_handler_script },
+    { "skill_flags", i2d_handler_skill_flags },
+    { "string", i2d_handler_string },
+    { "searchstore_effect", i2d_handler_searchstore_effect },
+    { "announce_flag", i2d_handler_announce_flag },
+    { "mercenary", i2d_handler_mercenary },
+    { "bonus_script_flag", i2d_handler_bonus_script_flag },
+    { "pet", i2d_handler_pet },
+    { "pet_script", i2d_handler_pet_script },
+    { "pet_loyal_script", i2d_handler_pet_loyal_script },
+    { "produce", i2d_handler_produce },
+    { "sc_end", i2d_handler_sc_end }
 };
 
 static int i2d_handler_list_bonus(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
@@ -2410,12 +2410,12 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
             } else {
                 size = i2d_size(function_handlers);
                 for(i = 0; i < size && !status; i++)
-                    if(i2d_rbt_insert(object->function_handlers, function_handlers[i].name.string, &function_handlers[i]))
+                    if(i2d_rbt_insert(object->function_handlers, function_handlers[i].name, &function_handlers[i]))
                         status = i2d_panic("failed to map handler object");
 
                 size = i2d_size(argument_handlers);
                 for(i = 0; i < size && !status; i++)
-                    if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name.string, &argument_handlers[i]))
+                    if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name, &argument_handlers[i]))
                         status = i2d_panic("failed to map handler object");
 
                 size = i2d_size(argument_list_handlers);
@@ -2514,7 +2514,7 @@ int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data
             i2d_handler_append(handler, script->handlers);
         }
 
-        if(i2d_rbt_insert(index, handler->name.string, handler))
+        if(i2d_rbt_insert(index, handler->name, handler))
             status = i2d_panic("failed to map handler object");
     }
 
@@ -3450,8 +3450,8 @@ static int i2d_handler_init(i2d_handler ** result, i2d_data * data, i2d_handler_
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_string_create(&object->name, data->name.string, data->name.length)) {
-                status = i2d_panic("failed to copy name string");
+            if(i2d_string_copy(&object->name, data->name.string, data->name.length)) {
+                status = i2d_panic("failed to copy string object");
             } else {
                 object->handler = handler;
                 object->data = data;
@@ -3473,7 +3473,7 @@ static void i2d_handler_deit(i2d_handler ** result) {
     i2d_handler * object;
 
     object = *result;
-    i2d_string_destroy(&object->name);
+    i2d_free(object->name);
     i2d_free(object);
     *result = NULL;
 }
