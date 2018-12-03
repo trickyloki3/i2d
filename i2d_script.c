@@ -3,9 +3,16 @@
 static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
 static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
+enum i2d_handler_type {
+    one_node,
+    any_node
+};
+
 struct i2d_handler {
     char * name;
-    i2d_handler_cb handler;
+    enum i2d_handler_type type;
+    i2d_handler_cb one_node;
+    i2d_handler_list_cb any_node;
     i2d_data * data;
     struct i2d_handler * next;
     struct i2d_handler * prev;
@@ -16,11 +23,6 @@ static void i2d_handler_deit(i2d_handler **);
 static void i2d_handler_list_deit(i2d_handler **);
 static void i2d_handler_append(i2d_handler *, i2d_handler *);
 static void i2d_handler_remove(i2d_handler *);
-
-struct i2d_handler_list {
-    i2d_string name;
-    i2d_handler_list_cb handler;
-};
 
 static int i2d_handler_general(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_readparam(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
@@ -45,32 +47,32 @@ static int i2d_handler_getequipweaponlv(i2d_handler *, i2d_script *, i2d_rbt *, 
 static int i2d_handler_getexp2(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 
 i2d_handler function_handlers[] = {
-    { "getrefine", i2d_handler_general },
-    { "readparam", i2d_handler_readparam },
-    { "getskilllv", i2d_handler_getskilllv },
-    { "isequipped", i2d_handler_isequipped },
-    { "getpartnerid", i2d_handler_general },
-    { "checkmadogear", i2d_handler_general },
-    { "eaclass", i2d_handler_general },
-    { "countitem", i2d_handler_countitem },
-    { "gettime", i2d_handler_gettime },
-    { "strcharinfo", i2d_handler_strcharinfo },
-    { "getequipid", i2d_handler_getequipid },
-    { "getiteminfo", i2d_handler_getiteminfo },
-    { "getmapflag", i2d_handler_getmapflag },
-    { "max", i2d_handler_max },
-    { "min", i2d_handler_min },
-    { "getequiprefinerycnt", i2d_handler_getequiprefinerycnt },
-    { "pow", i2d_handler_pow },
-    { "checkoption", i2d_handler_checkoption },
-    { "rand", i2d_handler_rand },
-    { "callfunc", i2d_handler_callfunc },
-    { "ismounting", i2d_handler_general },
-    { "setmounting", i2d_handler_general },
-    { "getequipweaponlv", i2d_handler_getequipweaponlv },
-    { "getexp2", i2d_handler_getexp2 },
-    { "getcharid", i2d_handler_general },
-    { "checkfalcon", i2d_handler_general }
+    { "getrefine", one_node, i2d_handler_general},
+    { "readparam", one_node, i2d_handler_readparam},
+    { "getskilllv", one_node, i2d_handler_getskilllv},
+    { "isequipped", one_node, i2d_handler_isequipped},
+    { "getpartnerid", one_node, i2d_handler_general},
+    { "checkmadogear", one_node, i2d_handler_general},
+    { "eaclass", one_node, i2d_handler_general},
+    { "countitem", one_node, i2d_handler_countitem},
+    { "gettime", one_node, i2d_handler_gettime},
+    { "strcharinfo", one_node, i2d_handler_strcharinfo},
+    { "getequipid", one_node, i2d_handler_getequipid},
+    { "getiteminfo", one_node, i2d_handler_getiteminfo},
+    { "getmapflag", one_node, i2d_handler_getmapflag},
+    { "max", one_node, i2d_handler_max},
+    { "min", one_node, i2d_handler_min},
+    { "getequiprefinerycnt", one_node, i2d_handler_getequiprefinerycnt},
+    { "pow", one_node, i2d_handler_pow},
+    { "checkoption", one_node, i2d_handler_checkoption},
+    { "rand", one_node, i2d_handler_rand},
+    { "callfunc", one_node, i2d_handler_callfunc},
+    { "ismounting", one_node, i2d_handler_general},
+    { "setmounting", one_node, i2d_handler_general},
+    { "getequipweaponlv", one_node, i2d_handler_getequipweaponlv},
+    { "getexp2", one_node, i2d_handler_getexp2},
+    { "getcharid", one_node, i2d_handler_general},
+    { "checkfalcon", one_node, i2d_handler_general}
 };
 
 typedef int (*i2d_handler_range_cb)(i2d_script *, i2d_string_stack *, long);
@@ -135,61 +137,61 @@ static int i2d_handler_evaluate(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node
 static int i2d_handler_prefixes(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 
 i2d_handler argument_handlers[] = {
-    { "milliseconds", i2d_handler_milliseconds },
-    { "seconds", i2d_handler_seconds },
-    { "regen", i2d_handler_regen },
-    { "splash", i2d_handler_splash },
-    { "elements", i2d_handler_elements },
-    { "races", i2d_handler_races },
-    { "classes", i2d_handler_classes },
-    { "integer", i2d_handler_integer },
-    { "integer_sign", i2d_handler_integer_sign },
-    { "integer_absolute", i2d_handler_integer_absolute },
-    { "percent", i2d_handler_percent },
-    { "percent_sign", i2d_handler_percent_sign },
-    { "percent_absolute", i2d_handler_percent_absolute },
-    { "percent10", i2d_handler_percent10 },
-    { "percent100", i2d_handler_percent100 },
-    { "ignore", i2d_handler_ignore },
-    { "sizes", i2d_handler_sizes },
-    { "skill", i2d_handler_skill },
-    { "mob", i2d_handler_mob },
-    { "effects", i2d_handler_effects },
-    { "mob_races", i2d_handler_mob_races },
-    { "weapons", i2d_handler_weapons },
-    { "zeny", i2d_handler_zeny },
-    { "item", i2d_handler_item },
-    { "itemgroups", i2d_handler_itemgroups },
-    { "bf_type", i2d_handler_bf_type },
-    { "bf_damage", i2d_handler_bf_damage },
-    { "atf_target", i2d_handler_atf_target },
-    { "atf_type", i2d_handler_atf_type },
-    { "script", i2d_handler_script },
-    { "skill_flags", i2d_handler_skill_flags },
-    { "string", i2d_handler_string },
-    { "searchstore_effect", i2d_handler_searchstore_effect },
-    { "announce_flag", i2d_handler_announce_flag },
-    { "mercenary", i2d_handler_mercenary },
-    { "bonus_script_flag", i2d_handler_bonus_script_flag },
-    { "pet", i2d_handler_pet },
-    { "pet_script", i2d_handler_pet_script },
-    { "pet_loyal_script", i2d_handler_pet_loyal_script },
-    { "produce", i2d_handler_produce },
-    { "sc_end", i2d_handler_sc_end }
+    { "milliseconds", one_node, i2d_handler_milliseconds },
+    { "seconds", one_node, i2d_handler_seconds },
+    { "regen", one_node, i2d_handler_regen },
+    { "splash", one_node, i2d_handler_splash },
+    { "elements", one_node, i2d_handler_elements },
+    { "races", one_node, i2d_handler_races },
+    { "classes", one_node, i2d_handler_classes },
+    { "integer", one_node, i2d_handler_integer },
+    { "integer_sign", one_node, i2d_handler_integer_sign },
+    { "integer_absolute", one_node, i2d_handler_integer_absolute },
+    { "percent", one_node, i2d_handler_percent },
+    { "percent_sign", one_node, i2d_handler_percent_sign },
+    { "percent_absolute", one_node, i2d_handler_percent_absolute },
+    { "percent10", one_node, i2d_handler_percent10 },
+    { "percent100", one_node, i2d_handler_percent100 },
+    { "ignore", one_node, i2d_handler_ignore },
+    { "sizes", one_node, i2d_handler_sizes },
+    { "skill", one_node, i2d_handler_skill },
+    { "mob", one_node, i2d_handler_mob },
+    { "effects", one_node, i2d_handler_effects },
+    { "mob_races", one_node, i2d_handler_mob_races },
+    { "weapons", one_node, i2d_handler_weapons },
+    { "zeny", one_node, i2d_handler_zeny },
+    { "item", one_node, i2d_handler_item },
+    { "itemgroups", one_node, i2d_handler_itemgroups },
+    { "bf_type", one_node, i2d_handler_bf_type },
+    { "bf_damage", one_node, i2d_handler_bf_damage },
+    { "atf_target", one_node, i2d_handler_atf_target },
+    { "atf_type", one_node, i2d_handler_atf_type },
+    { "script", one_node, i2d_handler_script },
+    { "skill_flags", one_node, i2d_handler_skill_flags },
+    { "string", one_node, i2d_handler_string },
+    { "searchstore_effect", one_node, i2d_handler_searchstore_effect },
+    { "announce_flag", one_node, i2d_handler_announce_flag },
+    { "mercenary", one_node, i2d_handler_mercenary },
+    { "bonus_script_flag", one_node, i2d_handler_bonus_script_flag },
+    { "pet", one_node, i2d_handler_pet },
+    { "pet_script", one_node, i2d_handler_pet_script },
+    { "pet_loyal_script", one_node, i2d_handler_pet_loyal_script },
+    { "produce", one_node, i2d_handler_produce },
+    { "sc_end", one_node, i2d_handler_sc_end }
 };
 
-static int i2d_handler_list_bonus(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_list_bonus2(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_list_bonus3(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_list_bonus4(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_list_bonus5(i2d_handler_list *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus2(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus3(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus4(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus5(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 
-i2d_handler_list argument_list_handlers[] = {
-    { {"bonus", 5}, i2d_handler_list_bonus },
-    { {"bonus2", 6}, i2d_handler_list_bonus2 },
-    { {"bonus3", 6}, i2d_handler_list_bonus3 },
-    { {"bonus4", 6}, i2d_handler_list_bonus4 },
-    { {"bonus5", 6}, i2d_handler_list_bonus5 }
+i2d_handler argument_list_handlers[] = {
+    { "bonus", any_node, NULL, i2d_handler_bonus },
+    { "bonus2", any_node, NULL, i2d_handler_bonus2 },
+    { "bonus3", any_node, NULL, i2d_handler_bonus3 },
+    { "bonus4", any_node, NULL, i2d_handler_bonus4 },
+    { "bonus5", any_node, NULL, i2d_handler_bonus5 }
 };
 
 const char * i2d_token_string[] = {
@@ -2420,7 +2422,7 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
 
                 size = i2d_size(argument_list_handlers);
                 for(i = 0; i < size && !status; i++)
-                    if(i2d_rbt_insert(object->argument_list_handlers, argument_list_handlers[i].name.string, &argument_list_handlers[i]))
+                    if(i2d_rbt_insert(object->argument_list_handlers, argument_list_handlers[i].name, &argument_list_handlers[i]))
                         status = i2d_panic("failed to map handler object");
 
                 for(i = 0; i < object->arguments->size && !status; i++) 
@@ -2915,7 +2917,6 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
     size_t last;
     i2d_string * list;
     i2d_handler * handler;
-    i2d_handler_list * handler_list;
     int is_empty;
 
     i2d_zero(local);
@@ -2937,15 +2938,15 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                         i2d_buffer_clear(local.buffer);
 
                         if(i2d_rbt_search(script->argument_handlers, list[i].string, (void **) &handler)) {
-                            if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler_list)) {
+                            if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler)) {
                                 status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
                             } else if(arguments[data->argument_order.list[i]]) {
-                                status = handler_list->handler(handler_list, script, variables, &arguments[data->argument_order.list[i]], &local);
+                                status = handler->any_node(handler, script, variables, &arguments[data->argument_order.list[i]], &local);
                             } else {
                                 break;
                             }
                         } else if(arguments[data->argument_order.list[i]]) {
-                            status = handler->handler(handler, script, variables, arguments[data->argument_order.list[i]], &local);
+                            status = handler->one_node(handler, script, variables, arguments[data->argument_order.list[i]], &local);
                         } else {
                             break;
                         }
@@ -2959,13 +2960,13 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                     i2d_buffer_clear(local.buffer);
 
                     if(i2d_rbt_search(script->argument_handlers, list[i].string, (void **) &handler)) {
-                        if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler_list)) {
+                        if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler)) {
                             status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
                         } else {
-                            status = handler_list->handler(handler_list, script, variables, &arguments[i], &local);
+                            status = handler->any_node(handler, script, variables, &arguments[i], &local);
                         }
                     } else {
-                        status = handler->handler(handler, script, variables, arguments[i], &local);
+                        status = handler->one_node(handler, script, variables, arguments[i], &local);
                     }
                 }
             }
@@ -3165,7 +3166,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node, i2d_rbt
         } else if(i2d_rbt_search(script->function_handlers, name.string, (void **) &handler)) {
             status = i2d_panic("failed to get function handler -- %s", name.string);
         } else {
-            status = handler->handler(handler, script, variables, node, &local);
+            status = handler->one_node(handler, script, variables, node, &local);
         }
         if(i2d_script_local_destroy(script, &local))
             status = i2d_panic("failed to destroy local object");
@@ -3453,7 +3454,7 @@ static int i2d_handler_init(i2d_handler ** result, i2d_data * data, i2d_handler_
             if(i2d_string_copy(&object->name, data->name.string, data->name.length)) {
                 status = i2d_panic("failed to copy string object");
             } else {
-                object->handler = handler;
+                object->one_node = handler;
                 object->data = data;
                 object->next = object;
                 object->prev = object;
@@ -5186,7 +5187,7 @@ static int i2d_handler_prefixes(i2d_handler * handler, i2d_script * script, i2d_
     return status;
 }
 
-static int i2d_handler_list_bonus(i2d_handler_list * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+static int i2d_handler_bonus(i2d_handler * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
     i2d_string bonus_name;
@@ -5209,7 +5210,7 @@ static int i2d_handler_list_bonus(i2d_handler_list * handler_list, i2d_script * 
     return status;
 }
 
-static int i2d_handler_list_bonus2(i2d_handler_list * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+static int i2d_handler_bonus2(i2d_handler * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
     i2d_string bonus_name;
@@ -5232,7 +5233,7 @@ static int i2d_handler_list_bonus2(i2d_handler_list * handler_list, i2d_script *
     return status;
 }
 
-static int i2d_handler_list_bonus3(i2d_handler_list * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+static int i2d_handler_bonus3(i2d_handler * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
     i2d_string bonus_name;
@@ -5255,7 +5256,7 @@ static int i2d_handler_list_bonus3(i2d_handler_list * handler_list, i2d_script *
     return status;
 }
 
-static int i2d_handler_list_bonus4(i2d_handler_list * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+static int i2d_handler_bonus4(i2d_handler * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
     i2d_string bonus_name;
@@ -5278,7 +5279,7 @@ static int i2d_handler_list_bonus4(i2d_handler_list * handler_list, i2d_script *
     return status;
 }
 
-static int i2d_handler_list_bonus5(i2d_handler_list * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+static int i2d_handler_bonus5(i2d_handler * handler_list, i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
     long bonus_type;
     i2d_string bonus_name;
