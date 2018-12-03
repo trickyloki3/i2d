@@ -5,10 +5,12 @@ static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
 typedef int (* i2d_handler_one_node_cb)(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 typedef int (* i2d_handler_any_node_cb)(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+typedef int (* i2d_handler_one_data_cb)(i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 
 enum i2d_handler_type {
     one_node,
-    any_node
+    any_node,
+    one_data
 };
 
 struct i2d_handler {
@@ -16,6 +18,7 @@ struct i2d_handler {
     enum i2d_handler_type type;
     i2d_handler_one_node_cb one_node;
     i2d_handler_any_node_cb any_node;
+    i2d_handler_one_data_cb one_data;
     i2d_data * data;
     struct i2d_handler * next;
     struct i2d_handler * prev;
@@ -137,8 +140,8 @@ static int i2d_handler_pet_script(i2d_handler *, i2d_script *, i2d_rbt *, i2d_no
 static int i2d_handler_pet_loyal_script(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_produce(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_sc_end(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
-static int i2d_handler_evaluate(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
-static int i2d_handler_prefixes(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_evaluate(i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_prefixes(i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_bonus(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_bonus2(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_bonus3(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
@@ -2420,11 +2423,11 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                         status = i2d_panic("failed to map handler object");
 
                 for(i = 0; i < object->arguments->size && !status; i++) 
-                    if(i2d_handler_list_append(&object->handlers, one_node, &object->arguments->list[i], i2d_handler_evaluate))
+                    if(i2d_handler_list_append(&object->handlers, one_data, &object->arguments->list[i], i2d_handler_evaluate))
                         status = i2d_panic("failed to append handler object");
 
                 for(i = 0; i < object->prefixes->size && !status; i++) 
-                    if(i2d_handler_list_append(&object->handlers, one_node, &object->prefixes->list[i], i2d_handler_prefixes))
+                    if(i2d_handler_list_append(&object->handlers, one_data, &object->prefixes->list[i], i2d_handler_prefixes))
                         status = i2d_panic("failed to append handler object");
 
                 if(object->handlers) {
@@ -2933,6 +2936,9 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                                 case any_node:
                                     status = handler->any_node(handler, script, variables, &arguments[data->argument_order.list[i]], &local);
                                     break;
+                                case one_data:
+                                    status = handler->one_data(handler->data, script, variables, arguments[data->argument_order.list[i]], &local);
+                                    break;
                                 default:
                                     status = i2d_panic("invalid handler type -- %d", handler->type);
                             }
@@ -2955,6 +2961,9 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                                 break;
                             case any_node:
                                 status = handler->any_node(handler, script, variables, &arguments[i], &local);
+                                break;
+                            case one_data:
+                                status = handler->one_data(handler->data, script, variables, arguments[i], &local);
                                 break;
                             default:
                                 status = i2d_panic("invalid handler type -- %d", handler->type);
@@ -3453,6 +3462,9 @@ static int i2d_handler_init(i2d_handler ** result, enum i2d_handler_type type, i
                         break;
                     case any_node:
                         object->any_node = handler;
+                        break;
+                    case one_data:
+                        object->one_data = handler;
                         break;
                     default:
                         status = i2d_panic("invalid handler type -- %d", object->type);
@@ -5155,7 +5167,7 @@ static int i2d_handler_sc_end(i2d_handler * handler, i2d_script * script, i2d_rb
     return status;
 }
 
-static int i2d_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+static int i2d_handler_evaluate(i2d_data * data, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     long min;
@@ -5163,10 +5175,10 @@ static int i2d_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_
 
     i2d_range_get_range(&node->range, &min, &max);
 
-    if(handler->data->empty_description_on_zero && !min && !max) {
+    if(data->empty_description_on_zero && !min && !max) {
         if(i2d_string_stack_push(local->stack, "", 0))
             status = i2d_panic("failed to push string on stack");
-    } else if(i2d_script_statement_evaluate(script, variables, &node, handler->data, local->buffer)) {
+    } else if(i2d_script_statement_evaluate(script, variables, &node, data, local->buffer)) {
         status = i2d_panic("failed to evaluate data object");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
         status = i2d_panic("failed to push string on stack");
@@ -5175,7 +5187,7 @@ static int i2d_handler_evaluate(i2d_handler * handler, i2d_script * script, i2d_
     return status;
 }
 
-static int i2d_handler_prefixes(i2d_handler * handler, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+static int i2d_handler_prefixes(i2d_data * data, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     long min;
@@ -5186,10 +5198,10 @@ static int i2d_handler_prefixes(i2d_handler * handler, i2d_script * script, i2d_
 
     i2d_range_get_range(&node->range, &min, &max);
 
-    if(i2d_string_stack_get(&handler->data->prefixes, &list, &size)) {
+    if(i2d_string_stack_get(&data->prefixes, &list, &size)) {
         status = i2d_panic("failed to get string stack");
     } else if(size < 2) {
-        status = i2d_panic("invalid prefix array size -- %s (%zu)", handler->data->name.string, size);
+        status = i2d_panic("invalid prefix array size -- %s (%zu)", data->name.string, size);
     } else {
         if(min == 0 && max == 0) {
             if( size == 3 ?
