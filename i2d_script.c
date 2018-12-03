@@ -2000,7 +2000,7 @@ int i2d_config_init(i2d_config ** result, i2d_string * path) {
                     status = i2d_panic("failed to get source path");
                 } else if(!data_path || i2d_object_get_string(data_path, &object->data_path)) {
                     status = i2d_panic("failed to get data path");
-                } else if(!renewal || i2d_object_get_number(renewal, &object->renewal)) {
+                } else if(!renewal || i2d_object_get_boolean(renewal, &object->renewal)) {
                     status = i2d_panic("failed to get renewal");
                 } else if(item_id && i2d_object_get_number(item_id, &object->item_id)) {
                     status = i2d_panic("failed to get item id");
