@@ -275,7 +275,7 @@ int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_
 struct i2d_config {
     i2d_string source_path;
     i2d_string data_path;
-    long renewal;
+    int renewal;
     long item_id;
 };
 
