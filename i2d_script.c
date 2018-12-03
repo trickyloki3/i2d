@@ -2511,45 +2511,6 @@ int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data
     return status;
 }
 
-int i2d_script_default_node(i2d_script * script, const char * string, i2d_node ** result) {
-    int status = I2D_OK;
-    i2d_string source;
-    i2d_token * tokens = NULL;
-    i2d_node * nodes = NULL;
-    i2d_rbt * variables = NULL;
-
-    i2d_zero(source);
-
-    if(i2d_rbt_init(&variables, i2d_rbt_cmp_node)) {
-        status = i2d_panic("failed to create red black tree object");
-    } else {
-        if(i2d_string_create(&source, string, strlen(string))) {
-            status = i2d_panic("failed to create string object");
-        } else {
-            if(i2d_lexer_tokenize(script->lexer, &source, &tokens)) {
-                status = i2d_panic("failed to tokenize -- %s", source.string);
-            } else if(i2d_parser_expression_recursive(script->parser, script->lexer, tokens->next, &nodes)) {
-                status = i2d_panic("failed to parse -- %s", source.string);
-            } else if(i2d_script_expression(script, nodes, I2D_FLAG_NONE, variables, NULL)) {
-                status = i2d_panic("failed to evaluate expression");
-            } else {
-                *result = nodes->left;
-                nodes->left = NULL;
-            }
-            i2d_string_destroy(&source);
-        }
-        i2d_rbt_deit(&variables);
-    }
-
-    if(tokens)
-        i2d_lexer_reset(script->lexer, &tokens);
-
-    if(nodes)
-        i2d_parser_node_reset(script->parser, script->lexer, &nodes);
-
-    return status;
-}
-
 int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * target, i2d_rbt * inherit_variables) {
     int status = I2D_OK;
     i2d_token * tokens = NULL;
@@ -2590,6 +2551,47 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
             i2d_rbt_deit(&variables);
         }
     }
+
+    return status;
+}
+
+int i2d_script_compile_node(i2d_script * script, const char * string, i2d_node ** result, i2d_rbt * inherit_variables) {
+    int status = I2D_OK;
+    i2d_string source;
+    i2d_token * tokens = NULL;
+    i2d_node * nodes = NULL;
+    i2d_rbt * variables = NULL;
+
+    i2d_zero(source);
+
+    if(inherit_variables ?
+            i2d_rbt_copy(&variables, inherit_variables) :
+            i2d_rbt_init(&variables, i2d_rbt_cmp_node) ) {
+        status = i2d_panic("failed to create red black tree object");
+    } else {
+        if(i2d_string_create(&source, string, strlen(string))) {
+            status = i2d_panic("failed to create string object");
+        } else {
+            if(i2d_lexer_tokenize(script->lexer, &source, &tokens)) {
+                status = i2d_panic("failed to tokenize -- %s", source.string);
+            } else if(i2d_parser_expression_recursive(script->parser, script->lexer, tokens->next, &nodes)) {
+                status = i2d_panic("failed to parse -- %s", source.string);
+            } else if(i2d_script_expression(script, nodes, I2D_FLAG_NONE, variables, NULL)) {
+                status = i2d_panic("failed to evaluate expression");
+            } else {
+                *result = nodes->left;
+                nodes->left = NULL;
+            }
+            i2d_string_destroy(&source);
+        }
+        i2d_rbt_deit(&variables);
+    }
+
+    if(tokens)
+        i2d_lexer_reset(script->lexer, &tokens);
+
+    if(nodes)
+        i2d_parser_node_reset(script->parser, script->lexer, &nodes);
 
     return status;
 }
@@ -2877,7 +2879,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block, i2d_rbt
         i2d_string_stack_get(&data->argument_default, &list, &size);
         for(i = 0; i < (size_t) data->optional && i < size; i++) {
             if(!arguments[i + data->required]) {
-                if(i2d_script_default_node(script, list[i].string, &defaults[i])) {
+                if(i2d_script_compile_node(script, list[i].string, &defaults[i], variables)) {
                     status = i2d_panic("failed to create default node object");
                 } else {
                     arguments[i + data->required] = defaults[i];
