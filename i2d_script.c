@@ -18,7 +18,7 @@ struct i2d_handler {
     struct i2d_handler * prev;
 };
 
-static int i2d_handler_init(i2d_handler **, i2d_data *, i2d_handler_cb);
+static int i2d_handler_init(i2d_handler **, enum i2d_handler_type, i2d_data *, i2d_handler_cb);
 static void i2d_handler_deit(i2d_handler **);
 static void i2d_handler_list_deit(i2d_handler **);
 static void i2d_handler_append(i2d_handler *, i2d_handler *);
@@ -2507,7 +2507,7 @@ int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data
     int status = I2D_OK;
     i2d_handler * handler = NULL;
 
-    if(i2d_handler_init(&handler, data, cb)) {
+    if(i2d_handler_init(&handler, one_node, data, cb)) {
         status = i2d_panic("failed to create handler object");
     } else {
         if(!script->handlers) {
@@ -3440,7 +3440,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
     return status;
 }
 
-static int i2d_handler_init(i2d_handler ** result, i2d_data * data, i2d_handler_cb handler) {
+static int i2d_handler_init(i2d_handler ** result, enum i2d_handler_type type, i2d_data * data, i2d_handler_cb handler) {
     int status = I2D_OK;
     i2d_handler * object = NULL;
 
@@ -3454,6 +3454,7 @@ static int i2d_handler_init(i2d_handler ** result, i2d_data * data, i2d_handler_
             if(i2d_string_copy(&object->name, data->name.string, data->name.length)) {
                 status = i2d_panic("failed to copy string object");
             } else {
+                object->type = type;
                 object->one_node = handler;
                 object->data = data;
                 object->next = object;
