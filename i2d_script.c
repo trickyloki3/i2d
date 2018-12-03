@@ -135,6 +135,11 @@ static int i2d_handler_produce(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node 
 static int i2d_handler_sc_end(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_evaluate(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_prefixes(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_bonus(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus2(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus3(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus4(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_bonus5(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 
 i2d_handler argument_handlers[] = {
     { "milliseconds", one_node, i2d_handler_milliseconds },
@@ -177,16 +182,7 @@ i2d_handler argument_handlers[] = {
     { "pet_script", one_node, i2d_handler_pet_script },
     { "pet_loyal_script", one_node, i2d_handler_pet_loyal_script },
     { "produce", one_node, i2d_handler_produce },
-    { "sc_end", one_node, i2d_handler_sc_end }
-};
-
-static int i2d_handler_bonus(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_bonus2(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_bonus3(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_bonus4(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-static int i2d_handler_bonus5(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
-
-i2d_handler argument_list_handlers[] = {
+    { "sc_end", one_node, i2d_handler_sc_end },
     { "bonus", any_node, NULL, i2d_handler_bonus },
     { "bonus2", any_node, NULL, i2d_handler_bonus2 },
     { "bonus3", any_node, NULL, i2d_handler_bonus3 },
@@ -2407,8 +2403,6 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to create read black tree object");
             } else if(i2d_rbt_init(&object->argument_handlers, i2d_rbt_cmp_str)) {
                 status = i2d_panic("failed to create read black tree object");
-            } else if(i2d_rbt_init(&object->argument_list_handlers, i2d_rbt_cmp_str)) {
-                status = i2d_panic("failed to create read black tree object");
             } else {
                 size = i2d_size(function_handlers);
                 for(i = 0; i < size && !status; i++)
@@ -2418,11 +2412,6 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 size = i2d_size(argument_handlers);
                 for(i = 0; i < size && !status; i++)
                     if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name, &argument_handlers[i]))
-                        status = i2d_panic("failed to map handler object");
-
-                size = i2d_size(argument_list_handlers);
-                for(i = 0; i < size && !status; i++)
-                    if(i2d_rbt_insert(object->argument_list_handlers, argument_list_handlers[i].name, &argument_list_handlers[i]))
                         status = i2d_panic("failed to map handler object");
 
                 for(i = 0; i < object->arguments->size && !status; i++) 
@@ -2449,7 +2438,6 @@ void i2d_script_deit(i2d_script ** result) {
 
     object = *result;
     i2d_deit(object->handlers, i2d_handler_list_deit);
-    i2d_deit(object->argument_list_handlers, i2d_rbt_deit);
     i2d_deit(object->argument_handlers, i2d_rbt_deit);
     i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
@@ -2938,17 +2926,20 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                         i2d_buffer_clear(local.buffer);
 
                         if(i2d_rbt_search(script->argument_handlers, list[i].string, (void **) &handler)) {
-                            if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler)) {
-                                status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
-                            } else if(arguments[data->argument_order.list[i]]) {
-                                status = handler->any_node(handler, script, variables, &arguments[data->argument_order.list[i]], &local);
-                            } else {
-                                break;
-                            }
-                        } else if(arguments[data->argument_order.list[i]]) {
-                            status = handler->one_node(handler, script, variables, arguments[data->argument_order.list[i]], &local);
-                        } else {
+                            status = i2d_panic("failed to find handler -- %s", list[i].string);
+                        } else if(!arguments[data->argument_order.list[i]]) {
                             break;
+                        } else {
+                            switch(handler->type) {
+                                case one_node:
+                                    status = handler->one_node(handler, script, variables, arguments[data->argument_order.list[i]], &local);
+                                    break;
+                                case any_node:
+                                    status = handler->any_node(handler, script, variables, &arguments[data->argument_order.list[i]], &local);
+                                    break;
+                                default:
+                                    status = i2d_panic("invalid handler type -- %d", handler->type);
+                            }
                         }
                     }
                 }
@@ -2960,13 +2951,18 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                     i2d_buffer_clear(local.buffer);
 
                     if(i2d_rbt_search(script->argument_handlers, list[i].string, (void **) &handler)) {
-                        if(i2d_rbt_search(script->argument_list_handlers, list[i].string, (void **) &handler)) {
-                            status = i2d_panic("failed to find bonus handler -- %s", list[i].string);
-                        } else {
-                            status = handler->any_node(handler, script, variables, &arguments[i], &local);
-                        }
+                        status = i2d_panic("failed to find handler -- %s", list[i].string);
                     } else {
-                        status = handler->one_node(handler, script, variables, arguments[i], &local);
+                        switch(handler->type) {
+                            case one_node:
+                                status = handler->one_node(handler, script, variables, arguments[i], &local);
+                                break;
+                            case any_node:
+                                status = handler->any_node(handler, script, variables, &arguments[i], &local);
+                                break;
+                            default:
+                                status = i2d_panic("invalid handler type -- %d", handler->type);
+                        }
                     }
                 }
             }

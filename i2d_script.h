@@ -377,7 +377,6 @@ struct i2d_script {
     i2d_string_stack_cache * stack_cache;
     i2d_rbt * function_handlers;
     i2d_rbt * argument_handlers;
-    i2d_rbt * argument_list_handlers;
     i2d_handler * handlers;
 };
 
