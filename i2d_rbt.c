@@ -265,6 +265,21 @@ int i2d_rbt_exist(i2d_rbt * tree, const void * key) {
     return i2d_rbt_node_search(tree, &node, key);
 }
 
+int i2d_rbt_iterate(i2d_rbt * tree, i2d_rbt_iterate_cb cb, void * data) {
+    int status = I2D_OK;
+    i2d_rbt_node * node;
+
+    if(tree->root) {
+        node = tree->root;
+        do {
+            status = cb(node, data);
+            node = node->next;
+        } while(node != tree->root && !status);
+    }
+
+    return status;
+}
+
 static int i2d_rbt_node_init(i2d_rbt_node ** result, void * key, void * val) {
     int status = I2D_OK;
     i2d_rbt_node * object;
