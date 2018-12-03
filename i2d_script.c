@@ -3,6 +3,9 @@
 static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
 static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 
+typedef int (* i2d_handler_one_node_cb)(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+typedef int (* i2d_handler_any_node_cb)(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+
 enum i2d_handler_type {
     one_node,
     any_node
@@ -23,6 +26,7 @@ static void i2d_handler_deit(i2d_handler **);
 static void i2d_handler_list_deit(i2d_handler **);
 static void i2d_handler_append(i2d_handler *, i2d_handler *);
 static void i2d_handler_remove(i2d_handler *);
+static int i2d_handler_list_append(i2d_handler **, enum i2d_handler_type, i2d_data *, void *);
 
 static int i2d_handler_general(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_readparam(i2d_handler *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
@@ -2343,6 +2347,7 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
     i2d_script * object;
     size_t i;
     size_t size;
+    i2d_handler * handler;
 
     if(i2d_is_invalid(result) || !config) {
         status = i2d_panic("invalid paramater");
@@ -2415,12 +2420,21 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                         status = i2d_panic("failed to map handler object");
 
                 for(i = 0; i < object->arguments->size && !status; i++) 
-                    if(i2d_script_add_handler(object, object->argument_handlers, &object->arguments->list[i], i2d_handler_evaluate))
-                        status = i2d_panic("failed to add handler");
+                    if(i2d_handler_list_append(&object->handlers, one_node, &object->arguments->list[i], i2d_handler_evaluate))
+                        status = i2d_panic("failed to append handler object");
 
                 for(i = 0; i < object->prefixes->size && !status; i++) 
-                    if(i2d_script_add_handler(object, object->argument_handlers, &object->prefixes->list[i], i2d_handler_prefixes))
-                        status = i2d_panic("failed to add handler");
+                    if(i2d_handler_list_append(&object->handlers, one_node, &object->prefixes->list[i], i2d_handler_prefixes))
+                        status = i2d_panic("failed to append handler object");
+
+                if(object->handlers) {
+                    handler = object->handlers;
+                    do {
+                        if(i2d_rbt_insert(object->argument_handlers, handler->name, handler)) 
+                            status = i2d_panic("failed to map handler object");
+                        handler = handler->next;
+                    } while(!status && handler != object->handlers);
+                }
             }
 
             if(status)
@@ -2486,26 +2500,6 @@ int i2d_script_local_destroy(i2d_script * script, i2d_local * result) {
         status = i2d_panic("failed to cache string stack object");
     } else if(i2d_buffer_cache_put(script->buffer_cache, &result->buffer)) {
         status = i2d_panic("failed to cache buffer object");
-    }
-
-    return status;
-}
-
-int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data, i2d_handler_one_node_cb cb) {
-    int status = I2D_OK;
-    i2d_handler * handler = NULL;
-
-    if(i2d_handler_init(&handler, one_node, data, cb)) {
-        status = i2d_panic("failed to create handler object");
-    } else {
-        if(!script->handlers) {
-            script->handlers = handler;
-        } else {
-            i2d_handler_append(handler, script->handlers);
-        }
-
-        if(i2d_rbt_insert(index, handler->name, handler))
-            status = i2d_panic("failed to map handler object");
     }
 
     return status;
@@ -3517,6 +3511,24 @@ static void i2d_handler_remove(i2d_handler * x) {
     x->next = x;
     x->prev = x;
 }
+
+static int i2d_handler_list_append(i2d_handler ** result, enum i2d_handler_type type, i2d_data * data, void * cb) {
+    int status = I2D_OK;
+    i2d_handler * handler = NULL;
+
+    if(i2d_handler_init(&handler, type, data, cb)) {
+        status = i2d_panic("failed to create handler object");
+    } else {
+        if(!*result) {
+            *result = handler;
+        } else {
+            i2d_handler_append(handler, *result);
+        }
+    }
+
+    return status;
+}
+
 
 static int i2d_handler_general(i2d_handler * handler, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
