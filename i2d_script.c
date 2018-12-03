@@ -11,14 +11,14 @@ enum i2d_handler_type {
 struct i2d_handler {
     char * name;
     enum i2d_handler_type type;
-    i2d_handler_cb one_node;
-    i2d_handler_list_cb any_node;
+    i2d_handler_one_node_cb one_node;
+    i2d_handler_any_node_cb any_node;
     i2d_data * data;
     struct i2d_handler * next;
     struct i2d_handler * prev;
 };
 
-static int i2d_handler_init(i2d_handler **, enum i2d_handler_type, i2d_data *, i2d_handler_cb);
+static int i2d_handler_init(i2d_handler **, enum i2d_handler_type, i2d_data *, i2d_handler_one_node_cb);
 static void i2d_handler_deit(i2d_handler **);
 static void i2d_handler_list_deit(i2d_handler **);
 static void i2d_handler_append(i2d_handler *, i2d_handler *);
@@ -2491,7 +2491,7 @@ int i2d_script_local_destroy(i2d_script * script, i2d_local * result) {
     return status;
 }
 
-int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data, i2d_handler_cb cb) {
+int i2d_script_add_handler(i2d_script * script, i2d_rbt * index, i2d_data * data, i2d_handler_one_node_cb cb) {
     int status = I2D_OK;
     i2d_handler * handler = NULL;
 
@@ -3438,7 +3438,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
     return status;
 }
 
-static int i2d_handler_init(i2d_handler ** result, enum i2d_handler_type type, i2d_data * data, i2d_handler_cb handler) {
+static int i2d_handler_init(i2d_handler ** result, enum i2d_handler_type type, i2d_data * data, i2d_handler_one_node_cb handler) {
     int status = I2D_OK;
     i2d_handler * object = NULL;
 
