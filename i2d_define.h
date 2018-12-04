@@ -1,5 +1,5 @@
-#ifndef i2d_config_h
-#define i2d_config_h
+#ifndef i2d_define_h
+#define i2d_define_h
 /*
  * maximum number of arguments per statement
  */

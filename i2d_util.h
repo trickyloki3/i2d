@@ -21,7 +21,7 @@
 #include "assert.h"
 #endif
 
-#include "i2d_config.h"
+#include "i2d_define.h"
 
 #define I2D_OK 0
 #define I2D_FAIL 1
