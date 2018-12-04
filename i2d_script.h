@@ -357,6 +357,7 @@ struct i2d_script {
     i2d_string_stack_cache * stack_cache;
     i2d_rbt * function_handlers;
     i2d_rbt * argument_handlers;
+    i2d_rbt * statement_handlers;
     void * handlers;
 };
 
@@ -372,6 +373,7 @@ int i2d_script_generate_or(i2d_script *, i2d_logic *, i2d_buffer *);
 int i2d_script_generate_and(i2d_script *, i2d_logic *, i2d_buffer *);
 int i2d_script_generate_var(i2d_script *, i2d_logic *, i2d_buffer *);
 int i2d_script_statement(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
+int i2d_script_statement_ignore(i2d_script *, i2d_block *, i2d_rbt *);
 int i2d_script_statement_set(i2d_script *, i2d_block *, i2d_rbt *);
 int i2d_script_statement_generic(i2d_script *, i2d_block *, i2d_rbt *);
 int i2d_script_statement_evaluate(i2d_script *, i2d_rbt *, i2d_node **, i2d_data *, i2d_buffer *);

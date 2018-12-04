@@ -16,11 +16,13 @@ int i2d_local_destroy(i2d_local *, i2d_script *);
 typedef int (* i2d_handler_single_node_cb) (i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 typedef int (* i2d_handler_multiple_node_cb) (i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 typedef int (* i2d_handler_single_node_data_cb) (i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+typedef int (* i2d_handler_block_statement_cb) (i2d_script *, i2d_block *, i2d_rbt *);
 
 enum i2d_handler_type {
     single_node,
     multiple_node,
-    single_node_data
+    single_node_data,
+    block_statement
 };
 
 struct i2d_handler {
@@ -31,6 +33,7 @@ struct i2d_handler {
         i2d_handler_single_node_cb single_node;
         i2d_handler_multiple_node_cb multiple_node;
         i2d_handler_single_node_data_cb single_node_data;
+        i2d_handler_block_statement_cb block_statement;
     };
     i2d_data * data;
     struct i2d_handler * next;
@@ -210,6 +213,12 @@ i2d_handler argument_handlers[] = {
     { "bonus3", multiple_node, {i2d_handler_bonus3} },
     { "bonus4", multiple_node, {i2d_handler_bonus4} },
     { "bonus5", multiple_node, {i2d_handler_bonus5} }
+};
+
+i2d_handler statement_handlers[] = {
+    { "ignore", block_statement, {i2d_script_statement_ignore} },
+    { "set", block_statement, {i2d_script_statement_set} },
+    { "generic", block_statement, {i2d_script_statement_generic} }
 };
 
 const char * i2d_token_string[] = {
@@ -2371,6 +2380,8 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to create read black tree object");
             } else if(i2d_rbt_init(&object->argument_handlers, i2d_rbt_cmp_str)) {
                 status = i2d_panic("failed to create read black tree object");
+            } else if(i2d_rbt_init(&object->statement_handlers, i2d_rbt_cmp_str)) {
+                status = i2d_panic("failed to create read black tree object");
             } else {
                 size = i2d_size(function_handlers);
                 for(i = 0; i < size && !status; i++)
@@ -2380,6 +2391,11 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 size = i2d_size(argument_handlers);
                 for(i = 0; i < size && !status; i++)
                     if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name, &argument_handlers[i]))
+                        status = i2d_panic("failed to map handler object");
+
+                size = i2d_size(statement_handlers);
+                for(i = 0; i < size && !status; i++)
+                    if(i2d_rbt_insert(object->statement_handlers, statement_handlers[i].name, &statement_handlers[i]))
                         status = i2d_panic("failed to map handler object");
 
                 for(i = 0; i < object->arguments->size && !status; i++) 
@@ -2417,6 +2433,7 @@ void i2d_script_deit(i2d_script ** result) {
     object = *result;
     handlers = object->handlers;
     i2d_deit(handlers, i2d_handler_list_deit);
+    i2d_deit(object->statement_handlers, i2d_rbt_deit);
     i2d_deit(object->argument_handlers, i2d_rbt_deit);
     i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
@@ -2766,6 +2783,10 @@ int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * varia
     }
 
     return status;
+}
+
+int i2d_script_statement_ignore(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
+    return I2D_OK;
 }
 
 int i2d_script_statement_set(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
@@ -3427,6 +3448,9 @@ static int i2d_handler_init(i2d_handler ** result, enum i2d_handler_type type, i
                         break;
                     case single_node_data:
                         object->single_node_data = handler;
+                        break;
+                    case block_statement:
+                        object->block_statement = handler;
                         break;
                     default:
                         status = i2d_panic("invalid handler type -- %d", object->type);
