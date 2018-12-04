@@ -24,6 +24,8 @@ struct i2d_handler {
     struct i2d_handler * prev;
 };
 
+typedef struct i2d_handler i2d_handler;
+
 static int i2d_handler_init(i2d_handler **, enum i2d_handler_type, i2d_data *, void *);
 static void i2d_handler_deit(i2d_handler **);
 static void i2d_handler_list_deit(i2d_handler **);
@@ -2423,11 +2425,11 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                         status = i2d_panic("failed to map handler object");
 
                 for(i = 0; i < object->arguments->size && !status; i++) 
-                    if(i2d_handler_list_append(&object->handlers, one_data, &object->arguments->list[i], i2d_handler_evaluate))
+                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, one_data, &object->arguments->list[i], i2d_handler_evaluate))
                         status = i2d_panic("failed to append handler object");
 
                 for(i = 0; i < object->prefixes->size && !status; i++) 
-                    if(i2d_handler_list_append(&object->handlers, one_data, &object->prefixes->list[i], i2d_handler_prefixes))
+                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, one_data, &object->prefixes->list[i], i2d_handler_prefixes))
                         status = i2d_panic("failed to append handler object");
 
                 if(object->handlers) {
@@ -2454,7 +2456,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
 
     object = *result;
-    i2d_deit(object->handlers, i2d_handler_list_deit);
+    i2d_deit((i2d_handler *) object->handlers, i2d_handler_list_deit);
     i2d_deit(object->argument_handlers, i2d_rbt_deit);
     i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
