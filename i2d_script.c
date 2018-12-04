@@ -26,9 +26,12 @@ enum i2d_handler_type {
 struct i2d_handler {
     char * name;
     enum i2d_handler_type type;
-    i2d_handler_one_node_cb one_node;
-    i2d_handler_any_node_cb any_node;
-    i2d_handler_one_data_cb one_data;
+    union {
+        void * ptr;
+        i2d_handler_one_node_cb one_node;
+        i2d_handler_any_node_cb any_node;
+        i2d_handler_one_data_cb one_data;
+    };
     i2d_data * data;
     struct i2d_handler * next;
     struct i2d_handler * prev;
@@ -66,32 +69,32 @@ static int i2d_handler_getequipweaponlv(i2d_script *, i2d_rbt *, i2d_node *, i2d
 static int i2d_handler_getexp2(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 
 i2d_handler function_handlers[] = {
-    { "getrefine", one_node, i2d_handler_general},
-    { "readparam", one_node, i2d_handler_readparam},
-    { "getskilllv", one_node, i2d_handler_getskilllv},
-    { "isequipped", one_node, i2d_handler_isequipped},
-    { "getpartnerid", one_node, i2d_handler_general},
-    { "checkmadogear", one_node, i2d_handler_general},
-    { "eaclass", one_node, i2d_handler_general},
-    { "countitem", one_node, i2d_handler_countitem},
-    { "gettime", one_node, i2d_handler_gettime},
-    { "strcharinfo", one_node, i2d_handler_strcharinfo},
-    { "getequipid", one_node, i2d_handler_getequipid},
-    { "getiteminfo", one_node, i2d_handler_getiteminfo},
-    { "getmapflag", one_node, i2d_handler_getmapflag},
-    { "max", one_node, i2d_handler_max},
-    { "min", one_node, i2d_handler_min},
-    { "getequiprefinerycnt", one_node, i2d_handler_getequiprefinerycnt},
-    { "pow", one_node, i2d_handler_pow},
-    { "checkoption", one_node, i2d_handler_checkoption},
-    { "rand", one_node, i2d_handler_rand},
-    { "callfunc", one_node, i2d_handler_callfunc},
-    { "ismounting", one_node, i2d_handler_general},
-    { "setmounting", one_node, i2d_handler_general},
-    { "getequipweaponlv", one_node, i2d_handler_getequipweaponlv},
-    { "getexp2", one_node, i2d_handler_getexp2},
-    { "getcharid", one_node, i2d_handler_general},
-    { "checkfalcon", one_node, i2d_handler_general}
+    { "getrefine", one_node, {i2d_handler_general}},
+    { "readparam", one_node, {i2d_handler_readparam}},
+    { "getskilllv", one_node, {i2d_handler_getskilllv}},
+    { "isequipped", one_node, {i2d_handler_isequipped}},
+    { "getpartnerid", one_node, {i2d_handler_general}},
+    { "checkmadogear", one_node, {i2d_handler_general}},
+    { "eaclass", one_node, {i2d_handler_general}},
+    { "countitem", one_node, {i2d_handler_countitem}},
+    { "gettime", one_node, {i2d_handler_gettime}},
+    { "strcharinfo", one_node, {i2d_handler_strcharinfo}},
+    { "getequipid", one_node, {i2d_handler_getequipid}},
+    { "getiteminfo", one_node, {i2d_handler_getiteminfo}},
+    { "getmapflag", one_node, {i2d_handler_getmapflag}},
+    { "max", one_node, {i2d_handler_max}},
+    { "min", one_node, {i2d_handler_min}},
+    { "getequiprefinerycnt", one_node, {i2d_handler_getequiprefinerycnt}},
+    { "pow", one_node, {i2d_handler_pow}},
+    { "checkoption", one_node, {i2d_handler_checkoption}},
+    { "rand", one_node, {i2d_handler_rand}},
+    { "callfunc", one_node, {i2d_handler_callfunc}},
+    { "ismounting", one_node, {i2d_handler_general}},
+    { "setmounting", one_node, {i2d_handler_general}},
+    { "getequipweaponlv", one_node, {i2d_handler_getequipweaponlv}},
+    { "getexp2", one_node, {i2d_handler_getexp2}},
+    { "getcharid", one_node, {i2d_handler_general}},
+    { "checkfalcon", one_node, {i2d_handler_general}}
 };
 
 typedef int (*i2d_handler_range_cb)(i2d_script *, i2d_string_stack *, long);
@@ -161,52 +164,52 @@ static int i2d_handler_bonus4(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *)
 static int i2d_handler_bonus5(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 
 i2d_handler argument_handlers[] = {
-    { "milliseconds", one_node, i2d_handler_milliseconds },
-    { "seconds", one_node, i2d_handler_seconds },
-    { "regen", one_node, i2d_handler_regen },
-    { "splash", one_node, i2d_handler_splash },
-    { "elements", one_node, i2d_handler_elements },
-    { "races", one_node, i2d_handler_races },
-    { "classes", one_node, i2d_handler_classes },
-    { "integer", one_node, i2d_handler_integer },
-    { "integer_sign", one_node, i2d_handler_integer_sign },
-    { "integer_absolute", one_node, i2d_handler_integer_absolute },
-    { "percent", one_node, i2d_handler_percent },
-    { "percent_sign", one_node, i2d_handler_percent_sign },
-    { "percent_absolute", one_node, i2d_handler_percent_absolute },
-    { "percent10", one_node, i2d_handler_percent10 },
-    { "percent100", one_node, i2d_handler_percent100 },
-    { "ignore", one_node, i2d_handler_ignore },
-    { "sizes", one_node, i2d_handler_sizes },
-    { "skill", one_node, i2d_handler_skill },
-    { "mob", one_node, i2d_handler_mob },
-    { "effects", one_node, i2d_handler_effects },
-    { "mob_races", one_node, i2d_handler_mob_races },
-    { "weapons", one_node, i2d_handler_weapons },
-    { "zeny", one_node, i2d_handler_zeny },
-    { "item", one_node, i2d_handler_item },
-    { "itemgroups", one_node, i2d_handler_itemgroups },
-    { "bf_type", one_node, i2d_handler_bf_type },
-    { "bf_damage", one_node, i2d_handler_bf_damage },
-    { "atf_target", one_node, i2d_handler_atf_target },
-    { "atf_type", one_node, i2d_handler_atf_type },
-    { "script", one_node, i2d_handler_script },
-    { "skill_flags", one_node, i2d_handler_skill_flags },
-    { "string", one_node, i2d_handler_string },
-    { "searchstore_effect", one_node, i2d_handler_searchstore_effect },
-    { "announce_flag", one_node, i2d_handler_announce_flag },
-    { "mercenary", one_node, i2d_handler_mercenary },
-    { "bonus_script_flag", one_node, i2d_handler_bonus_script_flag },
-    { "pet", one_node, i2d_handler_pet },
-    { "pet_script", one_node, i2d_handler_pet_script },
-    { "pet_loyal_script", one_node, i2d_handler_pet_loyal_script },
-    { "produce", one_node, i2d_handler_produce },
-    { "sc_end", one_node, i2d_handler_sc_end },
-    { "bonus", any_node, NULL, i2d_handler_bonus },
-    { "bonus2", any_node, NULL, i2d_handler_bonus2 },
-    { "bonus3", any_node, NULL, i2d_handler_bonus3 },
-    { "bonus4", any_node, NULL, i2d_handler_bonus4 },
-    { "bonus5", any_node, NULL, i2d_handler_bonus5 }
+    { "milliseconds", one_node, {i2d_handler_milliseconds} },
+    { "seconds", one_node, {i2d_handler_seconds} },
+    { "regen", one_node, {i2d_handler_regen} },
+    { "splash", one_node, {i2d_handler_splash} },
+    { "elements", one_node, {i2d_handler_elements} },
+    { "races", one_node, {i2d_handler_races} },
+    { "classes", one_node, {i2d_handler_classes} },
+    { "integer", one_node, {i2d_handler_integer} },
+    { "integer_sign", one_node, {i2d_handler_integer_sign} },
+    { "integer_absolute", one_node, {i2d_handler_integer_absolute} },
+    { "percent", one_node, {i2d_handler_percent} },
+    { "percent_sign", one_node, {i2d_handler_percent_sign} },
+    { "percent_absolute", one_node, {i2d_handler_percent_absolute} },
+    { "percent10", one_node, {i2d_handler_percent10} },
+    { "percent100", one_node, {i2d_handler_percent100} },
+    { "ignore", one_node, {i2d_handler_ignore} },
+    { "sizes", one_node, {i2d_handler_sizes} },
+    { "skill", one_node, {i2d_handler_skill} },
+    { "mob", one_node, {i2d_handler_mob} },
+    { "effects", one_node, {i2d_handler_effects} },
+    { "mob_races", one_node, {i2d_handler_mob_races} },
+    { "weapons", one_node, {i2d_handler_weapons} },
+    { "zeny", one_node, {i2d_handler_zeny} },
+    { "item", one_node, {i2d_handler_item} },
+    { "itemgroups", one_node, {i2d_handler_itemgroups} },
+    { "bf_type", one_node, {i2d_handler_bf_type} },
+    { "bf_damage", one_node, {i2d_handler_bf_damage} },
+    { "atf_target", one_node, {i2d_handler_atf_target} },
+    { "atf_type", one_node, {i2d_handler_atf_type} },
+    { "script", one_node, {i2d_handler_script} },
+    { "skill_flags", one_node, {i2d_handler_skill_flags} },
+    { "string", one_node, {i2d_handler_string} },
+    { "searchstore_effect", one_node, {i2d_handler_searchstore_effect} },
+    { "announce_flag", one_node, {i2d_handler_announce_flag} },
+    { "mercenary", one_node, {i2d_handler_mercenary} },
+    { "bonus_script_flag", one_node, {i2d_handler_bonus_script_flag} },
+    { "pet", one_node, {i2d_handler_pet} },
+    { "pet_script", one_node, {i2d_handler_pet_script} },
+    { "pet_loyal_script", one_node, {i2d_handler_pet_loyal_script} },
+    { "produce", one_node, {i2d_handler_produce} },
+    { "sc_end", one_node, {i2d_handler_sc_end} },
+    { "bonus", any_node, {i2d_handler_bonus} },
+    { "bonus2", any_node, {i2d_handler_bonus2} },
+    { "bonus3", any_node, {i2d_handler_bonus3} },
+    { "bonus4", any_node, {i2d_handler_bonus4} },
+    { "bonus5", any_node, {i2d_handler_bonus5} }
 };
 
 const char * i2d_token_string[] = {
@@ -2464,9 +2467,11 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
 
 void i2d_script_deit(i2d_script ** result) {
     i2d_script * object;
+    i2d_handler * handlers;
 
     object = *result;
-    i2d_deit((i2d_handler *) object->handlers, i2d_handler_list_deit);
+    handlers = object->handlers;
+    i2d_deit(handlers, i2d_handler_list_deit);
     i2d_deit(object->argument_handlers, i2d_rbt_deit);
     i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
