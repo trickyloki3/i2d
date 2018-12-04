@@ -2143,6 +2143,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * min;
     json_t * max;
     json_t * description;
+    json_t * handler;
     json_t * argument_type;
     json_t * argument_default;
     json_t * argument_order;
@@ -2156,6 +2157,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     min = json_object_get(json, "min");
     max = json_object_get(json, "max");
     description = json_object_get(json, "description");
+    handler = json_object_get(json, "handler");
     argument_type = json_object_get(json, "argument_type");
     argument_default = json_object_get(json, "argument_default");
     argument_order = json_object_get(json, "argument_order");
@@ -2173,6 +2175,8 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
         status = i2d_panic("failed to create range");
     } else if(description && i2d_format_create_json(&result->description, description)) {
         status = i2d_panic("failed to create format object");
+    } else if(handler && i2d_object_get_string(handler, &result->handler)) {
+        status = i2d_panic("failed to create string");
     } else if(argument_type && i2d_object_get_string_stack(argument_type, &result->argument_type)) {
         status = i2d_panic("failed to create string stack");
     } else if(argument_default && i2d_object_get_string_stack(argument_default, &result->argument_default)) {
@@ -2201,6 +2205,7 @@ void i2d_data_destroy(i2d_data * result) {
     i2d_free(result->argument_order.list);
     i2d_string_stack_destroy(&result->argument_default);
     i2d_string_stack_destroy(&result->argument_type);
+    i2d_string_destroy(&result->handler);
     i2d_format_destroy(&result->description);
     i2d_range_destroy(&result->range);
     i2d_string_destroy(&result->name);

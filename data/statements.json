@@ -1,5 +1,6 @@
 {
     "bonus" : {
+        "handler" : "generic",
         "argument_type" : [
             "bonus",
             "ignore"
@@ -9,6 +10,7 @@
         "optional" : 1
     },
     "bonus2" : {
+        "handler" : "generic",
         "argument_type" : [
             "bonus2",
             "ignore",
@@ -19,6 +21,7 @@
         "optional" : 0
     },
     "bonus3" : {
+        "handler" : "generic",
         "argument_type" : [
             "bonus3",
             "ignore",
@@ -30,6 +33,7 @@
         "optional" : 0
     },
     "bonus4" : {
+        "handler" : "generic",
         "argument_type" : [
             "bonus4",
             "ignore",
@@ -42,6 +46,7 @@
         "optional" : 0
     },
     "bonus5" : {
+        "handler" : "generic",
         "argument_type" : [
             "bonus5",
             "ignore",
@@ -55,6 +60,7 @@
         "optional" : 0
     },
     "autobonus" : {
+        "handler" : "generic",
         "argument_type" : [
             "script",
             "percent10",
@@ -80,6 +86,7 @@
         "optional" : 2
     },
     "autobonus2" : {
+        "handler" : "generic",
         "argument_type" : [
             "script",
             "percent10",
@@ -105,6 +112,7 @@
         "optional" : 2
     },
     "autobonus3" : {
+        "handler" : "generic",
         "argument_type" : [
             "script",
             "percent10",
@@ -120,6 +128,7 @@
         "optional" : 1
     },
     "heal" : {
+        "handler" : "generic",
         "argument_type" : [
             "hp_integer",
             "sp_integer",
@@ -130,6 +139,7 @@
         "dump_stack_instead_of_description" : true
     },
     "percentheal" : {
+        "handler" : "generic",
         "argument_type" : [
             "hp_percent",
             "sp_percent",
@@ -140,6 +150,7 @@
         "dump_stack_instead_of_description" : true
     },
     "itemheal" : {
+        "handler" : "generic",
         "argument_type" : [
             "hp_integer",
             "sp_integer",
@@ -150,6 +161,7 @@
         "dump_stack_instead_of_description" : true
     },
     "skill" : {
+        "handler" : "generic",
         "argument_type" : [
             "skill",
             "integer",
@@ -163,6 +175,7 @@
         "optional" : 1
     },
     "itemskill" : {
+        "handler" : "generic",
         "argument_type" : [
             "skill",
             "integer",
@@ -173,6 +186,7 @@
         "optional" : 1
     },
     "unitskilluseid" : {
+        "handler" : "generic",
         "argument_type" : [
             "ignore",
             "skill",
@@ -185,6 +199,7 @@
         "optional" : 2
     },
     "getitem" : {
+        "handler" : "generic",
         "argument_type" : [
             "item",
             "integer",
@@ -195,6 +210,7 @@
         "optional" : 1
     },
     "rentitem" : {
+        "handler" : "generic",
         "argument_type" : [
             "item",
             "milliseconds",
@@ -205,6 +221,7 @@
         "optional" : 1
     },
     "delitem" : {
+        "handler" : "generic",
         "argument_type" : [
             "item",
             "integer",
@@ -215,6 +232,7 @@
         "optional" : 1
     },
     "warp" : {
+        "handler" : "generic",
         "argument_type" : [
             "string",
             "integer",
@@ -225,6 +243,7 @@
         "optional" : 0
     },
     "getexp2" : {
+        "handler" : "generic",
         "argument_type" : [
             "base_experience",
             "job_experience",
@@ -235,6 +254,7 @@
         "dump_stack_instead_of_description" : true
     },
     "guildgetexp" : {
+        "handler" : "generic",
         "argument_type" : [
             "integer"
         ],
@@ -242,6 +262,7 @@
         "required" : 1
     },
     "resetstatus" : {
+        "handler" : "generic",
         "argument_type" : [
             "ignore"
         ],
@@ -250,6 +271,7 @@
         "optional" : 1
     },
     "searchstores" : {
+        "handler" : "generic",
         "argument_type" : [
             "integer",
             "searchstore_effect"
@@ -259,6 +281,7 @@
         "optional" : 0
     },
     "buyingstore" : {
+        "handler" : "generic",
         "argument_type" : [
             "integer"
         ],
@@ -267,6 +290,7 @@
         "optional" : 0
     },
     "announce" : {
+        "handler" : "generic",
         "argument_type" : [
             "ignore",
             "announce_flag"
@@ -286,6 +310,7 @@
         "optional" : 0
     },
     "getgroupitem" : {
+        "handler" : "generic",
         "argument_type" : [
             "itemgroups",
             "ignore",
@@ -296,6 +321,7 @@
         "optional" : 2
     },
     "mercenary_create" : {
+        "handler" : "generic",
         "argument_type" : [
             "mercenary",
             "milliseconds"
@@ -305,6 +331,7 @@
         "optional" : 0
     },
     "mercenary_heal" : {
+        "handler" : "generic",
         "argument_type" : [
             "hp_mercenary",
             "sp_mercenary"
@@ -314,6 +341,7 @@
         "dump_stack_instead_of_description" : true
     },
     "bonus_script" : {
+        "handler" : "generic",
         "argument_type" : [
             "script",
             "milliseconds",
@@ -330,6 +358,7 @@
         "optional" : 4
     },
     "makerune" : {
+        "handler" : "generic",
         "argument_type" : [
             "makerune_success_bonus",
             "ignore"
@@ -339,6 +368,7 @@
         "optional" : 1
     },
     "pet" : {
+        "handler" : "generic",
         "argument_type" : [
             "pet_tame",
             "pet_script_print",
@@ -354,6 +384,7 @@
         "dump_stack_instead_of_description" : true
     },
     "produce" : {
+        "handler" : "generic",
         "argument_type" : [
             "produce"
         ],
@@ -362,6 +393,7 @@
         "dump_stack_instead_of_description" : true
     },
     "cooking" : {
+        "handler" : "generic",
         "argument_type" : [
             "produce"
         ],
@@ -370,6 +402,7 @@
         "dump_stack_instead_of_description" : true
     },
     "petloot" : {
+        "handler" : "generic",
         "argument_type" : [
             "integer"
         ],
@@ -378,6 +411,7 @@
         "optional" : 0
     },
     "petskillsupport" : {
+        "handler" : "generic",
         "argument_type" : [
             "skill",
             "integer",
@@ -390,6 +424,7 @@
         "optional" : 0
     },
     "petskillattack2" : {
+        "handler" : "generic",
         "argument_type" : [
             "skill",
             "integer",
@@ -402,6 +437,7 @@
         "optional" : 0
     },
     "petskillattack" : {
+        "handler" : "generic",
         "argument_type" : [
             "skill",
             "integer",
@@ -413,6 +449,7 @@
         "optional" : 0
     },
     "getrandgroupitem" : {
+        "handler" : "generic",
         "argument_type" : [
             "itemgroups",
             "integer",
@@ -428,6 +465,7 @@
         "optional" : 4
     },
     "transform" : {
+        "handler" : "generic",
         "argument_type" : [
             "mob",
             "milliseconds",
@@ -442,6 +480,7 @@
         "optional" : 5
     },
     "setfalcon" : {
+        "handler" : "generic",
         "argument_type" : [
             "setmount_prefix"
         ],
@@ -453,6 +492,7 @@
         "optional" : 2
     },
     "setmadogear" : {
+        "handler" : "generic",
         "argument_type" : [
             "setmount_prefix"
         ],
@@ -464,6 +504,7 @@
         "optional" : 2
     },
     "monster" : {
+        "handler" : "generic",
         "argument_type" : [
             "string",
             "integer",
@@ -480,6 +521,7 @@
         "optional" : 3
     },
     "petskillbonus" : {
+        "handler" : "generic",
         "argument_type" : [
             "bonus",
             "ignore",
@@ -491,6 +533,7 @@
         "optional" : 0
     },
     "petrecovery" : {
+        "handler" : "generic",
         "argument_type" : [
             "sc_end",
             "seconds"
@@ -500,6 +543,7 @@
         "optional" : 0
     },
     "sc_end" : {
+        "handler" : "generic",
         "argument_type" : [
             "sc_end",
             "ignore"
@@ -509,6 +553,7 @@
         "optional" : 1
     },
     "active_transform" : {
+        "handler" : "generic",
         "argument_type" : [
             "mob",
             "milliseconds",
@@ -521,5 +566,53 @@
         "description" : "Transform into a {0} for {1}.",
         "required" : 2,
         "optional" : 5
+    },
+    "set" : {
+        "handler" : "set"
+    },
+    "sc_start" : {
+        "handler" : "ignore"
+    },
+    "mercenary_sc_start" : {
+        "handler" : "ignore"
+    },
+    "sc_start2" : {
+        "handler" : "ignore"
+    },
+    "sc_start4" : {
+        "handler" : "ignore"
+    },
+    "hateffect" : {
+        "handler" : "ignore"
+    },
+    "skilleffect" : {
+        "handler" : "ignore"
+    },
+    "specialeffect" : {
+        "handler" : "ignore"
+    },
+    "specialeffect2" : {
+        "handler" : "ignore"
+    },
+    "setfont" : {
+        "handler" : "ignore"
+    },
+    "setarray" : {
+        "handler" : "ignore"
+    },
+    "input" : {
+        "handler" : "ignore"
+    },
+    "end" : {
+        "handler" : "ignore"
+    },
+    "playbgm" : {
+        "handler" : "ignore"
+    },
+    "callfunc" : {
+        "handler" : "ignore"
+    },
+    "showscript" : {
+        "handler" : "ignore"
     }
 }

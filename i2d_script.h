@@ -290,6 +290,7 @@ struct i2d_data {
     i2d_string name;
     i2d_range range;
     i2d_format description;
+    i2d_string handler;
     i2d_string_stack argument_type;
     i2d_string_stack argument_default;
     struct {
