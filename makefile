@@ -21,6 +21,7 @@ OBJECT+=i2d_constant.o
 OBJECT+=i2d_db.o
 OBJECT+=i2d_json.o
 OBJECT+=i2d_script.o
+OBJECT+=i2d_config.o
 
 
 all: clean i2d

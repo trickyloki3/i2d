@@ -7,6 +7,7 @@
 #include "i2d_constant.h"
 #include "i2d_db.h"
 #include "i2d_json.h"
+#include "i2d_config.h"
 
 enum i2d_token_type {
     I2D_TOKEN,
@@ -271,18 +272,6 @@ int i2d_parser_node_init(i2d_parser *, i2d_node **, enum i2d_node_type, i2d_toke
 int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_token *, i2d_block **);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
-
-struct i2d_config {
-    i2d_string source_path;
-    i2d_string data_path;
-    int renewal;
-    long item_id;
-};
-
-typedef struct i2d_config i2d_config;
-
-int i2d_config_init(i2d_config **, i2d_string *);
-void i2d_config_deit(i2d_config  **);
 
 struct i2d_format {
     i2d_token * tokens;
