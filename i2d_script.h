@@ -94,6 +94,60 @@ int i2d_token_set_string(i2d_token *, i2d_string *);
 int i2d_token_get_constant(i2d_token *, long *);
 
 
+struct i2d_format {
+    i2d_token * tokens;
+};
+
+typedef struct i2d_format i2d_format;
+
+int i2d_format_create(i2d_format *, const char *, size_t);
+int i2d_format_create_json(i2d_format *, json_t *);
+void i2d_format_destroy(i2d_format *);
+int i2d_format_tokenize(const char *, size_t, i2d_token **);
+int i2d_format_write(i2d_format *, i2d_string_stack *, i2d_buffer *);
+
+struct i2d_data {
+    long constant;
+    i2d_string name;
+    i2d_range range;
+    i2d_format description;
+    i2d_string handler;
+    i2d_string_stack argument_type;
+    i2d_string_stack argument_default;
+    struct {
+        long * list;
+        size_t size;
+    } argument_order;
+    long required;
+    long optional;
+    i2d_string_stack prefixes;
+    int empty_description_on_zero;  /* i2d_data_handler_evaluate */
+    int empty_description_on_empty_string; /* i2d_script_statement_evaluate */
+    int dump_stack_instead_of_description; /* i2d_script_statement_evaluate */
+};
+
+typedef struct i2d_data i2d_data;
+
+int i2d_data_create(i2d_data *, const char *, json_t *, i2d_constant_db *);
+void i2d_data_destroy(i2d_data *);
+
+enum i2d_data_map_type {
+    data_map_by_constant = 1,
+    data_map_by_name
+};
+
+struct i2d_data_map {
+    i2d_rbt * map;
+    i2d_data * list;
+    size_t size;
+};
+
+typedef struct i2d_data_map i2d_data_map;
+
+int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_constant_db *);
+void i2d_data_map_deit(i2d_data_map **);
+int i2d_data_map_get(i2d_data_map *, void *, i2d_data **);
+
 struct i2d_lexer {
     i2d_token * cache;
 };
@@ -272,60 +326,6 @@ int i2d_parser_node_init(i2d_parser *, i2d_node **, enum i2d_node_type, i2d_toke
 int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_token *, i2d_block **);
 int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
-
-struct i2d_format {
-    i2d_token * tokens;
-};
-
-typedef struct i2d_format i2d_format;
-
-int i2d_format_create(i2d_format *, const char *, size_t);
-int i2d_format_create_json(i2d_format *, json_t *);
-void i2d_format_destroy(i2d_format *);
-int i2d_format_tokenize(const char *, size_t, i2d_token **);
-int i2d_format_write(i2d_format *, i2d_string_stack *, i2d_buffer *);
-
-struct i2d_data {
-    long constant;
-    i2d_string name;
-    i2d_range range;
-    i2d_format description;
-    i2d_string handler;
-    i2d_string_stack argument_type;
-    i2d_string_stack argument_default;
-    struct {
-        long * list;
-        size_t size;
-    } argument_order;
-    long required;
-    long optional;
-    i2d_string_stack prefixes;
-    int empty_description_on_zero;  /* i2d_data_handler_evaluate */
-    int empty_description_on_empty_string; /* i2d_script_statement_evaluate */
-    int dump_stack_instead_of_description; /* i2d_script_statement_evaluate */
-};
-
-typedef struct i2d_data i2d_data;
-
-int i2d_data_create(i2d_data *, const char *, json_t *, i2d_constant_db *);
-void i2d_data_destroy(i2d_data *);
-
-enum i2d_data_map_type {
-    data_map_by_constant = 1,
-    data_map_by_name
-};
-
-struct i2d_data_map {
-    i2d_rbt * map;
-    i2d_data * list;
-    size_t size;
-};
-
-typedef struct i2d_data_map i2d_data_map;
-
-int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_constant_db *);
-void i2d_data_map_deit(i2d_data_map **);
-int i2d_data_map_get(i2d_data_map *, void *, i2d_data **);
 
 enum {
     I2D_FLAG_NONE = 0x0,
