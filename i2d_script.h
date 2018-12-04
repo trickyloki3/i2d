@@ -202,81 +202,6 @@ int i2d_node_get_predicate_all_recursive(i2d_node *, i2d_string_stack *);
 int i2d_node_is_conditional(i2d_node *);
 int i2d_node_is_colon(i2d_node *);
 
-enum i2d_statement_type {
-    I2D_STATEMENT_START,
-    I2D_BONUS,
-    I2D_BONUS2,
-    I2D_BONUS3,
-    I2D_BONUS4,
-    I2D_BONUS5,
-    I2D_AUTOBONUS,
-    I2D_AUTOBONUS2,
-    I2D_AUTOBONUS3,
-    I2D_HEAL,
-    I2D_PERCENTHEAL,
-    I2D_ITEMHEAL,
-    I2D_SKILL,
-    I2D_ITEMSKILL,
-    I2D_UNITSKILLUSEID,
-    I2D_SC_START,
-    I2D_SC_START4,
-    I2D_SC_END,
-    I2D_GETITEM,
-    I2D_RENTITEM,
-    I2D_DELITEM,
-    I2D_GETRANDGROUPITEM,
-    I2D_SKILLEFFECT,
-    I2D_SPECIALEFFECT2,
-    I2D_SETFONT,
-    I2D_BUYINGSTORE,
-    I2D_SEARCHSTORES,
-    I2D_SET,
-    I2D_INPUT,
-    I2D_ANNOUNCE,
-    I2D_CALLFUNC,
-    I2D_END,
-    I2D_WARP,
-    I2D_PET,
-    I2D_BPET,
-    I2D_MERCENARY_CREATE,
-    I2D_MERCENARY_HEAL,
-    I2D_MERCENARY_SC_START,
-    I2D_PRODUCE,
-    I2D_COOKING,
-    I2D_MAKERUNE,
-    I2D_GUILDGETEXP,
-    I2D_GETEXP2,
-    I2D_MONSTER,
-    I2D_HOMEVOLUTION,
-    I2D_SETFALCON,
-    I2D_GETGROUPITEM,
-    I2D_RESETSTATUS,
-    I2D_BONUS_SCRIPT,
-    I2D_PLAYBGM,
-    I2D_TRANSFORM,
-    I2D_SC_START2,
-    I2D_PETLOOT,
-    I2D_PETRECOVERY,
-    I2D_PETSKILLBONUS,
-    I2D_PETSKILLATTACK,
-    I2D_PETSKILLATTACK2,
-    I2D_PETSKILLSUPPORT,
-    I2D_SPECIALEFFECT,
-    I2D_SHOWSCRIPT,
-    I2D_HATEFFECT,
-    I2D_SETMADOGEAR,
-    I2D_SETARRAY,
-    I2D_ACTIVE_TRANSFORM,
-    I2D_STATEMENT_END
-};
-
-struct i2d_statement {
-    enum i2d_statement_type type;
-    i2d_string name;
-};
-
-typedef struct i2d_statement i2d_statement;
-
 enum i2d_block_type {
     I2D_BLOCK,
     I2D_STATEMENT,
@@ -291,7 +216,7 @@ struct i2d_block {
     i2d_token * tokens;
     i2d_node * nodes;
     i2d_logic * logics;
-    i2d_statement * statement;
+    i2d_data * statement;
     struct i2d_block * parent;
     struct i2d_block * child;
     struct i2d_block * next;
@@ -311,20 +236,19 @@ void i2d_block_list_print(i2d_block *, int);
 struct i2d_parser {
     i2d_block * block_cache;
     i2d_node * node_cache;
-    i2d_rbt * statement_map;
 };
 
 typedef struct i2d_parser i2d_parser;
 
 int i2d_parser_init(i2d_parser **);
 void i2d_parser_deit(i2d_parser **);
-int i2d_parser_statement_map(i2d_parser *, i2d_lexer *, i2d_block *);
 void i2d_parser_reset(i2d_parser *, i2d_lexer *, i2d_block **);
 void i2d_parser_node_reset(i2d_parser *, i2d_lexer *, i2d_node **);
 int i2d_parser_block_init(i2d_parser *, i2d_block **, enum i2d_block_type, i2d_token *, i2d_block *);
 int i2d_parser_node_init(i2d_parser *, i2d_node **, enum i2d_node_type, i2d_token *);
-int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_token *, i2d_block **);
-int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_block *, i2d_block **, i2d_token *);
+int i2d_parser_get_statement(i2d_parser *, i2d_lexer *, i2d_data_map *, i2d_block *);
+int i2d_parser_analysis(i2d_parser *, i2d_lexer *, i2d_data_map *, i2d_token *, i2d_block **);
+int i2d_parser_analysis_recursive(i2d_parser *, i2d_lexer *, i2d_data_map *, i2d_block *, i2d_block **, i2d_token *);
 int i2d_parser_expression_recursive(i2d_parser *, i2d_lexer *, i2d_token *, i2d_node **);
 
 enum {
@@ -374,9 +298,9 @@ int i2d_script_generate_or(i2d_script *, i2d_logic *, i2d_buffer *);
 int i2d_script_generate_and(i2d_script *, i2d_logic *, i2d_buffer *);
 int i2d_script_generate_var(i2d_script *, i2d_logic *, i2d_buffer *);
 int i2d_script_statement(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
-int i2d_script_statement_ignore(i2d_script *, i2d_block *, i2d_rbt *);
-int i2d_script_statement_set(i2d_script *, i2d_block *, i2d_rbt *);
-int i2d_script_statement_generic(i2d_script *, i2d_block *, i2d_rbt *);
+int i2d_script_statement_ignore(i2d_script *, i2d_block *, i2d_rbt *, i2d_data *);
+int i2d_script_statement_set(i2d_script *, i2d_block *, i2d_rbt *, i2d_data *);
+int i2d_script_statement_generic(i2d_script *, i2d_block *, i2d_rbt *, i2d_data *);
 int i2d_script_statement_evaluate(i2d_script *, i2d_rbt *, i2d_node **, i2d_data *, i2d_buffer *);
 int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_rbt *, i2d_logic *);
 int i2d_script_expression_conditional(i2d_script *, i2d_node *, i2d_logic *, i2d_logic **);

@@ -16,7 +16,7 @@ int i2d_local_destroy(i2d_local *, i2d_script *);
 typedef int (* i2d_handler_single_node_cb) (i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 typedef int (* i2d_handler_multiple_node_cb) (i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 typedef int (* i2d_handler_single_node_data_cb) (i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
-typedef int (* i2d_handler_block_statement_cb) (i2d_script *, i2d_block *, i2d_rbt *);
+typedef int (* i2d_handler_block_statement_cb) (i2d_script *, i2d_block *, i2d_rbt *, i2d_data *);
 
 enum i2d_handler_type {
     single_node,
@@ -1457,72 +1457,6 @@ int i2d_node_is_colon(i2d_node * node) {
     return (node->type == I2D_BINARY && node->tokens->type == I2D_COLON) ? I2D_OK : I2D_FAIL;
 }
 
-i2d_statement statements[] = {
-    {I2D_BONUS, {"bonus", 5}},
-    {I2D_BONUS2, {"bonus2", 6}},
-    {I2D_BONUS3, {"bonus3", 6}},
-    {I2D_BONUS4, {"bonus4", 6}},
-    {I2D_BONUS5, {"bonus5", 6}},
-    {I2D_AUTOBONUS, {"autobonus", 9}},
-    {I2D_AUTOBONUS2, {"autobonus2", 10}},
-    {I2D_AUTOBONUS3, {"autobonus3", 10}},
-    {I2D_HEAL, {"heal", 4}},
-    {I2D_PERCENTHEAL, {"percentheal", 11}},
-    {I2D_ITEMHEAL, {"itemheal", 8}},
-    {I2D_SKILL, {"skill", 5}},
-    {I2D_ITEMSKILL, {"itemskill", 9}},
-    {I2D_UNITSKILLUSEID, {"unitskilluseid", 14}},
-    {I2D_SC_START, {"sc_start", 8}},
-    {I2D_SC_START4, {"sc_start4", 9}},
-    {I2D_SC_END, {"sc_end", 6}},
-    {I2D_GETITEM, {"getitem", 7}},
-    {I2D_RENTITEM, {"rentitem", 8}},
-    {I2D_DELITEM, {"delitem", 7}},
-    {I2D_GETRANDGROUPITEM, {"getrandgroupitem", 16}},
-    {I2D_SKILLEFFECT, {"skilleffect", 11}},
-    {I2D_SPECIALEFFECT2, {"specialeffect2", 14}},
-    {I2D_SETFONT, {"setfont", 7}},
-    {I2D_BUYINGSTORE, {"buyingstore", 11}},
-    {I2D_SEARCHSTORES, {"searchstores", 12}},
-    {I2D_SET, {"set", 3}},
-    {I2D_INPUT, {"input", 5}},
-    {I2D_ANNOUNCE, {"announce", 8}},
-    {I2D_CALLFUNC, {"callfunc", 8}},
-    {I2D_END, {"end", 3}},
-    {I2D_WARP, {"warp", 4}},
-    {I2D_PET, {"pet", 3}},
-    {I2D_BPET, {"bpet", 4}},
-    {I2D_MERCENARY_CREATE, {"mercenary_create", 16}},
-    {I2D_MERCENARY_HEAL, {"mercenary_heal", 14}},
-    {I2D_MERCENARY_SC_START, {"mercenary_sc_start", 18}},
-    {I2D_PRODUCE, {"produce", 7}},
-    {I2D_COOKING, {"cooking", 7}},
-    {I2D_MAKERUNE, {"makerune", 8}},
-    {I2D_GUILDGETEXP, {"guildgetexp", 11}},
-    {I2D_GETEXP2, {"getexp2", 7}},
-    {I2D_MONSTER, {"monster", 7}},
-    {I2D_HOMEVOLUTION, {"homevolution", 12}},
-    {I2D_SETFALCON, {"setfalcon", 9}},
-    {I2D_GETGROUPITEM, {"getgroupitem", 12}},
-    {I2D_RESETSTATUS, {"resetstatus", 11}},
-    {I2D_BONUS_SCRIPT, {"bonus_script", 12}},
-    {I2D_PLAYBGM, {"playbgm", 7}},
-    {I2D_TRANSFORM, {"transform", 9}},
-    {I2D_SC_START2, {"sc_start2", 9}},
-    {I2D_PETLOOT, {"petloot", 7}},
-    {I2D_PETRECOVERY, {"petrecovery", 11}},
-    {I2D_PETSKILLBONUS, {"petskillbonus", 13}},
-    {I2D_PETSKILLATTACK, {"petskillattack", 14}},
-    {I2D_PETSKILLATTACK2, {"petskillattack2", 15}},
-    {I2D_PETSKILLSUPPORT, {"petskillsupport", 15}},
-    {I2D_SPECIALEFFECT, {"specialeffect", 13}},
-    {I2D_SHOWSCRIPT, {"showscript", 10}},
-    {I2D_HATEFFECT, {"hateffect", 9}},
-    {I2D_SETMADOGEAR, {"setmadogear", 11}},
-    {I2D_SETARRAY, {"setarray", 8}},
-    {I2D_ACTIVE_TRANSFORM, {"active_transform", 16}}
-};
-
 const char * i2d_block_string[] = {
     "block",
     "statement",
@@ -1639,9 +1573,6 @@ int i2d_parser_init(i2d_parser ** result) {
     int status = I2D_OK;
     i2d_parser * object;
 
-    size_t i;
-    size_t size;
-
     if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
@@ -1656,15 +1587,6 @@ int i2d_parser_init(i2d_parser ** result) {
             } else {
                 object->node_cache->left = object->node_cache;
                 object->node_cache->right = object->node_cache;
-
-                if(i2d_rbt_init(&object->statement_map, i2d_rbt_cmp_str)) {
-                    status = i2d_panic("failed to create red black tree object");
-                } else {
-                    size = i2d_size(statements);
-                    for(i = 0; i < size; i++)
-                        if(i2d_rbt_insert(object->statement_map, statements[i].name.string, &statements[i]))
-                            status = i2d_panic("failed to index statement object");
-                }
             }
 
             if(status)
@@ -1681,31 +1603,10 @@ void i2d_parser_deit(i2d_parser ** result) {
     i2d_parser * object;
 
     object = *result;
-    i2d_deit(object->statement_map, i2d_rbt_deit);
     i2d_deit(object->node_cache, i2d_node_list_deit);
     i2d_deit(object->block_cache, i2d_block_list_deit);
     i2d_free(object);
     *result = NULL;
-}
-
-int i2d_parser_statement_map(i2d_parser * parser, i2d_lexer * lexer, i2d_block * block) {
-    int status = I2D_OK;
-    i2d_token * token;
-    i2d_string name;
-
-    token = block->tokens->next;
-    if(I2D_LITERAL == token->type) {
-        if(i2d_token_get_string(token, &name)) {
-            status = i2d_panic("failed to get token string");
-        } else {
-            if(!i2d_rbt_search(parser->statement_map, name.string, (void *) &block->statement)) {
-                i2d_token_remove(token);
-                i2d_lexer_reset(lexer, &token);
-            }
-        }
-    }
-
-    return status;
 }
 
 void i2d_parser_reset(i2d_parser * parser, i2d_lexer * lexer, i2d_block ** result) {
@@ -1790,7 +1691,28 @@ int i2d_parser_node_init(i2d_parser * parser, i2d_node ** result, enum i2d_node_
     return status;
 }
 
-int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_token * tokens, i2d_block ** result) {
+
+int i2d_parser_get_statement(i2d_parser * parser, i2d_lexer * lexer, i2d_data_map * statements, i2d_block * block) {
+    int status = I2D_OK;
+    i2d_token * token;
+    i2d_string name;
+
+    token = block->tokens->next;
+    if(I2D_LITERAL == token->type) {
+        if(i2d_token_get_string(token, &name)) {
+            status = i2d_panic("failed to get token string");
+        } else {
+            if(!i2d_data_map_get(statements, name.string, (void *) &block->statement)) {
+                i2d_token_remove(token);
+                i2d_lexer_reset(lexer, &token);
+            }
+        }
+    }
+
+    return status;
+}
+
+int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_data_map * statements, i2d_token * tokens, i2d_block ** result) {
     int status = I2D_OK;
     i2d_token * token;
 
@@ -1804,14 +1726,14 @@ int i2d_parser_analysis(i2d_parser * parser, i2d_lexer * lexer, i2d_token * toke
         status = i2d_panic("script must start with a {");
     } else if(I2D_CURLY_CLOSE != tokens->prev->type) {
         status = i2d_panic("script must end with a }");
-    } else if(i2d_parser_analysis_recursive(parser, lexer, NULL, result, tokens->next)) {
+    } else if(i2d_parser_analysis_recursive(parser, lexer, statements, NULL, result, tokens->next)) {
         status = i2d_panic("failed to parse script");
     }
 
     return status;
 }
 
-int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_block * parent, i2d_block ** result, i2d_token * tokens) {
+int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_data_map * statements, i2d_block * parent, i2d_block ** result, i2d_token * tokens) {
     int status = I2D_OK;
     i2d_block * root;
     i2d_block * block;
@@ -1828,7 +1750,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
         if(I2D_CURLY_OPEN == tokens->type) {
             if(i2d_parser_block_init(parser, &block, I2D_BLOCK, NULL, parent)) {
                 status = i2d_panic("failed to create block object");
-            } else if(i2d_parser_analysis_recursive(parser, lexer, block, &block->child, tokens->next)) {
+            } else if(i2d_parser_analysis_recursive(parser, lexer, statements, block, &block->child, tokens->next)) {
                 status = i2d_panic("failed to parse script");
             } else if(I2D_CURLY_CLOSE != tokens->next->type) {
                 status = i2d_panic("missing } after {");
@@ -1866,7 +1788,7 @@ int i2d_parser_analysis_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_bl
                     i2d_token_append(token, block->tokens);
                     block->tokens = token;
                     token = NULL;
-                    if(i2d_parser_statement_map(parser, lexer, block)) {
+                    if(i2d_parser_get_statement(parser, lexer, statements, block)) {
                         status = i2d_panic("failed to lookup block data object");
                     } else if(block->statement && block->tokens->next->type == I2D_SEMICOLON) {
                         /* support statements without arguments */
@@ -2489,7 +2411,7 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
             if(i2d_lexer_tokenize(script->lexer, source, &tokens)) {
                 status = i2d_panic("failed to tokenize -- %s", source->string);
             } else {
-                if(i2d_parser_analysis(script->parser, script->lexer, tokens, &blocks)) {
+                if(i2d_parser_analysis(script->parser, script->lexer, script->statements, tokens, &blocks)) {
                     status = i2d_panic("failed to parse -- %s", source->string);
                 } else {
                     if(i2d_script_translate(script, blocks, variables, NULL)) {
@@ -2710,91 +2632,30 @@ int i2d_script_generate_var(i2d_script * script, i2d_logic * logic, i2d_buffer *
 
 int i2d_script_statement(i2d_script * script, i2d_block * block, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
+    i2d_handler * handler;
 
-    switch(block->statement->type) {
-        case I2D_SET:
-            status = i2d_script_statement_set(script, block, variables);
-            break;
-        case I2D_BONUS:
-        case I2D_BONUS2:
-        case I2D_BONUS3:
-        case I2D_BONUS4:
-        case I2D_BONUS5:
-        case I2D_AUTOBONUS:
-        case I2D_AUTOBONUS2:
-        case I2D_AUTOBONUS3:
-        case I2D_HEAL:
-        case I2D_PERCENTHEAL:
-        case I2D_ITEMHEAL:
-        case I2D_SKILL:
-        case I2D_ITEMSKILL:
-        case I2D_UNITSKILLUSEID:
-        case I2D_GETITEM:
-        case I2D_RENTITEM:
-        case I2D_DELITEM:
-        case I2D_WARP:
-        case I2D_GETEXP2:
-        case I2D_GUILDGETEXP:
-        case I2D_RESETSTATUS:
-        case I2D_BUYINGSTORE:
-        case I2D_SEARCHSTORES:
-        case I2D_ANNOUNCE:
-        case I2D_HOMEVOLUTION:
-        case I2D_BPET:
-        case I2D_GETGROUPITEM:
-        case I2D_MERCENARY_CREATE:
-        case I2D_MERCENARY_HEAL:
-        case I2D_BONUS_SCRIPT:
-        case I2D_MAKERUNE:
-        case I2D_PET:
-        case I2D_PRODUCE:
-        case I2D_COOKING:
-        case I2D_PETLOOT:
-        case I2D_PETSKILLATTACK2:
-        case I2D_PETSKILLATTACK:
-        case I2D_PETSKILLSUPPORT:
-        case I2D_PETSKILLBONUS:
-        case I2D_GETRANDGROUPITEM:
-        case I2D_TRANSFORM:
-        case I2D_ACTIVE_TRANSFORM:
-        case I2D_SETFALCON:
-        case I2D_SETMADOGEAR:
-        case I2D_MONSTER:
-        case I2D_SC_END:
-        case I2D_PETRECOVERY:
-            status = i2d_script_statement_generic(script, block, variables);
-            break;
-        /* to-do */
-        case I2D_SC_START:
-        case I2D_MERCENARY_SC_START:
-        case I2D_SC_START2:
-        case I2D_SC_START4:
-        /* statement without description */
-        case I2D_HATEFFECT:
-        case I2D_SKILLEFFECT:
-        case I2D_SPECIALEFFECT:
-        case I2D_SPECIALEFFECT2:
-        case I2D_SETFONT:
-        case I2D_SETARRAY:
-        case I2D_INPUT:
-        case I2D_END:
-        case I2D_PLAYBGM:
-        case I2D_CALLFUNC:
-        case I2D_SHOWSCRIPT:
-            break;
-        default:
-            status = i2d_panic("invalid statement type -- %d", block->statement->type);
-            break;
+    if(!block->statement->handler.string) {
+        status = i2d_panic("invalid handler string");
+    } else if(i2d_rbt_search(script->statement_handlers, block->statement->handler.string, (void **) &handler)) {
+        status = i2d_panic("failed to find handler -- %s", block->statement->handler.string);
+    } else {
+        switch(handler->type) {
+            case block_statement:
+                status = handler->block_statement(script, block, variables, block->statement);
+                break;
+            default:
+                status = i2d_panic("invalid handler type -- %d", handler->type);
+        }
     }
 
     return status;
 }
 
-int i2d_script_statement_ignore(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
+int i2d_script_statement_ignore(i2d_script * script, i2d_block * block, i2d_rbt * variables, i2d_data * statement) {
     return I2D_OK;
 }
 
-int i2d_script_statement_set(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
+int i2d_script_statement_set(i2d_script * script, i2d_block * block, i2d_rbt * variables, i2d_data * statement) {
     int status = I2D_OK;
     i2d_node * node;
 
@@ -2817,10 +2678,9 @@ int i2d_script_statement_set(i2d_script * script, i2d_block * block, i2d_rbt * v
     return status;
 }
 
-int i2d_script_statement_generic(i2d_script * script, i2d_block * block, i2d_rbt * variables) {
+int i2d_script_statement_generic(i2d_script * script, i2d_block * block, i2d_rbt * variables, i2d_data * statement) {
     int status = I2D_OK;
     i2d_node * arguments[MAX_ARGUMENT];
-    i2d_data * data = NULL;
 
     size_t i;
     i2d_string * list;
@@ -2830,28 +2690,26 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block, i2d_rbt
     i2d_zero(arguments);
     i2d_zero(defaults);
 
-    if(i2d_data_map_get(script->statements, block->statement->name.string, &data)) {
-        status = i2d_panic("failed to get statement data -- %s", block->statement->name.string);
-    } else if(MAX_ARGUMENT <= data->required + data->optional) {
+    if(MAX_ARGUMENT <= statement->required + statement->optional) {
         status = i2d_panic("MAX_ARGUMENT overflow");
-    } else if(i2d_node_get_arguments(block->nodes->tokens->type == I2D_TOKEN ? block->nodes->left : block->nodes, arguments, data->required, data->optional)) {
+    } else if(i2d_node_get_arguments(block->nodes->tokens->type == I2D_TOKEN ? block->nodes->left : block->nodes, arguments, statement->required, statement->optional)) {
         status = i2d_panic("failed to get arguments");
     } else {
-        i2d_string_stack_get(&data->argument_default, &list, &size);
-        for(i = 0; i < (size_t) data->optional && i < size; i++) {
-            if(!arguments[i + data->required]) {
+        i2d_string_stack_get(&statement->argument_default, &list, &size);
+        for(i = 0; i < (size_t) statement->optional && i < size; i++) {
+            if(!arguments[i + statement->required]) {
                 if(i2d_script_compile_node(script, list[i].string, &defaults[i], variables)) {
                     status = i2d_panic("failed to create default node object");
                 } else {
-                    arguments[i + data->required] = defaults[i];
+                    arguments[i + statement->required] = defaults[i];
                 }
             }
         }
 
-        if(i2d_script_statement_evaluate(script, variables, arguments, data, &block->buffer))
+        if(i2d_script_statement_evaluate(script, variables, arguments, statement, &block->buffer))
             status = i2d_panic("failed to handle statement arguments");
 
-        for(i = 0; i < (size_t) data->optional && i < size; i++)
+        for(i = 0; i < (size_t) statement->optional && i < size; i++)
             if(defaults[i])
                 i2d_parser_node_reset(script->parser, script->lexer, &defaults[i]);
     }
@@ -2859,7 +2717,7 @@ int i2d_script_statement_generic(i2d_script * script, i2d_block * block, i2d_rbt
     return status;
 }
 
-int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_node ** arguments, i2d_data * data, i2d_buffer * buffer) {
+int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_node ** arguments, i2d_data * statement, i2d_buffer * buffer) {
     int status = I2D_OK;
     i2d_local local;
 
@@ -2875,14 +2733,14 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
     if(i2d_local_create(&local, script)) {
         status = i2d_panic("failed to create local object");
     } else {
-        if(i2d_string_stack_get(&data->argument_type, &list, &size)) {
+        if(i2d_string_stack_get(&statement->argument_type, &list, &size)) {
             status = i2d_panic("failed to get argument type array");
         } else {
-            if(data->argument_order.list) {
+            if(statement->argument_order.list) {
                 /*
                  * specified order
                  */
-                if(size != data->argument_order.size) {
+                if(size != statement->argument_order.size) {
                     status = i2d_panic("argument type and order size mismatch");
                 } else {
                     for(i = 0; i < size && !status; i++) {
@@ -2890,18 +2748,18 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
 
                         if(i2d_rbt_search(script->argument_handlers, list[i].string, (void **) &handler)) {
                             status = i2d_panic("failed to find handler -- %s", list[i].string);
-                        } else if(!arguments[data->argument_order.list[i]]) {
+                        } else if(!arguments[statement->argument_order.list[i]]) {
                             break;
                         } else {
                             switch(handler->type) {
                                 case single_node:
-                                    status = handler->single_node(script, variables, arguments[data->argument_order.list[i]], &local);
+                                    status = handler->single_node(script, variables, arguments[statement->argument_order.list[i]], &local);
                                     break;
                                 case multiple_node:
-                                    status = handler->multiple_node(script, variables, &arguments[data->argument_order.list[i]], &local);
+                                    status = handler->multiple_node(script, variables, &arguments[statement->argument_order.list[i]], &local);
                                     break;
                                 case single_node_data:
-                                    status = handler->single_node_data(handler->data, script, variables, arguments[data->argument_order.list[i]], &local);
+                                    status = handler->single_node_data(handler->data, script, variables, arguments[statement->argument_order.list[i]], &local);
                                     break;
                                 default:
                                     status = i2d_panic("invalid handler type -- %d", handler->type);
@@ -2937,7 +2795,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
             }
         }
 
-        if(data->dump_stack_instead_of_description) {
+        if(statement->dump_stack_instead_of_description) {
             if(i2d_string_stack_get(local.stack, &list, &size)) {
                 status = i2d_panic("failed to get argument stack array");
             } else {
@@ -2951,7 +2809,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                         }
                     }
             }
-        } else if(data->empty_description_on_empty_string) {
+        } else if(statement->empty_description_on_empty_string) {
             if(i2d_string_stack_get(local.stack, &list, &size)) {
                 status = i2d_panic("failed to get argument stack array");
             } else {
@@ -2960,10 +2818,10 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                     if(!list[i].length)
                         is_empty = I2D_FAIL;
 
-                if(!is_empty && i2d_format_write(&data->description, local.stack, buffer))
+                if(!is_empty && i2d_format_write(&statement->description, local.stack, buffer))
                     status = i2d_panic("failed to write bonus type description");
             }
-        } else if(!status && i2d_format_write(&data->description, local.stack, buffer)) {
+        } else if(!status && i2d_format_write(&statement->description, local.stack, buffer)) {
             status = i2d_panic("failed to write bonus type description");
         }
 

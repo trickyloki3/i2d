@@ -300,11 +300,13 @@
         "optional" : 5
     },
     "homevolution" : {
+        "handler" : "generic",
         "description" : "Evolve a homunculus.",
         "required" : 0,
         "optional" : 0
     },
     "bpet" : {
+        "handler" : "generic",
         "description" : "Hatch an egg.",
         "required" : 0,
         "optional" : 0
