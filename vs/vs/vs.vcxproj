@@ -168,9 +168,9 @@
     <ClCompile Include="..\..\i2d_util.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\i2d_config.h" />
     <ClInclude Include="..\..\i2d_constant.h" />
     <ClInclude Include="..\..\i2d_db.h" />
+    <ClInclude Include="..\..\i2d_define.h" />
     <ClInclude Include="..\..\i2d_item.h" />
     <ClInclude Include="..\..\i2d_json.h" />
     <ClInclude Include="..\..\i2d_logic.h" />
