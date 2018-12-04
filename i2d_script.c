@@ -4719,48 +4719,60 @@ static int i2d_handler_itemgroups(i2d_script * script, i2d_rbt * variables, i2d_
 static int i2d_handler_bf_type(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
-    i2d_constant_bf * bf;
+    i2d_constant * BF_SHORT;
+    i2d_constant * BF_LONG;
+    i2d_constant * BF_WEAPON;
+    i2d_constant * BF_MAGIC;
+    i2d_constant * BF_MISC;
+    i2d_constant * BF_NORMAL;
+    i2d_constant * BF_SKILL;
 
     if(i2d_node_get_constant(node, &mask)) {
         status = i2d_panic("failed to get bf mask");
     } else {
-        bf = &script->constant_db->bf;
+        BF_SHORT = script->constant_db->BF_SHORT;
+        BF_LONG = script->constant_db->BF_LONG;
+        BF_WEAPON = script->constant_db->BF_WEAPON;
+        BF_MAGIC = script->constant_db->BF_MAGIC;
+        BF_MISC = script->constant_db->BF_MISC;
+        BF_NORMAL = script->constant_db->BF_NORMAL;
+        BF_SKILL = script->constant_db->BF_SKILL;
 
         /*
          * default is BF_SHORT and BF_LONG
          */
-        if(!(mask & bf->BF_SHORT->value) && !(mask & bf->BF_LONG->value))
-            mask |= (bf->BF_SHORT->value | bf->BF_LONG->value);
+        if(!(mask & BF_SHORT->value) && !(mask & BF_LONG->value))
+            mask |= (BF_SHORT->value | BF_LONG->value);
 
         /*
          * default is BF_WEAPON
          */
-        if(!(mask & bf->BF_WEAPON->value) && !(mask & bf->BF_MAGIC->value) && !(mask & bf->BF_MISC->value))
-            mask |= bf->BF_WEAPON->value;
+        if(!(mask & BF_WEAPON->value) && !(mask & BF_MAGIC->value) && !(mask & BF_MISC->value))
+            mask |= BF_WEAPON->value;
 
         /*
          * if BF_WEAPON then BF_NORMAL and if BF_SKILL then BF_SKILL
          */
-        if(!(mask & bf->BF_NORMAL->value) && !(mask & bf->BF_SKILL->value))
-            mask |= (mask & bf->BF_WEAPON->value) ? bf->BF_NORMAL->value : bf->BF_SKILL->value;
+        if(!(mask & BF_NORMAL->value) && !(mask & BF_SKILL->value))
+            mask |= (mask & BF_WEAPON->value) ? BF_NORMAL->value : BF_SKILL->value;
 
-        if(!((bf->BF_SHORT->value | bf->BF_LONG->value) == (mask & (bf->BF_SHORT->value | bf->BF_LONG->value)))) {
-            if(mask & bf->BF_SHORT->value) {
-                status = i2d_buffer_printf(local->buffer, "%s ", bf->BF_SHORT->name.string);
-            } else if(mask & bf->BF_LONG->value) {
-                status = i2d_buffer_printf(local->buffer, "%s ", bf->BF_LONG->name.string);
+        if(!((BF_SHORT->value | BF_LONG->value) == (mask & (BF_SHORT->value | BF_LONG->value)))) {
+            if(mask & BF_SHORT->value) {
+                status = i2d_buffer_printf(local->buffer, "%s ", BF_SHORT->name.string);
+            } else if(mask & BF_LONG->value) {
+                status = i2d_buffer_printf(local->buffer, "%s ", BF_LONG->name.string);
             }
         }
 
         if(status) {
             status = i2d_panic("failed to write buffer");
         } else {
-            if((bf->BF_NORMAL->value | bf->BF_SKILL->value) == (mask & (bf->BF_NORMAL->value | bf->BF_SKILL->value))) {
-                status = i2d_buffer_printf(local->buffer, "%s / %s", bf->BF_NORMAL->name.string, bf->BF_SKILL->name.string);
-            } else if(mask & bf->BF_NORMAL->value) {
-                status = i2d_buffer_printf(local->buffer, "%s", bf->BF_NORMAL->name.string);
-            } else if(mask & bf->BF_SKILL->value) {
-                status = i2d_buffer_printf(local->buffer, "%s", bf->BF_SKILL->name.string);
+            if((BF_NORMAL->value | BF_SKILL->value) == (mask & (BF_NORMAL->value | BF_SKILL->value))) {
+                status = i2d_buffer_printf(local->buffer, "%s / %s", BF_NORMAL->name.string, BF_SKILL->name.string);
+            } else if(mask & BF_NORMAL->value) {
+                status = i2d_buffer_printf(local->buffer, "%s", BF_NORMAL->name.string);
+            } else if(mask & BF_SKILL->value) {
+                status = i2d_buffer_printf(local->buffer, "%s", BF_SKILL->name.string);
             }
 
             if(status) {
@@ -4777,25 +4789,30 @@ static int i2d_handler_bf_type(i2d_script * script, i2d_rbt * variables, i2d_nod
 static int i2d_handler_bf_damage(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
-    i2d_constant_bf * bf;
+
+    i2d_constant * BF_WEAPON;
+    i2d_constant * BF_MAGIC;
+    i2d_constant * BF_MISC;
 
     if(i2d_node_get_constant(node, &mask)) {
         status = i2d_panic("failed to get bf mask");
     } else {
-        bf = &script->constant_db->bf;
+        BF_WEAPON = script->constant_db->BF_WEAPON;
+        BF_MAGIC = script->constant_db->BF_MAGIC;
+        BF_MISC = script->constant_db->BF_MISC;
 
         /*
          * default is BF_WEAPON
          */
-        if(!(mask & bf->BF_WEAPON->value) && !(mask & bf->BF_MAGIC->value) && !(mask & bf->BF_MISC->value))
-            mask |= bf->BF_WEAPON->value;
+        if(!(mask & BF_WEAPON->value) && !(mask & BF_MAGIC->value) && !(mask & BF_MISC->value))
+            mask |= BF_WEAPON->value;
 
-        if(mask & bf->BF_WEAPON->value)
-            status = i2d_buffer_printf(local->buffer, "%s", bf->BF_WEAPON->name.string);
-        if(!status && mask & bf->BF_MAGIC->value)
-            status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", bf->BF_MAGIC->name.string);
-        if(!status && mask & bf->BF_MISC->value)
-            status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", bf->BF_MISC->name.string);
+        if(mask & BF_WEAPON->value)
+            status = i2d_buffer_printf(local->buffer, "%s", BF_WEAPON->name.string);
+        if(!status && mask & BF_MAGIC->value)
+            status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", BF_MAGIC->name.string);
+        if(!status && mask & BF_MISC->value)
+            status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", BF_MISC->name.string);
 
         if(status) {
             status = i2d_panic("failed to write buffer");
@@ -4810,24 +4827,27 @@ static int i2d_handler_bf_damage(i2d_script * script, i2d_rbt * variables, i2d_n
 static int i2d_handler_atf_target(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
-    i2d_constant_atf * atf;
+
+    i2d_constant * ATF_SELF;
+    i2d_constant * ATF_TARGET;
 
     if(i2d_node_get_constant(node, &mask)) {
         status = i2d_panic("failed to get bf mask");
     } else {
-        atf = &script->constant_db->atf;
+        ATF_SELF = script->constant_db->ATF_SELF;
+        ATF_TARGET = script->constant_db->ATF_TARGET;
 
         /*
          * default is ATF_TARGET
          */
-        if(!(mask & atf->ATF_SELF->value) && !(mask & atf->ATF_TARGET->value))
-            mask |= atf->ATF_TARGET->value;
+        if(!(mask & ATF_SELF->value) && !(mask & ATF_TARGET->value))
+            mask |= ATF_TARGET->value;
 
-        if(mask & atf->ATF_SELF->value) {
-            if(i2d_string_stack_push(local->stack, atf->ATF_SELF->name.string, atf->ATF_SELF->name.length))
+        if(mask & ATF_SELF->value) {
+            if(i2d_string_stack_push(local->stack, ATF_SELF->name.string, ATF_SELF->name.length))
                 status = i2d_panic("failed to push string on stack");
-        } else if(mask & atf->ATF_TARGET->value) {
-            if(i2d_string_stack_push(local->stack, atf->ATF_TARGET->name.string, atf->ATF_TARGET->name.length))
+        } else if(mask & ATF_TARGET->value) {
+            if(i2d_string_stack_push(local->stack, ATF_TARGET->name.string, ATF_TARGET->name.length))
                 status = i2d_panic("failed to push string on stack");
         }
     }
@@ -4838,41 +4858,50 @@ static int i2d_handler_atf_target(i2d_script * script, i2d_rbt * variables, i2d_
 static int i2d_handler_atf_type(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long mask;
-    i2d_constant_atf * atf;
+
+    i2d_constant * ATF_SHORT;
+    i2d_constant * ATF_LONG;
+    i2d_constant * ATF_WEAPON;
+    i2d_constant * ATF_MAGIC;
+    i2d_constant * ATF_MISC;
 
     if(i2d_node_get_constant(node, &mask)) {
         status = i2d_panic("failed to get bf mask");
     } else {
-        atf = &script->constant_db->atf;
+        ATF_SHORT = script->constant_db->ATF_SHORT;
+        ATF_LONG = script->constant_db->ATF_LONG;
+        ATF_WEAPON = script->constant_db->ATF_WEAPON;
+        ATF_MAGIC = script->constant_db->ATF_MAGIC;
+        ATF_MISC = script->constant_db->ATF_MISC;
 
         /*
          * default is ATF_SHORT and ATF_LONG
          */
-        if(!(mask & atf->ATF_SHORT->value) && !(mask & atf->ATF_LONG->value))
-            mask |= (atf->ATF_SHORT->value | atf->ATF_LONG->value);
+        if(!(mask & ATF_SHORT->value) && !(mask & ATF_LONG->value))
+            mask |= (ATF_SHORT->value | ATF_LONG->value);
 
         /*
          * default is AFT_WEAPON
          */
-        if(!(mask & atf->ATF_WEAPON->value) && !(mask & atf->ATF_MAGIC->value) && !(mask & atf->ATF_MISC->value))
-            mask |= atf->ATF_WEAPON->value;
+        if(!(mask & ATF_WEAPON->value) && !(mask & ATF_MAGIC->value) && !(mask & ATF_MISC->value))
+            mask |= ATF_WEAPON->value;
 
-        if(!((atf->ATF_SHORT->value | atf->ATF_LONG->value) == (mask & (atf->ATF_SHORT->value | atf->ATF_LONG->value)))) {
-            if(mask & atf->ATF_SHORT->value) {
-                status = i2d_buffer_printf(local->buffer, "%s ", atf->ATF_SHORT->name.string);
-            } else if(mask & atf->ATF_LONG->value) {
-                status = i2d_buffer_printf(local->buffer, "%s ", atf->ATF_LONG->name.string);
+        if(!((ATF_SHORT->value | ATF_LONG->value) == (mask & (ATF_SHORT->value | ATF_LONG->value)))) {
+            if(mask & ATF_SHORT->value) {
+                status = i2d_buffer_printf(local->buffer, "%s ", ATF_SHORT->name.string);
+            } else if(mask & ATF_LONG->value) {
+                status = i2d_buffer_printf(local->buffer, "%s ", ATF_LONG->name.string);
             }
         }
         if(status) {
             status = i2d_panic("failed to write buffer");
         } else {
-            if(mask & atf->ATF_WEAPON->value)
-                status = i2d_buffer_printf(local->buffer, "%s", atf->ATF_WEAPON->name.string);
-            if(!status && mask & atf->ATF_MAGIC->value)
-                status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", atf->ATF_MAGIC->name.string);
-            if(!status && mask & atf->ATF_MISC->value)
-                status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", atf->ATF_MISC->name.string);
+            if(mask & ATF_WEAPON->value)
+                status = i2d_buffer_printf(local->buffer, "%s", ATF_WEAPON->name.string);
+            if(!status && mask & ATF_MAGIC->value)
+                status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", ATF_MAGIC->name.string);
+            if(!status && mask & ATF_MISC->value)
+                status = i2d_buffer_printf(local->buffer, "%s%s", local->buffer->offset ? ", " : "", ATF_MISC->name.string);
 
             if(status) {
                 status = i2d_panic("failed to write buffer");
