@@ -337,13 +337,6 @@ int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_con
 void i2d_data_map_deit(i2d_data_map **);
 int i2d_data_map_get(i2d_data_map *, void *, i2d_data **);
 
-struct i2d_local {
-    i2d_buffer * buffer;
-    i2d_string_stack * stack;
-};
-
-typedef struct i2d_local i2d_local;
-
 enum {
     I2D_FLAG_NONE = 0x0,
     I2D_FLAG_CONDITIONAL = 0x1
@@ -382,8 +375,6 @@ typedef struct i2d_script i2d_script;
 
 int i2d_script_init(i2d_script **, i2d_config *);
 void i2d_script_deit(i2d_script **);
-int i2d_script_local_create(i2d_script *, i2d_local *);
-int i2d_script_local_destroy(i2d_script *, i2d_local *);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *, i2d_rbt *);
 int i2d_script_compile_node(i2d_script *, const char *, i2d_node **, i2d_rbt *);
 int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
