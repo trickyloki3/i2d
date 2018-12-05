@@ -158,8 +158,8 @@ static int i2d_handler_pet_script(i2d_script *, i2d_rbt *, i2d_node *, i2d_local
 static int i2d_handler_pet_loyal_script(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_produce(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_sc_end(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
-static int i2d_handler_evaluate(i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
-static int i2d_handler_prefixes(i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_custom(i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_prefix(i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_bonus(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_bonus2(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_bonus3(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
@@ -208,6 +208,8 @@ i2d_handler argument_handlers[] = {
     { "pet_loyal_script", single_node, {i2d_handler_pet_loyal_script} },
     { "produce", single_node, {i2d_handler_produce} },
     { "sc_end", single_node, {i2d_handler_sc_end} },
+    { "custom", single_node_data, {i2d_handler_custom} },
+    { "prefix", single_node_data, {i2d_handler_prefix} },
     { "bonus", multiple_node, {i2d_handler_bonus} },
     { "bonus2", multiple_node, {i2d_handler_bonus2} },
     { "bonus3", multiple_node, {i2d_handler_bonus3} },
@@ -2326,11 +2328,11 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                         status = i2d_panic("failed to map handler object");
 
                 for(i = 0; i < object->arguments->size && !status; i++) 
-                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, single_node_data, &object->arguments->list[i], i2d_handler_evaluate))
+                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, single_node_data, &object->arguments->list[i], i2d_handler_custom))
                         status = i2d_panic("failed to append handler object");
 
                 for(i = 0; i < object->prefixes->size && !status; i++) 
-                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, single_node_data, &object->prefixes->list[i], i2d_handler_prefixes))
+                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, single_node_data, &object->prefixes->list[i], i2d_handler_prefix))
                         status = i2d_panic("failed to append handler object");
 
                 if(object->handlers) {
@@ -5045,7 +5047,7 @@ static int i2d_handler_sc_end(i2d_script * script, i2d_rbt * variables, i2d_node
     return status;
 }
 
-static int i2d_handler_evaluate(i2d_data * data, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+static int i2d_handler_custom(i2d_data * data, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     long min;
@@ -5065,7 +5067,7 @@ static int i2d_handler_evaluate(i2d_data * data, i2d_script * script, i2d_rbt * 
     return status;
 }
 
-static int i2d_handler_prefixes(i2d_data * data, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+static int i2d_handler_prefix(i2d_data * data, i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
 
     long min;
