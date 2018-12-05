@@ -136,7 +136,8 @@ int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
                         i2d_constant_db_index(object, json, "itemgroups", &object->itemgroups) ||
                         i2d_constant_db_index(object, json, "options", &object->options) ||
                         i2d_constant_db_index(object, json, "announces", &object->announces) ||
-                        i2d_constant_db_index(object, json, "sc_end", &object->sc_end) ) {
+                        i2d_constant_db_index(object, json, "sc_end", &object->sc_end) ||
+                        i2d_constant_db_index(object, json, "sc_start", &object->sc_start) ) {
                         status = i2d_panic("failed to index categories");
                     } else {
                         if( i2d_constant_get_by_macro(object, "BF_SHORT", &object->BF_SHORT) ||
@@ -177,6 +178,7 @@ void i2d_constant_db_deit(i2d_constant_db ** result) {
 
     object = *result;
     i2d_deit(object->mob_races, i2d_rbt_deit);
+    i2d_deit(object->sc_start, i2d_rbt_deit);
     i2d_deit(object->sc_end, i2d_rbt_deit);
     i2d_deit(object->announces, i2d_rbt_deit);
     i2d_deit(object->options, i2d_rbt_deit);
@@ -292,6 +294,10 @@ int i2d_constant_get_by_announces(i2d_constant_db * constant_db, const long key,
 
 int i2d_constant_get_by_sc_end(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
     return i2d_rbt_search(constant_db->sc_end, &key, (void **) result);
+}
+
+int i2d_constant_get_by_sc_start(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
+    return i2d_rbt_search(constant_db->sc_start, &key, (void **) result);
 }
 
 int i2d_constant_get_by_mob_races(i2d_constant_db * constant_db, const long key, i2d_constant ** result) {
