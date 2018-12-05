@@ -693,7 +693,9 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * argument_order;
     json_t * required;
     json_t * optional;
-    json_t * prefixes;
+    json_t * positive;
+    json_t * negative;
+    json_t * zero;
     json_t * empty_description_on_zero;
     json_t * empty_description_on_empty_string;
     json_t * dump_stack_instead_of_description;
@@ -707,7 +709,9 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     argument_order = json_object_get(json, "argument_order");
     required = json_object_get(json, "required");
     optional = json_object_get(json, "optional");
-    prefixes = json_object_get(json, "prefixes");
+    positive = json_object_get(json, "positive");
+    negative = json_object_get(json, "negative");
+    zero = json_object_get(json, "zero");
     empty_description_on_zero = json_object_get(json, "empty_description_on_zero");
     empty_description_on_empty_string = json_object_get(json, "empty_description_on_empty_string");
     dump_stack_instead_of_description = json_object_get(json, "dump_stack_instead_of_description");
@@ -731,8 +735,12 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
         status = i2d_panic("failed to create number");
     } else if(optional && i2d_object_get_number(optional, &result->optional)) {
         status = i2d_panic("failed to create number");
-    } else if(prefixes && i2d_object_get_string_stack(prefixes, &result->prefixes)) {
-        status = i2d_panic("failed to create string stack");
+    } else if(positive && i2d_object_get_string(positive, &result->positive)) {
+        status = i2d_panic("failed to create string");
+    } else if(negative && i2d_object_get_string(negative, &result->negative)) {
+        status = i2d_panic("failed to create string");
+    } else if(zero && i2d_object_get_string(zero, &result->zero)) {
+        status = i2d_panic("failed to create string");
     } else if(empty_description_on_zero && i2d_object_get_boolean(empty_description_on_zero, &result->empty_description_on_zero)) {
         status = i2d_panic("failed to create boolean");
     } else if(empty_description_on_empty_string && i2d_object_get_boolean(empty_description_on_empty_string, &result->empty_description_on_empty_string)) {
@@ -745,7 +753,9 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
 }
 
 void i2d_data_destroy(i2d_data * result) {
-    i2d_string_stack_destroy(&result->prefixes);
+    i2d_string_destroy(&result->zero);
+    i2d_string_destroy(&result->negative);
+    i2d_string_destroy(&result->positive);
     i2d_free(result->argument_order.list);
     i2d_string_stack_destroy(&result->argument_default);
     i2d_string_stack_destroy(&result->argument_type);
@@ -5073,26 +5083,17 @@ static int i2d_handler_prefix(i2d_data * data, i2d_script * script, i2d_rbt * va
     long min;
     long max;
 
-    i2d_string * list;
-    size_t size;
-
     i2d_range_get_range(&node->range, &min, &max);
 
-    if(i2d_string_stack_get(&data->prefixes, &list, &size)) {
-        status = i2d_panic("failed to get string stack");
-    } else if(size < 2) {
-        status = i2d_panic("invalid prefix array size -- %s (%zu)", data->name.string, size);
+    if(!min && !max && data->zero.string) {
+        if(i2d_string_stack_push(local->stack, data->zero.string, data->zero.length))
+            status = i2d_panic("failed to push string on stack");
     } else {
-        if(min == 0 && max == 0) {
-            if( size == 3 ?
-                    i2d_string_stack_push(local->stack, list[2].string, list[2].length) :
-                    i2d_string_stack_push(local->stack, list[0].string, list[0].length) )
-                status = i2d_panic("failed to push string on stack");
-        } else if(min > 0) {
-            if(i2d_string_stack_push(local->stack, list[0].string, list[0].length))
+        if(min > 0) {
+            if(i2d_string_stack_push(local->stack, data->positive.string, data->positive.length))
                 status = i2d_panic("failed to push string on stack");
         } else {
-            if(i2d_string_stack_push(local->stack, list[1].string, list[1].length))
+            if(i2d_string_stack_push(local->stack, data->negative.string, data->negative.length))
                 status = i2d_panic("failed to push string on stack");
         }
     }

@@ -1,15 +1,11 @@
 {
     "heal_prefix" : {
-        "prefixes" : [
-            "Recover",
-            "Drain"
-        ]
+        "negative" : "Drain",
+        "positive" : "Recover"
     },
     "setmount_prefix" : {
-        "prefixes" : [
-            "Summon",
-            "Summon",
-            "Release"
-        ]
+        "negative" : "Summon",
+        "positive" : "Summon",
+        "zero" : "Release"
     }
 }
