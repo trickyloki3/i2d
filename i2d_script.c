@@ -2337,13 +2337,21 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                     if(i2d_rbt_insert(object->statement_handlers, statement_handlers[i].name, &statement_handlers[i]))
                         status = i2d_panic("failed to map handler object");
 
-                for(i = 0; i < object->arguments->size && !status; i++) 
-                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, single_node_data, &object->arguments->list[i], i2d_handler_custom))
+                for(i = 0; i < object->arguments->size && !status; i++) {
+                    if(i2d_rbt_search(object->argument_handlers, object->arguments->list[i].handler.string, (void **) &handler)) {
+                        status = i2d_panic("failed to find handler -- %s", object->arguments->list[i].name.string);
+                    } else if(i2d_handler_list_append((i2d_handler **) &object->handlers, handler->type, &object->arguments->list[i], handler->ptr)) {
                         status = i2d_panic("failed to append handler object");
+                    }
+                }
 
-                for(i = 0; i < object->prefixes->size && !status; i++) 
-                    if(i2d_handler_list_append((i2d_handler **) &object->handlers, single_node_data, &object->prefixes->list[i], i2d_handler_prefix))
+                for(i = 0; i < object->prefixes->size && !status; i++) {
+                    if(i2d_rbt_search(object->argument_handlers, object->prefixes->list[i].handler.string, (void **) &handler)) {
+                        status = i2d_panic("failed to find handler -- %s", object->prefixes->list[i].name.string);
+                    } else if(i2d_handler_list_append((i2d_handler **) &object->handlers, handler->type, &object->prefixes->list[i], handler->ptr)) {
                         status = i2d_panic("failed to append handler object");
+                    }
+                }
 
                 if(object->handlers) {
                     handler = object->handlers;

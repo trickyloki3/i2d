@@ -1,9 +1,11 @@
 {
     "heal_prefix" : {
+        "handler" : "prefix",
         "negative" : "Drain",
         "positive" : "Recover"
     },
     "setmount_prefix" : {
+        "handler" : "prefix",
         "negative" : "Summon",
         "positive" : "Summon",
         "zero" : "Release"

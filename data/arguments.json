@@ -1,5 +1,6 @@
 {
     "hp_integer" : {
+        "handler" : "custom",
         "argument_type" : [
             "heal_prefix",
             "integer_absolute"
@@ -12,6 +13,7 @@
         "empty_description_on_zero" : true
     },
     "sp_integer" : {
+        "handler" : "custom",
         "argument_type" : [
             "heal_prefix",
             "integer_absolute"
@@ -24,6 +26,7 @@
         "empty_description_on_zero" : true
     },
     "hp_percent" : {
+        "handler" : "custom",
         "argument_type" : [
             "heal_prefix",
             "percent_absolute"
@@ -36,6 +39,7 @@
         "empty_description_on_zero" : true
     },
     "sp_percent" : {
+        "handler" : "custom",
         "argument_type" : [
             "heal_prefix",
             "percent_absolute"
@@ -48,6 +52,7 @@
         "empty_description_on_zero" : true
     },
     "base_experience" : {
+        "handler" : "custom",
         "argument_type" : [
             "integer"
         ],
@@ -55,6 +60,7 @@
         "empty_description_on_zero" : true
     },
     "job_experience" : {
+        "handler" : "custom",
         "argument_type" : [
             "integer"
         ],
@@ -62,6 +68,7 @@
         "empty_description_on_zero" : true
     },
     "hp_mercenary" : {
+        "handler" : "custom",
         "argument_type" : [
             "heal_prefix",
             "integer_absolute"
@@ -74,6 +81,7 @@
         "empty_description_on_zero" : true
     },
     "sp_mercenary" : {
+        "handler" : "custom",
         "argument_type" : [
             "heal_prefix",
             "integer_absolute"
@@ -86,6 +94,7 @@
         "empty_description_on_zero" : true
     },
     "makerune_success_bonus" : {
+        "handler" : "custom",
         "argument_type" : [
             "percent"
         ],
@@ -93,12 +102,14 @@
         "empty_description_on_zero" : true
     },
     "pet_tame" : {
+        "handler" : "custom",
         "argument_type" : [
             "pet"
         ],
         "description" : "Tame a {0}."
     },
     "pet_script_print" : {
+        "handler" : "custom",
         "argument_type" : [
             "pet_script"
         ],
@@ -106,6 +117,7 @@
         "empty_description_on_empty_string" : true
     },
     "pet_loyal_script_print" : {
+        "handler" : "custom",
         "argument_type" : [
             "pet_loyal_script"
         ],
