@@ -271,14 +271,14 @@ struct i2d_script {
     i2d_value_map * skill_flags;
     i2d_value_map * searchstore_effect;
     i2d_value_map * bonus_script_flag;
-    i2d_data_map * functions;
     i2d_data_map * bonus;
     i2d_data_map * bonus2;
     i2d_data_map * bonus3;
     i2d_data_map * bonus4;
     i2d_data_map * bonus5;
-    i2d_data_map * statements;
+    i2d_data_map * functions;
     i2d_data_map * arguments;
+    i2d_data_map * statements;
     i2d_buffer_cache * buffer_cache;
     i2d_string_stack_cache * stack_cache;
     i2d_rbt * function_handlers;

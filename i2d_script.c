@@ -2293,8 +2293,6 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to load searchstore_effect");
             } else if(i2d_value_map_init(&object->bonus_script_flag, object->json->bonus_script_flag)) {
                 status = i2d_panic("failed to load bonus_script_flag");
-            } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
-                status = i2d_panic("failed to load functions");
             } else if(i2d_data_map_init(&object->bonus, data_map_by_constant, object->json->bonus, object->constant_db)) {
                 status = i2d_panic("failed to load bonus");
             } else if(i2d_data_map_init(&object->bonus2, data_map_by_constant, object->json->bonus2, object->constant_db)) {
@@ -2305,10 +2303,12 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to load bonus4");
             } else if(i2d_data_map_init(&object->bonus5, data_map_by_constant, object->json->bonus5, object->constant_db)) {
                 status = i2d_panic("failed to load bonus5");
-            } else if(i2d_data_map_init(&object->statements, data_map_by_name, object->json->statements, object->constant_db)) {
-                status = i2d_panic("failed to load statements");
+            } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
+                status = i2d_panic("failed to load functions");
             } else if(i2d_data_map_init(&object->arguments, data_map_by_name, object->json->arguments, object->constant_db)) {
                 status = i2d_panic("failed to load arguments");
+            } else if(i2d_data_map_init(&object->statements, data_map_by_name, object->json->statements, object->constant_db)) {
+                status = i2d_panic("failed to load statements");
             } else if(i2d_buffer_cache_init(&object->buffer_cache)) {
                 status = i2d_panic("failed to create buffer cache object");
             } else if(i2d_string_stack_cache_init(&object->stack_cache)) {
@@ -2375,14 +2375,14 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
     i2d_deit(object->buffer_cache, i2d_buffer_cache_deit);
-    i2d_deit(object->arguments, i2d_data_map_deit);
     i2d_deit(object->statements, i2d_data_map_deit);
+    i2d_deit(object->arguments, i2d_data_map_deit);
+    i2d_deit(object->functions, i2d_data_map_deit);
     i2d_deit(object->bonus5, i2d_data_map_deit);
     i2d_deit(object->bonus4, i2d_data_map_deit);
     i2d_deit(object->bonus3, i2d_data_map_deit);
     i2d_deit(object->bonus2, i2d_data_map_deit);
     i2d_deit(object->bonus, i2d_data_map_deit);
-    i2d_deit(object->functions, i2d_data_map_deit);
     i2d_deit(object->bonus_script_flag, i2d_value_map_deit);
     i2d_deit(object->searchstore_effect, i2d_value_map_deit);
     i2d_deit(object->skill_flags, i2d_value_map_deit);
