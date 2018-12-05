@@ -123,5 +123,16 @@
         ],
         "description" : "[Loyal Script]\n{0}",
         "empty_description_on_empty_string" : true
+    },
+    "heal_prefix" : {
+        "handler" : "prefix",
+        "negative" : "Drain",
+        "positive" : "Recover"
+    },
+    "setmount_prefix" : {
+        "handler" : "prefix",
+        "negative" : "Summon",
+        "positive" : "Summon",
+        "zero" : "Release"
     }
 }

@@ -2309,8 +2309,6 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to load statements");
             } else if(i2d_data_map_init(&object->arguments, data_map_by_name, object->json->arguments, object->constant_db)) {
                 status = i2d_panic("failed to load arguments");
-            } else if(i2d_data_map_init(&object->prefixes, data_map_by_name, object->json->prefixes, object->constant_db)) {
-                status = i2d_panic("failed to load prefixes");
             } else if(i2d_buffer_cache_init(&object->buffer_cache)) {
                 status = i2d_panic("failed to create buffer cache object");
             } else if(i2d_string_stack_cache_init(&object->stack_cache)) {
@@ -2341,14 +2339,6 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                     if(i2d_rbt_search(object->argument_handlers, object->arguments->list[i].handler.string, (void **) &handler)) {
                         status = i2d_panic("failed to find handler -- %s", object->arguments->list[i].name.string);
                     } else if(i2d_handler_list_append((i2d_handler **) &object->handlers, handler->type, &object->arguments->list[i], handler->ptr)) {
-                        status = i2d_panic("failed to append handler object");
-                    }
-                }
-
-                for(i = 0; i < object->prefixes->size && !status; i++) {
-                    if(i2d_rbt_search(object->argument_handlers, object->prefixes->list[i].handler.string, (void **) &handler)) {
-                        status = i2d_panic("failed to find handler -- %s", object->prefixes->list[i].name.string);
-                    } else if(i2d_handler_list_append((i2d_handler **) &object->handlers, handler->type, &object->prefixes->list[i], handler->ptr)) {
                         status = i2d_panic("failed to append handler object");
                     }
                 }
@@ -2385,7 +2375,6 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
     i2d_deit(object->buffer_cache, i2d_buffer_cache_deit);
-    i2d_deit(object->prefixes, i2d_data_map_deit);
     i2d_deit(object->arguments, i2d_data_map_deit);
     i2d_deit(object->statements, i2d_data_map_deit);
     i2d_deit(object->bonus5, i2d_data_map_deit);

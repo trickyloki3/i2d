@@ -22,7 +22,6 @@ struct i2d_json {
     json_t * functions;
     json_t * constants;
     json_t * arguments;
-    json_t * prefixes;
     json_t * bonus_file;
     json_t * bonus;
     json_t * bonus2;
