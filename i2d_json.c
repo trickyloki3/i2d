@@ -259,6 +259,7 @@ int i2d_json_init(i2d_json ** result, i2d_string * directory) {
                 i2d_json_load_file(&object->constants, directory, "constants.json") ||
                 i2d_json_load_file(&object->arguments, directory, "arguments.json") ||
                 i2d_json_load_bonus(object, directory) ||
+                i2d_json_load_file(&object->sc_start, directory, "sc_start.json") ||
                 i2d_json_load_data(object, directory) )
                 status = i2d_panic("failed to load json object");
 
@@ -277,6 +278,7 @@ void i2d_json_deit(i2d_json ** result) {
 
     object = *result;
     i2d_json_destroy(object->data_file);
+    i2d_json_destroy(object->sc_start);
     i2d_json_destroy(object->bonus_file);
     i2d_json_destroy(object->arguments);
     i2d_json_destroy(object->constants);

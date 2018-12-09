@@ -2305,6 +2305,8 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to load bonus4");
             } else if(i2d_data_map_init(&object->bonus5, data_map_by_constant, object->json->bonus5, object->constant_db)) {
                 status = i2d_panic("failed to load bonus5");
+            } else if(i2d_data_map_init(&object->sc_start, data_map_by_constant, object->json->sc_start, object->constant_db)) {
+                status = i2d_panic("failed to load sc_start");
             } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
                 status = i2d_panic("failed to load functions");
             } else if(i2d_data_map_init(&object->arguments, data_map_by_name, object->json->arguments, object->constant_db)) {
@@ -2380,6 +2382,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->statements, i2d_data_map_deit);
     i2d_deit(object->arguments, i2d_data_map_deit);
     i2d_deit(object->functions, i2d_data_map_deit);
+    i2d_deit(object->sc_start, i2d_data_map_deit);
     i2d_deit(object->bonus5, i2d_data_map_deit);
     i2d_deit(object->bonus4, i2d_data_map_deit);
     i2d_deit(object->bonus3, i2d_data_map_deit);
