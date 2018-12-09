@@ -463,6 +463,150 @@
             "ignore",
             "percent100"
         ],
-        "description" : "Wear {0} for {1}. (Sucess Rate: {3})"
+        "description" : "Wear {0} for {1}."
+    },
+    "SC_WEDDING" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0} for {1}."
+    },
+    "SC_SUMMER" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0} for {1}."
+    },
+    "SC_DRESSUP" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0} for {1}."
+    },
+    "SC_OKTOBERFEST" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0} for {1}."
+    },
+    "SC_WATERWEAPON" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Enchanted weapon with {0} property for {1}."
+    },
+    "SC_WINDWEAPON" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Enchanted weapon with {0} property for {1}."
+    },
+    "SC_MOONSTAR" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_SUPER_STAR" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_STRANGELIGHTS" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_DECORATION_OF_MUSIC" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_LJOSALFAR" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_MERMAID_LONGING" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_HAT_EFFECT" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_MAPLE_FALLS" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_TIME_ACCESSORY" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
+    },
+    "SC_FSTONE" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0}."
     }
 }

@@ -15773,6 +15773,7 @@
             "value" : 10
         },
         "SC_DRESSUP" : {
+            "name" : "Summer Vacation Outfit",
             "value" : 686
         },
         "SC_DROCERA_HERB_STEAMED" : {
@@ -16593,6 +16594,7 @@
             "value" : 564
         },
         "SC_OKTOBERFEST" : {
+            "name" : "Oktoberfet Outfit",
             "value" : 586
         },
         "SC_ONEHAND" : {
@@ -17104,7 +17106,7 @@
             "value" : 236
         },
         "SC_SUMMER" : {
-            "name" : "Summer",
+            "name" : "Summer Clothing",
             "value" : 256
         },
         "SC_SUN_COMFORT" : {
@@ -17245,6 +17247,7 @@
             "value" : 390
         },
         "SC_WATERWEAPON" : {
+            "name" : "Water",
             "value" : 97
         },
         "SC_WATER_BARRIER" : {
@@ -17278,6 +17281,7 @@
             "value" : 44
         },
         "SC_WEDDING" : {
+            "name" : "Wedding Outfit",
             "value" : 63
         },
         "SC_WEIGHT50" : {
@@ -17302,6 +17306,7 @@
             "value" : 121
         },
         "SC_WINDWEAPON" : {
+            "name" : "Wind",
             "value" : 98
         },
         "SC_WIND_CURTAIN" : {
