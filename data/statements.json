@@ -573,7 +573,14 @@
         "handler" : "set"
     },
     "sc_start" : {
-        "handler" : "ignore"
+        "handler" : "generic",
+        "argument_type" : [
+            "sc_start",
+            "ignore"
+        ],
+        "description" : "{0}",
+        "required" : 3,
+        "optional" : 3
     },
     "mercenary_sc_start" : {
         "handler" : "ignore"
