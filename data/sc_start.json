@@ -233,7 +233,7 @@
     },
     "SC_BLIND" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -242,7 +242,7 @@
     },
     "SC_STUN" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -251,7 +251,7 @@
     },
     "SC_BLEEDING" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -260,7 +260,7 @@
     },
     "SC_CURSE" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -269,7 +269,7 @@
     },
     "SC_FSTONE" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -278,7 +278,7 @@
     },
     "SC_FREEZE" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -287,7 +287,7 @@
     },
     "SC_SILENCE" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -296,7 +296,7 @@
     },
     "SC_POISON" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -305,7 +305,7 @@
     },
     "SC_CONFUSION" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -314,7 +314,7 @@
     },
     "SC_DPOISON" : {
         "argument_type" : [
-            "constant_name",
+            "string",
             "milliseconds",
             "integer",
             "percent100"
@@ -455,5 +455,14 @@
             "percent100"
         ],
         "description" : "Increase heal amount by {2} from all items and skills for {1}. (Sucess Rate: {3})"
+    },
+    "SC_XMAS" : {
+        "argument_type" : [
+            "string",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Wear {0} for {1}. (Sucess Rate: {3})"
     }
 }
