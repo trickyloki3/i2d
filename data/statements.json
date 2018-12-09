@@ -537,7 +537,7 @@
     "petrecovery" : {
         "handler" : "generic",
         "argument_type" : [
-            "sc_end",
+            "constant_name",
             "seconds"
         ],
         "description" : "Remove {0} every {1}.",
@@ -547,7 +547,7 @@
     "sc_end" : {
         "handler" : "generic",
         "argument_type" : [
-            "sc_end",
+            "constant_name",
             "ignore"
         ],
         "description" : "Remove {0}.",
