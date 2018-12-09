@@ -1,5 +1,10 @@
 {
     "SC_AGIFOOD" : {
-        
+        "argument_type" : [
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "{1} AGI for {0}. (Sucess Rate: {2})"
     }
 }
