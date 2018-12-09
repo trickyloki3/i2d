@@ -235,8 +235,9 @@
         "argument_order" : [
             0,
             1,
-            1,
-            2
+            2,
+            2,
+            3
         ],
         "description" : "Natural HP recovery {2} and increase heal amount by {3} received from any skill for {1}."
     },
@@ -879,6 +880,15 @@
         ],
         "description" : "ASPD {2} for {1}."
     },
+    "SC_BOOST500" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "ASPD {2} for {1}."
+    },
     "SC_FULL_SWING_K" : {
         "argument_type" : [
             "ignore",
@@ -887,6 +897,15 @@
             "percent100"
         ],
         "description" : "ATK {2} for {1}."
+    },
+    "SC_MANA_PLUS" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "MATK {2} for {1}."
     },
     "SC_PROMOTE_HEALTH_RESERCH" : {
         "argument_type" : [
@@ -959,5 +978,50 @@
             "percent100"
         ],
         "description" : "All Stats {2}, ATK +30, MATK +30 for {1}."
+    },
+    "SC_MYSTERIOUS_POWDER" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "Decrease Max HP by {2} for {1}."
+    },
+    "SC_BOSSMAPINFO" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Mark MVP location on minimap for {1}."
+    },
+    "SC_INTRAVISION" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Enables the user to detect any hidden enemies for {1}."
+    },
+    "SC_LIFEINSURANCE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Remove EXP death penalty for {1}."
+    },
+    "SC_COMMONSC_RESIST" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Add a {2} resistance against stone, freeze, stun, sleep, poison, curse, silence, confusion, blind, bleed, deathly poison for {1}."
     }
 }

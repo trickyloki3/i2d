@@ -5240,12 +5240,11 @@ static int i2d_handler_sc_start(i2d_script * script, i2d_rbt * variables, i2d_no
     if(i2d_node_get_constant(nodes[0], &effect_type)) {
         status = i2d_panic("failed to get effect type");
     } else if(i2d_data_map_get(script->sc_start, &effect_type, &data)) {
-        /* to-do: remove when sc_starts are added
         if(!nodes[0]->constant) {
             status = i2d_panic("failed to get effect by type -- %ld", effect_type);
         } else {
             status = i2d_panic("failed to get effect by type -- %ld (%s)", effect_type, nodes[0]->constant->macro.string);
-        }*/
+        }
     } else if(i2d_script_statement_evaluate(script, variables, &nodes[0], data, local->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
