@@ -576,7 +576,14 @@
         "handler" : "generic",
         "argument_type" : [
             "sc_start",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
             "ignore"
+        ],
+        "argument_default" : [
+            "10000"
         ],
         "description" : "{0}",
         "required" : 3,
