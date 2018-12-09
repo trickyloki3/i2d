@@ -230,5 +230,95 @@
             2
         ],
         "description" : "Natural HP recovery {2} and increase heal amount by {3} received from any skill for {1}. (Sucess Rate: {3})"
+    },
+    "SC_BLIND" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_STUN" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_BLEEDING" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_CURSE" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_FSTONE" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_FREEZE" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_SILENCE" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_POISON" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_CONFUSION" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_DPOISON" : {
+        "argument_type" : [
+            "constant_name",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
     }
 }
