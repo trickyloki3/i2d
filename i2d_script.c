@@ -5232,7 +5232,7 @@ static int i2d_handler_sc_start(i2d_script * script, i2d_rbt * variables, i2d_no
         } else {
             status = i2d_panic("failed to get effect by type -- %ld (%s)", effect_type, nodes[0]->constant->macro.string);
         }*/
-    } else if(i2d_script_statement_evaluate(script, variables, &nodes[1], data, local->buffer)) {
+    } else if(i2d_script_statement_evaluate(script, variables, &nodes[0], data, local->buffer)) {
         status = i2d_panic("failed to handle bonus arguments");
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
         status = i2d_panic("failed to push string on stack");

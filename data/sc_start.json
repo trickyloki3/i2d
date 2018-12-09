@@ -1,198 +1,223 @@
 {
     "SC_AGIFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "AGI {1} for {0}. (Sucess Rate: {2})"
+        "description" : "AGI {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_FOOD_AGI_CASH" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "AGI {1} for {0}. (Sucess Rate: {2})"
+        "description" : "AGI {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_HITFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "HIT {1} for {0}. (Sucess Rate: {2})"
+        "description" : "HIT {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_FLEEFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "FLEE {1} for {0}. (Sucess Rate: {2})"
+        "description" : "FLEE {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_INTFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "INT {1} for {0}. (Sucess Rate: {2})"
+        "description" : "INT {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_FOOD_INT_CASH" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "INT {1} for {0}. (Sucess Rate: {2})"
+        "description" : "INT {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_CRIFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "Critical {1} for {0}. (Sucess Rate: {2})"
+        "description" : "Critical {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_MATKFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "MATK {1} for {0}. (Sucess Rate: {2})"
+        "description" : "MATK {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_MATKPOTION" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "MATK {1} for {0}. (Sucess Rate: {2})"
+        "description" : "MATK {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_BATKFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "ATK {1} for {0}. (Sucess Rate: {2})"
+        "description" : "ATK {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_ATKPOTION" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "ATK {1} for {0}. (Sucess Rate: {2})"
+        "description" : "ATK {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_VITFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "VIT {1} for {0}. (Sucess Rate: {2})"
+        "description" : "VIT {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_FOOD_VIT_CASH" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "VIT {1} for {0}. (Sucess Rate: {2})"
+        "description" : "VIT {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_STRFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "STR {1} for {0}. (Sucess Rate: {2})"
+        "description" : "STR {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_FOOD_STR_CASH" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "STR {1} for {0}. (Sucess Rate: {2})"
+        "description" : "STR {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_LUKFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "LUK {1} for {0}. (Sucess Rate: {2})"
+        "description" : "LUK {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_FOOD_LUK_CASH" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "LUK {1} for {0}. (Sucess Rate: {2})"
+        "description" : "LUK {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_DEXFOOD" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "DEX {1} for {0}. (Sucess Rate: {2})"
+        "description" : "DEX {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_FOOD_DEX_CASH" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "DEX {1} for {0}. (Sucess Rate: {2})"
+        "description" : "DEX {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_ASPDPOTION0" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "ASPD {1} for {0}. (Sucess Rate: {2})"
+        "description" : "ASPD {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_ASPDPOTION1" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "ASPD {1} for {0}. (Sucess Rate: {2})"
+        "description" : "ASPD {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_ASPDPOTION2" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "ASPD {1} for {0}. (Sucess Rate: {2})"
+        "description" : "ASPD {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_ASPDPOTION3" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer_sign",
             "percent100"
         ],
-        "description" : "ASPD {1} for {0}. (Sucess Rate: {2})"
+        "description" : "ASPD {2} for {1}. (Sucess Rate: {3})"
     },
     "SC_WINDWALK" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "integer",
             "percent100"
         ],
-        "description" : "Cast Level {1} Wind Walk for {0}. (Sucess Rate: {2})"
+        "description" : "Cast Level {2} Wind Walk for {1}. (Sucess Rate: {3})"
     },
     "SC_EXTRACT_WHITE_POTION_Z" : {
         "argument_type" : [
+            "ignore",
             "milliseconds",
             "percent_sign",
             "percent",
@@ -204,6 +229,6 @@
             1,
             2
         ],
-        "description" : "Natural HP recovery {1} and increase heal amount by {2} received from any skill for {0}. (Sucess Rate: {3})"
+        "description" : "Natural HP recovery {2} and increase heal amount by {3} received from any skill for {1}. (Sucess Rate: {3})"
     }
 }
