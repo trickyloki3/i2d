@@ -28,6 +28,7 @@ struct i2d_json {
     json_t * bonus3;
     json_t * bonus4;
     json_t * bonus5;
+    json_t * sc_start_file;
     json_t * sc_start;
     json_t * data_file;
     json_t * ammo_type;

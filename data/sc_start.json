@@ -1,1027 +1,1029 @@
 {
-    "SC_AGIFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "AGI {2} for {1}."
-    },
-    "SC_FOOD_AGI_CASH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "AGI {2} for {1}."
-    },
-    "SC_HITFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "HIT {2} for {1}."
-    },
-    "SC_FLEEFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "FLEE {2} for {1}."
-    },
-    "SC_INTFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "INT {2} for {1}."
-    },
-    "SC_FOOD_INT_CASH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "INT {2} for {1}."
-    },
-    "SC_CRIFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "Critical {2} for {1}."
-    },
-    "SC_MATKFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "MATK {2} for {1}."
-    },
-    "SC_MATKPOTION" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "MATK {2} for {1}."
-    },
-    "SC_BATKFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ATK {2} for {1}."
-    },
-    "SC_ATKPOTION" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ATK {2} for {1}."
-    },
-    "SC_VITFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "VIT {2} for {1}."
-    },
-    "SC_FOOD_VIT_CASH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "VIT {2} for {1}."
-    },
-    "SC_STRFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "STR {2} for {1}."
-    },
-    "SC_FOOD_STR_CASH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "STR {2} for {1}."
-    },
-    "SC_LUKFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "LUK {2} for {1}."
-    },
-    "SC_FOOD_LUK_CASH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "LUK {2} for {1}."
-    },
-    "SC_DEXFOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "DEX {2} for {1}."
-    },
-    "SC_FOOD_DEX_CASH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "DEX {2} for {1}."
-    },
-    "SC_ASPDPOTION0" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ASPD {2} for {1}."
-    },
-    "SC_ASPDPOTION1" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ASPD {2} for {1}."
-    },
-    "SC_ASPDPOTION2" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ASPD {2} for {1}."
-    },
-    "SC_ASPDPOTION3" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ASPD {2} for {1}."
-    },
-    "SC_ATTHASTE_CASH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ASPD {2} for {1}."
-    },
-    "SC_WINDWALK" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Wind Walk for {1}."
-    },
-    "SC_EXTRACT_WHITE_POTION_Z" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent_sign",
-            "percent",
-            "percent100"
-        ],
-        "argument_order" : [
-            0,
-            1,
-            2,
-            2,
-            3
-        ],
-        "description" : "Natural HP recovery {2} and increase heal amount by {3} received from any skill for {1}."
-    },
-    "SC_BLIND" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_STUN" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_BLEEDING" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_CURSE" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_FSTONE" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_FREEZE" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_SILENCE" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_POISON" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_CONFUSION" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_DPOISON" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Inflict {0} for {1}. (Success Rate: {3})"
-    },
-    "SC_SPEEDUP0" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent_sign",
-            "percent100"
-        ],
-        "description" : "Walking Speed {2} for {1}."
-    },
-    "SC_SPEEDUP1" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent_sign",
-            "percent100"
-        ],
-        "description" : "Walking Speed {2} for {1}."
-    },
-    "SC_SLOWDOWN" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Walking Speed decrease by {2} for {1}."
-    },
-    "SC_INCAGI" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "AGI {2} for {1}."
-    },
-    "SC_INCINT" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "INT {2} for {1}."
-    },
-    "SC_INCSTR" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "STR {2} for {1}."
-    },
-    "SC_INCDEX" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "DEX {2} for {1}."
-    },
-    "SC_INCVIT" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "VIT {2} for {1}."
-    },
-    "SC_INCLUK" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "LUK {2} for {1}."
-    },
-    "SC_INCFLEE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "FLEE {2} for {1}."
-    },
-    "SC_INCFLEE2" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "Perfect Dodge {2} for {1}."
-    },
-    "SC_INCCRI" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "Critical {2} for {1}."
-    },
-    "SC_INCALLSTATUS" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "All Stats {2} for {1}."
-    },
-    "SC_INCATKRATE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent_sign",
-            "percent100"
-        ],
-        "description" : "ATK {2} for {1}."
-    },
-    "SC_INCMATKRATE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent_sign",
-            "percent100"
-        ],
-        "description" : "MATK {2} for {1}."
-    },
-    "SC_INCHEALRATE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase heal amount by {2} from all items and skills for {1}."
-    },
-    "SC_XMAS" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0} for {1}."
-    },
-    "SC_WEDDING" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0} for {1}."
-    },
-    "SC_SUMMER" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0} for {1}."
-    },
-    "SC_DRESSUP" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0} for {1}."
-    },
-    "SC_OKTOBERFEST" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0} for {1}."
-    },
-    "SC_WATERWEAPON" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Enchanted weapon with {0} property for {1}."
-    },
-    "SC_WINDWEAPON" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Enchanted weapon with {0} property for {1}."
-    },
-    "SC_MOONSTAR" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_SUPER_STAR" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_STRANGELIGHTS" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_DECORATION_OF_MUSIC" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_LJOSALFAR" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_MERMAID_LONGING" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_HAT_EFFECT" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_MAPLE_FALLS" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_TIME_ACCESSORY" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_FSTONE" : {
-        "argument_type" : [
-            "string",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Wear {0}."
-    },
-    "SC_ASPERSIO" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Aspersio for {1}."
-    },
-    "SC_ADRENALINE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Adrenaline for {1}."
-    },
-    "SC_ENDURE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Endure for {1}."
-    },
-    "SC_ANCILLA" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Ancilla for {1}."
-    },
-    "SC_ASSUMPTIO" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Assumptio for {1}."
-    },
-    "SC_BLESSING" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Blessing for {1}."
-    },
-    "SC_INCREASEAGI" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Increase AGI for {1}."
-    },
-    "SC_BENEDICTIO" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "Cast Level {2} Benedictio for {1}."
-    },
-    "SC_EXPBOOST" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase experience gained by {2} for {1}."
-    },
-    "SC_JEXPBOOST" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase job experience gained by {2} for {1}."
-    },
-    "SC_ITEMBOOST" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase item drop rate by {2} for {1}."
-    },
-    "SC_MANU_ATK" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase damage by {2} against manuk enemies for {1}."
-    },
-    "SC_MANU_DEF" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Reduce damage by {2} from manuk enemies for {1}."
-    },
-    "SC_MANU_MATK" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase damage by {2} against manuk enemies for {1}."
-    },
-    "SC_SPL_ATK" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase damage by {2} against splendide enemies for {1}."
-    },
-    "SC_SPL_DEF" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Reduce damage by {2} from splendide enemies for {1}."
-    },
-    "SC_SPL_MATK" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase damage by {2} against splendide enemies for {1}."
-    },
-    "SC_DEF_RATE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Reduce physical damage by {2} for {1}."
-    },
-    "SC_MDEF_RATE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Reduce magical damage by {2} for {1}."
-    },
-    "SC_SPCOST_RATE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Reduce SP consumption by {2} for {1}."
-    },
-    "SC_SIROMA_ICE_TEA" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "DEX {2} for {1}."
-    },
-    "SC_DROCERA_HERB_STEAMED" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "AGI {2} for {1}."
-    },
-    "SC_SAVAGE_STEAK" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "STR {2} for {1}."
-    },
-    "SC_PUTTI_TAILS_NOODLES" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "LUK {2} for {1}."
-    },
-    "SC_COCKTAIL_WARG_BLOOD" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "INT {2} for {1}."
-    },
-    "SC_MINOR_BBQ" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "VIT {2} for {1}."
-    },
-    "SC_STOMACHACHE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer",
-            "percent100"
-        ],
-        "description" : "All Stats decreased by {2} for {1}."
-    },
-    "SC_EXTRACT_SALAMINE_JUICE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ASPD {2} for {1}."
-    },
-    "SC_BOOST500" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ASPD {2} for {1}."
-    },
-    "SC_FULL_SWING_K" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "ATK {2} for {1}."
-    },
-    "SC_MANA_PLUS" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "MATK {2} for {1}."
-    },
-    "SC_PROMOTE_HEALTH_RESERCH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Increase Max HP for {1}."
-    },
-    "SC_ENERGY_DRINK_RESERCH" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Increase Max SP for {1}."
-    },
-    "SC_LIFE_FORCE_F" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase Max SP by {2} for {1}."
-    },
-    "SC_MUSTLE_M" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Increase Max HP by {2} for {1}."
-    },
-    "SC_JP_EVENT04" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "(Unimplemented) Increase experience gained by {2} when killing fish enemies for {1}."
-    },
-    "SC_DORAM_BUF_01" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Heal 10 HP every 10 seconds."
-    },
-    "SC_DORAM_BUF_02" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Heal 5 SP every 10 seconds."
-    },
-    "SC_2011RWC_SCROLL" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "All Stats {2}, ATK +30, MATK +30 for {1}."
-    },
-    "SC_MYSTERIOUS_POWDER" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "integer_sign",
-            "percent100"
-        ],
-        "description" : "Decrease Max HP by {2} for {1}."
-    },
-    "SC_BOSSMAPINFO" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Mark MVP location on minimap for {1}."
-    },
-    "SC_INTRAVISION" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Enables the user to detect any hidden enemies for {1}."
-    },
-    "SC_LIFEINSURANCE" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "ignore",
-            "percent100"
-        ],
-        "description" : "Remove EXP death penalty for {1}."
-    },
-    "SC_COMMONSC_RESIST" : {
-        "argument_type" : [
-            "ignore",
-            "milliseconds",
-            "percent",
-            "percent100"
-        ],
-        "description" : "Add a {2} resistance against stone, freeze, stun, sleep, poison, curse, silence, confusion, blind, bleed, deathly poison for {1}."
+    "sc_start" : {
+        "SC_AGIFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "AGI {2} for {1}."
+        },
+        "SC_FOOD_AGI_CASH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "AGI {2} for {1}."
+        },
+        "SC_HITFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "HIT {2} for {1}."
+        },
+        "SC_FLEEFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "FLEE {2} for {1}."
+        },
+        "SC_INTFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "INT {2} for {1}."
+        },
+        "SC_FOOD_INT_CASH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "INT {2} for {1}."
+        },
+        "SC_CRIFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "Critical {2} for {1}."
+        },
+        "SC_MATKFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "MATK {2} for {1}."
+        },
+        "SC_MATKPOTION" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "MATK {2} for {1}."
+        },
+        "SC_BATKFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ATK {2} for {1}."
+        },
+        "SC_ATKPOTION" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ATK {2} for {1}."
+        },
+        "SC_VITFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "VIT {2} for {1}."
+        },
+        "SC_FOOD_VIT_CASH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "VIT {2} for {1}."
+        },
+        "SC_STRFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "STR {2} for {1}."
+        },
+        "SC_FOOD_STR_CASH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "STR {2} for {1}."
+        },
+        "SC_LUKFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "LUK {2} for {1}."
+        },
+        "SC_FOOD_LUK_CASH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "LUK {2} for {1}."
+        },
+        "SC_DEXFOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "DEX {2} for {1}."
+        },
+        "SC_FOOD_DEX_CASH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "DEX {2} for {1}."
+        },
+        "SC_ASPDPOTION0" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ASPD {2} for {1}."
+        },
+        "SC_ASPDPOTION1" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ASPD {2} for {1}."
+        },
+        "SC_ASPDPOTION2" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ASPD {2} for {1}."
+        },
+        "SC_ASPDPOTION3" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ASPD {2} for {1}."
+        },
+        "SC_ATTHASTE_CASH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ASPD {2} for {1}."
+        },
+        "SC_WINDWALK" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Wind Walk for {1}."
+        },
+        "SC_EXTRACT_WHITE_POTION_Z" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent_sign",
+                "percent",
+                "percent100"
+            ],
+            "argument_order" : [
+                0,
+                1,
+                2,
+                2,
+                3
+            ],
+            "description" : "Natural HP recovery {2} and increase heal amount by {3} received from any skill for {1}."
+        },
+        "SC_BLIND" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_STUN" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_BLEEDING" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_CURSE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_FSTONE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_FREEZE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_SILENCE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_POISON" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_CONFUSION" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_DPOISON" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Inflict {0} for {1}. (Success Rate: {3})"
+        },
+        "SC_SPEEDUP0" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Walking Speed {2} for {1}."
+        },
+        "SC_SPEEDUP1" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Walking Speed {2} for {1}."
+        },
+        "SC_SLOWDOWN" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Walking Speed decrease by {2} for {1}."
+        },
+        "SC_INCAGI" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "AGI {2} for {1}."
+        },
+        "SC_INCINT" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "INT {2} for {1}."
+        },
+        "SC_INCSTR" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "STR {2} for {1}."
+        },
+        "SC_INCDEX" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "DEX {2} for {1}."
+        },
+        "SC_INCVIT" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "VIT {2} for {1}."
+        },
+        "SC_INCLUK" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "LUK {2} for {1}."
+        },
+        "SC_INCFLEE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "FLEE {2} for {1}."
+        },
+        "SC_INCFLEE2" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "Perfect Dodge {2} for {1}."
+        },
+        "SC_INCCRI" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "Critical {2} for {1}."
+        },
+        "SC_INCALLSTATUS" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "All Stats {2} for {1}."
+        },
+        "SC_INCATKRATE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "ATK {2} for {1}."
+        },
+        "SC_INCMATKRATE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "MATK {2} for {1}."
+        },
+        "SC_INCHEALRATE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase heal amount by {2} from all items and skills for {1}."
+        },
+        "SC_XMAS" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0} for {1}."
+        },
+        "SC_WEDDING" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0} for {1}."
+        },
+        "SC_SUMMER" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0} for {1}."
+        },
+        "SC_DRESSUP" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0} for {1}."
+        },
+        "SC_OKTOBERFEST" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0} for {1}."
+        },
+        "SC_WATERWEAPON" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Enchanted weapon with {0} property for {1}."
+        },
+        "SC_WINDWEAPON" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Enchanted weapon with {0} property for {1}."
+        },
+        "SC_MOONSTAR" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_SUPER_STAR" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_STRANGELIGHTS" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_DECORATION_OF_MUSIC" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_LJOSALFAR" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_MERMAID_LONGING" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_HAT_EFFECT" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_MAPLE_FALLS" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_TIME_ACCESSORY" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_FSTONE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Wear {0}."
+        },
+        "SC_ASPERSIO" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Aspersio for {1}."
+        },
+        "SC_ADRENALINE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Adrenaline for {1}."
+        },
+        "SC_ENDURE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Endure for {1}."
+        },
+        "SC_ANCILLA" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Ancilla for {1}."
+        },
+        "SC_ASSUMPTIO" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Assumptio for {1}."
+        },
+        "SC_BLESSING" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Blessing for {1}."
+        },
+        "SC_INCREASEAGI" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Increase AGI for {1}."
+        },
+        "SC_BENEDICTIO" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Cast Level {2} Benedictio for {1}."
+        },
+        "SC_EXPBOOST" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase experience gained by {2} for {1}."
+        },
+        "SC_JEXPBOOST" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase job experience gained by {2} for {1}."
+        },
+        "SC_ITEMBOOST" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase item drop rate by {2} for {1}."
+        },
+        "SC_MANU_ATK" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase damage by {2} against manuk enemies for {1}."
+        },
+        "SC_MANU_DEF" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Reduce damage by {2} from manuk enemies for {1}."
+        },
+        "SC_MANU_MATK" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase damage by {2} against manuk enemies for {1}."
+        },
+        "SC_SPL_ATK" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase damage by {2} against splendide enemies for {1}."
+        },
+        "SC_SPL_DEF" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Reduce damage by {2} from splendide enemies for {1}."
+        },
+        "SC_SPL_MATK" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase damage by {2} against splendide enemies for {1}."
+        },
+        "SC_DEF_RATE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Reduce physical damage by {2} for {1}."
+        },
+        "SC_MDEF_RATE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Reduce magical damage by {2} for {1}."
+        },
+        "SC_SPCOST_RATE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Reduce SP consumption by {2} for {1}."
+        },
+        "SC_SIROMA_ICE_TEA" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "DEX {2} for {1}."
+        },
+        "SC_DROCERA_HERB_STEAMED" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "AGI {2} for {1}."
+        },
+        "SC_SAVAGE_STEAK" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "STR {2} for {1}."
+        },
+        "SC_PUTTI_TAILS_NOODLES" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "LUK {2} for {1}."
+        },
+        "SC_COCKTAIL_WARG_BLOOD" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "INT {2} for {1}."
+        },
+        "SC_MINOR_BBQ" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "VIT {2} for {1}."
+        },
+        "SC_STOMACHACHE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer",
+                "percent100"
+            ],
+            "description" : "All Stats decreased by {2} for {1}."
+        },
+        "SC_EXTRACT_SALAMINE_JUICE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ASPD {2} for {1}."
+        },
+        "SC_BOOST500" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ASPD {2} for {1}."
+        },
+        "SC_FULL_SWING_K" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "ATK {2} for {1}."
+        },
+        "SC_MANA_PLUS" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "MATK {2} for {1}."
+        },
+        "SC_PROMOTE_HEALTH_RESERCH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Increase Max HP for {1}."
+        },
+        "SC_ENERGY_DRINK_RESERCH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Increase Max SP for {1}."
+        },
+        "SC_LIFE_FORCE_F" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase Max SP by {2} for {1}."
+        },
+        "SC_MUSTLE_M" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase Max HP by {2} for {1}."
+        },
+        "SC_JP_EVENT04" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "(Unimplemented) Increase experience gained by {2} when killing fish enemies for {1}."
+        },
+        "SC_DORAM_BUF_01" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Heal 10 HP every 10 seconds."
+        },
+        "SC_DORAM_BUF_02" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Heal 5 SP every 10 seconds."
+        },
+        "SC_2011RWC_SCROLL" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "All Stats {2}, ATK +30, MATK +30 for {1}."
+        },
+        "SC_MYSTERIOUS_POWDER" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "integer_sign",
+                "percent100"
+            ],
+            "description" : "Decrease Max HP by {2} for {1}."
+        },
+        "SC_BOSSMAPINFO" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Mark MVP location on minimap for {1}."
+        },
+        "SC_INTRAVISION" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Enables the user to detect any hidden enemies for {1}."
+        },
+        "SC_LIFEINSURANCE" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Remove EXP death penalty for {1}."
+        },
+        "SC_COMMONSC_RESIST" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Add a {2} resistance against stone, freeze, stun, sleep, poison, curse, silence, confusion, blind, bleed, deathly poison for {1}."
+        }
     }
 }
