@@ -3302,7 +3302,9 @@
         },
         "BaseClass" : {
             "name" : "Base Class",
-            "value" : 120
+            "value" : 120,
+            "min" : 0,
+            "max" : 2147483647
         },
         "BaseExp" : {
             "name" : "Base Experience",
@@ -3310,7 +3312,9 @@
         },
         "BaseJob" : {
             "name" : "Base Job",
-            "value" : 119
+            "value" : 119,
+            "min" : 0,
+            "max" : 2147483647
         },
         "BaseLevel" : {
             "max" : 150,
