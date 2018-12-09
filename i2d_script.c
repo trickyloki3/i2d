@@ -2634,12 +2634,26 @@ int i2d_script_generate_and(i2d_script * script, i2d_logic * logic, i2d_buffer *
 
 int i2d_script_generate_var(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
     int status = I2D_OK;
-    long min;
-    long max;
+    i2d_range_node * walk;
 
-    i2d_range_get_range(&logic->range, &min, &max);
-    if(i2d_buffer_printf(buffer, "%s is %ld - %ld", logic->name.string, min, max))
+    if(i2d_buffer_printf(buffer, "%s is ", logic->name.string))
         status = i2d_panic("failed to write buffer object");
+    if(logic->range.list) {
+        walk = logic->range.list;
+        do {
+            if(walk != logic->range.list)
+                if(i2d_buffer_printf(buffer, ", "))
+                    status = i2d_panic("failed to write buffer object");
+            if(walk->min == walk->max) {
+                if(i2d_buffer_printf(buffer, "%ld", walk->min))
+                    status = i2d_panic("failed to write buffer object");
+            } else {
+                if(i2d_buffer_printf(buffer, "%ld - %ld", walk->min, walk->max))
+                    status = i2d_panic("failed to write buffer object");
+            }
+            walk = walk->next;
+        } while(walk != logic->range.list);
+    }
 
     return status;
 }
