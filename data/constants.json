@@ -3483,7 +3483,9 @@
         },
         "Class" : {
             "name" : "Class",
-            "value" : 19
+            "value" : 19,
+            "min" : 0,
+            "max" : 2147483647
         },
         "DECEMBER" : {
             "value" : 12
