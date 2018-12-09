@@ -280,7 +280,7 @@
             "argument_type" : [
                 "percent"
             ],
-            "description" : "Increase heal amount by {0} of all heal skills."
+            "description" : "Increase heal amount by {0} of all skills."
         },
         "bHealPower2" : {
             "argument_type" : [

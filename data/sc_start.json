@@ -320,5 +320,140 @@
             "percent100"
         ],
         "description" : "Inflict {0} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_SPEEDUP0" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent_sign",
+            "percent100"
+        ],
+        "description" : "Walking Speed {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_SPEEDUP1" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent_sign",
+            "percent100"
+        ],
+        "description" : "Walking Speed {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCAGI" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "AGI {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCINT" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "INT {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCSTR" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "STR {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCDEX" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "DEX {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCVIT" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "VIT {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCLUK" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "LUK {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCFLEE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "FLEE {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCFLEE2" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "Perfect Dodge {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCCRI" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "Critical {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCALLSTATUS" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "All Stats {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCATKRATE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent_sign",
+            "percent100"
+        ],
+        "description" : "ATK {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCMATKRATE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent_sign",
+            "percent100"
+        ],
+        "description" : "MATK {2} for {1}. (Sucess Rate: {3})"
+    },
+    "SC_INCHEALRATE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase heal amount by {2} from all items and skills for {1}. (Sucess Rate: {3})"
     }
 }
