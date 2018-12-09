@@ -166,6 +166,7 @@ static int i2d_handler_bonus3(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *)
 static int i2d_handler_bonus4(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_bonus5(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_sc_start(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_sc_start2(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 
 i2d_handler argument_handlers[] = {
     { "milliseconds", single_node, {i2d_handler_milliseconds} },
@@ -216,7 +217,8 @@ i2d_handler argument_handlers[] = {
     { "bonus3", multiple_node, {i2d_handler_bonus3} },
     { "bonus4", multiple_node, {i2d_handler_bonus4} },
     { "bonus5", multiple_node, {i2d_handler_bonus5} },
-    { "sc_start", multiple_node, {i2d_handler_sc_start} }
+    { "sc_start", multiple_node, {i2d_handler_sc_start} },
+    { "sc_start2", multiple_node, {i2d_handler_sc_start2} }
 };
 
 i2d_handler statement_handlers[] = {
@@ -5250,6 +5252,12 @@ static int i2d_handler_sc_start(i2d_script * script, i2d_rbt * variables, i2d_no
     } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
         status = i2d_panic("failed to push string on stack");
     }
+
+    return status;
+}
+
+static int i2d_handler_sc_start2(i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+    int status = I2D_OK;
 
     return status;
 }
