@@ -206,6 +206,15 @@
         ],
         "description" : "ASPD {2} for {1}."
     },
+    "SC_ATTHASTE_CASH" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "ASPD {2} for {1}."
+    },
     "SC_WINDWALK" : {
         "argument_type" : [
             "ignore",
@@ -338,6 +347,15 @@
             "percent100"
         ],
         "description" : "Walking Speed {2} for {1}."
+    },
+    "SC_SLOWDOWN" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Walking Speed decrease by {2} for {1}."
     },
     "SC_INCAGI" : {
         "argument_type" : [
@@ -680,5 +698,266 @@
             "percent100"
         ],
         "description" : "Cast Level {2} Benedictio for {1}."
+    },
+    "SC_EXPBOOST" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase experience gained by {2} for {1}."
+    },
+    "SC_JEXPBOOST" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase job experience gained by {2} for {1}."
+    },
+    "SC_ITEMBOOST" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase item drop rate by {2} for {1}."
+    },
+    "SC_MANU_ATK" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase damage by {2} against manuk enemies for {1}."
+    },
+    "SC_MANU_DEF" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Reduce damage by {2} from manuk enemies for {1}."
+    },
+    "SC_MANU_MATK" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase damage by {2} against manuk enemies for {1}."
+    },
+    "SC_SPL_ATK" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase damage by {2} against splendide enemies for {1}."
+    },
+    "SC_SPL_DEF" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Reduce damage by {2} from splendide enemies for {1}."
+    },
+    "SC_SPL_MATK" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase damage by {2} against splendide enemies for {1}."
+    },
+    "SC_DEF_RATE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Reduce physical damage by {2} for {1}."
+    },
+    "SC_MDEF_RATE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Reduce magical damage by {2} for {1}."
+    },
+    "SC_SPCOST_RATE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Reduce SP consumption by {2} for {1}."
+    },
+    "SC_SIROMA_ICE_TEA" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "DEX {2} for {1}."
+    },
+    "SC_DROCERA_HERB_STEAMED" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "AGI {2} for {1}."
+    },
+    "SC_SAVAGE_STEAK" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "STR {2} for {1}."
+    },
+    "SC_PUTTI_TAILS_NOODLES" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "LUK {2} for {1}."
+    },
+    "SC_COCKTAIL_WARG_BLOOD" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "INT {2} for {1}."
+    },
+    "SC_MINOR_BBQ" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "VIT {2} for {1}."
+    },
+    "SC_STOMACHACHE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer",
+            "percent100"
+        ],
+        "description" : "All Stats decreased by {2} for {1}."
+    },
+    "SC_EXTRACT_SALAMINE_JUICE" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "ASPD {2} for {1}."
+    },
+    "SC_FULL_SWING_K" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "ATK {2} for {1}."
+    },
+    "SC_PROMOTE_HEALTH_RESERCH" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Increase Max HP for {1}."
+    },
+    "SC_ENERGY_DRINK_RESERCH" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Increase Max SP for {1}."
+    },
+    "SC_LIFE_FORCE_F" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase Max SP by {2} for {1}."
+    },
+    "SC_MUSTLE_M" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "Increase Max HP by {2} for {1}."
+    },
+    "SC_JP_EVENT04" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "percent",
+            "percent100"
+        ],
+        "description" : "(Unimplemented) Increase experience gained by {2} when killing fish enemies for {1}."
+    },
+    "SC_DORAM_BUF_01" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Heal 10 HP every 10 seconds."
+    },
+    "SC_DORAM_BUF_02" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "ignore",
+            "percent100"
+        ],
+        "description" : "Heal 5 SP every 10 seconds."
+    },
+    "SC_2011RWC_SCROLL" : {
+        "argument_type" : [
+            "ignore",
+            "milliseconds",
+            "integer_sign",
+            "percent100"
+        ],
+        "description" : "All Stats {2}, ATK +30, MATK +30 for {1}."
     }
 }
