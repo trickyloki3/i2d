@@ -81,7 +81,7 @@
             "0",
             "\"{}\""
         ],
-        "description" : "Add {1} chance to activate bonus for {2} when using {3} and dealing {4} damage.\n{0}",
+        "description" : "Add a {1} chance to activate bonus for {2} when using {3} and dealing {4} damage.\n{0}",
         "required" : 3,
         "optional" : 2
     },
@@ -107,7 +107,7 @@
             "0",
             "\"{}\""
         ],
-        "description" : "Add {1} chance to activate bonus for {2} when receiving {4} damage from {3}.\n{0}",
+        "description" : "Add a {1} chance to activate bonus for {2} when receiving {4} damage from {3}.\n{0}",
         "required" : 3,
         "optional" : 2
     },
@@ -123,7 +123,7 @@
         "argument_default" : [
             "\"{}\""
         ],
-        "description" : "Add {1} chance to activate bonus for {2} when using {3}.\n{0}",
+        "description" : "Add a {1} chance to activate bonus for {2} when using {3}.\n{0}",
         "required" : 4,
         "optional" : 1
     },
@@ -530,7 +530,7 @@
             "seconds",
             "seconds"
         ],
-        "description" : "[Bonus lasting {2} for every {3}]\n{0}",
+        "description" : "Pet will grant a bonus every {3} with a duration of {2}: {0}",
         "required" : 4,
         "optional" : 0
     },

@@ -34,13 +34,13 @@
             "argument_type" : [
                 "integer_sign"
             ],
-            "description" : "STR {0}\nAGI {0}\nDEX {0}"
+            "description" : "STR {0}, AGI {0}, DEX {0}"
         },
         "bAgiVit" : {
             "argument_type" : [
                 "integer_sign"
             ],
-            "description" : "AGI {0}\nVIT {0}"
+            "description" : "AGI {0}, VIT {0}"
         },
         "bAllStats" : {
             "argument_type" : [
