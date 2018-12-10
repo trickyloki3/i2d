@@ -357,7 +357,7 @@
                 "percent",
                 "percent100"
             ],
-            "description" : "Walking Speed decrease by {2} for {1}."
+            "description" : "Walking Speed -{2} for {1}."
         },
         "SC_INCAGI" : {
             "argument_type" : [
@@ -930,19 +930,19 @@
             "argument_type" : [
                 "ignore",
                 "milliseconds",
-                "percent",
+                "percent_sign",
                 "percent100"
             ],
-            "description" : "Increase Max SP by {2} for {1}."
+            "description" : "Max SP {2} for {1}."
         },
         "SC_MUSTLE_M" : {
             "argument_type" : [
                 "ignore",
                 "milliseconds",
-                "percent",
+                "percent_sign",
                 "percent100"
             ],
-            "description" : "Increase Max HP by {2} for {1}."
+            "description" : "Max HP {2} for {1}."
         },
         "SC_JP_EVENT04" : {
             "argument_type" : [
@@ -984,10 +984,10 @@
             "argument_type" : [
                 "ignore",
                 "milliseconds",
-                "integer_sign",
+                "percent",
                 "percent100"
             ],
-            "description" : "Decrease Max HP by {2} for {1}."
+            "description" : "Max HP -{2} for {1}."
         },
         "SC_BOSSMAPINFO" : {
             "argument_type" : [
@@ -1046,6 +1046,16 @@
                 "percent100"
             ],
             "description" : "Increase Max SP for {1}."
+        },
+        "SC_VITATA_500" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "percent_sign",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Natural SP recovery {2} and Max SP {3} for {1}."
         }
     }
 }
