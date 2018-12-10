@@ -1182,6 +1182,117 @@
                 "percent100"
             ],
             "description" : "Recover {2} of Max HP every {3} for {1}."
+        },
+        "SC_ELEMENTALCHANGE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "elements",
+                "ignore",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Enchanted armor with Level {2} {3} property for {1}."
+        },
+        "SC_GVG_GIANT" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Increase damage by {5} and skill damage by {4} against players for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_GVG_GOLEM" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent",
+                "percent",
+                "percent100"
+            ],
+            "description" : "Decrease physical damage by {4} and magical damage by {5} from players for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_ENDURE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Permanent Level {2} Endure."
+        },
+        "SC_ARMOR_RESIST" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+        },
+        "SC_ARMOR_ELEMENT_FIRE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+        }
+        ,
+        "SC_ARMOR_ELEMENT_WATER" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+        }
+        ,
+        "SC_ARMOR_ELEMENT_WIND" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+        }
+        ,
+        "SC_ARMOR_ELEMENT_EARTH" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent_sign",
+                "percent100"
+            ],
+            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
         }
     }
 }
