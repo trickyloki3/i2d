@@ -16056,12 +16056,15 @@
             "value" : 493
         },
         "SC_GVG_BLIND" : {
+            "name" : "Blind",
             "value" : 657
         },
         "SC_GVG_CURSE" : {
+            "name" : "Curse",
             "value" : 655
         },
         "SC_GVG_FREEZ" : {
+            "name" : "Freeze",
             "value" : 653
         },
         "SC_GVG_GIANT" : {
@@ -16071,15 +16074,19 @@
             "value" : 650
         },
         "SC_GVG_SILENCE" : {
+            "name" : "Silence",
             "value" : 656
         },
         "SC_GVG_SLEEP" : {
+            "name" : "Sleep",
             "value" : 654
         },
         "SC_GVG_STONE" : {
+            "name" : "Stone",
             "value" : 652
         },
         "SC_GVG_STUN" : {
+            "name" : "Stun",
             "value" : 651
         },
         "SC_HALLUCINATION" : {

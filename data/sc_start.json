@@ -1056,6 +1056,76 @@
                 "percent100"
             ],
             "description" : "Natural SP recovery {2} and Max SP {3} for {1}."
+        },
+        "SC_GVG_SLEEP" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_GVG_CURSE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_GVG_BLIND" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_GVG_SILENCE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_GVG_FREEZ" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_GVG_STUN" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_GVG_STONE" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "integer",
+                "integer",
+                "percent100"
+            ],
+            "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
         }
     }
 }
