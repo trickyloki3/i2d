@@ -1146,6 +1146,16 @@
                 "percent100"
             ],
             "description" : "Recover {2} of Max HP every {3} for {1}."
+        },
+        "SC_ITEMSCRIPT" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "item",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Item script of {2} for {1}."
         }
     }
 }
