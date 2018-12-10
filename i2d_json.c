@@ -257,6 +257,7 @@ static int i2d_json_load_sc_start(i2d_json * json, i2d_string * directory) {
         } else {
             json->sc_start = json_object_get(json->sc_start_file, "sc_start");
             json->sc_start2 = json_object_get(json->sc_start_file, "sc_start2");
+            json->sc_start4 = json_object_get(json->sc_start_file, "sc_start4");
         }
         i2d_string_destroy(&path);
     }

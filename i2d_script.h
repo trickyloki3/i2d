@@ -278,6 +278,7 @@ struct i2d_script {
     i2d_data_map * bonus5;
     i2d_data_map * sc_start;
     i2d_data_map * sc_start2;
+    i2d_data_map * sc_start4;
     i2d_data_map * functions;
     i2d_data_map * arguments;
     i2d_data_map * statements;

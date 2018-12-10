@@ -618,7 +618,24 @@
         "optional" : 3
     },
     "sc_start4" : {
-        "handler" : "ignore"
+        "handler" : "generic",
+        "argument_type" : [
+            "sc_start4",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore",
+            "ignore"
+        ],
+        "argument_default" : [
+            "10000"
+        ],
+        "description" : "{0}",
+        "required" : 6,
+        "optional" : 3
     },
     "hateffect" : {
         "handler" : "ignore"
