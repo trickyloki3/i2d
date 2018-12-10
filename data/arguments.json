@@ -121,7 +121,7 @@
         "argument_type" : [
             "pet_loyal_script"
         ],
-        "description" : "[Loyal Script]\n{0}",
+        "description" : "[Loyal Pet Script]\n{0}",
         "empty_description_on_empty_string" : true
     },
     "heal_prefix" : {

@@ -81,7 +81,7 @@
             "0",
             "\"{}\""
         ],
-        "description" : "Add a {1} chance to activate bonus for {2} when using {3} and dealing {4} damage.\n{0}",
+        "description" : "[Autobonus Script]\n{0}(Autobonus has a {1} chance to trigger for {2} when using {3} and dealing {4} damage.)",
         "required" : 3,
         "optional" : 2
     },
@@ -107,7 +107,7 @@
             "0",
             "\"{}\""
         ],
-        "description" : "Add a {1} chance to activate bonus for {2} when receiving {4} damage from {3}.\n{0}",
+        "description" : "[Autobonus Script]\n{0}(Autobonus has a {1} chance to trigger for {2} when receiving {4} damage from {3}.)",
         "required" : 3,
         "optional" : 2
     },
@@ -123,7 +123,7 @@
         "argument_default" : [
             "\"{}\""
         ],
-        "description" : "Add a {1} chance to activate bonus for {2} when using {3}.\n{0}",
+        "description" : "[Autobonus Script]\n{0}(Autobonus has a {1} chance to trigger for {2} when using {3}.)",
         "required" : 4,
         "optional" : 1
     },
@@ -355,7 +355,7 @@
         "argument_default" : [
             "0"
         ],
-        "description" : "[Bonus Script {1} Duration]\n{0}{2}",
+        "description" : "[Bonus Script]\n{0}{2}(Bonus script has a duration of {1}.)",
         "required" : 2,
         "optional" : 4
     },
