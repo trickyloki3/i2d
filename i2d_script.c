@@ -2309,6 +2309,8 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 status = i2d_panic("failed to load bonus5");
             } else if(i2d_data_map_init(&object->sc_start, data_map_by_constant, object->json->sc_start, object->constant_db)) {
                 status = i2d_panic("failed to load sc_start");
+            } else if(i2d_data_map_init(&object->sc_start2, data_map_by_constant, object->json->sc_start2, object->constant_db)) {
+                status = i2d_panic("failed to load sc_start2");
             } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
                 status = i2d_panic("failed to load functions");
             } else if(i2d_data_map_init(&object->arguments, data_map_by_name, object->json->arguments, object->constant_db)) {
@@ -2352,7 +2354,7 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
                 if(object->handlers) {
                     handler = object->handlers;
                     do {
-                        if(i2d_rbt_insert(object->argument_handlers, handler->name, handler)) 
+                        if(i2d_rbt_insert(object->argument_handlers, handler->name, handler))
                             status = i2d_panic("failed to map handler object");
                         handler = handler->next;
                     } while(!status && handler != object->handlers);
@@ -2384,6 +2386,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->statements, i2d_data_map_deit);
     i2d_deit(object->arguments, i2d_data_map_deit);
     i2d_deit(object->functions, i2d_data_map_deit);
+    i2d_deit(object->sc_start2, i2d_data_map_deit);
     i2d_deit(object->sc_start, i2d_data_map_deit);
     i2d_deit(object->bonus5, i2d_data_map_deit);
     i2d_deit(object->bonus4, i2d_data_map_deit);
@@ -5258,6 +5261,22 @@ static int i2d_handler_sc_start(i2d_script * script, i2d_rbt * variables, i2d_no
 
 static int i2d_handler_sc_start2(i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
     int status = I2D_OK;
+    long effect_type;
+    i2d_data * data;
+
+    if(i2d_node_get_constant(nodes[0], &effect_type)) {
+        status = i2d_panic("failed to get effect type");
+    } else if(i2d_data_map_get(script->sc_start2, &effect_type, &data)) {
+        if(!nodes[0]->constant) {
+            status = i2d_panic("failed to get effect by type -- %ld", effect_type);
+        } else {
+            status = i2d_panic("failed to get effect by type -- %ld (%s)", effect_type, nodes[0]->constant->macro.string);
+        }
+    } else if(i2d_script_statement_evaluate(script, variables, &nodes[0], data, local->buffer)) {
+        status = i2d_panic("failed to handle bonus arguments");
+    } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+        status = i2d_panic("failed to push string on stack");
+    }
 
     return status;
 }

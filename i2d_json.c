@@ -256,6 +256,7 @@ static int i2d_json_load_sc_start(i2d_json * json, i2d_string * directory) {
             status = i2d_panic("failed to load %s", path.string);
         } else {
             json->sc_start = json_object_get(json->sc_start_file, "sc_start");
+            json->sc_start2 = json_object_get(json->sc_start_file, "sc_start2");
         }
         i2d_string_destroy(&path);
     }

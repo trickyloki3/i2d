@@ -1025,5 +1025,27 @@
             ],
             "description" : "Add a {2} resistance against stone, freeze, stun, sleep, poison, curse, silence, confusion, blind, bleed, deathly poison for {1}."
         }
+    },
+    "sc_start2" : {
+        "SC_PROMOTE_HEALTH_RESERCH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Increase Max HP for {1}."
+        },
+        "SC_ENERGY_DRINK_RESERCH" : {
+            "argument_type" : [
+                "ignore",
+                "milliseconds",
+                "ignore",
+                "ignore",
+                "percent100"
+            ],
+            "description" : "Increase Max SP for {1}."
+        }
     }
 }
