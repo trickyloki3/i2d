@@ -118,6 +118,7 @@ static int i2d_handler_integer_sign(i2d_script *, i2d_rbt *, i2d_node *, i2d_loc
 static int i2d_handler_integer_absolute(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_percent(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_percent_sign(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_percent_sign_inverse(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_percent_absolute(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_percent10(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_percent100(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
@@ -181,6 +182,7 @@ i2d_handler argument_handlers[] = {
     { "integer_absolute", single_node, {i2d_handler_integer_absolute} },
     { "percent", single_node, {i2d_handler_percent} },
     { "percent_sign", single_node, {i2d_handler_percent_sign} },
+    { "percent_sign_inverse", single_node, {i2d_handler_percent_sign_inverse} },
     { "percent_absolute", single_node, {i2d_handler_percent_absolute} },
     { "percent10", single_node, {i2d_handler_percent10} },
     { "percent100", single_node, {i2d_handler_percent100} },
@@ -4306,6 +4308,27 @@ static int i2d_handler_percent_sign(i2d_script * script, i2d_rbt * variables, i2
     long max;
 
     i2d_range_get_range(&node->range, &min, &max);
+    if( min == max ?
+        i2d_buffer_printf(local->buffer, "%+ld%%", min) :
+        i2d_buffer_printf(local->buffer, "%+ld%% ~ %+ld%%", min, max) ) {
+        status = i2d_panic("failed to write percent range");
+    } else if(i2d_handler_expression(script, variables, node, local)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_handler_percent_sign_inverse(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range(&node->range, &min, &max);
+
+    min *= -1;
+    max *= -1;
+
     if( min == max ?
         i2d_buffer_printf(local->buffer, "%+ld%%", min) :
         i2d_buffer_printf(local->buffer, "%+ld%% ~ %+ld%%", min, max) ) {

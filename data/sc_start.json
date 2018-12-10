@@ -354,10 +354,10 @@
             "argument_type" : [
                 "ignore",
                 "milliseconds",
-                "percent",
+                "percent_sign_inverse",
                 "percent100"
             ],
-            "description" : "Walking Speed -{2} for {1}."
+            "description" : "Walking Speed {2} for {1}."
         },
         "SC_INCAGI" : {
             "argument_type" : [
@@ -984,10 +984,10 @@
             "argument_type" : [
                 "ignore",
                 "milliseconds",
-                "percent",
+                "percent_sign_inverse",
                 "percent100"
             ],
-            "description" : "Max HP -{2} for {1}."
+            "description" : "Max HP {2} for {1}."
         },
         "SC_BOSSMAPINFO" : {
             "argument_type" : [
@@ -1126,6 +1126,26 @@
                 "percent100"
             ],
             "description" : "Immune against {0} for {1}. Drain {2} HP and {3} SP."
+        },
+        "SC_S_LIFEPOTION" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "percent_sign_inverse",
+                "seconds",
+                "percent100"
+            ],
+            "description" : "Recover {2} of Max HP every {3} for {1}."
+        },
+        "SC_L_LIFEPOTION" : {
+            "argument_type" : [
+                "string",
+                "milliseconds",
+                "percent_sign_inverse",
+                "seconds",
+                "percent100"
+            ],
+            "description" : "Recover {2} of Max HP every {3} for {1}."
         }
     }
 }
