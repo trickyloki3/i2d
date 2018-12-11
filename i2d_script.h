@@ -316,4 +316,6 @@ int i2d_script_expression_binary_assign(i2d_node *, int, i2d_rbt *);
 int i2d_script_expression_binary_relational(i2d_node *, int, int);
 int i2d_script_expression_binary_logical(i2d_node *, int, int);
 int i2d_script_expression_binary(i2d_script *, i2d_node *, int, i2d_rbt *);
+
+int i2d_script_compile_item_combo(i2d_script *, i2d_item *, i2d_string *);
 #endif
