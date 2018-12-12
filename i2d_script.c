@@ -2261,7 +2261,7 @@ static int i2d_rbt_get_variable(i2d_rbt * variables, i2d_node * key, i2d_node **
     return i2d_rbt_search(variables, key, (void **) result);
 }
 
-int i2d_script_init(i2d_script ** result, i2d_config * config) {
+int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) {
     int status = I2D_OK;
     i2d_script * object;
     size_t i;
@@ -2277,51 +2277,49 @@ int i2d_script_init(i2d_script ** result, i2d_config * config) {
         } else {
             if(i2d_db_init(&object->db, config->renewal ? i2d_renewal : i2d_pre_renewal, &config->source_path)) {
                 status = i2d_panic("failed to create database object");
-            } else if(i2d_json_init(&object->json, &config->data_path)) {
-                status = i2d_panic("failed to create json object");
             } else if(i2d_lexer_init(&object->lexer)) {
                 status = i2d_panic("failed to create lexer object");
             } else if(i2d_parser_init(&object->parser)) {
                 status = i2d_panic("failed to create parser object");
-            } else if(i2d_constant_db_init(&object->constant_db, object->json->constants)) {
+            } else if(i2d_constant_db_init(&object->constant_db, json->constants)) {
                 status = i2d_panic("failed to create constant db object");
             } else if(i2d_constant_index_mob_races(object->constant_db, object->db->mob_race_db)) {
                 status = i2d_panic("failed to index mob race db");
-            } else if(i2d_value_map_init(&object->getiteminfo, object->json->getiteminfo_type)) {
+            } else if(i2d_value_map_init(&object->getiteminfo, json->getiteminfo_type)) {
                 status = i2d_panic("failed to load getiteminfo");
-            } else if(i2d_value_map_init(&object->strcharinfo, object->json->strcharinfo_type)) {
+            } else if(i2d_value_map_init(&object->strcharinfo, json->strcharinfo_type)) {
                 status = i2d_panic("failed to load strcharinfo");
-            } else if(i2d_value_map_init(&object->weapons, object->json->weapon_type)) {
+            } else if(i2d_value_map_init(&object->weapons, json->weapon_type)) {
                 status = i2d_panic("failed to load weapons");
-            } else if(i2d_value_map_init(&object->ammos, object->json->ammo_type)) {
+            } else if(i2d_value_map_init(&object->ammos, json->ammo_type)) {
                 status = i2d_panic("failed to load ammos");
-            } else if(i2d_value_map_init(&object->skill_flags, object->json->skill_flag)) {
+            } else if(i2d_value_map_init(&object->skill_flags, json->skill_flag)) {
                 status = i2d_panic("failed to load skill_flags");
-            } else if(i2d_value_map_init(&object->searchstore_effect, object->json->searchstore_effect)) {
+            } else if(i2d_value_map_init(&object->searchstore_effect, json->searchstore_effect)) {
                 status = i2d_panic("failed to load searchstore_effect");
-            } else if(i2d_value_map_init(&object->bonus_script_flag, object->json->bonus_script_flag)) {
+            } else if(i2d_value_map_init(&object->bonus_script_flag, json->bonus_script_flag)) {
                 status = i2d_panic("failed to load bonus_script_flag");
-            } else if(i2d_data_map_init(&object->bonus, data_map_by_constant, object->json->bonus, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus, data_map_by_constant, json->bonus, object->constant_db)) {
                 status = i2d_panic("failed to load bonus");
-            } else if(i2d_data_map_init(&object->bonus2, data_map_by_constant, object->json->bonus2, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus2, data_map_by_constant, json->bonus2, object->constant_db)) {
                 status = i2d_panic("failed to load bonus2");
-            } else if(i2d_data_map_init(&object->bonus3, data_map_by_constant, object->json->bonus3, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus3, data_map_by_constant, json->bonus3, object->constant_db)) {
                 status = i2d_panic("failed to load bonus3");
-            } else if(i2d_data_map_init(&object->bonus4, data_map_by_constant, object->json->bonus4, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus4, data_map_by_constant, json->bonus4, object->constant_db)) {
                 status = i2d_panic("failed to load bonus4");
-            } else if(i2d_data_map_init(&object->bonus5, data_map_by_constant, object->json->bonus5, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->bonus5, data_map_by_constant, json->bonus5, object->constant_db)) {
                 status = i2d_panic("failed to load bonus5");
-            } else if(i2d_data_map_init(&object->sc_start, data_map_by_constant, object->json->sc_start, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->sc_start, data_map_by_constant, json->sc_start, object->constant_db)) {
                 status = i2d_panic("failed to load sc_start");
-            } else if(i2d_data_map_init(&object->sc_start2, data_map_by_constant, object->json->sc_start2, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->sc_start2, data_map_by_constant, json->sc_start2, object->constant_db)) {
                 status = i2d_panic("failed to load sc_start2");
-            } else if(i2d_data_map_init(&object->sc_start4, data_map_by_constant, object->json->sc_start4, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->sc_start4, data_map_by_constant, json->sc_start4, object->constant_db)) {
                 status = i2d_panic("failed to load sc_start4");
-            } else if(i2d_data_map_init(&object->functions, data_map_by_name, object->json->functions, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->functions, data_map_by_name, json->functions, object->constant_db)) {
                 status = i2d_panic("failed to load functions");
-            } else if(i2d_data_map_init(&object->arguments, data_map_by_name, object->json->arguments, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->arguments, data_map_by_name, json->arguments, object->constant_db)) {
                 status = i2d_panic("failed to load arguments");
-            } else if(i2d_data_map_init(&object->statements, data_map_by_name, object->json->statements, object->constant_db)) {
+            } else if(i2d_data_map_init(&object->statements, data_map_by_name, json->statements, object->constant_db)) {
                 status = i2d_panic("failed to load statements");
             } else if(i2d_buffer_cache_init(&object->buffer_cache)) {
                 status = i2d_panic("failed to create buffer cache object");
@@ -2410,7 +2408,6 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->constant_db, i2d_constant_db_deit);
     i2d_deit(object->parser, i2d_parser_deit);
     i2d_deit(object->lexer, i2d_lexer_deit);
-    i2d_deit(object->json, i2d_json_deit);
     i2d_deit(object->db, i2d_db_deit);
     i2d_free(object);
     *result = NULL;

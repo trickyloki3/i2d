@@ -260,7 +260,6 @@ enum {
 
 struct i2d_script {
     i2d_db * db;
-    i2d_json * json;
     i2d_lexer * lexer;
     i2d_parser * parser;
     i2d_constant_db * constant_db;
@@ -292,7 +291,7 @@ struct i2d_script {
 
 typedef struct i2d_script i2d_script;
 
-int i2d_script_init(i2d_script **, i2d_config *);
+int i2d_script_init(i2d_script **, i2d_config *, i2d_json *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *, i2d_rbt *);
 int i2d_script_compile_node(i2d_script *, const char *, i2d_node **, i2d_rbt *);
