@@ -1,4 +1,5 @@
 #include "i2d_script.h"
+#include "i2d_print.h"
 
 int main(int argc, char * argv[]) {
     int status = I2D_OK;

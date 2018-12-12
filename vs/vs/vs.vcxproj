@@ -161,6 +161,7 @@
     <ClCompile Include="..\..\i2d_mercenary.c" />
     <ClCompile Include="..\..\i2d_mob.c" />
     <ClCompile Include="..\..\i2d_pet.c" />
+    <ClCompile Include="..\..\i2d_print.c" />
     <ClCompile Include="..\..\i2d_produce.c" />
     <ClCompile Include="..\..\i2d_range.c" />
     <ClCompile Include="..\..\i2d_rbt.c" />
@@ -179,6 +180,7 @@
     <ClInclude Include="..\..\i2d_mercenary.h" />
     <ClInclude Include="..\..\i2d_mob.h" />
     <ClInclude Include="..\..\i2d_pet.h" />
+    <ClInclude Include="..\..\i2d_print.h" />
     <ClInclude Include="..\..\i2d_produce.h" />
     <ClInclude Include="..\..\i2d_range.h" />
     <ClInclude Include="..\..\i2d_rbt.h" />
