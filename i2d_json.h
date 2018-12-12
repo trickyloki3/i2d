@@ -40,6 +40,10 @@ struct i2d_json {
     json_t * skill_flag;
     json_t * strcharinfo_type;
     json_t * weapon_type;
+    json_t * item_type;
+    json_t * item_location;
+    json_t * job;
+    json_t * class;
 };
 
 typedef struct i2d_json i2d_json;
