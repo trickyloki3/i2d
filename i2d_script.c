@@ -2501,6 +2501,53 @@ int i2d_script_compile_node(i2d_script * script, const char * string, i2d_node *
     return status;
 }
 
+int i2d_script_compile_item_combo(i2d_script * script, i2d_item * item, i2d_string * result) {
+    int status = I2D_OK;
+    i2d_item_combo_list * item_combo_list;
+    i2d_buffer buffer;
+
+    size_t i;
+    i2d_item_combo * item_combo;
+    i2d_string list;
+    i2d_string description;
+    i2d_string output;
+
+    if(i2d_item_combo_db_search_by_id(script->db->item_combo_db, item->id, &item_combo_list)) {
+        if(i2d_string_create(result, "", 0))
+            status = i2d_panic("failed to create string object");
+    } else {
+        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE)) {
+            status = i2d_panic("failed to create buffer object");
+        } else {
+            for(i = 0; i < item_combo_list->size && !status; i++) {
+                item_combo = item_combo_list->list[i];
+                if(i2d_item_combo_get_string(item_combo, script->db->item_db, &list)) {
+                    status = i2d_panic("failed to get item combo list string");
+                } else {
+                    if(i2d_script_compile(script, &item_combo->script, &description, NULL)) {
+                        status = i2d_panic("failed to compile item combo script -- %ld", item->id);
+                    } else {
+                        if(description.length > 0 && i2d_buffer_printf(&buffer, "[%s Combo]\n%s", list.string, description.string))
+                            status = i2d_panic("failed to write buffer object");
+                        i2d_string_destroy(&description);
+                    }
+                    i2d_string_destroy(&list);
+                }
+            }
+
+            if(!status) {
+                i2d_buffer_get(&buffer, &output.string, &output.length);
+                if(i2d_string_create(result, output.string, output.length))
+                    status = i2d_panic("failed to create string object");
+            }
+
+            i2d_buffer_destroy(&buffer);
+        }
+    }
+
+    return status;
+}
+
 int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
     i2d_block * block;
@@ -3303,14 +3350,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
     return status;
 }
 
-void i2d_item_script_destroy(i2d_item_script * result) {
-    i2d_string_destroy(&result->script);
-    i2d_string_destroy(&result->onequip);
-    i2d_string_destroy(&result->onunequip);
-    i2d_string_destroy(&result->combo);
-}
-
-int i2d_script_compile_item(i2d_script * script, i2d_item * item, i2d_item_script * result) {
+int i2d_item_script_create(i2d_item_script * result, i2d_script * script, i2d_item * item) {
     int status = I2D_OK;
     i2d_item_script output;
     i2d_zero(output);
@@ -3323,6 +3363,8 @@ int i2d_script_compile_item(i2d_script * script, i2d_item * item, i2d_item_scrip
         status = i2d_panic("failed to compile onunequip script -- %ld", item->id);
     } else if(i2d_script_compile_item_combo(script, item, &output.combo)) {
         status = i2d_panic("failed to compile item combo script -- %ld", item->id);
+    } else {
+        output.item = item;
     }
 
     if(status)
@@ -3333,51 +3375,11 @@ int i2d_script_compile_item(i2d_script * script, i2d_item * item, i2d_item_scrip
     return status;
 }
 
-int i2d_script_compile_item_combo(i2d_script * script, i2d_item * item, i2d_string * result) {
-    int status = I2D_OK;
-    i2d_item_combo_list * item_combo_list;
-    i2d_buffer buffer;
-
-    size_t i;
-    i2d_item_combo * item_combo;
-    i2d_string list;
-    i2d_string description;
-    i2d_string output;
-
-    if(i2d_item_combo_db_search_by_id(script->db->item_combo_db, item->id, &item_combo_list)) {
-        if(i2d_string_create(result, "", 0))
-            status = i2d_panic("failed to create string object");
-    } else {
-        if(i2d_buffer_create(&buffer, BUFFER_SIZE_LARGE)) {
-            status = i2d_panic("failed to create buffer object");
-        } else {
-            for(i = 0; i < item_combo_list->size && !status; i++) {
-                item_combo = item_combo_list->list[i];
-                if(i2d_item_combo_get_string(item_combo, script->db->item_db, &list)) {
-                    status = i2d_panic("failed to get item combo list string");
-                } else {
-                    if(i2d_script_compile(script, &item_combo->script, &description, NULL)) {
-                        status = i2d_panic("failed to compile item combo script -- %ld", item->id);
-                    } else {
-                        if(description.length > 0 && i2d_buffer_printf(&buffer, "[%s Combo]\n%s", list.string, description.string))
-                            status = i2d_panic("failed to write buffer object");
-                        i2d_string_destroy(&description);
-                    }
-                    i2d_string_destroy(&list);
-                }
-            }
-
-            if(!status) {
-                i2d_buffer_get(&buffer, &output.string, &output.length);
-                if(i2d_string_create(result, output.string, output.length))
-                    status = i2d_panic("failed to create string object");
-            }
-
-            i2d_buffer_destroy(&buffer);
-        }
-    }
-
-    return status;
+void i2d_item_script_destroy(i2d_item_script * result) {
+    i2d_string_destroy(&result->script);
+    i2d_string_destroy(&result->onequip);
+    i2d_string_destroy(&result->onunequip);
+    i2d_string_destroy(&result->combo);
 }
 
 int i2d_local_create(i2d_local * result, i2d_script * script) {

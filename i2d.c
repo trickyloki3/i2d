@@ -23,7 +23,7 @@ int main(int argc, char * argv[]) {
                     if(i2d_item_db_search_by_id(script->db->item_db, config->item_id, &item)) {
                         status = i2d_panic("failed to find item -- %ld", config->item_id);
                     } else {
-                        if(i2d_script_compile_item(script, item, &item_script)) {
+                        if(i2d_item_script_create(&item_script, script, item)) {
                             status = i2d_panic("failed to get compile item -- %ld", item->id);
                         } else {
                             i2d_item_script_destroy(&item_script);
@@ -32,7 +32,7 @@ int main(int argc, char * argv[]) {
                 } else {
                     item = script->db->item_db->list;
                     do {
-                        if(i2d_script_compile_item(script, item, &item_script)) {
+                        if(i2d_item_script_create(&item_script, script, item)) {
                             status = i2d_panic("failed to get compile item -- %ld", item->id);
                         } else {
                             i2d_item_script_destroy(&item_script);
