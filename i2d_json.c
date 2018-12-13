@@ -4,6 +4,7 @@ static int i2d_json_load_file(json_t **, i2d_string *, const char *);
 static int i2d_json_load_bonus(i2d_json *, i2d_string *);
 static int i2d_json_load_data(i2d_json *, i2d_string *);
 static int i2d_json_load_sc_start(i2d_json *, i2d_string *);
+static int i2d_json_load_print(i2d_json *, i2d_string *);
 
 int i2d_json_create(json_t ** json, i2d_string * path) {
     int status = I2D_OK;
@@ -269,6 +270,26 @@ static int i2d_json_load_sc_start(i2d_json * json, i2d_string * directory) {
     return status;
 }
 
+static int i2d_json_load_print(i2d_json * json, i2d_string * directory) {
+    int status = I2D_OK;
+    i2d_string path;
+    i2d_zero(path);
+
+    if(i2d_string_vprintf(&path, "%s/print.json", directory->string)) {
+        status = i2d_panic("failed to create string object");
+    } else {
+        if(i2d_json_create(&json->print_file, &path)) {
+            status = i2d_panic("failed to load %s", path.string);
+        } else {
+            json->description_by_item_type = json_object_get(json->print_file, "description_by_item_type");
+            json->description_of_item_property = json_object_get(json->print_file, "description_of_item_property");
+        }
+        i2d_string_destroy(&path);
+    }
+
+    return status;
+}
+
 int i2d_json_init(i2d_json ** result, i2d_string * directory) {
     int status = I2D_OK;
     i2d_json * object;
@@ -286,7 +307,8 @@ int i2d_json_init(i2d_json ** result, i2d_string * directory) {
                 i2d_json_load_file(&object->arguments, directory, "arguments.json") ||
                 i2d_json_load_bonus(object, directory) ||
                 i2d_json_load_sc_start(object, directory) ||
-                i2d_json_load_data(object, directory) )
+                i2d_json_load_data(object, directory) ||
+                i2d_json_load_print(object, directory) )
                 status = i2d_panic("failed to load json object");
 
             if(status)
@@ -303,6 +325,7 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json * object;
 
     object = *result;
+    i2d_json_destroy(object->print_file);
     i2d_json_destroy(object->data_file);
     i2d_json_destroy(object->sc_start_file);
     i2d_json_destroy(object->bonus_file);
