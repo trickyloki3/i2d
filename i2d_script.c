@@ -505,7 +505,7 @@ void i2d_token_print(i2d_token * token) {
 }
 
 char i2d_token_getc(i2d_token * token) {
-    return token->buffer.offset ? token->buffer.buffer[token->buffer.offset - 1] : 0;
+    return token->buffer.offset > 0 ? token->buffer.buffer[token->buffer.offset - 1] : 0;
 }
 
 int i2d_token_putc(i2d_token * token, char character) {
