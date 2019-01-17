@@ -169,7 +169,7 @@ int i2d_data_map_get(i2d_data_map * data_map, void * key, i2d_data ** result) {
     return i2d_rbt_search(data_map->map, key, (void **) result);
 }
 
-int i2d_value_map_init(i2d_value_map ** result, json_t * json) {
+int i2d_value_map_init(i2d_value_map ** result, json_t * json, enum i2d_value_type type) {
     int status = I2D_OK;
     i2d_value_map * object;
 
@@ -184,6 +184,7 @@ int i2d_value_map_init(i2d_value_map ** result, json_t * json) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
+            object->type = type;
             if(i2d_rbt_init(&object->map, i2d_rbt_cmp_long)) {
                 status = i2d_panic("failed to create value map");
             } else if(i2d_object_get_list(json, sizeof(*object->list), (void **) &object->list, &object->size)) {
@@ -192,12 +193,30 @@ int i2d_value_map_init(i2d_value_map ** result, json_t * json) {
                 json_object_foreach(json, key, value) {
                     if(i2d_strtol(&object->list[i].value, key, strlen(key), 10)) {
                         status = i2d_panic("failed to convert value string");
-                    } else if(i2d_object_get_string(value, &object->list[i].name)) {
-                        status = i2d_panic("failed to copy value name");
-                    } else if(i2d_rbt_insert(object->map, &object->list[i].value, &object->list[i])) {
-                        status = i2d_panic("failed to map value object");
                     } else {
-                        i++;
+                        switch(object->type) {
+                            case i2d_value_string:
+                                if(i2d_object_get_string(value, &object->list[i].string))
+                                    status = i2d_panic("failed to copy string");
+                                break;
+                            case i2d_value_string_stack:
+                                if(i2d_object_get_string_stack(value, &object->list[i].stack))
+                                    status = i2d_panic("failed to copy string stack");
+                                break;
+                            default:
+                                status = i2d_panic("invalid value type -- %d", object->type);
+                                break;
+                        }
+                    }
+
+                    if(status) {
+                        break;
+                    } else {
+                        if(i2d_rbt_insert(object->map, &object->list[i].value, &object->list[i])) {
+                            status = i2d_panic("failed to map value object");
+                        } else {
+                            i++;
+                        }
                     }
                 }
             }
@@ -218,8 +237,16 @@ void i2d_value_map_deit(i2d_value_map ** result) {
 
     object = *result;
     if(object->list) {
-        for(i = 0; i < object->size; i++)
-            i2d_free(object->list[i].name.string);
+        for(i = 0; i < object->size; i++) {
+            switch(object->type) {
+                case i2d_value_string:
+                    i2d_string_destroy(&object->list[i].string);
+                    break;
+                case i2d_value_string_stack:
+                    i2d_string_stack_destroy(&object->list[i].stack);
+                    break;
+            }
+        }
         i2d_free(object->list);
     }
     i2d_deit(object->map, i2d_rbt_deit);
@@ -232,7 +259,7 @@ int i2d_value_map_get(i2d_value_map * value_map, long key, i2d_string * result) 
     i2d_value * value;
 
     if(!i2d_rbt_search(value_map->map, &key, (void **) &value))
-        *result = value->name;
+        *result = value->string;
 
     return status;
 }

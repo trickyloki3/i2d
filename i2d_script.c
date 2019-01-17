@@ -1982,19 +1982,19 @@ int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) 
                 status = i2d_panic("failed to create constant db object");
             } else if(i2d_constant_index_mob_races(object->constant_db, object->db->mob_race_db)) {
                 status = i2d_panic("failed to index mob race db");
-            } else if(i2d_value_map_init(&object->getiteminfo, json->getiteminfo_type)) {
+            } else if(i2d_value_map_init(&object->getiteminfo, json->getiteminfo_type, i2d_value_string)) {
                 status = i2d_panic("failed to load getiteminfo");
-            } else if(i2d_value_map_init(&object->strcharinfo, json->strcharinfo_type)) {
+            } else if(i2d_value_map_init(&object->strcharinfo, json->strcharinfo_type, i2d_value_string)) {
                 status = i2d_panic("failed to load strcharinfo");
-            } else if(i2d_value_map_init(&object->weapons, json->weapon_type)) {
+            } else if(i2d_value_map_init(&object->weapons, json->weapon_type, i2d_value_string)) {
                 status = i2d_panic("failed to load weapons");
-            } else if(i2d_value_map_init(&object->ammos, json->ammo_type)) {
+            } else if(i2d_value_map_init(&object->ammos, json->ammo_type, i2d_value_string)) {
                 status = i2d_panic("failed to load ammos");
-            } else if(i2d_value_map_init(&object->skill_flags, json->skill_flag)) {
+            } else if(i2d_value_map_init(&object->skill_flags, json->skill_flag, i2d_value_string)) {
                 status = i2d_panic("failed to load skill_flags");
-            } else if(i2d_value_map_init(&object->searchstore_effect, json->searchstore_effect)) {
+            } else if(i2d_value_map_init(&object->searchstore_effect, json->searchstore_effect, i2d_value_string)) {
                 status = i2d_panic("failed to load searchstore_effect");
-            } else if(i2d_value_map_init(&object->bonus_script_flag, json->bonus_script_flag)) {
+            } else if(i2d_value_map_init(&object->bonus_script_flag, json->bonus_script_flag, i2d_value_string)) {
                 status = i2d_panic("failed to load bonus_script_flag");
             } else if(i2d_data_map_init(&object->bonus, data_map_by_constant, json->bonus, object->constant_db)) {
                 status = i2d_panic("failed to load bonus");

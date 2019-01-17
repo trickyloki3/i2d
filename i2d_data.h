@@ -49,14 +49,21 @@ int i2d_data_map_init(i2d_data_map **, enum i2d_data_map_type, json_t *, i2d_con
 void i2d_data_map_deit(i2d_data_map **);
 int i2d_data_map_get(i2d_data_map *, void *, i2d_data **);
 
+enum i2d_value_type {
+    i2d_value_string,
+    i2d_value_string_stack
+};
+
 struct i2d_value {
     long value;
-    i2d_string name;
+    i2d_string string;
+    i2d_string_stack stack;
 };
 
 typedef struct i2d_value i2d_value;
 
 struct i2d_value_map {
+    enum i2d_value_type type;
     i2d_rbt * map;
     i2d_value * list;
     size_t size;
@@ -64,7 +71,7 @@ struct i2d_value_map {
 
 typedef struct i2d_value_map i2d_value_map;
 
-int i2d_value_map_init(i2d_value_map **, json_t *);
+int i2d_value_map_init(i2d_value_map **, json_t *, enum i2d_value_type);
 void i2d_value_map_deit(i2d_value_map **);
 int i2d_value_map_get(i2d_value_map *, long, i2d_string *);
 #endif
