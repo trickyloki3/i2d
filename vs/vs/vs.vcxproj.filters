@@ -66,6 +66,9 @@
     <ClCompile Include="..\..\i2d_print.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\i2d_data.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\i2d_constant.h">
@@ -117,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\i2d_print.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\i2d_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

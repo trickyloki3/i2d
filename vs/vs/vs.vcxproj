@@ -154,6 +154,7 @@
     <ClCompile Include="..\..\i2d.c" />
     <ClCompile Include="..\..\i2d_config.c" />
     <ClCompile Include="..\..\i2d_constant.c" />
+    <ClCompile Include="..\..\i2d_data.c" />
     <ClCompile Include="..\..\i2d_db.c" />
     <ClCompile Include="..\..\i2d_item.c" />
     <ClCompile Include="..\..\i2d_json.c" />
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\i2d_config.h" />
     <ClInclude Include="..\..\i2d_constant.h" />
+    <ClInclude Include="..\..\i2d_data.h" />
     <ClInclude Include="..\..\i2d_db.h" />
     <ClInclude Include="..\..\i2d_define.h" />
     <ClInclude Include="..\..\i2d_item.h" />

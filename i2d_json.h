@@ -53,23 +53,4 @@ typedef struct i2d_json i2d_json;
 
 int i2d_json_init(i2d_json **, i2d_string *);
 void i2d_json_deit(i2d_json **);
-
-struct i2d_value {
-    long value;
-    i2d_string name;
-};
-
-typedef struct i2d_value i2d_value;
-
-struct i2d_value_map {
-    i2d_rbt * map;
-    i2d_value * list;
-    size_t size;
-};
-
-typedef struct i2d_value_map i2d_value_map;
-
-int i2d_value_map_init(i2d_value_map **, json_t *);
-void i2d_value_map_deit(i2d_value_map **);
-int i2d_value_map_get(i2d_value_map *, long, i2d_string *);
 #endif
