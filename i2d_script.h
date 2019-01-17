@@ -262,7 +262,6 @@ int i2d_script_expression_binary_logical(i2d_node *, int, int);
 int i2d_script_expression_binary(i2d_script *, i2d_node *, int, i2d_rbt *);
 
 struct i2d_item_script {
-    i2d_item * item;
     i2d_string script;
     i2d_string onequip;
     i2d_string onunequip;
@@ -271,6 +270,6 @@ struct i2d_item_script {
 
 typedef struct i2d_item_script i2d_item_script;
 
-int i2d_item_script_create(i2d_item_script *, i2d_script *, i2d_item *);
+int i2d_item_script_create(i2d_item_script *, i2d_item *, i2d_script *);
 void i2d_item_script_destroy(i2d_item_script *);
 #endif

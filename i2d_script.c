@@ -3044,7 +3044,7 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
     return status;
 }
 
-int i2d_item_script_create(i2d_item_script * result, i2d_script * script, i2d_item * item) {
+int i2d_item_script_create(i2d_item_script * result, i2d_item * item, i2d_script * script) {
     int status = I2D_OK;
     i2d_item_script output;
     i2d_zero(output);
@@ -3057,8 +3057,6 @@ int i2d_item_script_create(i2d_item_script * result, i2d_script * script, i2d_it
         status = i2d_panic("failed to compile onunequip script -- %ld", item->id);
     } else if(i2d_script_compile_item_combo(script, item, &output.combo)) {
         status = i2d_panic("failed to compile item combo script -- %ld", item->id);
-    } else {
-        output.item = item;
     }
 
     if(status)
