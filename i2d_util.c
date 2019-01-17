@@ -524,6 +524,68 @@ int i2d_string_stack_get_unique(i2d_string_stack * stack, i2d_buffer * buffer) {
     return status;
 }
 
+int i2d_string_stack_format(i2d_string_stack * stack, i2d_string * format, i2d_buffer * result) {
+    int status = I2D_OK;
+
+    i2d_string * list;
+    size_t size;
+
+    i2d_buffer buffer;
+    i2d_string string;
+    long position;
+
+    size_t i;
+    char symbol;
+    int level = 0;
+
+    if(i2d_string_stack_get(stack, &list, &size)) {
+        status = i2d_panic("failed to get string stack");
+    } else if(i2d_buffer_create(&buffer, BUFFER_SIZE_SMALL)) {
+        status = i2d_panic("failed to create buffere object");
+    } else {
+        for(i = 0; i < format->length && !status; i++) {
+            symbol = format->string[i];
+            switch(symbol) {
+                case '{':
+                    if(level) {
+                        status = i2d_panic("invalid starting curly");
+                    } else {
+                        level++;
+                    }
+                    break;
+                case '}':
+                    if(!level) {
+                        status = i2d_panic("invalid ending curly");
+                    } else {
+                        level--;
+
+                        i2d_buffer_get(&buffer, &string.string, &string.length);
+                        if(i2d_strtol(&position, string.string, string.length, 10)) {
+                            status = i2d_panic("invalid number string -- %s", string.string);
+                        } else if(position < 0 || (size_t) position >= size) {
+                            status = i2d_panic("invalid position on string stack");
+                        } else if(i2d_buffer_printf(result, "%s", list[position].string)) {
+                            status = i2d_panic("failed to write buffer");
+                        }
+                        i2d_buffer_clear(&buffer);
+                    }
+                    break;
+                default:
+                    if(level) {
+                        if(i2d_buffer_putc(&buffer, symbol))
+                            status = i2d_panic("failed to write buffer object");
+                    } else {
+                        if(i2d_buffer_putc(result, symbol))
+                            status = i2d_panic("failed to write buffer object");
+                    }
+            }
+        }
+        i2d_buffer_destroy(&buffer);
+    }
+
+    return status;
+}
+
 int i2d_string_stack_cache_init(i2d_string_stack_cache ** result) {
     int status = I2D_OK;
     i2d_string_stack_cache * object;
@@ -737,7 +799,7 @@ int i2d_fd_read(HANDLE hFile, size_t size, i2d_buffer * buffer) {
         status = I2D_FAIL;
     } else {
         if(!ReadFile(hFile, buffer->buffer + buffer->offset, size, &dwBytes, NULL)) {
-            status = i2d_panic("failed on read");   
+            status = i2d_panic("failed on read");
         } else {
             buffer->offset += dwBytes;
             buffer->buffer[buffer->offset] = 0;

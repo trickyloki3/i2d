@@ -121,6 +121,7 @@ void i2d_string_stack_clear(i2d_string_stack *);
 int i2d_string_stack_get(i2d_string_stack *, i2d_string **, size_t *);
 int i2d_string_stack_get_sorted(i2d_string_stack *, i2d_string **, size_t *);
 int i2d_string_stack_get_unique(i2d_string_stack *, i2d_buffer *);
+int i2d_string_stack_format(i2d_string_stack *, i2d_string *, i2d_buffer *);
 
 struct i2d_string_stack_cache {
     i2d_string_stack * list;

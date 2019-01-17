@@ -93,24 +93,11 @@ int i2d_token_get_string(i2d_token *, i2d_string *);
 int i2d_token_set_string(i2d_token *, i2d_string *);
 int i2d_token_get_constant(i2d_token *, long *);
 
-
-struct i2d_format {
-    i2d_token * tokens;
-};
-
-typedef struct i2d_format i2d_format;
-
-int i2d_format_create(i2d_format *, const char *, size_t);
-int i2d_format_create_json(i2d_format *, json_t *);
-void i2d_format_destroy(i2d_format *);
-int i2d_format_tokenize(const char *, size_t, i2d_token **);
-int i2d_format_write(i2d_format *, i2d_string_stack *, i2d_buffer *);
-
 struct i2d_data {
     long constant;
     i2d_string name;
     i2d_range range;
-    i2d_format description;
+    i2d_string description;
     i2d_string handler;
     i2d_string_stack argument_type;
     i2d_string_stack argument_default;
