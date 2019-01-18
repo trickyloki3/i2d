@@ -504,21 +504,26 @@ int i2d_string_stack_get_sorted(i2d_string_stack * stack, i2d_string ** list, si
     return status;
 }
 
-int i2d_string_stack_dump_buffer(i2d_string_stack * stack, i2d_buffer * buffer) {
+int i2d_string_stack_dump_buffer(i2d_string_stack * stack, i2d_buffer * buffer, const char * delimit) {
     int status = I2D_OK;
     size_t i;
     size_t size;
+    size_t last;
     i2d_string * list;
 
     if(i2d_string_stack_get_sorted(stack, &list, &size)) {
         status = i2d_panic("failed to get string list");
-    } else if(size > 0) {
-        if(i2d_buffer_printf(buffer, "%s", list[0].string))
-            status = i2d_panic("failed to write buffer");
-        for(i = 1; i < size; i++)
-            if( strcmp(list[i].string, list[i - 1].string) &&
-                i2d_buffer_printf(buffer, ", %s", list[i].string) )
-                status = i2d_panic("failed to write buffer");
+    } else {
+        for(i = 0, last = 0; i < size && !status; i++) {
+            if(list[i].length) {
+                if( (i && list[last].length && i2d_buffer_printf(buffer, delimit)) ||
+                    i2d_buffer_printf(buffer, "%s", list[i].string) ) {
+                    status = i2d_panic("failed to write buffer object");
+                } else {
+                    last = i;
+                }
+            }
+        }
     }
 
     return status;

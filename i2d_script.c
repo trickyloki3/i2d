@@ -2722,7 +2722,7 @@ int i2d_script_expression_variable_predicate(i2d_script * script, i2d_node * nod
         status = i2d_panic("failed to create local object");
     } else {
         if( i2d_node_get_predicate_all(variable, local.stack) ||
-            i2d_string_stack_dump_buffer(local.stack, local.buffer) ) {
+            i2d_string_stack_dump_buffer(local.stack, local.buffer, ", ") ) {
             status = i2d_panic("failed to get predicate list");
         } else {
             i2d_buffer_get(local.buffer, &predicate.string, &predicate.length);
@@ -3615,7 +3615,7 @@ static int i2d_handler_checkoption(i2d_script * script, i2d_rbt * variables, i2d
         context.local = local;
         if(i2d_by_bit64(flag, i2d_handler_checkoption_loop, &context)) {
             status = i2d_panic("failed to get option by flag -- %ld", flag);
-        } else if(i2d_string_stack_dump_buffer(local->stack, local->buffer)) {
+        } else if(i2d_string_stack_dump_buffer(local->stack, local->buffer, ", ")) {
             status = i2d_panic("failed to get option list from stack");
         } else {
             i2d_string_stack_clear(local->stack);
@@ -3781,7 +3781,7 @@ static int i2d_handler_range(i2d_script * script, i2d_node * node, i2d_local * l
             } while(range != node->range.list && !status);
 
             if(!status)
-                if(i2d_string_stack_dump_buffer(stack, local->buffer))
+                if(i2d_string_stack_dump_buffer(stack, local->buffer, ", "))
                     status = i2d_panic("failed to push buffer on stack");
         }
 
@@ -3804,7 +3804,7 @@ static int i2d_handler_expression(i2d_script * script, i2d_rbt * variables, i2d_
         status = i2d_panic("failed to create local object");
     } else {
         if( i2d_node_get_predicate_all(node, predicate.stack) ||
-            i2d_string_stack_dump_buffer(predicate.stack, predicate.buffer) ) {
+            i2d_string_stack_dump_buffer(predicate.stack, predicate.buffer, ", ") ) {
             status = i2d_panic("failed to get predicate list");
         } else {
             i2d_buffer_get(predicate.buffer, &string.string, &string.length);
