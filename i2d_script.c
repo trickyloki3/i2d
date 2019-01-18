@@ -2520,7 +2520,6 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
 
     size_t i;
     size_t size;
-    size_t last;
     i2d_string * list;
     i2d_handler * handler;
     int is_empty;
@@ -2593,19 +2592,8 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
         }
 
         if(statement->dump_stack_instead_of_description) {
-            if(i2d_string_stack_get(local.stack, &list, &size)) {
-                status = i2d_panic("failed to get argument stack array");
-            } else {
-                for(i = 0, last = 0; i < size && !status; i++)
-                    if(list[i].length) {
-                        if( (i && list[last].length && i2d_buffer_printf(buffer, "\n")) ||
-                            i2d_buffer_printf(buffer, "%s", list[i].string) ) {
-                            status = i2d_panic("failed to write buffer object");
-                        } else {
-                            last = i;
-                        }
-                    }
-            }
+            if(i2d_string_stack_dump_buffer(local.stack, buffer, "\n"))
+                status = i2d_panic("failed to dump string stack to buffer");
         } else if(statement->empty_description_on_empty_string) {
             if(i2d_string_stack_get(local.stack, &list, &size)) {
                 status = i2d_panic("failed to get argument stack array");

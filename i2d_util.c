@@ -138,7 +138,7 @@ int i2d_buffer_create(i2d_buffer * result, size_t length) {
         status = i2d_panic("invalid buffer length");
     } else {
         result->length = length;
-        result->buffer = malloc(result->length);
+        result->buffer = calloc(result->length, sizeof(*result->buffer));
         if(!result->buffer) {
             status = i2d_panic("out of memory");
         } else {
