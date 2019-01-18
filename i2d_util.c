@@ -504,7 +504,7 @@ int i2d_string_stack_get_sorted(i2d_string_stack * stack, i2d_string ** list, si
     return status;
 }
 
-int i2d_string_stack_get_unique(i2d_string_stack * stack, i2d_buffer * buffer) {
+int i2d_string_stack_dump_buffer(i2d_string_stack * stack, i2d_buffer * buffer) {
     int status = I2D_OK;
     size_t i;
     size_t size;

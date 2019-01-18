@@ -523,7 +523,7 @@ int i2d_item_combo_get_string(i2d_item_combo * item_combo, i2d_item_db * item_db
             }
 
             if(!status) {
-                if(i2d_string_stack_get_unique(stack, buffer)) {
+                if(i2d_string_stack_dump_buffer(stack, buffer)) {
                     status = i2d_panic("failed to get item list");
                 } else {
                     i2d_buffer_get(buffer, &list.string, &list.length);
