@@ -33,7 +33,8 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     empty_description_on_zero = json_object_get(json, "empty_description_on_zero");
     empty_description_on_empty_string = json_object_get(json, "empty_description_on_empty_string");
     dump_stack_instead_of_description = json_object_get(json, "dump_stack_instead_of_description");
-    i2d_constant_get_by_macro_value(constant_db, key, &result->constant);
+    if(constant_db)
+        i2d_constant_get_by_macro_value(constant_db, key, &result->constant);
 
     if(i2d_string_create(&result->name, key, strlen(key))) {
         status = i2d_panic("failed to copy name string");
