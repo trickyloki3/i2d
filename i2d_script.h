@@ -238,6 +238,7 @@ typedef struct i2d_script i2d_script;
 int i2d_script_init(i2d_script **, i2d_config *, i2d_json *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *, i2d_rbt *);
+int i2d_script_compile_item(i2d_script *, i2d_item *);
 int i2d_script_compile_node(i2d_script *, const char *, i2d_node **, i2d_rbt *);
 int i2d_script_compile_item_combo(i2d_script *, i2d_item *, i2d_string *);
 int i2d_script_translate(i2d_script *, i2d_block *, i2d_rbt *, i2d_logic *);
@@ -260,16 +261,4 @@ int i2d_script_expression_binary_assign(i2d_node *, int, i2d_rbt *);
 int i2d_script_expression_binary_relational(i2d_node *, int, int);
 int i2d_script_expression_binary_logical(i2d_node *, int, int);
 int i2d_script_expression_binary(i2d_script *, i2d_node *, int, i2d_rbt *);
-
-struct i2d_item_script {
-    i2d_string script;
-    i2d_string onequip;
-    i2d_string onunequip;
-    i2d_string combo;
-};
-
-typedef struct i2d_item_script i2d_item_script;
-
-int i2d_item_script_create(i2d_item_script *, i2d_item *, i2d_script *);
-void i2d_item_script_destroy(i2d_item_script *);
 #endif

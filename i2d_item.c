@@ -46,8 +46,12 @@ void i2d_item_deit(i2d_item ** result) {
     i2d_free(object->aegis_name.string);
     i2d_free(object->name.string);
     i2d_free(object->script.string);
+    i2d_free(object->script_description.string);
     i2d_free(object->onequip_script.string);
+    i2d_free(object->onequip_script_description.string);
     i2d_free(object->onunequip_script.string);
+    i2d_free(object->onunequip_script_description.string);
+    i2d_free(object->combo_description.string);
     i2d_free(object);
     *result = NULL;
 }

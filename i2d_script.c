@@ -2154,6 +2154,22 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
     return status;
 }
 
+int i2d_script_compile_item(i2d_script * script, i2d_item * item) {
+    int status = I2D_OK;
+
+    if(i2d_script_compile(script, &item->script, &item->script_description, NULL)) {
+        status = i2d_panic("failed to compile script -- %ld", item->id);
+    } else if(i2d_script_compile(script, &item->onequip_script, &item->onequip_script_description, NULL)) {
+        status = i2d_panic("failed to compile onequip script -- %ld", item->id);
+    } else if(i2d_script_compile(script, &item->onunequip_script, &item->onunequip_script_description, NULL)) {
+        status = i2d_panic("failed to compile onunequip script -- %ld", item->id);
+    } else if(i2d_script_compile_item_combo(script, item, &item->combo_description)) {
+        status = i2d_panic("failed to compile item combo script -- %ld", item->id);
+    }
+
+    return status;
+}
+
 int i2d_script_compile_node(i2d_script * script, const char * string, i2d_node ** result, i2d_rbt * inherit_variables) {
     int status = I2D_OK;
     i2d_string source;
@@ -3042,36 +3058,6 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
     }
 
     return status;
-}
-
-int i2d_item_script_create(i2d_item_script * result, i2d_item * item, i2d_script * script) {
-    int status = I2D_OK;
-    i2d_item_script output;
-    i2d_zero(output);
-
-    if(i2d_script_compile(script, &item->script, &output.script, NULL)) {
-        status = i2d_panic("failed to compile script -- %ld", item->id);
-    } else if(i2d_script_compile(script, &item->onequip_script, &output.onequip, NULL)) {
-        status = i2d_panic("failed to compile onequip script -- %ld", item->id);
-    } else if(i2d_script_compile(script, &item->onunequip_script, &output.onunequip, NULL)) {
-        status = i2d_panic("failed to compile onunequip script -- %ld", item->id);
-    } else if(i2d_script_compile_item_combo(script, item, &output.combo)) {
-        status = i2d_panic("failed to compile item combo script -- %ld", item->id);
-    }
-
-    if(status)
-        i2d_item_script_destroy(&output);
-    else
-        *result = output;
-
-    return status;
-}
-
-void i2d_item_script_destroy(i2d_item_script * result) {
-    i2d_string_destroy(&result->script);
-    i2d_string_destroy(&result->onequip);
-    i2d_string_destroy(&result->onunequip);
-    i2d_string_destroy(&result->combo);
 }
 
 int i2d_local_create(i2d_local * result, i2d_script * script) {

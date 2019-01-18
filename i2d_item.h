@@ -27,8 +27,12 @@ struct i2d_item {
     long refineable;
     long view;
     i2d_string script;
+    i2d_string script_description;
     i2d_string onequip_script;
+    i2d_string onequip_script_description;
     i2d_string onunequip_script;
+    i2d_string onunequip_script_description;
+    i2d_string combo_description;
     struct i2d_item * next;
     struct i2d_item * prev;
 };
