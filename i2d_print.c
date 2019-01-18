@@ -36,3 +36,11 @@ void i2d_print_deit(i2d_print ** result) {
     i2d_free(object);
     *result = NULL;
 }
+
+int i2d_print_format(i2d_print * print, i2d_item * item) {
+    int status = I2D_OK;
+
+
+
+    return status;
+}

@@ -3361,7 +3361,7 @@ static int i2d_handler_strcharinfo(i2d_script * script, i2d_rbt * variables, i2d
         status = i2d_panic("failed to get strcharinfo arguments");
     } else if(i2d_node_get_constant(arguments[0], &value)) {
         status = i2d_panic("failed to get type");
-    } else if(i2d_value_map_get(script->strcharinfo, value, &string)) {
+    } else if(i2d_value_map_get_string(script->strcharinfo, value, &string)) {
         status = i2d_panic("failed to get strcharinfo by type -- %ld", value);
     } else if(i2d_node_set_string(node, &string)) {
         status = i2d_panic("failed to write strcharinfo string");
@@ -3428,7 +3428,7 @@ static int i2d_handler_getiteminfo(i2d_script * script, i2d_rbt * variables, i2d
         if(!status) {
             if(i2d_node_get_constant(arguments[1], &value)) {
                 status = i2d_panic("failed to get type");
-            } else if(i2d_value_map_get(script->getiteminfo, value, &string)) {
+            } else if(i2d_value_map_get_string(script->getiteminfo, value, &string)) {
                 status = i2d_panic("failed to get getiteminfo by type -- %ld", value);
             } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
                 status = i2d_panic("failed to push getiteminfo string");
@@ -4281,7 +4281,7 @@ static int i2d_handler_weapons_cb(i2d_script * script, i2d_string_stack * stack,
     int status = I2D_OK;
     i2d_string weapon;
 
-    if(i2d_value_map_get(script->weapons, id, &weapon)) {
+    if(i2d_value_map_get_string(script->weapons, id, &weapon)) {
         status = i2d_panic("failed to get weapon by weapon type -- %ld", id);
     } else if(i2d_string_stack_push(stack, weapon.string, weapon.length)) {
         status = i2d_panic("failed to push string on stack");
@@ -4599,7 +4599,7 @@ static int i2d_handler_skill_flags(i2d_script * script, i2d_rbt * variables, i2d
 
     if(i2d_node_get_constant(node, &flag)) {
         status = i2d_panic("failed to get skill flag");
-    } else if(i2d_value_map_get(script->skill_flags, flag, &string)) {
+    } else if(i2d_value_map_get_string(script->skill_flags, flag, &string)) {
         status = i2d_panic("failed to get skill flag by flag -- %ld", flag);
     } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
         status = i2d_panic("failed to push string on stack");
@@ -4628,7 +4628,7 @@ static int i2d_handler_searchstore_effect(i2d_script * script, i2d_rbt * variabl
 
     if(i2d_node_get_constant(node, &flag)) {
         status = i2d_panic("failed to get searchstore effect");
-    } else if(i2d_value_map_get(script->searchstore_effect, flag, &string)) {
+    } else if(i2d_value_map_get_string(script->searchstore_effect, flag, &string)) {
         status = i2d_panic("failed to get searchstore effect by flag -- %ld", flag);
     } else if(i2d_string_stack_push(local->stack, string.string, string.length)) {
         status = i2d_panic("failed to push string on stack");
@@ -4686,7 +4686,7 @@ static int i2d_handler_bonus_script_flag_cb(uint64_t bit, void * data) {
 
     i2d_zero(string);
 
-    if(i2d_value_map_get(context->script->bonus_script_flag, flag, &string)) {
+    if(i2d_value_map_get_string(context->script->bonus_script_flag, flag, &string)) {
         status = i2d_panic("failed to get bonus script by flag -- %ld", flag);
     } else if(i2d_string_stack_push(context->stack, string.string, string.length)) {
         status = i2d_panic("failed to push string on stack");
