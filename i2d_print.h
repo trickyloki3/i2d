@@ -18,4 +18,5 @@ typedef struct i2d_print i2d_print;
 int i2d_print_init(i2d_print **, i2d_json *);
 void i2d_print_deit(i2d_print **);
 int i2d_print_format(i2d_print *, i2d_item *);
+int i2d_print_format_lua(i2d_print *, i2d_item *, i2d_string *);
 #endif

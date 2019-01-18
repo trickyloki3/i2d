@@ -88,9 +88,9 @@ void i2d_print_deit(i2d_print ** result) {
 
 int i2d_print_format(i2d_print * print, i2d_item * item) {
     int status = I2D_OK;
-    i2d_string_stack * properties = NULL;
     i2d_buffer * buffer = NULL;
-    i2d_string_stack stack;
+    i2d_string_stack * stack = NULL;
+    i2d_string_stack properties;
     i2d_string * list;
     size_t size;
     size_t i;
@@ -98,38 +98,44 @@ int i2d_print_format(i2d_print * print, i2d_item * item) {
     i2d_handler * handler;
     i2d_string description;
 
-    if(i2d_string_stack_cache_get(print->stack_cache, &properties)) {
-        status = i2d_panic("failed to create string stack object");
+    if(i2d_buffer_cache_get(print->buffer_cache, &buffer)) {
+        status = i2d_panic("failed to create buffer object");
     } else {
-        if(i2d_buffer_cache_get(print->buffer_cache, &buffer)) {
-            status = i2d_panic("failed to create buffer object");
+        if(i2d_string_stack_cache_get(print->stack_cache, &stack)) {
+            status = i2d_panic("failed to create string stack object");
         } else {
-            if(i2d_value_map_get_string_stack(print->description_by_item_type, item->type, &stack)) {
+            if(i2d_value_map_get_string_stack(print->description_by_item_type, item->type, &properties)) {
                 status = i2d_panic("failed to get item properties by item type -- %ld", item->type);
-            } else if(i2d_string_stack_get(&stack, &list, &size)) {
+            } else if(i2d_string_stack_get(&properties, &list, &size)) {
                 status = i2d_panic("failed to get item properties from stack");
             } else {
                 for(i = 0; i < size && !status; i++) {
                     if(i2d_data_map_get(print->description_of_item_property, list[i].string, &data)) {
                         status = i2d_panic("failed to get item property by name -- %s", list[i].string);
-                    } else if(i2d_rbt_search(print->print_handlers, data->handler.string, &handler)) {
+                    } else if(i2d_rbt_search(print->print_handlers, data->handler.string, (void **) &handler)) {
                         status = i2d_panic("failed to get handler by name -- %s", data->handler.string);
-                    } else if(handler->handler(print, data, item, properties)) {
+                    } else if(handler->handler(print, data, item, stack)) {
                         status = I2D_FAIL;
                     }
                 }
-                if(i2d_string_stack_dump_buffer(properties, buffer, "\n")) {
+                if(i2d_string_stack_dump_buffer(stack, buffer, "\n")) {
                     status = i2d_panic("failed to dump string stack to buffer");
                 } else {
                     i2d_buffer_get(buffer, &description.string, &description.length);
-                    fprintf(stdout, "%s", description.string);
+                    if(i2d_print_format_lua(print, item, &description))
+                        status = i2d_panic("failed to write item in lua format -- %ld", item->id);
                 }
-                i2d_string_stack_clear(properties);
             }
-            i2d_buffer_cache_put(print->buffer_cache, &buffer);
+            i2d_string_stack_cache_put(print->stack_cache, &stack);
         }
-        i2d_string_stack_cache_put(print->stack_cache, &properties);
+        i2d_buffer_cache_put(print->buffer_cache, &buffer);
     }
+
+    return status;
+}
+
+int i2d_print_format_lua(i2d_print * print, i2d_item * item, i2d_string * description) {
+    int status = I2D_OK;
 
     return status;
 }
