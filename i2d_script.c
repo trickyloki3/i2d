@@ -2616,10 +2616,10 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
                         is_empty = I2D_FAIL;
 
                 if(!is_empty && i2d_string_stack_format(local.stack, &statement->description, buffer))
-                    status = i2d_panic("failed to write bonus type description");
+                    status = i2d_panic("failed to write statment description");
             }
         } else if(!status && i2d_string_stack_format(local.stack, &statement->description, buffer)) {
-            status = i2d_panic("failed to write bonus type description");
+            status = i2d_panic("failed to write statment description");
         }
 
         if(i2d_local_destroy(&local, script))
@@ -3201,7 +3201,7 @@ static int i2d_handler_general(i2d_script * script, i2d_rbt * variables, i2d_nod
         i2d_buffer_clear(&node->tokens->buffer);
 
         if(i2d_string_stack_format(local->stack, &data->description, &node->tokens->buffer)) {
-            status = i2d_panic("failed to write function format");
+            status = i2d_panic("failed to write function description");
         } else if(i2d_range_copy(&node->range, &data->range)) {
             status = i2d_panic("failed to copy function range");
         }
