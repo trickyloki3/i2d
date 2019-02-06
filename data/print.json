@@ -400,7 +400,7 @@
         },
         "script" : {
             "handler" : "string",
-            "description" : "[script]\n{0}"
+            "description" : "{0}"
         },
         "onequip_script" : {
             "handler" : "string",

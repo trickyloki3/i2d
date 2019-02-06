@@ -327,7 +327,7 @@ static int i2d_handler_string(i2d_print * print, i2d_data * data, i2d_item * ite
 
     if(i2d_print_get_property_string(print, data->name.string, item, &string)) {
         status = i2d_panic("failed to get string by name -- %s", data->name.string);
-    } else {
+    } else if(string.length > 0) {
         status = i2d_handler_general(print, data, &string, stack);
     }
 
