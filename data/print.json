@@ -380,15 +380,18 @@
         },
         "weapon_level" : {
             "handler" : "integer",
-            "description" : "weapon level: {0}"
+            "description" : "weapon level: {0}",
+            "empty_description_on_zero" : true
         },
         "base_level" : {
             "handler" : "integer",
-            "description" : "base level: {0}"
+            "description" : "base level: {0}",
+            "empty_description_on_zero" : true
         },
         "max_level" : {
             "handler" : "integer",
-            "description" : "max level: {0}"
+            "description" : "max level: {0}",
+            "empty_description_on_zero" : true
         },
         "refineable" : {
             "handler" : "refine",

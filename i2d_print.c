@@ -306,16 +306,20 @@ static int i2d_handler_integer(i2d_print * print, i2d_data * data, i2d_item * it
 
     if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
         status = i2d_panic("failed to get integer by name -- %s", data->name.string);
-    } else if(i2d_buffer_cache_get(print->buffer_cache, &buffer)) {
-        status = i2d_panic("failed to create buffer object");
+    } else if(data->empty_description_on_zero && !integer) {
+        /* empty description on zero */
     } else {
-        if(i2d_buffer_printf(buffer, "%ld", integer)) {
-            status = i2d_panic("failed to write buffer object");
+        if(i2d_buffer_cache_get(print->buffer_cache, &buffer)) {
+            status = i2d_panic("failed to create buffer object");
         } else {
-            i2d_buffer_get(buffer, &string.string, &string.length);
-            status = i2d_handler_general(print, data, &string, stack);
+            if(i2d_buffer_printf(buffer, "%ld", integer)) {
+                status = i2d_panic("failed to write buffer object");
+            } else {
+                i2d_buffer_get(buffer, &string.string, &string.length);
+                status = i2d_handler_general(print, data, &string, stack);
+            }
+            i2d_buffer_cache_put(print->buffer_cache, &buffer);
         }
-        i2d_buffer_cache_put(print->buffer_cache, &buffer);
     }
 
     return status;
