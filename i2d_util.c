@@ -511,7 +511,7 @@ int i2d_string_stack_dump_buffer(i2d_string_stack * stack, i2d_buffer * buffer, 
     size_t last;
     i2d_string * list;
 
-    if(i2d_string_stack_get_sorted(stack, &list, &size)) {
+    if(i2d_string_stack_get(stack, &list, &size)) {
         status = i2d_panic("failed to get string list");
     } else {
         for(i = 0, last = 0; i < size && !status; i++) {
