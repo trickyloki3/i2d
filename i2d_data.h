@@ -22,9 +22,9 @@ struct i2d_data {
     i2d_string positive;
     i2d_string negative;
     i2d_string zero;
-    int empty_description_on_zero;  /* i2d_data_handler_evaluate */
-    int empty_description_on_empty_string; /* i2d_script_statement_evaluate */
-    int dump_stack_instead_of_description; /* i2d_script_statement_evaluate */
+    int empty_description_on_zero;
+    int empty_description_on_empty_string;
+    int dump_stack_instead_of_description;
 };
 
 typedef struct i2d_data i2d_data;
