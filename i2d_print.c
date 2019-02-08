@@ -343,7 +343,7 @@ static int i2d_handler_integer(i2d_print * print, i2d_data * data, i2d_item * it
 
     if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
         status = i2d_panic("failed to get integer by name -- %s", data->name.string);
-    } else if(data->empty_description_on_zero && !integer) {
+    } else if(!integer) {
         /* empty description on zero */
     } else {
         if(i2d_buffer_cache_get(print->buffer_cache, &buffer)) {
