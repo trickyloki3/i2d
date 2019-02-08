@@ -180,8 +180,7 @@
     },
     "gender" : {
         "0" : "female",
-        "1" : "male",
-        "2" : "unisex"
+        "1" : "male"
     },
     "refineable" : {
         "0" : "Cannot be refined.",
