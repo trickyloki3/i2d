@@ -124,6 +124,14 @@ int i2d_print_init(i2d_print ** result, i2d_json * json) {
                 status = i2d_panic("failed to create buffer cache object");
             } else if(i2d_string_stack_cache_init(&object->stack_cache)) {
                 status = i2d_panic("failed to create string stack cache object");
+            } else if(i2d_value_map_init(&object->item_type, json->item_type, i2d_value_string)) {
+                status = i2d_panic("failed to load item_type");
+            } else if(i2d_value_map_init(&object->item_location, json->item_location, i2d_value_string)) {
+                status = i2d_panic("failed to load item_location");
+            } else if(i2d_value_map_init(&object->ammo_type, json->ammo_type, i2d_value_string)) {
+                status = i2d_panic("failed to load ammo_type");
+            } else if(i2d_value_map_init(&object->weapon_type, json->weapon_type, i2d_value_string)) {
+                status = i2d_panic("failed to load weapon_type");
             } else {
                 size = i2d_size(print_handlers);
                 for(i = 0; i < size && !status; i++)
@@ -151,6 +159,10 @@ void i2d_print_deit(i2d_print ** result) {
     i2d_print * object;
 
     object = *result;
+    i2d_deit(object->weapon_type, i2d_value_map_deit);
+    i2d_deit(object->ammo_type, i2d_value_map_deit);
+    i2d_deit(object->item_location, i2d_value_map_deit);
+    i2d_deit(object->item_type, i2d_value_map_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
     i2d_deit(object->buffer_cache, i2d_buffer_cache_deit);
     i2d_deit(object->item_properties, i2d_rbt_deit);
@@ -211,6 +223,8 @@ int i2d_print_format(i2d_print * print, i2d_item * item) {
 
 int i2d_print_format_lua(i2d_print * print, i2d_item * item, i2d_string * description) {
     int status = I2D_OK;
+
+    fprintf(stdout, "%s\n", description->string);
 
     return status;
 }
@@ -277,22 +291,24 @@ static int i2d_handler_general(i2d_print * print, i2d_data * data, i2d_string * 
     i2d_string_stack * format = NULL;
     i2d_buffer * description = NULL;
 
-    if(i2d_string_stack_cache_get(print->stack_cache, &format)) {
-        status = i2d_panic("failed to create string stack object");
-    } else {
-        if(i2d_string_stack_push(format, string->string, string->length)) {
-            status = i2d_panic("failed to push buffer on stack");
-        } else if(i2d_buffer_cache_get(print->buffer_cache, &description)) {
-            status = i2d_panic("failed to create buffer object");
+    if(string->length > 0) {
+        if(i2d_string_stack_cache_get(print->stack_cache, &format)) {
+            status = i2d_panic("failed to create string stack object");
         } else {
-            if(i2d_string_stack_format(format, &data->description, description)) {
-                status = i2d_panic("failed to format string stack");
-            } else if(i2d_string_stack_push_buffer(stack, description)) {
+            if(i2d_string_stack_push(format, string->string, string->length)) {
                 status = i2d_panic("failed to push buffer on stack");
+            } else if(i2d_buffer_cache_get(print->buffer_cache, &description)) {
+                status = i2d_panic("failed to create buffer object");
+            } else {
+                if(i2d_string_stack_format(format, &data->description, description)) {
+                    status = i2d_panic("failed to format string stack");
+                } else if(i2d_string_stack_push_buffer(stack, description)) {
+                    status = i2d_panic("failed to push buffer on stack");
+                }
+                i2d_buffer_cache_put(print->buffer_cache, &description);
             }
-            i2d_buffer_cache_put(print->buffer_cache, &description);
+            i2d_string_stack_cache_put(print->stack_cache, &format);
         }
-        i2d_string_stack_cache_put(print->stack_cache, &format);
     }
 
     return status;
@@ -303,6 +319,7 @@ static int i2d_handler_integer(i2d_print * print, i2d_data * data, i2d_item * it
     long integer;
     i2d_buffer * buffer = NULL;
     i2d_string string;
+    i2d_zero(string);
 
     if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
         status = i2d_panic("failed to get integer by name -- %s", data->name.string);
@@ -328,10 +345,11 @@ static int i2d_handler_integer(i2d_print * print, i2d_data * data, i2d_item * it
 static int i2d_handler_string(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
     i2d_string string;
+    i2d_zero(string);
 
     if(i2d_print_get_property_string(print, data->name.string, item, &string)) {
         status = i2d_panic("failed to get string by name -- %s", data->name.string);
-    } else if(string.length > 0) {
+    } else {
         status = i2d_handler_general(print, data, &string, stack);
     }
 
@@ -340,6 +358,18 @@ static int i2d_handler_string(i2d_print * print, i2d_data * data, i2d_item * ite
 
 static int i2d_handler_type(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
+    long integer;
+    i2d_string string;
+    i2d_zero(string);
+
+    if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
+        status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(i2d_value_map_get_string(print->item_type, integer, &string)) {
+        status = i2d_panic("failed to get item type by integer -- %ld", integer);
+    } else {
+        status = i2d_handler_general(print, data, &string, stack);
+    }
+
     return status;
 }
 
@@ -360,6 +390,18 @@ static int i2d_handler_gender(i2d_print * print, i2d_data * data, i2d_item * ite
 
 static int i2d_handler_location(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
+    long integer;
+    i2d_string string;
+    i2d_zero(string);
+
+    if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
+        status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(i2d_value_map_get_string(print->item_location, integer, &string)) {
+        status = i2d_panic("failed to get item location by integer -- %ld", integer);
+    } else {
+        status = i2d_handler_general(print, data, &string, stack);
+    }
+
     return status;
 }
 
@@ -370,6 +412,32 @@ static int i2d_handler_refine(i2d_print * print, i2d_data * data, i2d_item * ite
 
 static int i2d_handler_view(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
+    long integer;
+    i2d_string string;
+    i2d_zero(string);
+
+    if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
+        status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else {
+        switch(item->type) {
+            case 5: /* weapon */
+                if(i2d_value_map_get_string(print->weapon_type, integer, &string)) {
+                    status = i2d_panic("failed to get weapon type by integer -- %ld", integer);
+                } else {
+                    status = i2d_handler_general(print, data, &string, stack);
+                }
+                break;
+            case 10: /* ammo */
+                if(i2d_value_map_get_string(print->ammo_type, integer, &string)) {
+                    status = i2d_panic("failed to get ammo type by integer -- %ld", integer);
+                } else {
+                    status = i2d_handler_general(print, data, &string, stack);
+                }
+                break;
+                break;
+        }
+    }
+
     return status;
 }
 

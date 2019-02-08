@@ -12,6 +12,10 @@ struct i2d_print {
     i2d_rbt * item_properties;
     i2d_buffer_cache * buffer_cache;
     i2d_string_stack_cache * stack_cache;
+    i2d_value_map * item_type;
+    i2d_value_map * item_location;
+    i2d_value_map * ammo_type;
+    i2d_value_map * weapon_type;
 };
 
 typedef struct i2d_print i2d_print;
