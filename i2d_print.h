@@ -16,6 +16,8 @@ struct i2d_print {
     i2d_value_map * item_location;
     i2d_value_map * ammo_type;
     i2d_value_map * weapon_type;
+    i2d_value_map * gender;
+    i2d_value_map * refineable;
 };
 
 typedef struct i2d_print i2d_print;

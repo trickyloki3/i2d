@@ -132,6 +132,10 @@ int i2d_print_init(i2d_print ** result, i2d_json * json) {
                 status = i2d_panic("failed to load ammo_type");
             } else if(i2d_value_map_init(&object->weapon_type, json->weapon_type, i2d_value_string)) {
                 status = i2d_panic("failed to load weapon_type");
+            } else if(i2d_value_map_init(&object->gender, json->gender, i2d_value_string)) {
+                status = i2d_panic("failed to load gender");
+            } else if(i2d_value_map_init(&object->refineable, json->refineable, i2d_value_string)) {
+                status = i2d_panic("failed to load refineable");
             } else {
                 size = i2d_size(print_handlers);
                 for(i = 0; i < size && !status; i++)
@@ -159,6 +163,8 @@ void i2d_print_deit(i2d_print ** result) {
     i2d_print * object;
 
     object = *result;
+    i2d_deit(object->refineable, i2d_value_map_deit);
+    i2d_deit(object->gender, i2d_value_map_deit);
     i2d_deit(object->weapon_type, i2d_value_map_deit);
     i2d_deit(object->ammo_type, i2d_value_map_deit);
     i2d_deit(object->item_location, i2d_value_map_deit);
@@ -385,6 +391,18 @@ static int i2d_handler_class(i2d_print * print, i2d_data * data, i2d_item * item
 
 static int i2d_handler_gender(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
+    long integer;
+    i2d_string string;
+    i2d_zero(string);
+
+    if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
+        status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(i2d_value_map_get_string(print->gender, integer, &string)) {
+        status = i2d_panic("failed to get gender by integer -- %ld", integer);
+    } else {
+        status = i2d_handler_general(print, data, &string, stack);
+    }
+
     return status;
 }
 
@@ -407,6 +425,18 @@ static int i2d_handler_location(i2d_print * print, i2d_data * data, i2d_item * i
 
 static int i2d_handler_refine(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
+    long integer;
+    i2d_string string;
+    i2d_zero(string);
+
+    if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
+        status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(i2d_value_map_get_string(print->refineable, integer, &string)) {
+        status = i2d_panic("failed to get refineable by integer -- %ld", integer);
+    } else {
+        status = i2d_handler_general(print, data, &string, stack);
+    }
+
     return status;
 }
 
