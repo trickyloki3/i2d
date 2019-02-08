@@ -3,41 +3,40 @@
         "0" : [
             "id",
             "name",
-            "type",
-            "weight",
+            "type"
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ],
         "2" : [
             "id",
             "name",
             "type",
-            "weight",
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ],
         "3" : [
             "id",
             "name",
             "type",
-            "weight",
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ],
         "4" : [
             "id",
             "name",
             "type",
-            "weight",
             "def",
             "job",
             "upper",
@@ -48,13 +47,13 @@
             "refineable",
             "script",
             "onequip_script",
-            "onunequip_script"
+            "onunequip_script",
+            "weight"
         ],
         "5" : [
             "id",
             "name",
             "type",
-            "weight",
             "atk",
             "matk",
             "range",
@@ -69,46 +68,46 @@
             "view",
             "script",
             "onequip_script",
-            "onunequip_script"
+            "onunequip_script",
+            "weight"
         ],
         "6" : [
             "id",
             "name",
             "type",
-            "weight",
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ],
         "7" : [
             "id",
             "name",
             "type",
-            "weight",
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ],
         "8" : [
             "id",
             "name",
             "type",
-            "weight",
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ],
         "10" : [
             "id",
             "name",
             "type",
-            "weight",
             "atk",
             "job",
             "upper",
@@ -116,24 +115,24 @@
             "base_level",
             "max_level",
             "view",
-            "script"
+            "script",
+            "weight"
         ],
         "11" : [
             "id",
             "name",
             "type",
-            "weight",
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ],
         "12" : [
             "id",
             "name",
             "type",
-            "weight",
             "atk",
             "matk",
             "range",
@@ -148,18 +147,19 @@
             "view",
             "script",
             "onequip_script",
-            "onunequip_script"
+            "onunequip_script",
+            "weight"
         ],
         "18" : [
             "id",
             "name",
             "type",
-            "weight",
             "job",
             "upper",
             "base_level",
             "max_level",
-            "script"
+            "script",
+            "weight"
         ]
     },
     "description_of_item_property" : {
