@@ -3,7 +3,7 @@
         "0" : [
             "id",
             "name",
-            "type"
+            "type",
             "job",
             "upper",
             "base_level",
@@ -46,8 +46,6 @@
             "max_level",
             "refineable",
             "script",
-            "onequip_script",
-            "onunequip_script",
             "weight"
         ],
         "5" : [
@@ -67,8 +65,6 @@
             "refineable",
             "view",
             "script",
-            "onequip_script",
-            "onunequip_script",
             "weight"
         ],
         "6" : [
@@ -146,8 +142,6 @@
             "refineable",
             "view",
             "script",
-            "onequip_script",
-            "onunequip_script",
             "weight"
         ],
         "18" : [
