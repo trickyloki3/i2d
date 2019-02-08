@@ -163,6 +163,10 @@
         "1073741824" : "Rebellion",
         "2147483648" : "Summoner"
     },
+    "job_group" : {
+        "-1" : "All Jobs",
+        "-2" : "All Jobs except Novice"
+    },
     "class" : {
         "1" : "Normal Class",
         "2" : "Transcedent Class",

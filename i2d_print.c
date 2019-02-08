@@ -140,6 +140,8 @@ int i2d_print_init(i2d_print ** result, i2d_json * json) {
                 status = i2d_panic("failed to load refineable");
             } else if(i2d_value_map_init(&object->job, json->job, i2d_value_string)) {
                 status = i2d_panic("failed to load job");
+            } else if(i2d_value_map_init(&object->job_group, json->job_group, i2d_value_string)) {
+                status = i2d_panic("failed to load job_group");
             } else if(i2d_value_map_init(&object->class, json->class, i2d_value_string)) {
                 status = i2d_panic("failed to load class");
             } else {
@@ -170,6 +172,7 @@ void i2d_print_deit(i2d_print ** result) {
 
     object = *result;
     i2d_deit(object->class, i2d_value_map_deit);
+    i2d_deit(object->job_group, i2d_value_map_deit);
     i2d_deit(object->job, i2d_value_map_deit);
     i2d_deit(object->refineable, i2d_value_map_deit);
     i2d_deit(object->gender, i2d_value_map_deit);
@@ -415,9 +418,12 @@ static int i2d_handler_job(i2d_print * print, i2d_data * data, i2d_item * item, 
     i2d_buffer * buffer = NULL;
     i2d_string string;
     i2d_loop_context context = { print, NULL };
+    i2d_zero(string);
 
     if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
         status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(!i2d_value_map_get_string(print->job_group, integer, &string) && string.length > 0) {
+        status = i2d_handler_general(print, data, &string, stack);
     } else if(i2d_string_stack_cache_get(print->stack_cache, &context.stack)) {
         status = i2d_panic("failed to create string stack object");
     } else {
@@ -462,6 +468,7 @@ static int i2d_handler_class(i2d_print * print, i2d_data * data, i2d_item * item
     i2d_buffer * buffer = NULL;
     i2d_string string;
     i2d_loop_context context = { print, NULL };
+    i2d_zero(string);
 
     if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
         status = i2d_panic("failed to get integer by name -- %s", data->name.string);
