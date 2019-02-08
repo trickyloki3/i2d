@@ -2140,6 +2140,9 @@ int i2d_script_compile(i2d_script * script, i2d_string * source, i2d_string * ta
                         status = i2d_panic("failed to generate -- %s", source->string);
                     } else {
                         i2d_buffer_get(&blocks->buffer, &description.string, &description.length);
+                        /* remove the last newline */
+                        while(description.length > 0 && description.string[description.length - 1] == '\n')
+                            description.string[--description.length] = 0;
                         if(i2d_string_create(target, description.string, description.length))
                             status = i2d_panic("failed to create string object");
                     }
