@@ -159,87 +159,87 @@
     "description_of_item_property" : {
         "id" : {
             "handler" : "integer",
-            "description" : "id: {0}"
+            "description" : "ID: {0}"
         },
         "aegis_name" : {
             "handler" : "string",
-            "description" : "aegis name: {0}"
+            "description" : "Aegis Name: {0}"
         },
         "name" : {
             "handler" : "string",
-            "description" : "name: {0}"
+            "description" : "Name: {0}"
         },
         "type" : {
             "handler" : "type",
-            "description" : "type: {0}"
+            "description" : "Type: {0}"
         },
         "buy" : {
             "handler" : "integer",
-            "description" : "buy: {0}"
+            "description" : "Buy: {0}"
         },
         "sell" : {
             "handler" : "integer",
-            "description" : "sell: {0}"
+            "description" : "Sell: {0}"
         },
         "weight" : {
             "handler" : "integer",
-            "description" : "weight: {0}"
+            "description" : "Weight: {0}"
         },
         "atk" : {
             "handler" : "integer",
-            "description" : "atk: {0}"
+            "description" : "Attack: {0}"
         },
         "matk" : {
             "handler" : "integer",
-            "description" : "matk: {0}"
+            "description" : "Magical Attack: {0}"
         },
         "def" : {
             "handler" : "integer",
-            "description" : "def: {0}"
+            "description" : "Defense: {0}"
         },
         "range" : {
             "handler" : "integer",
-            "description" : "range: {0}"
+            "description" : "Range: {0}"
         },
         "slots" : {
             "handler" : "integer",
-            "description" : "slots: {0}"
+            "description" : "Slots: {0}"
         },
         "job" : {
             "handler" : "job",
-            "description" : "job: {0}"
+            "description" : "Job: {0}"
         },
         "upper" : {
             "handler" : "class",
-            "description" : "class: {0}"
+            "description" : "Class: {0}"
         },
         "gender" : {
             "handler" : "gender",
-            "description" : "gender: {0}"
+            "description" : "Gender: {0}"
         },
         "location" : {
             "handler" : "location",
-            "description" : "location: {0}"
+            "description" : "Location: {0}"
         },
         "weapon_level" : {
             "handler" : "integer",
-            "description" : "weapon level: {0}"
+            "description" : "Weapon Level: {0}"
         },
         "base_level" : {
             "handler" : "integer",
-            "description" : "base level: {0}"
+            "description" : "Required Level: {0}"
         },
         "max_level" : {
             "handler" : "integer",
-            "description" : "max level: {0}"
+            "description" : "Max Level: {0}"
         },
         "refineable" : {
             "handler" : "refine",
-            "description" : "refine: {0}"
+            "description" : "Refine: {0}"
         },
         "view" : {
             "handler" : "view",
-            "description" : "view: {0}"
+            "description" : "Weapon Type: {0}"
         },
         "script" : {
             "handler" : "string",
@@ -247,11 +247,11 @@
         },
         "onequip_script" : {
             "handler" : "string",
-            "description" : "[onequip]\n{0}"
+            "description" : "[On Equip]\n{0}"
         },
         "onunequip_script" : {
             "handler" : "string",
-            "description" : "[onunequip]\n{0}"
+            "description" : "[On Unequip]\n{0}"
         }
     }
 }
