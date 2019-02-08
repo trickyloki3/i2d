@@ -113,7 +113,7 @@
         "argument_type" : [
             "pet_script"
         ],
-        "description" : "[Pet Script]\n{0}",
+        "description" : "{0}",
         "empty_description_on_empty_string" : true
     },
     "pet_loyal_script_print" : {
@@ -121,7 +121,7 @@
         "argument_type" : [
             "pet_loyal_script"
         ],
-        "description" : "[Loyal Pet Script]\n{0}",
+        "description" : "[When Pet Is Loyal]\n{0}",
         "empty_description_on_empty_string" : true
     },
     "heal_prefix" : {
