@@ -170,5 +170,14 @@
         "8" : "3rd Class",
         "16" : "Transcedent 3rd Class",
         "32" : "3rd Baby Class"
+    },
+    "gender" : {
+        "0" : "female",
+        "1" : "male",
+        "2" : "unisex"
+    },
+    "refineable" : {
+        "0" : "Cannot be refined.",
+        "1" : "Can be refined."
     }
 }
