@@ -3582,7 +3582,7 @@ static int i2d_handler_checkoption_loop(uint64_t flag, void * data) {
     if(i2d_constant_get_by_options(context->script->constant_db, (long) flag, &constant)) {
         status = i2d_panic("failed to get option by value -- %" PRIu64, flag);
     } else if(i2d_string_stack_push(context->local->stack, constant->name.string, constant->name.length)) {
-        status = i2d_panic("failed to push on stack");
+        status = i2d_panic("failed to push string on stack");
     }
 
     return status;

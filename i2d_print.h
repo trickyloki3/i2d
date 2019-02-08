@@ -18,6 +18,8 @@ struct i2d_print {
     i2d_value_map * weapon_type;
     i2d_value_map * gender;
     i2d_value_map * refineable;
+    i2d_value_map * job;
+    i2d_value_map * class;
 };
 
 typedef struct i2d_print i2d_print;

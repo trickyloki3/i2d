@@ -79,7 +79,9 @@ static int i2d_handler_general(i2d_print *, i2d_data *, i2d_string *, i2d_string
 static int i2d_handler_integer(i2d_print *, i2d_data *, i2d_item *, i2d_string_stack *);
 static int i2d_handler_string(i2d_print *, i2d_data *, i2d_item *, i2d_string_stack *);
 static int i2d_handler_type(i2d_print *, i2d_data *, i2d_item *, i2d_string_stack *);
+static int i2d_handler_job_loop(uint64_t, void *);
 static int i2d_handler_job(i2d_print *, i2d_data *, i2d_item *, i2d_string_stack *);
+static int i2d_handler_class_loop(uint64_t, void *);
 static int i2d_handler_class(i2d_print *, i2d_data *, i2d_item *, i2d_string_stack *);
 static int i2d_handler_gender(i2d_print *, i2d_data *, i2d_item *, i2d_string_stack *);
 static int i2d_handler_location(i2d_print *, i2d_data *, i2d_item *, i2d_string_stack *);
@@ -136,6 +138,10 @@ int i2d_print_init(i2d_print ** result, i2d_json * json) {
                 status = i2d_panic("failed to load gender");
             } else if(i2d_value_map_init(&object->refineable, json->refineable, i2d_value_string)) {
                 status = i2d_panic("failed to load refineable");
+            } else if(i2d_value_map_init(&object->job, json->job, i2d_value_string)) {
+                status = i2d_panic("failed to load job");
+            } else if(i2d_value_map_init(&object->class, json->class, i2d_value_string)) {
+                status = i2d_panic("failed to load class");
             } else {
                 size = i2d_size(print_handlers);
                 for(i = 0; i < size && !status; i++)
@@ -163,6 +169,8 @@ void i2d_print_deit(i2d_print ** result) {
     i2d_print * object;
 
     object = *result;
+    i2d_deit(object->class, i2d_value_map_deit);
+    i2d_deit(object->job, i2d_value_map_deit);
     i2d_deit(object->refineable, i2d_value_map_deit);
     i2d_deit(object->gender, i2d_value_map_deit);
     i2d_deit(object->weapon_type, i2d_value_map_deit);
@@ -379,13 +387,104 @@ static int i2d_handler_type(i2d_print * print, i2d_data * data, i2d_item * item,
     return status;
 }
 
+struct i2d_loop_context {
+    i2d_print * print;
+    i2d_string_stack * stack;
+};
+
+typedef struct i2d_loop_context i2d_loop_context;
+
+static int i2d_handler_job_loop(uint64_t flag, void * data) {
+    int status = I2D_OK;
+    i2d_loop_context * context = data;
+    i2d_string string;
+    i2d_zero(string);
+
+    if(i2d_value_map_get_string(context->print->job, (long) flag, &string)) {
+        status = i2d_panic("failed to get job by flag -- %ld", flag);
+    } else if(string.length > 0 && i2d_string_stack_push(context->stack, string.string, string.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
+    return status;
+}
+
 static int i2d_handler_job(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
+    long integer;
+    i2d_buffer * buffer = NULL;
+    i2d_string string;
+    i2d_loop_context context = { print, NULL };
+
+    if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
+        status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(i2d_string_stack_cache_get(print->stack_cache, &context.stack)) {
+        status = i2d_panic("failed to create string stack object");
+    } else {
+        if(i2d_by_bit64(integer, i2d_handler_job_loop, &context)) {
+            status = i2d_panic("failed to get job by flag -- %ld", integer);
+        } else if(i2d_buffer_cache_get(print->buffer_cache, &buffer)) {
+            status = i2d_panic("failed to create buffer object");
+        } else {
+            if(i2d_string_stack_dump_buffer(context.stack, buffer, ", ")) {
+                status = i2d_panic("failed to get job list from stack");
+            } else {
+                i2d_buffer_get(buffer, &string.string, &string.length);
+                status = i2d_handler_general(print, data, &string, stack);
+            }
+            i2d_buffer_cache_put(print->buffer_cache, &buffer);
+        }
+
+        i2d_string_stack_cache_put(print->stack_cache, &context.stack);
+    }
+
+    return status;
+}
+
+static int i2d_handler_class_loop(uint64_t flag, void * data) {
+    int status = I2D_OK;
+    i2d_loop_context * context = data;
+    i2d_string string;
+    i2d_zero(string);
+
+    if(i2d_value_map_get_string(context->print->class, (long) flag, &string)) {
+        status = i2d_panic("failed to get class by flag -- %ld", flag);
+    } else if(string.length > 0 && i2d_string_stack_push(context->stack, string.string, string.length)) {
+        status = i2d_panic("failed to push string on stack");
+    }
+
     return status;
 }
 
 static int i2d_handler_class(i2d_print * print, i2d_data * data, i2d_item * item, i2d_string_stack * stack) {
     int status = I2D_OK;
+    long integer;
+    i2d_buffer * buffer = NULL;
+    i2d_string string;
+    i2d_loop_context context = { print, NULL };
+
+    if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
+        status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(i2d_string_stack_cache_get(print->stack_cache, &context.stack)) {
+        status = i2d_panic("failed to create string stack object");
+    } else {
+        if(i2d_by_bit64(integer, i2d_handler_class_loop, &context)) {
+            status = i2d_panic("failed to get class by flag -- %ld", integer);
+        } else if(i2d_buffer_cache_get(print->buffer_cache, &buffer)) {
+            status = i2d_panic("failed to create buffer object");
+        } else {
+            if(i2d_string_stack_dump_buffer(context.stack, buffer, ", ")) {
+                status = i2d_panic("failed to get class list from stack");
+            } else {
+                i2d_buffer_get(buffer, &string.string, &string.length);
+                status = i2d_handler_general(print, data, &string, stack);
+            }
+            i2d_buffer_cache_put(print->buffer_cache, &buffer);
+        }
+
+        i2d_string_stack_cache_put(print->stack_cache, &context.stack);
+    }
+
     return status;
 }
 
