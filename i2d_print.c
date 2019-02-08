@@ -144,6 +144,8 @@ int i2d_print_init(i2d_print ** result, i2d_json * json) {
                 status = i2d_panic("failed to load job_group");
             } else if(i2d_value_map_init(&object->class, json->class, i2d_value_string)) {
                 status = i2d_panic("failed to load class");
+            } else if(i2d_value_map_init(&object->class_group, json->class_group, i2d_value_string)) {
+                status = i2d_panic("failed to load class_group");
             } else {
                 size = i2d_size(print_handlers);
                 for(i = 0; i < size && !status; i++)
@@ -171,6 +173,7 @@ void i2d_print_deit(i2d_print ** result) {
     i2d_print * object;
 
     object = *result;
+    i2d_deit(object->class_group, i2d_value_map_deit);
     i2d_deit(object->class, i2d_value_map_deit);
     i2d_deit(object->job_group, i2d_value_map_deit);
     i2d_deit(object->job, i2d_value_map_deit);
@@ -472,6 +475,8 @@ static int i2d_handler_class(i2d_print * print, i2d_data * data, i2d_item * item
 
     if(i2d_print_get_property_integer(print, data->name.string, item, &integer)) {
         status = i2d_panic("failed to get integer by name -- %s", data->name.string);
+    } else if(!i2d_value_map_get_string(print->class_group, integer, &string) && string.length > 0) {
+        status = i2d_handler_general(print, data, &string, stack);
     } else if(i2d_string_stack_cache_get(print->stack_cache, &context.stack)) {
         status = i2d_panic("failed to create string stack object");
     } else {

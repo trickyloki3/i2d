@@ -45,6 +45,7 @@ struct i2d_json {
     json_t * job;
     json_t * job_group;
     json_t * class;
+    json_t * class_group;
     json_t * gender;
     json_t * refineable;
     json_t * print_file;

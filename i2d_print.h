@@ -21,6 +21,7 @@ struct i2d_print {
     i2d_value_map * job;
     i2d_value_map * job_group;
     i2d_value_map * class;
+    i2d_value_map * class_group;
 };
 
 typedef struct i2d_print i2d_print;

@@ -175,6 +175,9 @@
         "16" : "Transcedent 3rd Class",
         "32" : "3rd Baby Class"
     },
+    "class_group" : {
+        "63" : "All Classes"
+    },
     "gender" : {
         "0" : "female",
         "1" : "male",

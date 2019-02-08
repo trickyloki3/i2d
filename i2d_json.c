@@ -243,6 +243,7 @@ static int i2d_json_load_data(i2d_json * json, i2d_string * directory) {
             json->job = json_object_get(json->data_file, "job");
             json->job_group = json_object_get(json->data_file, "job_group");
             json->class = json_object_get(json->data_file, "class");
+            json->class_group = json_object_get(json->data_file, "class_group");
             json->gender = json_object_get(json->data_file, "gender");
             json->refineable = json_object_get(json->data_file, "refineable");
         }
