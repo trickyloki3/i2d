@@ -575,7 +575,6 @@ static int i2d_handler_view(i2d_print * print, i2d_data * data, i2d_item * item,
                     status = i2d_handler_general(print, data, &string, stack);
                 }
                 break;
-                break;
         }
     }
 

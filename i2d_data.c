@@ -192,7 +192,7 @@ int i2d_value_map_init(i2d_value_map ** result, json_t * json, enum i2d_value_ty
                 status = i2d_panic("failed to create value array");
             } else {
                 json_object_foreach(json, key, value) {
-                    if(i2d_strtol(&object->list[i].value, key, strlen(key), 10)) {
+                    if(i2d_strtoll(&object->list[i].value, key, strlen(key), 10)) {
                         status = i2d_panic("failed to convert value string");
                     } else {
                         switch(object->type) {
@@ -255,7 +255,7 @@ void i2d_value_map_deit(i2d_value_map ** result) {
     *result = NULL;
 }
 
-int i2d_value_map_get_string(i2d_value_map * value_map, long key, i2d_string * result) {
+int i2d_value_map_get_string(i2d_value_map * value_map, long long key, i2d_string * result) {
     int status = I2D_OK;
     i2d_value * value;
 
@@ -265,7 +265,7 @@ int i2d_value_map_get_string(i2d_value_map * value_map, long key, i2d_string * r
     return status;
 }
 
-int i2d_value_map_get_string_stack(i2d_value_map * value_map, long key, i2d_string_stack * result) {
+int i2d_value_map_get_string_stack(i2d_value_map * value_map, long long key, i2d_string_stack * result) {
     int status = I2D_OK;
     i2d_value * value;
 

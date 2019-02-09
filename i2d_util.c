@@ -669,6 +669,25 @@ int i2d_strtol(long * result, const char * string, size_t length, int base) {
         }
     }
 
+    return status;
+}
+
+int i2d_strtoll(long long * result, const char * string, size_t length, int base) {
+    int status = I2D_OK;
+
+    long long number;
+    char * end = NULL;
+
+    if(!length) {
+        *result = 0;
+    } else {
+        number = strtoll(string, &end, base);
+        if(string + length != end) {
+            status = i2d_panic("invalid string '%s' in '%s'", end, string);
+        } else {
+            *result = number;
+        }
+    }
 
     return status;
 }

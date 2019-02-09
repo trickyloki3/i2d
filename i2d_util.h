@@ -135,6 +135,7 @@ int i2d_string_stack_cache_get(i2d_string_stack_cache *, i2d_string_stack **);
 int i2d_string_stack_cache_put(i2d_string_stack_cache *, i2d_string_stack **);
 
 int i2d_strtol(long *, const char *, size_t, int);
+int i2d_strtoll(long long *, const char *, size_t, int);
 int i2d_strtoul(unsigned long *, const char *, size_t, int);
 int i2d_strtod(double *, const char *, size_t);
 
