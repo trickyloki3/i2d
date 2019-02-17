@@ -109,7 +109,7 @@ int i2d_lexer_tokenize(i2d_lexer *, i2d_string *, i2d_token **);
 enum i2d_node_type {
     I2D_NODE,
     I2D_NUMBER,
-    I2D_VARIABLE,
+    I2D_IDENTIFIER,
     I2D_FUNCTION,
     I2D_INDEX,
     I2D_UNARY,
@@ -253,7 +253,7 @@ int i2d_script_statement_generic(i2d_script *, i2d_block *, i2d_rbt *, i2d_data 
 int i2d_script_statement_evaluate(i2d_script *, i2d_rbt *, i2d_node **, i2d_data *, i2d_buffer *);
 int i2d_script_expression(i2d_script *, i2d_node *, int, i2d_rbt *, i2d_logic *);
 int i2d_script_expression_conditional(i2d_script *, i2d_node *, i2d_logic *, i2d_logic **);
-int i2d_script_expression_variable(i2d_script *, i2d_node *, i2d_rbt *, i2d_logic *);
+int i2d_script_expression_identifier(i2d_script *, i2d_node *, i2d_rbt *, i2d_logic *);
 int i2d_script_expression_function(i2d_script *, i2d_node *, i2d_rbt *);
 int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
 int i2d_script_expression_binary_assign(i2d_node *, int, i2d_rbt *);

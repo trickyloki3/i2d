@@ -877,7 +877,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
 const char * i2d_node_string[] = {
     "node",
     "number",
-    "variable",
+    "identifier",
     "function",
     "index",
     "unary",
@@ -1119,7 +1119,7 @@ int i2d_node_set_string(i2d_node * node, i2d_string * result) {
 int i2d_node_get_predicate(i2d_node * node, i2d_string * result) {
     int status = I2D_FAIL;
 
-    if(I2D_VARIABLE == node->type) {
+    if(I2D_IDENTIFIER == node->type) {
         status = i2d_node_get_string(node, result);
     } else if(I2D_FUNCTION == node->type) {
         status = i2d_node_get_string(node, result);
@@ -1149,7 +1149,7 @@ int i2d_node_get_predicate_all_recursive(i2d_node * node, i2d_string_stack * sta
     int status = I2D_OK;
     i2d_string string;
 
-    if( I2D_VARIABLE == node->type ||
+    if( I2D_IDENTIFIER == node->type ||
         I2D_FUNCTION == node->type ) {
         if(i2d_node_get_string(node, &string)) {
             status = i2d_panic("failed to get node string");
@@ -1697,7 +1697,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                         while(iter->right)
                             iter = iter->right;
 
-                        if(I2D_VARIABLE == iter->type) {
+                        if(I2D_IDENTIFIER == iter->type) {
                             iter->left = node;
                             iter->type = I2D_FUNCTION;
                             node = NULL;
@@ -1740,7 +1740,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                         while(iter->right)
                             iter = iter->right;
 
-                        if(I2D_VARIABLE == iter->type) {
+                        if(I2D_IDENTIFIER == iter->type) {
                             iter->index = node;
                             iter->type = I2D_INDEX;
                             node = NULL;
@@ -1748,7 +1748,7 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
                     }
                     break;
                 case I2D_LITERAL:
-                    if(i2d_parser_node_init(parser, &node, I2D_VARIABLE, tokens)) {
+                    if(i2d_parser_node_init(parser, &node, I2D_IDENTIFIER, tokens)) {
                         status = i2d_panic("failed to create node object");
                     } else {
                         tokens = tokens->next;
@@ -1940,7 +1940,7 @@ static int i2d_rbt_add_variable(i2d_rbt * variables, i2d_node * node) {
     int status = I2D_OK;
     i2d_node * last;
 
-    if(I2D_VARIABLE != node->type && I2D_INDEX != node->type) {
+    if(I2D_IDENTIFIER != node->type && I2D_INDEX != node->type) {
         status = i2d_panic("invalid node type -- %d", node->type);
     } else {
         if(!i2d_rbt_search(variables, node, (void **) &last) &&
@@ -2635,8 +2635,8 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rb
                 case I2D_NODE:
                     status = (node->left) ? i2d_node_copy(node, node->left) : i2d_range_create_add(&node->range, 0, 0);
                     break;
-                case I2D_VARIABLE:
-                    status = i2d_script_expression_variable(script, node, variables, logics);
+                case I2D_IDENTIFIER:
+                    status = i2d_script_expression_identifier(script, node, variables, logics);
                     break;
                 case I2D_FUNCTION:
                     status = i2d_script_expression_function(script, node, variables);
@@ -2655,7 +2655,7 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rb
                     break;
             }
 
-            if(logics && (I2D_VARIABLE == node->type || I2D_FUNCTION == node->type)) {
+            if(logics && (I2D_IDENTIFIER == node->type || I2D_FUNCTION == node->type)) {
                 if(i2d_node_get_string(node, &name)) {
                     status = i2d_panic("failed to get string from node object");
                 } else if(i2d_logic_search(logics, name.string, &node->range)) {
@@ -2701,7 +2701,7 @@ int i2d_script_expression_conditional(i2d_script * script, i2d_node * node, i2d_
     return status;
 }
 
-int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt * variables, i2d_logic * logics) {
+int i2d_script_expression_identifier(i2d_script * script, i2d_node * node, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
     i2d_node * variable;
     long number;
