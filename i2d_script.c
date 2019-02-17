@@ -1119,15 +1119,16 @@ int i2d_node_set_string(i2d_node * node, i2d_string * result) {
 int i2d_node_get_predicate(i2d_node * node, i2d_string * result) {
     int status = I2D_FAIL;
 
-    if(I2D_IDENTIFIER == node->type) {
-        status = i2d_node_get_string(node, result);
-    } else if(I2D_FUNCTION == node->type) {
-        status = i2d_node_get_string(node, result);
-    } else {
-        if(node->left)
-            status = i2d_node_get_predicate(node->left, result);
-        if(node->right && status)
-            status = i2d_node_get_predicate(node->right, result);
+    switch(node->type) {
+        case I2D_IDENTIFIER:
+        case I2D_FUNCTION:
+            status = i2d_node_get_string(node, result);
+            break;
+        default:
+            if(node->left)
+                status = i2d_node_get_predicate(node->left, result);
+            if(node->right && status)
+                status = i2d_node_get_predicate(node->right, result);
     }
 
     return status;
@@ -1136,16 +1137,21 @@ int i2d_node_get_predicate(i2d_node * node, i2d_string * result) {
 int i2d_node_get_predicate_all(i2d_node * node, i2d_string_stack * stack) {
     int status = I2D_OK;
 
-    if(node->left && i2d_node_get_predicate_all_recursive(node->left, stack)) {
-        status = i2d_panic("failed to get left node's predicate list");
-    } else if(node->right && i2d_node_get_predicate_all_recursive(node->right, stack)) {
-        status = i2d_panic("failed to get right node's predicate list");
+    i2d_rbt * rbt = NULL;
+
+    if(i2d_rbt_init(&rbt, i2d_rbt_cmp_str)) {
+        status = i2d_panic("failed to create red black tree object");
+    } else {
+        if(i2d_node_get_predicate_all_recursive(node, stack, rbt))
+            status = i2d_panic("failed to get node predicate");
+
+        i2d_rbt_deit(&rbt);
     }
 
     return status;
 }
 
-int i2d_node_get_predicate_all_recursive(i2d_node * node, i2d_string_stack * stack) {
+int i2d_node_get_predicate_all_recursive(i2d_node * node, i2d_string_stack * stack, i2d_rbt * rbt) {
     int status = I2D_OK;
     i2d_string string;
 
@@ -1153,15 +1159,21 @@ int i2d_node_get_predicate_all_recursive(i2d_node * node, i2d_string_stack * sta
         I2D_FUNCTION == node->type ) {
         if(i2d_node_get_string(node, &string)) {
             status = i2d_panic("failed to get node string");
-        } else if(i2d_string_stack_push(stack, string.string, string.length)) {
-            status = i2d_panic("failed to push node string");
+        } else {
+            if(i2d_rbt_exist(rbt, string.string)) {
+                if(i2d_rbt_insert(rbt, string.string, NULL)) {
+                    status = i2d_panic("failed to index string object");
+                } else if(i2d_string_stack_push(stack, string.string, string.length)) {
+                    status = i2d_panic("failed to push node string");
+                }
+            }
         }
-    } else {
-        if(node->left)
-            status = i2d_node_get_predicate_all_recursive(node->left, stack);
-        if(!status && node->right)
-            status = i2d_node_get_predicate_all_recursive(node->right, stack);
     }
+
+    if(node->left)
+        status = i2d_node_get_predicate_all_recursive(node->left, stack, rbt);
+    if(node->right)
+        status = i2d_node_get_predicate_all_recursive(node->right, stack, rbt);
 
     return status;
 }

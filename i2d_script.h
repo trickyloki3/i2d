@@ -144,7 +144,7 @@ int i2d_node_get_string(i2d_node *, i2d_string *);
 int i2d_node_set_string(i2d_node *, i2d_string *);
 int i2d_node_get_predicate(i2d_node *, i2d_string *);
 int i2d_node_get_predicate_all(i2d_node *, i2d_string_stack *);
-int i2d_node_get_predicate_all_recursive(i2d_node *, i2d_string_stack *);
+int i2d_node_get_predicate_all_recursive(i2d_node *, i2d_string_stack *, i2d_rbt *);
 int i2d_node_is_conditional(i2d_node *);
 int i2d_node_is_colon(i2d_node *);
 
