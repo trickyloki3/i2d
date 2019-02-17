@@ -618,6 +618,44 @@ int i2d_lexer_token_init(i2d_lexer * lexer, i2d_token ** result, enum i2d_token_
     return status;
 }
 
+int i2d_lexer_token_copy(i2d_lexer * lexer, i2d_token ** result, i2d_token * token) {
+    int status = I2D_OK;
+    i2d_token * iter;
+    i2d_token * copy = NULL;
+    i2d_token * root = NULL;
+
+    iter = token;
+    do {
+        if(i2d_lexer_token_init(lexer, &copy, token->type)) {
+            status = i2d_panic("failed to create token object");
+        } else {
+            if(i2d_buffer_copy(&copy->buffer, &token->buffer)) {
+                status = i2d_panic("failed to copy buffer object");
+            } else {
+                if(!root) {
+                    root = copy;
+                } else {
+                    i2d_token_append(copy, root);
+                }
+            }
+
+            if(status) {
+                i2d_lexer_reset(lexer, &copy);
+            } else {
+                copy = NULL;
+            }
+        }
+    } while(!status && iter != token);
+
+    if(status) {
+        i2d_lexer_reset(lexer, &root);
+    } else {
+        *result = root;
+    }
+
+    return status;
+}
+
 int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** result) {
     int status = I2D_OK;
     size_t i;
@@ -1420,6 +1458,37 @@ int i2d_parser_node_init(i2d_parser * parser, i2d_node ** result, enum i2d_node_
     return status;
 }
 
+int i2d_parser_node_copy(i2d_parser * parser, i2d_lexer * lexer, i2d_node ** result, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_node * copy = NULL;
+
+    if(i2d_parser_node_init(parser, &copy, node->type, NULL)) {
+        status = i2d_panic("failed to create node object");
+    } else {
+        if(i2d_range_copy(&copy->range, &node->range)) {
+            status = i2d_panic("failed to copy range object");
+        } else if(node->logic && i2d_logic_copy(&copy->logic, node->logic)) {
+            status = i2d_panic("failed to copy logic object");
+        } else if(node->tokens && i2d_lexer_token_copy(lexer, &copy->tokens, node->tokens)) {
+            status = i2d_panic("failed to copy token object");
+        } else if(node->index && i2d_parser_node_copy(parser, lexer, &copy->index, node->index)) {
+            status = i2d_panic("failed to copy node object");
+        } else if(node->left && i2d_parser_node_copy(parser, lexer, &copy->left, node->left)) {
+            status = i2d_panic("failed to copy node object");
+        } else if(node->right && i2d_parser_node_copy(parser, lexer, &copy->right, node->right)) {
+            status = i2d_panic("failed to copy node object");
+        } else {
+            copy->constant = node->constant;
+        }
+
+        if(status)
+            i2d_parser_node_reset(parser, lexer, &copy);
+        else
+            *result = copy;
+    }
+
+    return status;
+}
 
 int i2d_parser_get_statement(i2d_parser * parser, i2d_lexer * lexer, i2d_data_map * statements, i2d_block * block) {
     int status = I2D_OK;
@@ -2729,8 +2798,11 @@ int i2d_script_expression_identifier(i2d_script * script, i2d_node * node, i2d_r
     i2d_constant * constant;
 
     if(!i2d_rbt_get_variable(variables, node, &variable)) {
-        if(i2d_node_copy(node, variable))
+        if(i2d_node_copy(node, variable)) {
             status = i2d_panic("failed to copy variable");
+        } else if(variable->left && i2d_parser_node_copy(script->parser, script->lexer, &node->left, variable->left)) {
+            status = i2d_panic("failed to copy variable");
+        }
     } else if(i2d_node_get_string(node, &name)) {
         status = i2d_panic("failed to get variable string");
     } else {

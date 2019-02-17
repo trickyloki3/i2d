@@ -274,6 +274,20 @@ int i2d_buffer_cache_init(i2d_buffer_cache ** result) {
     return status;
 }
 
+int i2d_buffer_copy(i2d_buffer * result, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    i2d_string string;
+    i2d_zero(string);
+
+    i2d_buffer_get(buffer, &string.string, &string.length);
+    i2d_buffer_clear(result);
+
+    if(i2d_buffer_memcpy(result, string.string, string.length))
+        status = i2d_panic("failed to copy buffer object");
+
+    return status;
+}
+
 void i2d_buffer_cache_deit(i2d_buffer_cache ** result) {
     i2d_buffer_cache * object;
 

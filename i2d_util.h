@@ -83,6 +83,7 @@ int i2d_buffer_printf(i2d_buffer *, const char *, ...);
 int i2d_buffer_vprintf(i2d_buffer *, const char *, va_list);
 int i2d_buffer_memcpy(i2d_buffer *, const char *, size_t);
 void i2d_buffer_get(i2d_buffer *, char **, size_t *);
+int i2d_buffer_copy(i2d_buffer *, i2d_buffer *);
 
 struct i2d_buffer_cache {
     i2d_buffer * list;
