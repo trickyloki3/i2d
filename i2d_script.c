@@ -2701,33 +2701,6 @@ int i2d_script_expression_conditional(i2d_script * script, i2d_node * node, i2d_
     return status;
 }
 
-int i2d_script_expression_variable_predicate(i2d_script * script, i2d_node * node, i2d_node * variable) {
-    int status = I2D_OK;
-    i2d_local local;
-    i2d_string predicate;
-
-    i2d_zero(local);
-    i2d_zero(predicate);
-
-    if(i2d_local_create(&local, script)) {
-        status = i2d_panic("failed to create local object");
-    } else {
-        if( i2d_node_get_predicate_all(variable, local.stack) ||
-            i2d_string_stack_dump_buffer(local.stack, local.buffer, ", ") ) {
-            status = i2d_panic("failed to get predicate list");
-        } else {
-            i2d_buffer_get(local.buffer, &predicate.string, &predicate.length);
-            if(predicate.length && i2d_node_set_string(node, &predicate)) {
-                status = i2d_panic("failed to write predicate list");
-            }
-        }
-        if(i2d_local_destroy(&local, script))
-            status = i2d_panic("failed to destroy local object");
-    }
-
-    return status;
-}
-
 int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
     i2d_node * variable;
@@ -2736,11 +2709,8 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * node, i2d_rbt
     i2d_constant * constant;
 
     if(!i2d_rbt_get_variable(variables, node, &variable)) {
-        if(i2d_node_copy(node, variable)) {
+        if(i2d_node_copy(node, variable))
             status = i2d_panic("failed to copy variable");
-        } else if(i2d_script_expression_variable_predicate(script, node, variable)) {
-            status = i2d_panic("failed to copy predicate list");
-        }
     } else if(i2d_node_get_string(node, &name)) {
         status = i2d_panic("failed to get variable string");
     } else {
@@ -3481,11 +3451,8 @@ static int i2d_handler_max(i2d_script * script, i2d_rbt * variables, i2d_node * 
     } else {
         i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
         i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
-        if(i2d_range_create_add(&node->range, max(xmin, ymin), max(xmax, ymax))) {
+        if(i2d_range_create_add(&node->range, max(xmin, ymin), max(xmax, ymax)))
             status = i2d_panic("failed to create range object");
-        } else if(i2d_script_expression_variable_predicate(script, node, node->left)) {
-            status = i2d_panic("failed to copy predicate list");
-        }
     }
 
     return status;
@@ -3506,11 +3473,8 @@ static int i2d_handler_min(i2d_script * script, i2d_rbt * variables, i2d_node * 
     } else {
         i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
         i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
-        if(i2d_range_create_add(&node->range, min(xmin, ymin), min(xmax, ymax))) {
+        if(i2d_range_create_add(&node->range, min(xmin, ymin), min(xmax, ymax)))
             status = i2d_panic("failed to create range object");
-        } else if(i2d_script_expression_variable_predicate(script, node, node->left)) {
-            status = i2d_panic("failed to copy predicate list");
-        }
     }
 
     return status;
@@ -3560,11 +3524,8 @@ static int i2d_handler_pow(i2d_script * script, i2d_rbt * variables, i2d_node * 
     } else {
         i2d_range_get_range(&arguments[0]->range, &min, &max);
         i2d_range_get_range(&arguments[1]->range, &pow_min, &pow_max);
-        if(i2d_range_create_add(&node->range, (long) pow(min, pow_min), (long) pow(max, pow_max))) {
+        if(i2d_range_create_add(&node->range, (long) pow(min, pow_min), (long) pow(max, pow_max)))
             status = i2d_panic("failed to create range object");
-        } else if(i2d_script_expression_variable_predicate(script, node, node->left)) {
-            status = i2d_panic("failed to copy predicate list");
-        }
     }
 
     return status;
@@ -3647,9 +3608,6 @@ static int i2d_handler_rand(i2d_script * script, i2d_rbt * variables, i2d_node *
             if(i2d_range_create_add(&node->range, 0, lmax - 1))
                 status = i2d_panic("failed to create range object");
         }
-
-        if(!status && i2d_script_expression_variable_predicate(script, node, node->left))
-            status = i2d_panic("failed to copy predicate list");
     }
 
     return status;
