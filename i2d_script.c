@@ -1192,12 +1192,13 @@ int i2d_node_get_predicate_all(i2d_node * node, i2d_string_stack * stack) {
 int i2d_node_get_predicate_all_recursive(i2d_node * node, i2d_string_stack * stack, i2d_rbt * rbt) {
     int status = I2D_OK;
     i2d_string string;
+    i2d_zero(string);
 
     if( I2D_IDENTIFIER == node->type ||
         I2D_FUNCTION == node->type ) {
         if(i2d_node_get_string(node, &string)) {
             status = i2d_panic("failed to get node string");
-        } else {
+        } else if(string.length > 0) {
             if(i2d_rbt_exist(rbt, string.string)) {
                 if(i2d_rbt_insert(rbt, string.string, NULL)) {
                     status = i2d_panic("failed to index string object");
