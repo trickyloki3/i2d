@@ -2623,7 +2623,6 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
 int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
     i2d_logic * conditional = NULL;
-    i2d_string name;
 
     if(node->left && i2d_script_expression(script, node->left, flag | (i2d_node_is_conditional(node) ? 0 : I2D_FLAG_CONDITIONAL), variables, logics)) {
         status = i2d_panic("failed to evaluate left expression");
@@ -2636,10 +2635,12 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rb
                     status = (node->left) ? i2d_node_copy(node, node->left) : i2d_range_create_add(&node->range, 0, 0);
                     break;
                 case I2D_IDENTIFIER:
-                    status = i2d_script_expression_identifier(script, node, variables, logics);
+                    status = i2d_script_expression_identifier(script, node, variables, logics) ||
+                             i2d_script_expression_logic(script, node, logics);
                     break;
                 case I2D_FUNCTION:
-                    status = i2d_script_expression_function(script, node, variables);
+                    status = i2d_script_expression_function(script, node, variables) ||
+                             i2d_script_expression_logic(script, node, logics);
                     break;
                 case I2D_INDEX:
                     /* index node is unsupported */
@@ -2654,18 +2655,25 @@ int i2d_script_expression(i2d_script * script, i2d_node * node, int flag, i2d_rb
                     status = i2d_panic("invalid node type -- %d", node->type);
                     break;
             }
-
-            if(logics && (I2D_IDENTIFIER == node->type || I2D_FUNCTION == node->type)) {
-                if(i2d_node_get_string(node, &name)) {
-                    status = i2d_panic("failed to get string from node object");
-                } else if(i2d_logic_search(logics, name.string, &node->range)) {
-                    status = i2d_panic("failed to search logic object");
-                }
-            }
         }
     }
 
     i2d_deit(conditional, i2d_logic_deit);
+    return status;
+}
+
+int i2d_script_expression_logic(i2d_script * script, i2d_node * node, i2d_logic * logics) {
+    int status = I2D_OK;
+    i2d_string name;
+
+    if(logics) {
+        if(i2d_node_get_string(node, &name)) {
+            status = i2d_panic("failed to get string from node object");
+        } else if(i2d_logic_search(logics, name.string, &node->range)) {
+            status = i2d_panic("failed to search logic object");
+        }
+    }
+
     return status;
 }
 
