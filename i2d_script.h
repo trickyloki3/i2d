@@ -115,7 +115,8 @@ enum i2d_node_type {
     I2D_VARIABLE,
     I2D_INDEX,
     I2D_UNARY,
-    I2D_BINARY
+    I2D_BINARY,
+    I2D_MATH
 };
 
 struct i2d_node {

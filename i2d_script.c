@@ -920,7 +920,8 @@ const char * i2d_node_string[] = {
     "variable",
     "index",
     "unary",
-    "binary"
+    "binary",
+    "math"
 };
 
 int i2d_rbt_cmp_node(const void * left, const void * right) {
@@ -3555,8 +3556,11 @@ static int i2d_handler_max(i2d_script * script, i2d_rbt * variables, i2d_node * 
     } else {
         i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
         i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
-        if(i2d_range_create_add(&node->range, max(xmin, ymin), max(xmax, ymax)))
+        if(i2d_range_create_add(&node->range, max(xmin, ymin), max(xmax, ymax))) {
             status = i2d_panic("failed to create range object");
+        } else {
+            node->type = I2D_MATH;
+        }
     }
 
     return status;
@@ -3577,8 +3581,11 @@ static int i2d_handler_min(i2d_script * script, i2d_rbt * variables, i2d_node * 
     } else {
         i2d_range_get_range(&arguments[0]->range, &xmin, &xmax);
         i2d_range_get_range(&arguments[1]->range, &ymin, &ymax);
-        if(i2d_range_create_add(&node->range, min(xmin, ymin), min(xmax, ymax)))
+        if(i2d_range_create_add(&node->range, min(xmin, ymin), min(xmax, ymax))) {
             status = i2d_panic("failed to create range object");
+        } else {
+            node->type = I2D_MATH;
+        }
     }
 
     return status;
@@ -3628,8 +3635,11 @@ static int i2d_handler_pow(i2d_script * script, i2d_rbt * variables, i2d_node * 
     } else {
         i2d_range_get_range(&arguments[0]->range, &min, &max);
         i2d_range_get_range(&arguments[1]->range, &pow_min, &pow_max);
-        if(i2d_range_create_add(&node->range, (long) pow(min, pow_min), (long) pow(max, pow_max)))
+        if(i2d_range_create_add(&node->range, (long) pow(min, pow_min), (long) pow(max, pow_max))) {
             status = i2d_panic("failed to create range object");
+        } else {
+            node->type = I2D_MATH;
+        }
     }
 
     return status;
