@@ -132,6 +132,45 @@ int i2d_object_get_number(json_t * json, long * result) {
     return status;
 }
 
+int i2d_object_get_range_array(json_t * json, i2d_range * result) {
+    int status = I2D_OK;
+    size_t index;
+    json_t * value;
+
+    json_t * min;
+    json_t * max;
+
+    long min_val;
+    long max_val;
+
+    if(!json_array_size(json)) {
+        status = i2d_panic("empty array");
+    } else {
+        json_array_foreach(json, index, value) {
+            min = json_object_get(value, "min");
+            max = json_object_get(value, "max");
+            if(i2d_object_get_number(min, &min_val)) {
+                status = i2d_panic("failed to get number object");
+            } else if(i2d_object_get_number(max, &max_val)) {
+                status = i2d_panic("failed to get number object");
+            } else {
+                if(!index) {
+                    if(i2d_range_create_add(result, min_val, max_val))
+                        status = i2d_panic("failed to create range object");
+                } else {
+                    if(i2d_range_add(result, min_val, max_val))
+                        status = i2d_panic("failed to add range object");
+                }
+            }
+
+            if(status)
+                break;
+        }
+    }
+
+    return status;
+}
+
 int i2d_object_get_range(json_t * left, json_t * right, i2d_range * result) {
     int status = I2D_OK;
     long min;
