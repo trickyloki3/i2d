@@ -3302,9 +3302,13 @@
         },
         "BaseClass" : {
             "name" : "Base Class",
-            "value" : 120,
-            "min" : 0,
-            "max" : 2147483647
+            "range" : [
+                {
+                    "max" : 2147483647,
+                    "min" : 0
+                }
+            ],
+            "value" : 120
         },
         "BaseExp" : {
             "name" : "Base Experience",
@@ -3312,14 +3316,22 @@
         },
         "BaseJob" : {
             "name" : "Base Job",
-            "value" : 119,
-            "min" : 0,
-            "max" : 2147483647
+            "range" : [
+                {
+                    "max" : 2147483647,
+                    "min" : 0
+                }
+            ],
+            "value" : 119
         },
         "BaseLevel" : {
-            "max" : 150,
-            "min" : 0,
             "name" : "Base Level",
+            "range" : [
+                {
+                    "max" : 150,
+                    "min" : 0
+                }
+            ],
             "value" : 11
         },
         "CARD0_CREATE" : {
@@ -3487,9 +3499,13 @@
         },
         "Class" : {
             "name" : "Class",
-            "value" : 19,
-            "min" : 0,
-            "max" : 2147483647
+            "range" : [
+                {
+                    "max" : 2147483647,
+                    "min" : 0
+                }
+            ],
+            "value" : 19
         },
         "DECEMBER" : {
             "value" : 12
@@ -3519,51 +3535,83 @@
             "value" : 2
         },
         "DT_DAYOFMONTH" : {
-            "max" : 31,
-            "min" : 0,
             "name" : "Day of Month",
+            "range" : [
+                {
+                    "max" : 31,
+                    "min" : 0
+                }
+            ],
             "value" : 5
         },
         "DT_DAYOFWEEK" : {
-            "max" : 7,
-            "min" : 0,
             "name" : "Day of Week",
+            "range" : [
+                {
+                    "max" : 7,
+                    "min" : 0
+                }
+            ],
             "value" : 4
         },
         "DT_DAYOFYEAR" : {
-            "max" : 365,
-            "min" : 0,
             "name" : "Day of Year",
+            "range" : [
+                {
+                    "max" : 365,
+                    "min" : 0
+                }
+            ],
             "value" : 8
         },
         "DT_HOUR" : {
-            "max" : 24,
-            "min" : 0,
             "name" : "Hour",
+            "range" : [
+                {
+                    "max" : 24,
+                    "min" : 0
+                }
+            ],
             "value" : 3
         },
         "DT_MINUTE" : {
-            "max" : 60,
-            "min" : 0,
             "name" : "Minute",
+            "range" : [
+                {
+                    "max" : 60,
+                    "min" : 0
+                }
+            ],
             "value" : 2
         },
         "DT_MONTH" : {
-            "max" : 12,
-            "min" : 0,
             "name" : "Month",
+            "range" : [
+                {
+                    "max" : 12,
+                    "min" : 0
+                }
+            ],
             "value" : 6
         },
         "DT_SECOND" : {
-            "max" : 60,
-            "min" : 0,
             "name" : "Second",
+            "range" : [
+                {
+                    "max" : 60,
+                    "min" : 0
+                }
+            ],
             "value" : 1
         },
         "DT_YEAR" : {
-            "max" : 2050,
-            "min" : 0,
             "name" : "Year",
+            "range" : [
+                {
+                    "max" : 2050,
+                    "min" : 0
+                }
+            ],
             "value" : 7
         },
         "DT_YYYYMMDD" : {
@@ -14263,9 +14311,13 @@
             "value" : 2
         },
         "JobLevel" : {
-            "max" : 70,
-            "min" : 0,
             "name" : "Job Level",
+            "range" : [
+                {
+                    "max" : 70,
+                    "min" : 0
+                }
+            ],
             "value" : 55
         },
         "Job_SuperNovice" : {
@@ -21037,9 +21089,13 @@
             "value" : 1070
         },
         "bAgi" : {
-            "max" : 150,
-            "min" : 0,
             "name" : "AGI",
+            "range" : [
+                {
+                    "max" : 150,
+                    "min" : 0
+                }
+            ],
             "value" : 14
         },
         "bAgiDexStr" : {
@@ -21166,9 +21222,13 @@
             "value" : 1083
         },
         "bDex" : {
-            "max" : 150,
-            "min" : 0,
             "name" : "DEX",
+            "range" : [
+                {
+                    "max" : 150,
+                    "min" : 0
+                }
+            ],
             "value" : 17
         },
         "bDoubleAddRate" : {
@@ -21301,9 +21361,13 @@
             "value" : 1086
         },
         "bInt" : {
-            "max" : 150,
-            "min" : 0,
             "name" : "INT",
+            "range" : [
+                {
+                    "max" : 150,
+                    "min" : 0
+                }
+            ],
             "value" : 16
         },
         "bIntravision" : {
@@ -21323,9 +21387,13 @@
             "value" : 1064
         },
         "bLuk" : {
-            "max" : 150,
-            "min" : 0,
             "name" : "LUK",
+            "range" : [
+                {
+                    "max" : 150,
+                    "min" : 0
+                }
+            ],
             "value" : 18
         },
         "bMagicAddClass" : {
@@ -21563,9 +21631,13 @@
             "value" : 2079
         },
         "bStr" : {
-            "max" : 150,
-            "min" : 0,
             "name" : "STR",
+            "range" : [
+                {
+                    "max" : 150,
+                    "min" : 0
+                }
+            ],
             "value" : 13
         },
         "bSubClass" : {
@@ -21650,9 +21722,13 @@
             "value" : 2054
         },
         "bVit" : {
-            "max" : 150,
-            "min" : 0,
             "name" : "VIT",
+            "range" : [
+                {
+                    "max" : 150,
+                    "min" : 0
+                }
+            ],
             "value" : 15
         },
         "bWeaponAtk" : {

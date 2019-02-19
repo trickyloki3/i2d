@@ -1,92 +1,164 @@
 {
+    "checkfalcon" : {
+        "description" : "Falcon",
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
+    },
     "checkmadogear" : {
         "description" : "Madogear Equipped",
-        "max" : 1,
-        "min" : 0
-    },
-    "countitem" : {
-        "description" : "{0} Count",
-        "max" : 2147483647,
-        "min" : 0
-    },
-    "eaclass" : {
-        "description" : "Class",
-        "max" : 2147483647,
-        "min" : 0
-    },
-    "getequiprefinerycnt" : {
-        "description" : "Refine Count Of {0}",
-        "max" : 20,
-        "min" : 0
-    },
-    "getiteminfo" : {
-        "description" : "{0}'s {1}",
-        "max" : 2147483647,
-        "min" : 0
-    },
-    "getmapflag" : {
-        "description" : "{0} with {1} flag",
-        "max" : 1,
-        "min" : 0
-    },
-    "getpartnerid" : {
-        "description" : "Married",
-        "max" : 1,
-        "min" : 0
-    },
-    "getrefine" : {
-        "description" : "Refine Count",
-        "max" : 20,
-        "min" : 0
-    },
-    "isequipped" : {
-        "description" : "{0} is Equipped",
-        "max" : 1,
-        "min" : 0
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
     },
     "checkoption" : {
         "description" : "{0}",
-        "max" : 1,
-        "min" : 0
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
     },
-    "rand" : {
-        "description" : "Random",
-        "max" : 2147483647,
-        "min" : 0
+    "countitem" : {
+        "description" : "{0} Count",
+        "range" : [
+            {
+                "max" : 2147483647,
+                "min" : 0
+            }
+        ]
     },
-    "ismounting" : {
-        "description" : "Have Cash Mount",
-        "max" : 1,
-        "min" : 0
-    },
-    "setmounting" : {
-        "description" : "Toogle Cash Mount",
-        "max" : 1,
-        "min" : 0
-    },
-    "getequipid" : {
-        "description" : "Equip On",
-        "max" : 2147483647,
-        "min" : 0
-    },
-    "getequipweaponlv" : {
-        "description" : "{0} Weapon Level",
-        "max" : 5,
-        "min" : 0
-    },
-    "getexp2" : {
-        "description" : "Increase base exp by {0} and job exp by {1}.",
-        "max" : 1,
-        "min" : 0
+    "eaclass" : {
+        "description" : "Class",
+        "range" : [
+            {
+                "max" : 2147483647,
+                "min" : 0
+            }
+        ]
     },
     "getcharid" : {
         "description" : "Current Character",
-        "max" : 1,
-        "min" : 0
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
     },
-    "checkfalcon" : {
-        "description" : "Falcon",
-        "max" : 1,
-        "min" : 0
+    "getequipid" : {
+        "description" : "Equip On",
+        "range" : [
+            {
+                "max" : 2147483647,
+                "min" : 0
+            }
+        ]
+    },
+    "getequiprefinerycnt" : {
+        "description" : "Refine Count Of {0}",
+        "range" : [
+            {
+                "max" : 20,
+                "min" : 0
+            }
+        ]
+    },
+    "getequipweaponlv" : {
+        "description" : "{0} Weapon Level",
+        "range" : [
+            {
+                "max" : 5,
+                "min" : 0
+            }
+        ]
+    },
+    "getexp2" : {
+        "description" : "Increase base exp by {0} and job exp by {1}.",
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
+    },
+    "getiteminfo" : {
+        "description" : "{0}'s {1}",
+        "range" : [
+            {
+                "max" : 2147483647,
+                "min" : 0
+            }
+        ]
+    },
+    "getmapflag" : {
+        "description" : "{0} with {1} flag",
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
+    },
+    "getpartnerid" : {
+        "description" : "Married",
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
+    },
+    "getrefine" : {
+        "description" : "Refine Count",
+        "range" : [
+            {
+                "max" : 20,
+                "min" : 0
+            }
+        ]
+    },
+    "isequipped" : {
+        "description" : "{0} is Equipped",
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
+    },
+    "ismounting" : {
+        "description" : "Have Cash Mount",
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
+    },
+    "rand" : {
+        "description" : "Random",
+        "range" : [
+            {
+                "max" : 2147483647,
+                "min" : 0
+            }
+        ]
+    },
+    "setmounting" : {
+        "description" : "Toogle Cash Mount",
+        "range" : [
+            {
+                "max" : 1,
+                "min" : 0
+            }
+        ]
     }
 }

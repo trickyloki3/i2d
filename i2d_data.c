@@ -2,8 +2,7 @@
 
 int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_constant_db * constant_db) {
     int status = I2D_OK;
-    json_t * min;
-    json_t * max;
+    json_t * range;
     json_t * description;
     json_t * handler;
     json_t * argument_type;
@@ -18,8 +17,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
     json_t * empty_description_on_empty_string;
     json_t * dump_stack_instead_of_description;
 
-    min = json_object_get(json, "min");
-    max = json_object_get(json, "max");
+    range = json_object_get(json, "range");
     description = json_object_get(json, "description");
     handler = json_object_get(json, "handler");
     argument_type = json_object_get(json, "argument_type");
@@ -38,7 +36,7 @@ int i2d_data_create(i2d_data * result, const char * key, json_t * json, i2d_cons
 
     if(i2d_string_create(&result->name, key, strlen(key))) {
         status = i2d_panic("failed to copy name string");
-    } else if(min && max && i2d_object_get_range(min, max, &result->range)) {
+    } else if(range && i2d_object_get_range_array(range, &result->range)) {
         status = i2d_panic("failed to create range");
     } else if(description && i2d_object_get_string(description, &result->description)) {
         status = i2d_panic("failed to create string");
