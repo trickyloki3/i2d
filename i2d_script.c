@@ -2851,6 +2851,10 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * variable, i2d
         case I2D_IDENTIFIER:
         case I2D_VARIABLE:
         case I2D_INDEX:
+
+            if(variable->left)
+                i2d_parser_node_reset(script->parser, script->lexer, &variable->left);
+
             /*
              * assign the expression (expression) to the variable (variable)
              */
