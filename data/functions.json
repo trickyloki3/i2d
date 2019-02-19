@@ -16,7 +16,7 @@
     },
     "getequiprefinerycnt" : {
         "description" : "Refine Count Of {0}",
-        "max" : 15,
+        "max" : 20,
         "min" : 0
     },
     "getiteminfo" : {
@@ -36,7 +36,7 @@
     },
     "getrefine" : {
         "description" : "Refine Count",
-        "max" : 15,
+        "max" : 20,
         "min" : 0
     },
     "isequipped" : {
