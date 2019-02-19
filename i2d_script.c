@@ -2862,6 +2862,8 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * variable, i2d
                 status = i2d_panic("failed to copy node object");
             } else if(i2d_parser_node_copy(script->parser, script->lexer, &variable->left, expression)) {
                 status = i2d_panic("failed to copy node object");
+            } else if(i2d_script_expression_variable_logic(script, variable)) {
+                status = i2d_panic("failed to handle variable logic");
             } else if(i2d_rbt_add_variable(variables, variable)) {
                 status = i2d_panic("failed to add variable");
             } else {
@@ -2871,6 +2873,35 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * variable, i2d
         default:
             status = i2d_panic("invalid node type -- %ld", variable->type);
             break;
+    }
+
+    return status;
+}
+
+int i2d_script_expression_variable_logic(i2d_script * script, i2d_node * node) {
+    int status = I2D_OK;
+    i2d_local predicate;
+    i2d_string string;
+
+    i2d_zero(predicate);
+    i2d_zero(string);
+
+    if(i2d_local_create(&predicate, script)) {
+        status = i2d_panic("failed to create local object");
+    } else {
+        if( i2d_node_get_predicate_all(node->left, predicate.stack) ||
+            i2d_string_stack_dump_buffer(predicate.stack, predicate.buffer, ", ") ) {
+            status = i2d_panic("failed to get predicate list");
+        } else {
+            i2d_buffer_get(predicate.buffer, &string.string, &string.length);
+            if(string.length > 0) {
+                i2d_deit(node->logic, i2d_logic_deit);
+                if(i2d_logic_init(&node->logic, &string, &node->range))
+                    status = i2d_panic("failed to create logic object");
+            }
+        }
+        if(i2d_local_destroy(&predicate, script))
+            status = i2d_panic("failed to destroy local object");
     }
 
     return status;

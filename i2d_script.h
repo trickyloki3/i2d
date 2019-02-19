@@ -261,6 +261,7 @@ int i2d_script_expression_conditional(i2d_script *, i2d_node *, i2d_logic *, i2d
 int i2d_script_expression_identifier(i2d_script *, i2d_node *, i2d_rbt *, i2d_logic *);
 int i2d_script_expression_function(i2d_script *, i2d_node *, i2d_rbt *);
 int i2d_script_expression_variable(i2d_script *, i2d_node *, i2d_node *, i2d_rbt *);
+int i2d_script_expression_variable_logic(i2d_script *, i2d_node *);
 int i2d_script_expression_unary(i2d_script *, i2d_node *, int);
 int i2d_script_expression_binary_assign(i2d_script *, i2d_node *, int, i2d_rbt *);
 int i2d_script_expression_binary_relational(i2d_node *, int, int);
