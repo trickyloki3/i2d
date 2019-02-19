@@ -917,6 +917,7 @@ const char * i2d_node_string[] = {
     "number",
     "identifier",
     "function",
+    "variable",
     "index",
     "unary",
     "binary"
@@ -2792,8 +2793,10 @@ int i2d_script_expression_identifier(i2d_script * script, i2d_node * node, i2d_r
     if(!i2d_rbt_get_variable(variables, node, &variable)) {
         if(i2d_node_copy(node, variable)) {
             status = i2d_panic("failed to copy variable");
-        } else if(variable->left && i2d_parser_node_copy(script->parser, script->lexer, &node->left, variable->left)) {
+        } else if(i2d_parser_node_copy(script->parser, script->lexer, &node->left, variable->left)) {
             status = i2d_panic("failed to copy variable");
+        } else {
+            node->type = I2D_VARIABLE;
         }
     } else if(i2d_node_get_string(node, &name)) {
         status = i2d_panic("failed to get variable string");
@@ -2845,6 +2848,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * variable, i2d
 
     switch(variable->type) {
         case I2D_IDENTIFIER:
+        case I2D_VARIABLE:
         case I2D_INDEX:
             /*
              * assign the expression (expression) to the variable (variable)
@@ -2855,6 +2859,8 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * variable, i2d
                 status = i2d_panic("failed to copy node object");
             } else if(i2d_rbt_add_variable(variables, variable)) {
                 status = i2d_panic("failed to add variable");
+            } else {
+                variable->type = I2D_VARIABLE;
             }
             break;
         default:
