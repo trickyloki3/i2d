@@ -2325,7 +2325,7 @@ int i2d_script_compile_item_combo(i2d_script * script, i2d_item * item, i2d_stri
                     if(i2d_script_compile(script, &item_combo->script, &description, NULL)) {
                         status = i2d_panic("failed to compile item combo script -- %ld", item->id);
                     } else {
-                        if(description.length > 0 && i2d_buffer_printf(&buffer, "[%s Combo]\n%s", list.string, description.string))
+                        if(description.length > 0 && i2d_buffer_printf(&buffer, "[%s Combo]\n%s\n", list.string, description.string))
                             status = i2d_panic("failed to write buffer object");
                         i2d_string_destroy(&description);
                     }
