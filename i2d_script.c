@@ -2369,6 +2369,7 @@ int i2d_script_compile_item_combo(i2d_script * script, i2d_item * item, i2d_stri
 int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * variables, i2d_logic * logics) {
     int status = I2D_OK;
     i2d_block * block;
+    i2d_logic * merge = NULL;
 
     if(blocks) {
         block = blocks;
@@ -2387,19 +2388,14 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
                 case I2D_IF:
                     if(i2d_script_expression(script, block->nodes, I2D_FLAG_CONDITIONAL, variables, logics)) {
                         status = i2d_panic("failed to evaluate expression");
+                    } else if(block->nodes->logic && i2d_logic_copy(&block->logics, block->nodes->logic)) {
+                        status = i2d_panic("failed to copy logic object");
                     } else {
-                        if(!block->nodes->logic && logics) {
-                            if(i2d_logic_copy(&block->logics, logics))
-                                status = i2d_panic("failed to copy logic object");
-                        } else if(block->nodes->logic && !logics) {
-                            if(i2d_logic_copy(&block->logics, block->nodes->logic))
-                                status = i2d_panic("failed to copy logic object");
-                        } else if(block->nodes->logic && logics) {
-                            if(i2d_logic_or(&block->logics, block->nodes->logic, logics))
-                                status = i2d_panic("failed to or logic object");
-                        }
+                        if(block->logics && logics && i2d_logic_or(&merge, block->logics, logics))
+                            status = i2d_panic("failed to or logic object");
                         if(!status)
-                            status = i2d_script_translate(script, block->child, variables, block->logics);
+                            status = i2d_script_translate(script, block->child, variables, merge ? merge : logics);
+                        i2d_deit(merge, i2d_logic_deit);
                     }
                     break;
                 case I2D_ELSE:
