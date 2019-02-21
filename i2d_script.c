@@ -231,6 +231,8 @@ i2d_handler argument_handlers[] = {
 static int i2d_script_logic_generate_basejob(i2d_script *, i2d_logic *, i2d_buffer *);
 
 i2d_handler generate_handlers[] = {
+    { "Class", logic_generate, {i2d_script_logic_generate_basejob} },
+    { "Base Class", logic_generate, {i2d_script_logic_generate_basejob} },
     { "Base Job", logic_generate, {i2d_script_logic_generate_basejob} }
 };
 
