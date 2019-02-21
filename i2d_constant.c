@@ -5,16 +5,14 @@ static int i2d_constant_db_index(i2d_constant_db *, json_t *, const char *, i2d_
 int i2d_constant_create(i2d_constant * result, const char * key, json_t * json) {
     int status = I2D_OK;
     json_t * name;
-    json_t * min;
-    json_t * max;
+    json_t * range;
     json_t * value;
 
     if(i2d_string_create(&result->macro, key, strlen(key))) {
         status = i2d_panic("failed to copy macro string");
     } else {
         name = json_object_get(json, "name");
-        min = json_object_get(json, "min");
-        max = json_object_get(json, "max");
+        range = json_object_get(json, "range");
         value = json_object_get(json, "value");
 
         if(name && i2d_object_get_string(name, &result->name)) {
@@ -22,8 +20,8 @@ int i2d_constant_create(i2d_constant * result, const char * key, json_t * json) 
         } else {
             if(!value || i2d_object_get_number(value, &result->value)) {
                 status = i2d_panic("failed to get value number");
-            } else if( (min && max) ?
-                i2d_object_get_range(min, max, &result->range) :
+            } else if( range ?
+                i2d_object_get_range_array(range, &result->range) :
                 i2d_range_create_add(&result->range, result->value, result->value) ) {
                 status = i2d_panic("failed to create range");
             }
@@ -155,7 +153,7 @@ int i2d_constant_db_init(i2d_constant_db ** result, json_t * json) {
                                 i2d_constant_get_by_macro(object, "ATF_LONG", &object->ATF_LONG) ||
                                 i2d_constant_get_by_macro(object, "ATF_WEAPON", &object->ATF_WEAPON) ||
                                 i2d_constant_get_by_macro(object, "ATF_MAGIC", &object->ATF_MAGIC) ||
-                                i2d_constant_get_by_macro(object, "ATF_MISC", &object->ATF_MISC) ) 
+                                i2d_constant_get_by_macro(object, "ATF_MISC", &object->ATF_MISC) )
                                 status = i2d_panic("failed to load atf constants");
                         }
                     }
