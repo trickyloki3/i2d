@@ -17,12 +17,14 @@ typedef int (* i2d_handler_single_node_cb) (i2d_script *, i2d_rbt *, i2d_node *,
 typedef int (* i2d_handler_multiple_node_cb) (i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 typedef int (* i2d_handler_single_node_data_cb) (i2d_data *, i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 typedef int (* i2d_handler_block_statement_cb) (i2d_script *, i2d_block *, i2d_rbt *, i2d_data *);
+typedef int (* i2d_handler_logic_generate_cb) (i2d_script *, i2d_logic *, i2d_buffer *);
 
 enum i2d_handler_type {
     single_node,
     multiple_node,
     single_node_data,
-    block_statement
+    block_statement,
+    logic_generate
 };
 
 struct i2d_handler {
@@ -34,6 +36,7 @@ struct i2d_handler {
         i2d_handler_multiple_node_cb multiple_node;
         i2d_handler_single_node_data_cb single_node_data;
         i2d_handler_block_statement_cb block_statement;
+        i2d_handler_logic_generate_cb logic_generate;
     };
     i2d_data * data;
     struct i2d_handler * next;
@@ -223,6 +226,12 @@ i2d_handler argument_handlers[] = {
     { "sc_start", multiple_node, {i2d_handler_sc_start} },
     { "sc_start2", multiple_node, {i2d_handler_sc_start2} },
     { "sc_start4", multiple_node, {i2d_handler_sc_start4} }
+};
+
+static int i2d_script_logic_generate_basejob(i2d_script *, i2d_logic *, i2d_buffer *);
+
+i2d_handler generate_handlers[] = {
+    { "Base Job", logic_generate, {i2d_script_logic_generate_basejob} }
 };
 
 i2d_handler statement_handlers[] = {
@@ -2081,6 +2090,8 @@ int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) 
                 status = i2d_panic("failed to load searchstore_effect");
             } else if(i2d_value_map_init(&object->bonus_script_flag, json->bonus_script_flag, i2d_value_string)) {
                 status = i2d_panic("failed to load bonus_script_flag");
+            } else if(i2d_value_map_init(&object->basejob, json->basejob, i2d_value_string)) {
+                status = i2d_panic("failed to load basejob");
             } else if(i2d_data_map_init(&object->bonus, data_map_by_constant, json->bonus, object->constant_db)) {
                 status = i2d_panic("failed to load bonus");
             } else if(i2d_data_map_init(&object->bonus2, data_map_by_constant, json->bonus2, object->constant_db)) {
@@ -2111,6 +2122,8 @@ int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) 
                 status = i2d_panic("failed to create read black tree object");
             } else if(i2d_rbt_init(&object->argument_handlers, i2d_rbt_cmp_str)) {
                 status = i2d_panic("failed to create read black tree object");
+            } else if(i2d_rbt_init(&object->generate_handlers, i2d_rbt_cmp_str)) {
+                status = i2d_panic("failed to create read black tree object");
             } else if(i2d_rbt_init(&object->statement_handlers, i2d_rbt_cmp_str)) {
                 status = i2d_panic("failed to create read black tree object");
             } else {
@@ -2122,6 +2135,11 @@ int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) 
                 size = i2d_size(argument_handlers);
                 for(i = 0; i < size && !status; i++)
                     if(i2d_rbt_insert(object->argument_handlers, argument_handlers[i].name, &argument_handlers[i]))
+                        status = i2d_panic("failed to map handler object");
+
+                size = i2d_size(generate_handlers);
+                for(i = 0; i < size && !status; i++)
+                    if(i2d_rbt_insert(object->generate_handlers, generate_handlers[i].name, &generate_handlers[i]))
                         status = i2d_panic("failed to map handler object");
 
                 size = i2d_size(statement_handlers);
@@ -2165,6 +2183,7 @@ void i2d_script_deit(i2d_script ** result) {
     handlers = object->handlers;
     i2d_deit(handlers, i2d_handler_list_deit);
     i2d_deit(object->statement_handlers, i2d_rbt_deit);
+    i2d_deit(object->generate_handlers, i2d_rbt_deit);
     i2d_deit(object->argument_handlers, i2d_rbt_deit);
     i2d_deit(object->function_handlers, i2d_rbt_deit);
     i2d_deit(object->stack_cache, i2d_string_stack_cache_deit);
@@ -2180,6 +2199,7 @@ void i2d_script_deit(i2d_script ** result) {
     i2d_deit(object->bonus3, i2d_data_map_deit);
     i2d_deit(object->bonus2, i2d_data_map_deit);
     i2d_deit(object->bonus, i2d_data_map_deit);
+    i2d_deit(object->basejob, i2d_value_map_deit);
     i2d_deit(object->bonus_script_flag, i2d_value_map_deit);
     i2d_deit(object->searchstore_effect, i2d_value_map_deit);
     i2d_deit(object->skill_flags, i2d_value_map_deit);
@@ -2491,25 +2511,68 @@ int i2d_script_generate_and(i2d_script * script, i2d_logic * logic, i2d_buffer *
 
 int i2d_script_generate_var(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
     int status = I2D_OK;
+    i2d_handler * handler;
     i2d_range_node * walk;
 
-    if(i2d_buffer_printf(buffer, "%s is ", logic->name.string))
+    if(i2d_rbt_search(script->generate_handlers, logic->name.string, (void **) &handler)) {
+        if(i2d_buffer_printf(buffer, "%s is ", logic->name.string))
+            status = i2d_panic("failed to write buffer object");
+        if(logic->range.list) {
+            walk = logic->range.list;
+            do {
+                if(walk != logic->range.list)
+                    if(i2d_buffer_printf(buffer, ", "))
+                        status = i2d_panic("failed to write buffer object");
+                if(walk->min == walk->max) {
+                    if(i2d_buffer_printf(buffer, "%ld", walk->min))
+                        status = i2d_panic("failed to write buffer object");
+                } else {
+                    if(i2d_buffer_printf(buffer, "%ld - %ld", walk->min, walk->max))
+                        status = i2d_panic("failed to write buffer object");
+                }
+                walk = walk->next;
+            } while(walk != logic->range.list);
+        }
+    } else {
+        switch(handler->type) {
+            case logic_generate:
+                status = handler->logic_generate(script, logic, buffer);
+                break;
+            default:
+                status = i2d_panic("invalid handler type -- %d", handler->type);
+        }
+    }
+
+    return status;
+}
+
+int i2d_script_logic_generate_basejob(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    i2d_range_node * walk;
+
+    long i;
+    i2d_string job;
+
+    if(i2d_buffer_printf(buffer, "%s is ", logic->name.string)) {
         status = i2d_panic("failed to write buffer object");
-    if(logic->range.list) {
-        walk = logic->range.list;
-        do {
-            if(walk != logic->range.list)
-                if(i2d_buffer_printf(buffer, ", "))
-                    status = i2d_panic("failed to write buffer object");
-            if(walk->min == walk->max) {
-                if(i2d_buffer_printf(buffer, "%ld", walk->min))
-                    status = i2d_panic("failed to write buffer object");
-            } else {
-                if(i2d_buffer_printf(buffer, "%ld - %ld", walk->min, walk->max))
-                    status = i2d_panic("failed to write buffer object");
-            }
-            walk = walk->next;
-        } while(walk != logic->range.list);
+    } else {
+        if(logic->range.list) {
+            walk = logic->range.list;
+            do {
+                if(walk != logic->range.list)
+                    if(i2d_buffer_printf(buffer, ", "))
+                        status = i2d_panic("failed to write buffer object");
+
+                for(i = walk->min; i <= walk->max; i++) {
+                    if(i2d_value_map_get_string(script->basejob, i, &job)) {
+                        status = i2d_panic("failed to get job by name -- %s", job.string);
+                    } else if(i2d_buffer_printf(buffer, "%s", job.string)) {
+                        status = i2d_panic("failed to write buffer object");
+                    }
+                }
+                walk = walk->next;
+            } while(walk != logic->range.list);
+        }
     }
 
     return status;
@@ -3212,6 +3275,9 @@ static int i2d_handler_init(i2d_handler ** result, enum i2d_handler_type type, i
                         break;
                     case block_statement:
                         object->block_statement = handler;
+                        break;
+                    case logic_generate:
+                        object->logic_generate = handler;
                         break;
                     default:
                         status = i2d_panic("invalid handler type -- %d", object->type);
