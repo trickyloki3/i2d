@@ -2564,6 +2564,9 @@ int i2d_script_logic_generate_basejob(i2d_script * script, i2d_logic * logic, i2
                         status = i2d_panic("failed to write buffer object");
 
                 for(i = walk->min; i <= walk->max; i++) {
+                    if(i != walk->min)
+                        if(i2d_buffer_printf(buffer, ", "))
+                            status = i2d_panic("failed to write buffer object");
                     if(i2d_value_map_get_string(script->basejob, i, &job)) {
                         status = i2d_panic("failed to get job by name -- %s", job.string);
                     } else if(i2d_buffer_printf(buffer, "%s", job.string)) {
