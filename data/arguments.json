@@ -134,5 +134,17 @@
         "negative" : "Summon",
         "positive" : "Summon",
         "zero" : "Release"
+    },
+    "increase_prefix" : {
+        "handler" : "prefix",
+        "negative" : "Decrease",
+        "positive" : "Increase",
+        "zero" : "Increase"
+    },
+    "decrease_prefix" : {
+        "handler" : "prefix",
+        "negative" : "Increase",
+        "positive" : "Decrease",
+        "zero" : "Decrease"
     }
 }
