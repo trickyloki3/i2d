@@ -399,7 +399,7 @@ int i2d_string_stack_create(i2d_string_stack * result, size_t size) {
     } else {
         result->size = size;
         result->top = 0;
-        if(i2d_buffer_create(&result->buffer, 4096)) {
+        if(i2d_buffer_create(&result->buffer, BUFFER_SIZE_LARGE)) {
             status = I2D_FAIL;
         } else {
             result->list = calloc(result->size, sizeof(*result->list));
@@ -648,7 +648,7 @@ int i2d_string_stack_cache_get(i2d_string_stack_cache * cache, i2d_string_stack 
         i2d_string_stack_clear(stack);
         *result = stack;
     } else {
-        status = i2d_string_stack_init(result, BUFFER_SIZE_SMALL);
+        status = i2d_string_stack_init(result, MAX_STACK);
     }
 
     return status;
