@@ -2545,6 +2545,33 @@ int i2d_script_generate_var(i2d_script * script, i2d_logic * logic, i2d_buffer *
     return status;
 }
 
+static int i2d_script_logic_generate_inverse(i2d_script * script, const char * name, i2d_range * range, i2d_range * result, int * is_inverse) {
+    int status = I2D_OK;
+    i2d_constant * constant;
+    i2d_range inverse;
+    long range_size;
+    long inverse_size;
+
+    if(i2d_constant_get_by_macro(script->constant_db, name, &constant)) {
+        status = i2d_panic("failed to get constant object by name -- %s", name);
+    } else if(i2d_range_not(&inverse, range)) {
+        status = i2d_panic("failed to not range object");
+    } else {
+        if(i2d_range_and(result, &constant->range, &inverse)) {
+            status = i2d_panic("failed to and range object");
+        } else if(i2d_range_solution_space_size(range, &range_size)) {
+            status = i2d_panic("failed to get solution space size for range object");
+        } else if(i2d_range_solution_space_size(result, &inverse_size)) {
+            status = i2d_panic("failed to get solution space size for range object");
+        } else {
+            *is_inverse = range_size > inverse_size;
+        }
+        i2d_range_destroy(&inverse);
+    }
+
+    return status;
+}
+
 static int i2d_script_logic_generate_basejob_cb(long value, void * data) {
     int status = I2D_OK;
     i2d_local * context = data;
@@ -2564,17 +2591,25 @@ static int i2d_script_logic_generate_basejob(i2d_script * script, i2d_logic * lo
     i2d_local context;
     i2d_string string;
 
+    i2d_range inverse;
+    int is_inverse;
+
     if(i2d_local_create(&context, script)) {
         status = i2d_panic("failed to create local object");
     } else {
-        if(i2d_range_iterate_by_number(&logic->range, i2d_script_logic_generate_basejob_cb, &context)) {
-            status = i2d_panic("failed to iterate range object");
-        } else if(i2d_string_stack_dump_buffer(context.stack, context.buffer, ", ")) {
-            status = i2d_panic("failed to get job list from stack");
+        if(i2d_script_logic_generate_inverse(script, "BaseJob", &logic->range, &inverse, &is_inverse)) {
+            status = i2d_panic("failed to generate inverse range object");
         } else {
-            i2d_buffer_get(context.buffer, &string.string, &string.length);
-            if(i2d_buffer_printf(buffer, "%s is %s", logic->name.string, string.string))
-                status = i2d_panic("failed to write buffer object");
+            if(i2d_range_iterate_by_number(is_inverse ? &inverse : &logic->range, i2d_script_logic_generate_basejob_cb, &context)) {
+                status = i2d_panic("failed to iterate range object");
+            } else if(i2d_string_stack_dump_buffer(context.stack, context.buffer, ", ")) {
+                status = i2d_panic("failed to get job list from stack");
+            } else {
+                i2d_buffer_get(context.buffer, &string.string, &string.length);
+                if(i2d_buffer_printf(buffer, "%s %s %s", logic->name.string, is_inverse ? "is not" : "is", string.string))
+                    status = i2d_panic("failed to write buffer object");
+            }
+            i2d_range_destroy(&inverse);
         }
         i2d_local_destroy(&context);
     }
