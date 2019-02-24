@@ -4865,9 +4865,6 @@ static int i2d_handler_bonus_script_flag(i2d_script * script, i2d_rbt * variable
     long flag;
     i2d_string_stack * stack = NULL;
     i2d_bonus_script context;
-    i2d_string * list;
-    size_t size;
-    size_t i;
 
     if(i2d_node_get_constant(node, &flag)) {
         status = i2d_panic("failed to get bonus script flag");
@@ -4878,21 +4875,15 @@ static int i2d_handler_bonus_script_flag(i2d_script * script, i2d_rbt * variable
         context.stack = stack;
         if(i2d_by_bit64(flag, i2d_handler_bonus_script_flag_cb, &context)) {
             status = i2d_panic("failed to get bonus script by flag -- %ld", flag);
-        } else if(i2d_string_stack_get(stack, &list, &size)) {
-            status = i2d_panic("failed to get string stack");
-        } else {
-            for(i = 0; i < size && !status; i++)
-                if(list[i].length && i2d_buffer_printf(local->buffer, "%s\n", list[i].string))
-                    status = i2d_panic("failed to write buffer object");
-
-            if(!status && i2d_string_stack_push_buffer(local->stack, local->buffer))
-                status = i2d_panic("failed to push string on stack");
+        } else if(i2d_string_stack_dump_buffer(stack, local->buffer, "\n")) {
+            status = i2d_panic("failed to get bonus script flag list from stack");
+        } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+            status = i2d_panic("failed to push string on stack");
         }
 
         if(i2d_string_stack_cache_put(script->stack_cache, &stack))
             status = i2d_panic("failed to cache string stack object");
     }
-
 
     return status;
 }

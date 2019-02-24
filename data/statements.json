@@ -355,7 +355,7 @@
         "argument_default" : [
             "0"
         ],
-        "description" : "[Bonus Script]\n{0}{2}\n(Bonus script has a duration of {1}.)",
+        "description" : "[Bonus Script]\n{0}\n{2}\n(Bonus script has a duration of {1}.)",
         "required" : 2,
         "optional" : 4
     },
