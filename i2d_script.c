@@ -2545,36 +2545,38 @@ int i2d_script_generate_var(i2d_script * script, i2d_logic * logic, i2d_buffer *
     return status;
 }
 
-int i2d_script_logic_generate_basejob(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
+static int i2d_script_logic_generate_basejob_cb(long value, void * data) {
     int status = I2D_OK;
-    i2d_range_node * walk;
+    i2d_local * context = data;
+    i2d_string string;
 
-    long i;
-    i2d_string job;
+    if(i2d_value_map_get_string(context->script->basejob, value, &string)) {
+        status = i2d_panic("failed to get job by number -- %ld", value);
+    } else if(i2d_string_stack_push(context->stack, string.string, string.length)) {
+        status = i2d_panic("failed to push job name");
+    }
 
-    if(i2d_buffer_printf(buffer, "%s is ", logic->name.string)) {
-        status = i2d_panic("failed to write buffer object");
+    return status;
+}
+
+static int i2d_script_logic_generate_basejob(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    i2d_local context;
+    i2d_string string;
+
+    if(i2d_local_create(&context, script)) {
+        status = i2d_panic("failed to create local object");
     } else {
-        if(logic->range.list) {
-            walk = logic->range.list;
-            do {
-                if(walk != logic->range.list)
-                    if(i2d_buffer_printf(buffer, ", "))
-                        status = i2d_panic("failed to write buffer object");
-
-                for(i = walk->min; i <= walk->max; i++) {
-                    if(i != walk->min)
-                        if(i2d_buffer_printf(buffer, ", "))
-                            status = i2d_panic("failed to write buffer object");
-                    if(i2d_value_map_get_string(script->basejob, i, &job)) {
-                        status = i2d_panic("failed to get job by name -- %s", job.string);
-                    } else if(i2d_buffer_printf(buffer, "%s", job.string)) {
-                        status = i2d_panic("failed to write buffer object");
-                    }
-                }
-                walk = walk->next;
-            } while(walk != logic->range.list);
+        if(i2d_range_iterate_by_number(&logic->range, i2d_script_logic_generate_basejob_cb, &context)) {
+            status = i2d_panic("failed to iterate range object");
+        } else if(i2d_string_stack_dump_buffer(context.stack, context.buffer, ", ")) {
+            status = i2d_panic("failed to get job list from stack");
+        } else {
+            i2d_buffer_get(context.buffer, &string.string, &string.length);
+            if(i2d_buffer_printf(buffer, "%s is %s", logic->name.string, string.string))
+                status = i2d_panic("failed to write buffer object");
         }
+        i2d_local_destroy(&context);
     }
 
     return status;

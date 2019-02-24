@@ -8,7 +8,7 @@
 /*
  * maximum number of strings per stack
  */
-#define MAX_STACK 64
+#define MAX_STACK 256
 
 /*
  * default buffer size
