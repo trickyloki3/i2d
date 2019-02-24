@@ -52,4 +52,6 @@ int i2d_range_iterate_by_number(i2d_range *, i2d_range_iterate_by_number_cb, voi
 
 typedef int (*i2d_range_iterate_by_range_cb) (i2d_range_node *, void *);
 int i2d_range_iterate_by_range(i2d_range *, i2d_range_iterate_by_range_cb, void *);
+
+int i2d_range_solution_space_size(i2d_range *, long *);
 #endif

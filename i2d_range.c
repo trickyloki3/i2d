@@ -1,5 +1,7 @@
 #include "i2d_range.h"
 
+static int i2d_range_solution_space_size_cb(i2d_range_node *, void *);
+
 int i2d_range_node_init(i2d_range_node ** result, long min, long max) {
     int status = I2D_OK;
     i2d_range_node * object;
@@ -563,6 +565,27 @@ int i2d_range_iterate_by_range(i2d_range * list, i2d_range_iterate_by_range_cb c
             status = cb(walk, data);
             walk = walk->next;
         } while(walk != list->list && !status);
+    }
+
+    return status;
+}
+
+static int i2d_range_solution_space_size_cb(i2d_range_node * range, void * data) {
+    long * size = data;
+
+    *size += range->max - range->min + 1;
+
+    return I2D_OK;
+}
+
+int i2d_range_solution_space_size(i2d_range * list, long * result) {
+    int status = I2D_OK;
+    int size = 0;
+
+    if(i2d_range_iterate_by_range(list, i2d_range_solution_space_size_cb, &size)) {
+        status = i2d_panic("failed to iterate range object");
+    } else {
+        *result = size;
     }
 
     return status;
