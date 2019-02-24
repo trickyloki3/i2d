@@ -3750,21 +3750,14 @@ static int i2d_handler_pow(i2d_script * script, i2d_rbt * variables, i2d_node * 
     return status;
 }
 
-struct i2d_checkoption {
-    i2d_script * script;
-    i2d_local * local;
-};
-
-typedef struct i2d_checkoption i2d_checkoption;
-
 static int i2d_handler_checkoption_loop(uint64_t flag, void * data) {
     int status = I2D_OK;
-    i2d_checkoption * context = data;
+    i2d_local * context = data;
     i2d_constant * constant = NULL;
 
     if(i2d_constant_get_by_options(context->script->constant_db, (long) flag, &constant)) {
         status = i2d_panic("failed to get option by value -- %" PRIu64, flag);
-    } else if(i2d_string_stack_push(context->local->stack, constant->name.string, constant->name.length)) {
+    } else if(i2d_string_stack_push(context->stack, constant->name.string, constant->name.length)) {
         status = i2d_panic("failed to push string on stack");
     }
 
@@ -3775,16 +3768,13 @@ static int i2d_handler_checkoption(i2d_script * script, i2d_rbt * variables, i2d
     int status = I2D_OK;
     i2d_node * argument;
     long flag;
-    i2d_checkoption context;
 
     if(i2d_node_get_arguments(node->left, &argument, 1, 0)) {
         status = i2d_panic("failed to checkoption argument");
     } else if(i2d_node_get_constant(argument, &flag)) {
         status = i2d_panic("failed to get option flag");
     } else {
-        context.script = script;
-        context.local = local;
-        if(i2d_by_bit64(flag, i2d_handler_checkoption_loop, &context)) {
+        if(i2d_by_bit64(flag, i2d_handler_checkoption_loop, local)) {
             status = i2d_panic("failed to get option by flag -- %ld", flag);
         } else if(i2d_string_stack_dump_buffer(local->stack, local->buffer, ", ")) {
             status = i2d_panic("failed to get option list from stack");
@@ -4839,16 +4829,9 @@ static int i2d_handler_mercenary(i2d_script * script, i2d_rbt * variables, i2d_n
             i2d_handler_expression(script, variables, node, local);
 }
 
-struct i2d_bonus_script {
-    i2d_script * script;
-    i2d_string_stack * stack;
-};
-
-typedef struct i2d_bonus_script i2d_bonus_script;
-
 static int i2d_handler_bonus_script_flag_cb(uint64_t bit, void * data) {
     int status = I2D_OK;
-    i2d_bonus_script * context = data;
+    i2d_local * context = data;
     long flag = (long) bit;
     i2d_string string;
 
@@ -4866,26 +4849,22 @@ static int i2d_handler_bonus_script_flag_cb(uint64_t bit, void * data) {
 static int i2d_handler_bonus_script_flag(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long flag;
-    i2d_string_stack * stack = NULL;
-    i2d_bonus_script context;
+    i2d_local context;
 
     if(i2d_node_get_constant(node, &flag)) {
         status = i2d_panic("failed to get bonus script flag");
-    } else if(i2d_string_stack_cache_get(script->stack_cache, &stack)) {
-        status = i2d_panic("failed to create string stack object");
+    } else if(i2d_local_create(&context, script)) {
+        status = i2d_panic("failed to create local object");
     } else {
-        context.script = script;
-        context.stack = stack;
         if(i2d_by_bit64(flag, i2d_handler_bonus_script_flag_cb, &context)) {
             status = i2d_panic("failed to get bonus script by flag -- %ld", flag);
-        } else if(i2d_string_stack_dump_buffer(stack, local->buffer, "\n")) {
+        } else if(i2d_string_stack_dump_buffer(context.stack, context.buffer, "\n")) {
             status = i2d_panic("failed to get bonus script flag list from stack");
-        } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
+        } else if(i2d_string_stack_push_buffer(local->stack, context.buffer)) {
             status = i2d_panic("failed to push string on stack");
         }
 
-        if(i2d_string_stack_cache_put(script->stack_cache, &stack))
-            status = i2d_panic("failed to cache string stack object");
+        i2d_local_destroy(&context);
     }
 
     return status;
