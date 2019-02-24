@@ -3240,8 +3240,10 @@ int i2d_script_expression_binary(i2d_script * script, i2d_node * node, int flag,
             case I2D_CONDITIONAL:
                 if(i2d_node_copy(node, node->right)) {
                     status = i2d_panic("failed to copy node object");
-                } else if(node->left->logic && i2d_logic_copy(&node->logic, node->left->logic)) {
-                    status = i2d_panic("failed to copy logic object");
+                } else if(node->left->logic) {
+                    i2d_deit(node->logic, i2d_logic_deit);
+                    if(i2d_logic_copy(&node->logic, node->left->logic))
+                        status = i2d_panic("failed to copy logic object");
                 }
                 break;
             case I2D_COLON:
