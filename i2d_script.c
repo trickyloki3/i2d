@@ -6,12 +6,13 @@ static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
 struct i2d_local {
     i2d_buffer * buffer;
     i2d_string_stack * stack;
+    i2d_script * script;
 };
 
 typedef struct i2d_local i2d_local;
 
 int i2d_local_create(i2d_local *, i2d_script *);
-int i2d_local_destroy(i2d_local *, i2d_script *);
+int i2d_local_destroy(i2d_local *);
 
 typedef int (* i2d_handler_single_node_cb) (i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 typedef int (* i2d_handler_multiple_node_cb) (i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
@@ -2752,7 +2753,7 @@ int i2d_script_statement_evaluate(i2d_script * script, i2d_rbt * variables, i2d_
             status = i2d_panic("failed to write statment description");
         }
 
-        if(i2d_local_destroy(&local, script))
+        if(i2d_local_destroy(&local))
             status = i2d_panic("failed to destroy local object");
     }
 
@@ -2901,7 +2902,7 @@ int i2d_script_expression_function(i2d_script * script, i2d_node * node, i2d_rbt
         } else {
             status = handler->single_node(script, variables, node, &local);
         }
-        if(i2d_local_destroy(&local, script))
+        if(i2d_local_destroy(&local))
             status = i2d_panic("failed to destroy local object");
     }
 
@@ -2964,7 +2965,7 @@ int i2d_script_expression_variable_logic(i2d_script * script, i2d_node * node) {
                     status = i2d_panic("failed to create logic object");
             }
         }
-        if(i2d_local_destroy(&predicate, script))
+        if(i2d_local_destroy(&predicate))
             status = i2d_panic("failed to destroy local object");
     }
 
@@ -3232,17 +3233,19 @@ int i2d_local_create(i2d_local * result, i2d_script * script) {
         status = i2d_panic("failed to create buffer object");
     } else if(i2d_string_stack_cache_get(script->stack_cache, &result->stack)) {
         status = i2d_panic("failed to create string stack object");
+    } else {
+        result->script = script;
     }
 
     return status;
 }
 
-int i2d_local_destroy(i2d_local * result, i2d_script * script) {
+int i2d_local_destroy(i2d_local * result) {
     int status = I2D_OK;
 
-    if(i2d_string_stack_cache_put(script->stack_cache, &result->stack)) {
+    if(i2d_string_stack_cache_put(result->script->stack_cache, &result->stack)) {
         status = i2d_panic("failed to cache string stack object");
-    } else if(i2d_buffer_cache_put(script->buffer_cache, &result->buffer)) {
+    } else if(i2d_buffer_cache_put(result->script->buffer_cache, &result->buffer)) {
         status = i2d_panic("failed to cache buffer object");
     }
 
@@ -3979,7 +3982,7 @@ static int i2d_handler_expression(i2d_script * script, i2d_rbt * variables, i2d_
                 status = i2d_panic("failed to push string on stack");
             }
         }
-        if(i2d_local_destroy(&predicate, script))
+        if(i2d_local_destroy(&predicate))
             status = i2d_panic("failed to destroy local object");
     }
 
