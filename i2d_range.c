@@ -534,3 +534,36 @@ int i2d_range_compute(i2d_range * result, i2d_range * left, i2d_range * right, i
 
     return status;
 }
+
+int i2d_range_iterate_by_number(i2d_range * list, i2d_range_iterate_by_number_cb cb, void * data) {
+    int status = I2D_OK;
+    i2d_range_node * walk;
+    long i;
+
+    if(list->list) {
+        walk = list->list;
+        do {
+            for(i = walk->min; i <= walk->max && !status; i++)
+                status = cb(i, data);
+            walk = walk->next;
+        } while(walk != list->list && !status);
+    }
+
+    return status;
+}
+
+
+int i2d_range_iterate_by_range(i2d_range * list, i2d_range_iterate_by_range_cb cb, void * data) {
+    int status = I2D_OK;
+    i2d_range_node * walk;
+
+    if(list->list) {
+        walk = list->list;
+        do {
+            status = cb(walk, data);
+            walk = walk->next;
+        } while(walk != list->list && !status);
+    }
+
+    return status;
+}

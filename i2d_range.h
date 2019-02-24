@@ -46,4 +46,10 @@ int i2d_range_not(i2d_range *, i2d_range *);
 void i2d_range_get_range(i2d_range *, long *, long *);
 void i2d_range_get_range_absolute(i2d_range *, long *, long *);
 int i2d_range_compute(i2d_range *, i2d_range *, i2d_range *, int);
+
+typedef int (*i2d_range_iterate_by_number_cb) (long, void *);
+int i2d_range_iterate_by_number(i2d_range *, i2d_range_iterate_by_number_cb, void *);
+
+typedef int (*i2d_range_iterate_by_range_cb) (i2d_range_node *, void *);
+int i2d_range_iterate_by_range(i2d_range *, i2d_range_iterate_by_range_cb, void *);
 #endif
