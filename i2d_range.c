@@ -425,6 +425,7 @@ void i2d_range_get_range_absolute(i2d_range * list, long * result_min, long * re
 int i2d_range_compute(i2d_range * result, i2d_range * left, i2d_range * right, int operator) {
     int status = I2D_OK;
     i2d_range object;
+    i2d_range intermediate;
     i2d_range_node * walk;
 
     long left_min;
@@ -449,12 +450,17 @@ int i2d_range_compute(i2d_range * result, i2d_range * left, i2d_range * right, i
                 status = i2d_panic("failed to and range operand");
             break;
         case '!' + '=':
-            if(i2d_range_and(&object, left, right)) {
+            if(i2d_range_and(&intermediate, left, right)) {
                 status = i2d_panic("failed to and range operand");
             } else {
-                if(i2d_range_not(result, &object))
+                if(i2d_range_not(&object, &intermediate)) {
                     status = i2d_panic("failed to invert range operand");
-                i2d_range_destroy(&object);
+                } else {
+                    if(i2d_range_and(result, &object, left))
+                        status = i2d_panic("failed to and range operand");
+                    i2d_range_destroy(&object);
+                }
+                i2d_range_destroy(&intermediate);
             }
             break;
         case '<':
