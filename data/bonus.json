@@ -1628,7 +1628,7 @@
                 2,
                 2
             ],
-            "description" : "{0} physical damage by {2} from {1} enemies when receiving {4} damage from {3}."
+            "description" : "{0} damage by {2} from {1} enemies when receiving {4} damage from {3}."
         },
         "bAddEff" : {
             "argument_type" : [
@@ -1674,7 +1674,7 @@
                 "integer",
                 "percent10"
             ],
-            "description" : "Add a {2} chance to cast {0} of level {1} on each normal attack."
+            "description" : "Add a {2} chance to cast Level {1} {0} when using normal attacks and dealing damage."
         },
         "bAutoSpellWhenHit" : {
             "argument_type" : [
@@ -1682,7 +1682,7 @@
                 "integer",
                 "percent10"
             ],
-            "description" : "Add a {2} chance to cast {0} of level {1} from each normal attack."
+            "description" : "Add a {2} chance to cast Level {1} {0} when receiving damage from normal attacks."
         },
         "bHPVanishRaceRate" : {
             "argument_type" : [
