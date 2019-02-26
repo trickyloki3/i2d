@@ -1884,7 +1884,7 @@
                 3,
                 4
             ],
-            "description" : "Add a {2} chance to cast {0} of level {1} when using {3} and dealing {4} damage."
+            "description" : "Add a {2} chance to cast Level {1} {0} when using {3} and dealing {4} damage."
         },
         "bAutoSpellWhenHit" : {
             "argument_type" : [
@@ -1903,7 +1903,7 @@
                 3,
                 4
             ],
-            "description" : "Add a {2} chance to cast {0} of level {1} when receiving {4} damage from {3}."
+            "description" : "Add a {2} chance to cast Level {1} {0} when receiving {4} damage from {3}."
         },
         "bAutoSpellOnSkill" : {
             "argument_type" : [
@@ -1913,7 +1913,7 @@
                 "percent10",
                 "ignore"
             ],
-            "description" : "Add a {3} chance to cast {1} of level {2} when using {0}."
+            "description" : "Add a {3} chance to cast Level {2} {1} when using {0}."
         }
     }
 }
