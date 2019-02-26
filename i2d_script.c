@@ -5072,7 +5072,7 @@ static int i2d_handler_prefix(i2d_data * data, i2d_script * script, i2d_rbt * va
         if(i2d_string_stack_push(local->stack, data->zero.string, data->zero.length))
             status = i2d_panic("failed to push string on stack");
     } else {
-        if(min > 0) {
+        if(max > 0) {
             if(i2d_string_stack_push(local->stack, data->positive.string, data->positive.length))
                 status = i2d_panic("failed to push string on stack");
         } else {

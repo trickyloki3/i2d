@@ -1477,10 +1477,16 @@
         },
         "bSubEle" : {
             "argument_type" : [
+                "decrease_prefix",
                 "elements",
                 "percent"
             ],
-            "description" : "Reduce damage by {1} from {0} property."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} from {1} property."
         },
         "bSubRace" : {
             "argument_type" : [
