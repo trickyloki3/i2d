@@ -1826,7 +1826,7 @@
                 "percent10",
                 "ignore"
             ],
-            "description" : "Add a {2} chance to cast {0} of level {1} on each normal attack."
+            "description" : "Add a {2} chance to cast Level {1} {0} when using normal attacks and dealing damage."
         },
         "bAutoSpellWhenHit" : {
             "argument_type" : [
@@ -1835,7 +1835,7 @@
                 "percent10",
                 "ignore"
             ],
-            "description" : "Add a {2} chance to cast {0} of level {1} from each normal attack."
+            "description" : "Add a {2} chance to cast Level {1} {0} when receiving damage from normal attacks."
         },
         "bAutoSpellOnSkill" : {
             "argument_type" : [
@@ -1844,7 +1844,7 @@
                 "integer",
                 "percent10"
             ],
-            "description" : "Add a {3} chance to cast {1} of level {2} when using {0}."
+            "description" : "Add a {3} chance to cast Level {2} {1} when using {0}."
         }
     },
     "bonus5" : {
