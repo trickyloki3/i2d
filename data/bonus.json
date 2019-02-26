@@ -8,9 +8,14 @@
         },
         "bAddItemHealRate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase heal amount by {0} from items."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} heal amount by {1} from items."
         },
         "bAddMaxWeight" : {
             "argument_type" : [
@@ -20,9 +25,14 @@
         },
         "bAddStealRate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent100"
             ],
-            "description" : "Increase steal success rate by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} steal success rate by {1}."
         },
         "bAgi" : {
             "argument_type" : [
@@ -110,9 +120,14 @@
         },
         "bCastrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase cast time by {0} of all skills."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} cast time by {1} of all skills."
         },
         "bClassChange" : {
             "argument_type" : [
@@ -122,9 +137,14 @@
         },
         "bCritAtkRate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase critical damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} critical damage by {1}."
         },
         "bCritical" : {
             "argument_type" : [
@@ -200,9 +220,14 @@
         },
         "bDelayrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase after-cast delay by {0} of all skills."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} after-cast delay by {1} of all skills."
         },
         "bDex" : {
             "argument_type" : [
@@ -224,15 +249,25 @@
         },
         "bFixedCast" : {
             "argument_type" : [
+                "increase_prefix",
                 "milliseconds"
             ],
-            "description" : "Increase fixed cast time by {0} of all skills."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} fixed cast time by {1} of all skills."
         },
         "bFixedCastrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase fixed cast time by {0} of all skills."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} fixed cast time by {1} of all skills."
         },
         "bFlee" : {
             "argument_type" : [
@@ -278,15 +313,25 @@
         },
         "bHealPower" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase heal amount by {0} of all skills."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} heal amount by {1} of all skills."
         },
         "bHealPower2" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase heal amount by {0} received from any skill."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} heal amount by {1} received from any skill."
         },
         "bHit" : {
             "argument_type" : [
@@ -344,15 +389,25 @@
         },
         "bLongAtkDef" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce long range damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} long range damage by {1}."
         },
         "bLongAtkRate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase long range damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} long range damage by {1}."
         },
         "bLongWeaponDamageReturn" : {
             "argument_type" : [
@@ -368,9 +423,14 @@
         },
         "bMagicAtkDef" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce magic damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} magic damage by {1}."
         },
         "bMagicDamageReturn" : {
             "argument_type" : [
@@ -452,15 +512,26 @@
         },
         "bMiscAtkDef" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce misc damage by {0}."
+
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} misc damage by {1}."
         },
         "bNearAtkDef" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce meelee damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} meelee damage by {1}."
         },
         "bNoCastCancel" : {
             "argument_type" : [
@@ -494,15 +565,25 @@
         },
         "bNoMagicDamage" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce magic damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} magic damage by {1}."
         },
         "bNoMiscDamage" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce misc damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} misc damage by {1}."
         },
         "bNoRegen" : {
             "argument_type" : [
@@ -518,9 +599,14 @@
         },
         "bNoWeaponDamage" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce physical damage by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} physical damage by {1}."
         },
         "bPerfectHide" : {
             "argument_type" : [
@@ -602,9 +688,14 @@
         },
         "bUnbreakable" : {
             "argument_type" : [
+                "decrease_prefix",
                 "percent"
             ],
-            "description" : "Reduce break chance by {0} of all equipment."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} break chance by {1} of all equipment."
         },
         "bUnbreakableArmor" : {
             "argument_type" : [
@@ -674,21 +765,36 @@
         },
         "bUseSPrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase SP consumption by {0}."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} SP consumption by {1}."
         },
         "bVariableCast" : {
             "argument_type" : [
+                "increase_prefix",
                 "milliseconds"
             ],
-            "description" : "Increase variable cast time by {0} of all skills."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} variable cast time by {1} of all skills."
         },
         "bVariableCastrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "percent"
             ],
-            "description" : "Increase variable cast time by {0} of all skills."
+            "argument_order" : [
+                0,
+                0
+            ],
+            "description" : "{0} variable cast time by {1} of all skills."
         },
         "bVit" : {
             "argument_type" : [
@@ -712,24 +818,42 @@
     "bonus2" : {
         "bAddClass" : {
             "argument_type" : [
+                "increase_prefix",
                 "classes",
                 "percent"
             ],
-            "description" : "Increase physical damage by {1} against {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} physical damage by {2} against {1} enemies."
         },
         "bAddDamageClass" : {
             "argument_type" : [
+                "increase_prefix",
                 "mob",
                 "percent"
             ],
-            "description" : "Increase physical damage by {1} against {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} physical damage by {2} against {1}."
         },
         "bAddDefMonster" : {
             "argument_type" : [
+                "decrease_prefix",
                 "mob",
                 "percent"
             ],
-            "description" : "Reduce physical damage by {1} from {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} physical damage by {2} from {1}."
         },
         "bAddEff" : {
             "argument_type" : [
@@ -754,10 +878,16 @@
         },
         "bAddEle" : {
             "argument_type" : [
+                "increase_prefix",
                 "elements",
                 "percent"
             ],
-            "description" : "Increase physical damage by {1} on {0} property."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} physical damage by {2} on {1} property."
         },
         "bAddGetZenyNum" : {
             "argument_type" : [
@@ -768,31 +898,55 @@
         },
         "bAddItemGroupHealRate" : {
             "argument_type" : [
+                "increase_prefix",
                 "itemgroups",
                 "percent"
             ],
-            "description" : "Increase heal amount by {1} from items in {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} heal amount by {2} from items in {1}."
         },
         "bAddItemHealRate" : {
             "argument_type" : [
+                "increase_prefix",
                 "item",
                 "percent"
             ],
-            "description" : "Increase heal amount by {1} from {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} heal amount by {2} from {1}."
         },
         "bAddMDefMonster" : {
             "argument_type" : [
+                "decrease_prefix",
                 "mob",
                 "percent"
             ],
-            "description" : "Reduce magic damage by {1} from {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} from {1}."
         },
         "bAddMagicDamageClass" : {
             "argument_type" : [
+                "increase_prefix",
                 "mob",
                 "percent"
             ],
-            "description" : "Increase magic damage by {1} against {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} against {1}."
         },
         "bAddMonsterDropItem" : {
             "argument_type" : [
@@ -810,24 +964,42 @@
         },
         "bAddRace" : {
             "argument_type" : [
+                "increase_prefix",
                 "races",
                 "percent"
             ],
-            "description" : "Increase physical damage by {1} against {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} physical damage by {2} against {1} enemies."
         },
         "bAddRace2" : {
             "argument_type" : [
+                "increase_prefix",
                 "mob_races",
                 "percent"
             ],
-            "description" : "Increase physical damage by {1} against {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} physical damage by {2} against {1} enemies."
         },
         "bAddSize" : {
             "argument_type" : [
+                "increase_prefix",
                 "sizes",
                 "percent"
             ],
-            "description" : "Increase physical damage by {1} against {0} sized enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} physical damage by {2} against {1} sized enemies."
         },
         "bAddSkillBlow" : {
             "argument_type" : [
@@ -838,10 +1010,16 @@
         },
         "bCastrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Increase cast time of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} cast time of {1} by {2}."
         },
         "bComaClass" : {
             "argument_type" : [
@@ -859,45 +1037,81 @@
         },
         "bCriticalAddRace" : {
             "argument_type" : [
+                "increase_prefix",
                 "races",
                 "integer"
             ],
-            "description" : "Increase critical chance by {1} against {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} critical chance by {2} against {1} enemies."
         },
         "bDropAddClass" : {
             "argument_type" : [
+                "increase_prefix",
                 "classes",
                 "percent"
             ],
-            "description" : "Increase item drop rate by {1} when killing {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} item drop rate by {2} when killing {1} enemies."
         },
         "bDropAddRace" : {
             "argument_type" : [
+                "increase_prefix",
                 "races",
                 "percent"
             ],
-            "description" : "Increase item drop rate by {1} when killing {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} item drop rate by {2} when killing {1} enemies."
         },
         "bExpAddClass" : {
             "argument_type" : [
+                "increase_prefix",
                 "classes",
                 "percent"
             ],
-            "description" : "Increase experience gained by {1} when killing {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} experience gained by {2} when killing {1} enemies."
         },
         "bExpAddRace" : {
             "argument_type" : [
+                "increase_prefix",
                 "races",
                 "percent"
             ],
-            "description" : "Increase experience gained by {1} when killing {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} experience gained by {2} when killing {1} enemies."
         },
         "bFixedCastrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Increase fixed cast time of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} fixed cast time of {1} by {2}."
         },
         "bGetZenyNum" : {
             "argument_type" : [
@@ -985,45 +1199,81 @@
         },
         "bMagicAddClass" : {
             "argument_type" : [
+                "increase_prefix",
                 "classes",
                 "percent"
             ],
-            "description" : "Increase magic damage by {1} against {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} against {1} enemies."
         },
         "bMagicAddEle" : {
             "argument_type" : [
+                "increase_prefix",
                 "elements",
                 "percent"
             ],
-            "description" : "Increase magic damage by {1} on {0} property."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} on {1} property."
         },
         "bMagicAddRace" : {
             "argument_type" : [
+                "increase_prefix",
                 "races",
                 "percent"
             ],
-            "description" : "Increase magic damage by {1} against {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} against {1} enemies."
         },
         "bMagicAddRace2" : {
             "argument_type" : [
+                "increase_prefix",
                 "mob_races",
                 "percent"
             ],
-            "description" : "Increase magic damage by {1} against {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} against {1}."
         },
         "bMagicAddSize" : {
             "argument_type" : [
+                "increase_prefix",
                 "sizes",
                 "percent"
             ],
-            "description" : "Increase magic damage by {1} against {0} sized enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} against {1} sized enemies."
         },
         "bMagicAtkEle" : {
             "argument_type" : [
+                "increase_prefix",
                 "elements",
                 "percent"
             ],
-            "description" : "Increase magic damage by {1} of {0} spells."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} magic damage by {2} of {1} spells."
         },
         "bRegenPercentHP" : {
             "argument_type" : [
@@ -1090,59 +1340,107 @@
         },
         "bSkillAtk" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Increase damage of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage of {1} by {2}."
         },
         "bSkillCooldown" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "milliseconds"
             ],
-            "description" : "Increase cooldown of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} cooldown of {1} by {2}."
         },
         "bSkillFixedCast" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "milliseconds"
             ],
-            "description" : "Increase fixed cast time of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} fixed cast time of {1} by {2}."
         },
         "bSkillHeal" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Increase heal amount by {1} when using {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} heal amount by {2} when using {1}."
         },
         "bSkillHeal2" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Increase heal amount by {1} from {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} heal amount by {2} from {1}."
         },
         "bSkillUseSP" : {
             "argument_type" : [
+                "decrease_prefix",
                 "skill",
                 "integer"
             ],
-            "description" : "Reduce SP consumption of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} SP consumption of {1} by {2}."
         },
         "bSkillUseSPRate" : {
             "argument_type" : [
+                "decrease_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Reduce SP consumption of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} SP consumption of {1} by {2}."
         },
         "bSkillVariableCast" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "milliseconds"
             ],
-            "description" : "Increase variable cast time of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} variable cast time of {1} by {2}."
         },
         "bSpDrainValueClass" : {
             "argument_type" : [
@@ -1153,17 +1451,29 @@
         },
         "bSubClass" : {
             "argument_type" : [
+                "decrease_prefix",
                 "classes",
                 "percent"
             ],
-            "description" : "Reduce damage by {1} from {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} from {1} enemies."
         },
         "bSubDefEle" : {
             "argument_type" : [
+                "decrease_prefix",
                 "elements",
                 "percent"
             ],
-            "description" : "Reduce damage by {1} from {0} property enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} from {1} property enemies."
         },
         "bSubEle" : {
             "argument_type" : [
@@ -1174,45 +1484,81 @@
         },
         "bSubRace" : {
             "argument_type" : [
+                "decrease_prefix",
                 "races",
                 "percent"
             ],
-            "description" : "Reduce damage by {1} from {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} from {1} enemies."
         },
         "bSubRace2" : {
             "argument_type" : [
+                "decrease_prefix",
                 "mob_races",
                 "percent"
             ],
-            "description" : "Reduce damage by {1} from {0} enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} from {1} enemies."
         },
         "bSubSize" : {
             "argument_type" : [
+                "decrease_prefix",
                 "sizes",
                 "percent"
             ],
-            "description" : "Reduce damage by {1} from {0} sized enemies."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} from {1} sized enemies."
         },
         "bSubSkill" : {
             "argument_type" : [
+                "decrease_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Reduce damage by {1} from {0}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} from {1}."
         },
         "bVariableCastrate" : {
             "argument_type" : [
+                "increase_prefix",
                 "skill",
                 "percent"
             ],
-            "description" : "Increase variable cast time of {0} by {1}."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} variable cast time of {1} by {2}."
         },
         "bWeaponAtk" : {
             "argument_type" : [
+                "increase_prefix",
                 "weapons",
                 "integer"
             ],
-            "description" : "Increase ATK by {1} on each normal attack when {0} is equipped."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} ATK by {2} on each normal attack when {1} is equipped."
         },
         "bWeaponComaClass" : {
             "argument_type" : [
@@ -1237,42 +1583,52 @@
         },
         "bWeaponDamageRate" : {
             "argument_type" : [
+                "increase_prefix",
                 "weapons",
                 "percent"
             ],
-            "description" : "Increase damage by {1} on each normal attack when {0} is equipped."
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} damage by {2} on each normal attack when {1} is equipped."
         }
     },
     "bonus3" : {
         "bAddEle" : {
             "argument_type" : [
+                "increase_prefix",
                 "elements",
                 "percent",
                 "bf_type",
                 "bf_damage"
             ],
             "argument_order" : [
+                1,
                 0,
                 1,
                 2,
                 2
             ],
-            "description" : "Increase physical damage by {1} against {0} enemies when using {2} and dealing {3} damage."
+            "description" : "{0} physical damage by {2} against {1} enemies when using {3} and dealing {4} damage."
         },
         "bSubEle" : {
             "argument_type" : [
+                "decrease_prefix",
                 "elements",
                 "percent",
                 "bf_type",
                 "bf_damage"
             ],
             "argument_order" : [
+                1,
                 0,
                 1,
                 2,
                 2
             ],
-            "description" : "Reduce physical damage by {1} from {0} enemies when receiving {3} damage from {2}."
+            "description" : "{0} physical damage by {2} from {1} enemies when receiving {4} damage from {3}."
         },
         "bAddEff" : {
             "argument_type" : [
@@ -1342,7 +1698,7 @@
                 "percent100",
                 "percent"
             ],
-            "description" : "Add a {1} chance of decreasing {0} eies' SP by {2} on each normal attack."
+            "description" : "Add a {1} chance of decreasing {0} enemies' SP by {2} on each normal attack."
         },
         "bStateNoRecoverRace" : {
             "argument_type" : [
