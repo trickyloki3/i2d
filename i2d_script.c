@@ -233,13 +233,16 @@ static int i2d_script_logic_generate_basejob_cb(long, void *);
 static int i2d_script_logic_generate_basejob(i2d_script *, i2d_logic *, i2d_buffer *);
 static int i2d_script_logic_generate_view_cb(long, void *);
 static int i2d_script_logic_generate_view(i2d_script *, i2d_logic *, i2d_buffer *);
+static int i2d_script_logic_generate_equipon_cb(long, void *);
+static int i2d_script_logic_generate_equipon(i2d_script *, i2d_logic *, i2d_buffer *);
 
 i2d_handler generate_handlers[] = {
     { "Class", logic_generate, {i2d_script_logic_generate_basejob} },
     { "Base Class", logic_generate, {i2d_script_logic_generate_basejob} },
     { "Base Job", logic_generate, {i2d_script_logic_generate_basejob} },
     { "Right-Hand Weapon's View", logic_generate, {i2d_script_logic_generate_view} },
-    { "Compound Equip's View", logic_generate, {i2d_script_logic_generate_view} }
+    { "Compound Equip's View", logic_generate, {i2d_script_logic_generate_view} },
+    { "Equip On", logic_generate, {i2d_script_logic_generate_equipon} }
 };
 
 i2d_handler statement_handlers[] = {
@@ -2647,7 +2650,44 @@ static int i2d_script_logic_generate_view(i2d_script * script, i2d_logic * logic
         if(i2d_range_iterate_by_number(&logic->range, i2d_script_logic_generate_view_cb, &context)) {
             status = i2d_panic("failed to iterate range object");
         } else if(i2d_string_stack_dump_buffer(context.stack, context.buffer, ", ")) {
-            status = i2d_panic("failed to get job list from stack");
+            status = i2d_panic("failed to get view list from stack");
+        } else {
+            i2d_buffer_get(context.buffer, &string.string, &string.length);
+            if(i2d_buffer_printf(buffer, "%s is %s", logic->name.string, string.string))
+                status = i2d_panic("failed to write buffer object");
+        }
+        i2d_local_destroy(&context);
+    }
+
+    return status;
+}
+
+static int i2d_script_logic_generate_equipon_cb(long value, void * data) {
+    int status = I2D_OK;
+    i2d_local * context = data;
+    i2d_item * item;
+
+    if(i2d_item_db_search_by_id(context->script->db->item_db, value, &item)) {
+        status = i2d_panic("failed to get item by id -- %ld", value);
+    } else if(i2d_string_stack_push(context->stack, item->name.string, item->name.length)) {
+        status = i2d_panic("failed to push item name");
+    }
+
+    return status;
+}
+
+static int i2d_script_logic_generate_equipon(i2d_script * script, i2d_logic * logic, i2d_buffer * buffer) {
+    int status = I2D_OK;
+    i2d_local context;
+    i2d_string string;
+
+    if(i2d_local_create(&context, script)) {
+        status = i2d_panic("failed to create local object");
+    } else {
+        if(i2d_range_iterate_by_number(&logic->range, i2d_script_logic_generate_equipon_cb, &context)) {
+            status = i2d_panic("failed to iterate range object");
+        } else if(i2d_string_stack_dump_buffer(context.stack, context.buffer, ", ")) {
+            status = i2d_panic("failed to get item list from stack");
         } else {
             i2d_buffer_get(context.buffer, &string.string, &string.length);
             if(i2d_buffer_printf(buffer, "%s is %s", logic->name.string, string.string))
