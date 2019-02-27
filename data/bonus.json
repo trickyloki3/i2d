@@ -887,7 +887,7 @@
                 0,
                 1
             ],
-            "description" : "{0} physical damage by {2} on {1} property."
+            "description" : "{0} physical damage by {2} against {1} enemies."
         },
         "bAddGetZenyNum" : {
             "argument_type" : [
@@ -986,7 +986,7 @@
                 0,
                 1
             ],
-            "description" : "{0} physical damage by {2} against {1} enemies."
+            "description" : "{0} damage by {2} against {1} enemies."
         },
         "bAddSize" : {
             "argument_type" : [
@@ -1026,14 +1026,14 @@
                 "classes",
                 "percent100"
             ],
-            "description" : "Add a {1} chance to inflict coma when dealing physical damage against {0} enemies."
+            "description" : "Add a {1} chance to inflict coma against {0} enemies when dealing physical damage."
         },
         "bComaRace" : {
             "argument_type" : [
                 "races",
                 "percent100"
             ],
-            "description" : "Add a {1} chance to inflict coma when dealing physical damage against {0} enemies."
+            "description" : "Add a {1} chance to inflict coma against {0} enemies when dealing physical damage."
         },
         "bCriticalAddRace" : {
             "argument_type" : [
@@ -1153,7 +1153,7 @@
                 "percent10",
                 "percent"
             ],
-            "description" : "Add a {1} chance to drain {0} of enemy's HP when dealing physical damage."
+            "description" : "Add a {0} chance to drain {1} of enemy's HP when dealing physical damage."
         },
         "bHpDrainValueClass" : {
             "argument_type" : [
@@ -1221,7 +1221,7 @@
                 0,
                 1
             ],
-            "description" : "{0} magic damage by {2} on {1} property."
+            "description" : "{0} magic damage by {2} on {1} enemies."
         },
         "bMagicAddRace" : {
             "argument_type" : [
@@ -1247,7 +1247,7 @@
                 0,
                 1
             ],
-            "description" : "{0} magic damage by {2} against {1}."
+            "description" : "{0} magic damage by {2} against {1} enemies."
         },
         "bMagicAddSize" : {
             "argument_type" : [
@@ -1315,7 +1315,7 @@
                 "races",
                 "integer"
             ],
-            "description" : "Heal {1} SP when killing {0} enemies."
+            "description" : "Heal {1} SP when killing {0} enemies and using normal attacks."
         },
         "bSPLossRate" : {
             "argument_type" : [
@@ -1336,7 +1336,7 @@
                 "percent10",
                 "percent"
             ],
-            "description" : "Add a {1} chance to drain {0} of enemy's SP when dealing physical damage."
+            "description" : "Add a {0} chance to drain {1} of enemy's SP when dealing physical damage."
         },
         "bSkillAtk" : {
             "argument_type" : [
@@ -1473,7 +1473,7 @@
                 0,
                 1
             ],
-            "description" : "{0} damage by {2} from {1} property enemies."
+            "description" : "{0} damage by {2} from {1} enemies."
         },
         "bSubEle" : {
             "argument_type" : [
@@ -1486,7 +1486,7 @@
                 0,
                 1
             ],
-            "description" : "{0} damage by {2} from {1} property."
+            "description" : "{0} damage by {2} from {1} enemies."
         },
         "bSubRace" : {
             "argument_type" : [
@@ -1564,7 +1564,7 @@
                 0,
                 1
             ],
-            "description" : "{0} ATK by {2} on each normal attack when {1} is equipped."
+            "description" : "{0} ATK by {2} when {1} is equipped."
         },
         "bWeaponComaClass" : {
             "argument_type" : [
