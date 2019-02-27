@@ -303,7 +303,7 @@
             "argument_type" : [
                 "integer"
             ],
-            "description" : "Heal {0} HP on each enemy killed with a normal attack."
+            "description" : "Heal {0} HP for each enemy killed with a normal attack."
         },
         "bHPrecovRate" : {
             "argument_type" : [
@@ -642,7 +642,7 @@
             "argument_type" : [
                 "integer"
             ],
-            "description" : "Heal {0} SP on each enemy killed with a normal attack."
+            "description" : "Heal {0} SP for each enemy killed with a normal attack."
         },
         "bSPrecovRate" : {
             "argument_type" : [
@@ -772,7 +772,7 @@
                 0,
                 0
             ],
-            "description" : "{0} SP consumption by {1}."
+            "description" : "{0} SP consumption by {1} of all skills."
         },
         "bVariableCast" : {
             "argument_type" : [
