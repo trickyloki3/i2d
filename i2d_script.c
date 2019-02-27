@@ -2402,11 +2402,11 @@ int i2d_script_translate(i2d_script * script, i2d_block * blocks, i2d_rbt * vari
                     }
                     break;
                 case I2D_ELSE:
-                    if(logics && i2d_logic_not(&block->logics, logics))
-                            status = i2d_panic("failed to not logic object");
-
-                    if(!status)
+                    if(logics && i2d_logic_not(&block->logics, logics)) {
+                        status = i2d_panic("failed to not logic object");
+                    } else {
                         status = i2d_script_translate(script, block->child, variables, block->logics);
+                    }
                     break;
                 case I2D_FOR:
                     /* for is unsupported */
