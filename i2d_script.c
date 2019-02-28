@@ -4059,8 +4059,10 @@ static int i2d_handler_vip_status(i2d_script * script, i2d_rbt * variables, i2d_
 
         if(i2d_constant_get_by_vip_status(script->constant_db, min, &constant)) {
             status = i2d_panic("failed to get vip status by value -- %ld", min);
-        } else if(i2d_node_set_constant(node, constant)) {
-            status = i2d_panic("failed to set constant on node object");
+        } else if(i2d_string_stack_push(local->stack, constant->name.string, constant->name.length)) {
+            status = i2d_panic("failed to push vip status string");
+        } else {
+            status = i2d_handler_general(script, variables, node, local);
         }
     }
 

@@ -200,5 +200,14 @@
                 "min" : 0
             }
         ]
+    },
+    "vip_status" : {
+        "description" : "VIP Status {0}",
+        "range" : [
+            {
+                "max" : 2147483647,
+                "min" : 0
+            }
+        ]
     }
 }

@@ -21005,15 +21005,15 @@
             "value" : 0
         },
         "VIP_STATUS_ACTIVE" : {
-            "name" : "VIP Active",
+            "name" : "Active",
             "value" : 1
         },
         "VIP_STATUS_EXPIRE" : {
-            "name" : "VIP Expire",
+            "name" : "Expire",
             "value" : 2
         },
         "VIP_STATUS_REMAINING" : {
-            "name" : "VIP Time",
+            "name" : "Time",
             "value" : 3
         },
         "WARPEFFECTNPC" : {
