@@ -13018,6 +13018,7 @@
             "value" : 491
         },
         "IG_PRIZEOFHERO" : {
+            "name" : "Prize Of Hero",
             "value" : 490
         },
         "IG_PR_RESET_STONE_BOX" : {
@@ -22128,6 +22129,7 @@
         "IG_GIFTBOX",
         "IG_HERO_MIDGARD_EGG",
         "IG_ARIES_SCROLL",
+        "IG_PRIZEOFHERO",
         "IG_PR_RESET_STONE_BOX",
         "IG_GEMI_CROWN_SCROLL_BOX",
         "IG_LUCKY_SILVERVINE_FRUIT_BOX_III10",
