@@ -1370,6 +1370,19 @@
             ],
             "description" : "{0} cooldown of {1} by {2}."
         },
+        "bSkillDelay" : {
+            "argument_type" : [
+                "increase_prefix",
+                "skill",
+                "milliseconds"
+            ],
+            "argument_order" : [
+                1,
+                0,
+                1
+            ],
+            "description" : "{0} after-cast delay by {2} of {1}."
+        },
         "bSkillFixedCast" : {
             "argument_type" : [
                 "increase_prefix",
