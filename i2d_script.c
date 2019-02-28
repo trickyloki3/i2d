@@ -74,6 +74,7 @@ static int i2d_handler_rand(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_callfunc(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_getequipweaponlv(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_getexp2(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_vip_status(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 
 i2d_handler function_handlers[] = {
     { "getrefine", single_node, {i2d_handler_general}},
@@ -101,7 +102,8 @@ i2d_handler function_handlers[] = {
     { "getequipweaponlv", single_node, {i2d_handler_getequipweaponlv}},
     { "getexp2", single_node, {i2d_handler_getexp2}},
     { "getcharid", single_node, {i2d_handler_general}},
-    { "checkfalcon", single_node, {i2d_handler_general}}
+    { "checkfalcon", single_node, {i2d_handler_general}},
+    { "vip_status", single_node, {i2d_handler_vip_status}}
 };
 
 typedef int (*i2d_handler_range_cb)(i2d_script *, i2d_string_stack *, long);
@@ -4034,6 +4036,31 @@ static int i2d_handler_getexp2(i2d_script * script, i2d_rbt * variables, i2d_nod
             } else {
                 status = i2d_handler_general(script, variables, node, local);
             }
+        }
+    }
+
+    return status;
+}
+
+static int i2d_handler_vip_status(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    i2d_node * arguments[2];
+
+    long min;
+    long max;
+    i2d_constant * constant;
+
+    i2d_zero(arguments);
+
+    if(i2d_node_get_arguments(node->left, arguments, 1, 1)) {
+        status = i2d_panic("failed to get getexp2 arguments");
+    } else {
+        i2d_range_get_range(&arguments[0]->range, &min, &max);
+
+        if(i2d_constant_get_by_vip_status(script->constant_db, min, &constant)) {
+            status = i2d_panic("failed to get vip status by value -- %ld", min);
+        } else if(i2d_node_set_constant(node, constant)) {
+            status = i2d_panic("failed to set constant on node object");
         }
     }
 
