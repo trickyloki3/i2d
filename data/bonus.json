@@ -597,6 +597,12 @@
             ],
             "description" : "Ignore enemy's size when dealing physical damage."
         },
+        "bNoWalkDelay" : {
+            "argument_type" : [
+                "ignore"
+            ],
+            "description" : "Permanent Endure."
+        },
         "bNoWeaponDamage" : {
             "argument_type" : [
                 "decrease_prefix",
