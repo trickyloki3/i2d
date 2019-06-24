@@ -1,5 +1,11 @@
 {
-    "source_path" : "/home/trickyloki3/Desktop/rathena",
     "data_path" : "/home/trickyloki3/Desktop/i2d/data",
-    "renewal" : true
+    "item_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/item_db.txt",
+    "skill_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/skill_db.txt",
+    "mob_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/mob_db.txt",
+    "mob_race2_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/mob_race2_db.txt",
+    "produce_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/produce_db.txt",
+    "mercenary_db_path" : "/home/trickyloki3/Desktop/rathena/db/mercenary_db.txt",
+    "pet_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/pet_db.txt",
+    "item_combo_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/item_combo_db.txt"
 }

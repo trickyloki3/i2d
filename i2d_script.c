@@ -2080,7 +2080,7 @@ int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) 
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_db_init(&object->db, config->renewal ? i2d_renewal : i2d_pre_renewal, &config->source_path)) {
+            if(i2d_db_init(&object->db, config)) {
                 status = i2d_panic("failed to create database object");
             } else if(i2d_lexer_init(&object->lexer)) {
                 status = i2d_panic("failed to create lexer object");
@@ -2088,7 +2088,7 @@ int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) 
                 status = i2d_panic("failed to create parser object");
             } else if(i2d_constant_db_init(&object->constant_db, json->constants)) {
                 status = i2d_panic("failed to create constant db object");
-            } else if(i2d_constant_index_mob_races(object->constant_db, object->db->mob_race_db)) {
+            } else if(i2d_constant_index_mob_races(object->constant_db, object->db->mob_race2_db)) {
                 status = i2d_panic("failed to index mob race db");
             } else if(i2d_value_map_init(&object->getiteminfo, json->getiteminfo_type, i2d_value_string)) {
                 status = i2d_panic("failed to load getiteminfo");
