@@ -1235,64 +1235,65 @@
             "argument_type" : [
                 "string",
                 "milliseconds",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
+                "water_resistance",
+                "earth_resistance",
+                "fire_resistance",
+                "wind_resistance",
                 "percent100"
             ],
-            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+            "description" : "{2} for {1}.\n{3} for {1}.\n{4} for {1}.\n{5} for {1}."
         },
         "SC_ARMOR_ELEMENT_FIRE" : {
             "argument_type" : [
                 "string",
                 "milliseconds",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
+                "water_resistance",
+                "earth_resistance",
+                "fire_resistance",
+                "wind_resistance",
                 "percent100"
             ],
-            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+            "description" : "{2} for {1}.\n{3} for {1}.\n{4} for {1}.\n{5} for {1}."
         }
         ,
         "SC_ARMOR_ELEMENT_WATER" : {
             "argument_type" : [
                 "string",
                 "milliseconds",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
+                "water_resistance",
+                "earth_resistance",
+                "fire_resistance",
+                "wind_resistance",
                 "percent100"
             ],
-            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+            "description" : "{2} for {1}.\n{3} for {1}.\n{4} for {1}.\n{5} for {1}."
         }
         ,
         "SC_ARMOR_ELEMENT_WIND" : {
             "argument_type" : [
                 "string",
                 "milliseconds",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
+                "water_resistance",
+                "earth_resistance",
+                "fire_resistance",
+                "wind_resistance",
                 "percent100"
             ],
-            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+            "description" : "{2} for {1}.\n{3} for {1}.\n{4} for {1}.\n{5} for {1}."
         }
         ,
         "SC_ARMOR_ELEMENT_EARTH" : {
             "argument_type" : [
                 "string",
                 "milliseconds",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
-                "percent_sign",
+                "water_resistance",
+                "earth_resistance",
+                "fire_resistance",
+                "wind_resistance",
                 "percent100"
             ],
-            "description" : "Water Resistance {2}, Earth Resistance {3}, Fire Resistance {4}, Wind Resistance {5} for {1}."
+            "description" : "{2} for {1}.\n{3} for {1}.\n{4} for {1}.\n{5} for {1}."
         }
+    }
     }
 }

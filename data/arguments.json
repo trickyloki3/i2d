@@ -124,6 +124,54 @@
         "description" : "[When Pet Is Loyal]\n{0}",
         "empty_description_on_empty_string" : true
     },
+    "water_resistance" : {
+        "handler" : "custom",
+        "argument_type" : [
+            "increase_prefix",
+            "percent_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} water resistance by {1}"
+    },
+    "earth_resistance" : {
+        "handler" : "custom",
+        "argument_type" : [
+            "increase_prefix",
+            "percent_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} earth resistance by {1}"
+    },
+    "fire_resistance" : {
+        "handler" : "custom",
+        "argument_type" : [
+            "increase_prefix",
+            "percent_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} fire resistance by {1}"
+    },
+    "wind_resistance" : {
+        "handler" : "custom",
+        "argument_type" : [
+            "increase_prefix",
+            "percent_absolute"
+        ],
+        "argument_order" : [
+            0,
+            0
+        ],
+        "description" : "{0} wind resistance by {1}"
+    },
     "heal_prefix" : {
         "handler" : "prefix",
         "negative" : "Drain",

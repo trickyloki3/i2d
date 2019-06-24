@@ -172,6 +172,7 @@ static int i2d_handler_bonus2(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *)
 static int i2d_handler_bonus3(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_bonus4(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_bonus5(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
+static int i2d_handler_sc_start_generic(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *, i2d_data_map *);
 static int i2d_handler_sc_start(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_sc_start2(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
 static int i2d_handler_sc_start4(i2d_script *, i2d_rbt *, i2d_node **, i2d_local *);
@@ -5312,14 +5313,14 @@ static int i2d_handler_bonus5(i2d_script * script, i2d_rbt * variables, i2d_node
     return status;
 }
 
-static int i2d_handler_sc_start(i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+static int i2d_handler_sc_start_generic(i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local, i2d_data_map * sc_start) {
     int status = I2D_OK;
     long effect_type;
     i2d_data * data;
 
     if(i2d_node_get_constant(nodes[0], &effect_type)) {
         status = i2d_panic("failed to get effect type");
-    } else if(i2d_data_map_get(script->sc_start, &effect_type, &data)) {
+    } else if(i2d_data_map_get(sc_start, &effect_type, &data)) {
         if(!nodes[0]->constant) {
             status = i2d_panic("failed to get effect by type -- %ld", effect_type);
         } else {
@@ -5332,48 +5333,16 @@ static int i2d_handler_sc_start(i2d_script * script, i2d_rbt * variables, i2d_no
     }
 
     return status;
+}
+
+static int i2d_handler_sc_start(i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
+    return i2d_handler_sc_start_generic(script, variables, nodes, local, script->sc_start);
 }
 
 static int i2d_handler_sc_start2(i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
-    int status = I2D_OK;
-    long effect_type;
-    i2d_data * data;
-
-    if(i2d_node_get_constant(nodes[0], &effect_type)) {
-        status = i2d_panic("failed to get effect type");
-    } else if(i2d_data_map_get(script->sc_start2, &effect_type, &data)) {
-        if(!nodes[0]->constant) {
-            status = i2d_panic("failed to get effect by type -- %ld", effect_type);
-        } else {
-            status = i2d_panic("failed to get effect by type -- %ld (%s)", effect_type, nodes[0]->constant->macro.string);
-        }
-    } else if(i2d_script_statement_evaluate(script, variables, &nodes[0], data, local->buffer)) {
-        status = i2d_panic("failed to handle bonus arguments");
-    } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
-        status = i2d_panic("failed to push string on stack");
-    }
-
-    return status;
+    return i2d_handler_sc_start_generic(script, variables, nodes, local, script->sc_start2);
 }
 
 static int i2d_handler_sc_start4(i2d_script * script, i2d_rbt * variables, i2d_node ** nodes, i2d_local * local) {
-    int status = I2D_OK;
-    long effect_type;
-    i2d_data * data;
-
-    if(i2d_node_get_constant(nodes[0], &effect_type)) {
-        status = i2d_panic("failed to get effect type");
-    } else if(i2d_data_map_get(script->sc_start4, &effect_type, &data)) {
-        if(!nodes[0]->constant) {
-            status = i2d_panic("failed to get effect by type -- %ld", effect_type);
-        } else {
-            status = i2d_panic("failed to get effect by type -- %ld (%s)", effect_type, nodes[0]->constant->macro.string);
-        }
-    } else if(i2d_script_statement_evaluate(script, variables, &nodes[0], data, local->buffer)) {
-        status = i2d_panic("failed to handle bonus arguments");
-    } else if(i2d_string_stack_push_buffer(local->stack, local->buffer)) {
-        status = i2d_panic("failed to push string on stack");
-    }
-
-    return status;
+    return i2d_handler_sc_start_generic(script, variables, nodes, local, script->sc_start4);
 }
