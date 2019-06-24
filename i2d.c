@@ -8,7 +8,7 @@ int main(int argc, char * argv[]) {
     i2d_json * json = NULL;
     i2d_script * script = NULL;
     i2d_print * print = NULL;
-    i2d_item * item;
+    i2d_item * item = NULL;
 
     if(argc < 2) {
         status = i2d_panic("%s <config.json>", argv[0]);
