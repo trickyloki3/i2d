@@ -21,7 +21,21 @@
 #include "assert.h"
 #endif
 
-#include "i2d_define.h"
+/*
+ * maximum number of arguments per statement
+ */
+#define MAX_ARGUMENT 32
+
+/*
+ * maximum number of strings per stack
+ */
+#define MAX_STACK 256
+
+/*
+ * default buffer size
+ */
+#define BUFFER_SIZE_SMALL 64
+#define BUFFER_SIZE_LARGE 4096
 
 #define I2D_OK 0
 #define I2D_FAIL 1
