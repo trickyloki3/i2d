@@ -19,7 +19,7 @@ int main(int argc, char * argv[]) {
         if(i2d_config_init(&config, &path)) {
             status = i2d_panic("failed to create config object");
         } else {
-            if(i2d_json_init(&json, &config->data_path)) {
+            if(i2d_json_init(&json, config)) {
                 status = i2d_panic("failed to create json object");
             } else {
                 if(i2d_script_init(&script, config, json)) {

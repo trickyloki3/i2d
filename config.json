@@ -1,5 +1,12 @@
 {
-    "data_path" : "/home/trickyloki3/Desktop/i2d/data",
+    "arguments_path" : "/home/trickyloki3/Desktop/i2d/data/arguments.json",
+    "bonus_path" : "/home/trickyloki3/Desktop/i2d/data/bonus.json",
+    "constants_path" : "/home/trickyloki3/Desktop/i2d/data/constants.json",
+    "data_path" : "/home/trickyloki3/Desktop/i2d/data/data.json",
+    "functions_path" : "/home/trickyloki3/Desktop/i2d/data/functions.json",
+    "print_path" : "/home/trickyloki3/Desktop/i2d/data/print.json",
+    "sc_start_path" : "/home/trickyloki3/Desktop/i2d/data/sc_start.json",
+    "statements_path" : "/home/trickyloki3/Desktop/i2d/data/statements.json",
     "item_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/item_db.txt",
     "skill_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/skill_db.txt",
     "mob_db_path" : "/home/trickyloki3/Desktop/rathena/db/re/mob_db.txt",

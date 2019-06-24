@@ -7,7 +7,6 @@
 #include "i2d_constant.h"
 #include "i2d_db.h"
 #include "i2d_json.h"
-#include "i2d_config.h"
 #include "i2d_data.h"
 
 enum i2d_token_type {

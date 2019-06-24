@@ -1,7 +1,7 @@
 #ifndef i2d_db_h
 #define i2d_db_h
 
-#include "i2d_config.h"
+#include "i2d_json.h"
 #include "i2d_item.h"
 #include "i2d_skill.h"
 #include "i2d_mob.h"

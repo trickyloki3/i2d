@@ -18,6 +18,31 @@ int i2d_object_get_range(json_t *, json_t *, i2d_range *);
 int i2d_object_get_list(json_t *, size_t, void **, size_t *);
 int i2d_object_get_boolean(json_t *, int *);
 
+struct i2d_config {
+    long item_id;
+    i2d_string arguments_path;
+    i2d_string bonus_path;
+    i2d_string constants_path;
+    i2d_string data_path;
+    i2d_string functions_path;
+    i2d_string print_path;
+    i2d_string sc_start_path;
+    i2d_string statements_path;
+    i2d_string item_db_path;
+    i2d_string skill_db_path;
+    i2d_string mob_db_path;
+    i2d_string mob_race2_db_path;
+    i2d_string produce_db_path;
+    i2d_string mercenary_db_path;
+    i2d_string pet_db_path;
+    i2d_string item_combo_db_path;
+};
+
+typedef struct i2d_config i2d_config;
+
+int i2d_config_init(i2d_config **, i2d_string *);
+void i2d_config_deit(i2d_config  **);
+
 struct i2d_json {
     json_t * statements;
     json_t * functions;
@@ -57,6 +82,6 @@ struct i2d_json {
 
 typedef struct i2d_json i2d_json;
 
-int i2d_json_init(i2d_json **, i2d_string *);
+int i2d_json_init(i2d_json **, i2d_config *);
 void i2d_json_deit(i2d_json **);
 #endif
