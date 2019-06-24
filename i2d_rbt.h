@@ -16,6 +16,7 @@ int i2d_rbt_copy(i2d_rbt **, i2d_rbt *);
 int i2d_rbt_insert(i2d_rbt *, void *, void *);
 int i2d_rbt_delete(i2d_rbt *, void *);
 int i2d_rbt_search(i2d_rbt *, const void *, void **);
+int i2d_rbt_replace(i2d_rbt *, void *, void *);
 int i2d_rbt_exist(i2d_rbt *, const void *);
 int i2d_rbt_iterate(i2d_rbt *, i2d_rbt_iterate_cb, void *);
 #endif

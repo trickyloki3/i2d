@@ -260,6 +260,20 @@ int i2d_rbt_search(i2d_rbt * tree, const void * key, void ** value) {
     return status;
 }
 
+int i2d_rbt_replace(i2d_rbt * tree, void * key, void * value) {
+    int status = I2D_OK;
+    void * exist;
+
+    if(!i2d_rbt_search(tree, key, &exist) &&
+        i2d_rbt_delete(tree, exist) ) {
+        status = i2d_panic("failed to delete node");
+    } else if(i2d_rbt_insert(tree, key, value)) {
+        status = i2d_panic("failed to insert node");
+    }
+
+    return status;
+}
+
 int i2d_rbt_exist(i2d_rbt * tree, const void * key) {
     i2d_rbt_node * node = NULL;
     return i2d_rbt_node_search(tree, &node, key);

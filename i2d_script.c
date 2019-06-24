@@ -1,8 +1,5 @@
 #include "i2d_script.h"
 
-static int i2d_rbt_add_variable(i2d_rbt *, i2d_node *);
-static int i2d_rbt_get_variable(i2d_rbt *, i2d_node *, i2d_node **);
-
 struct i2d_local {
     i2d_buffer * buffer;
     i2d_string_stack * stack;
@@ -2048,24 +2045,6 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-static int i2d_rbt_add_variable(i2d_rbt * variables, i2d_node * node) {
-    int status = I2D_OK;
-    i2d_node * last;
-
-    if(!i2d_rbt_search(variables, node, (void **) &last) &&
-        i2d_rbt_delete(variables, last) ) {
-        status = i2d_panic("failed to replace variable");
-    } else if(i2d_rbt_insert(variables, node, node)) {
-        status = i2d_panic("failed to insert variable");
-    }
-
-    return status;
-}
-
-static int i2d_rbt_get_variable(i2d_rbt * variables, i2d_node * key, i2d_node ** result) {
-    return i2d_rbt_search(variables, key, (void **) result);
-}
-
 int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) {
     int status = I2D_OK;
     i2d_script * object;
@@ -2978,7 +2957,7 @@ int i2d_script_expression_identifier(i2d_script * script, i2d_node * node, i2d_r
     i2d_string name;
     i2d_constant * constant;
 
-    if(!i2d_rbt_get_variable(variables, node, &variable)) {
+    if(!i2d_rbt_search(variables, node, (void **) &variable)) {
         if(i2d_node_copy(node, variable)) {
             status = i2d_panic("failed to copy variable");
         } else if(i2d_parser_node_copy(script->parser, script->lexer, &node->left, variable->left)) {
@@ -3053,7 +3032,7 @@ int i2d_script_expression_variable(i2d_script * script, i2d_node * variable, i2d
                 status = i2d_panic("failed to copy node object");
             } else if(i2d_script_expression_variable_logic(script, variable->left)) {
                 status = i2d_panic("failed to handle variable logic");
-            } else if(i2d_rbt_add_variable(variables, variable)) {
+            } else if(i2d_rbt_replace(variables, variable, variable)) {
                 status = i2d_panic("failed to add variable");
             } else {
                 variable->type = I2D_VARIABLE;
