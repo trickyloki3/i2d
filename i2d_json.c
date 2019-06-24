@@ -334,7 +334,7 @@ void i2d_config_deit(i2d_config ** result) {
     *result = NULL;
 }
 
-int i2d_json_init(i2d_json ** result, i2d_config * config) {
+int i2d_json_init(i2d_json ** result, i2d_string * path) {
     int status = I2D_OK;
     i2d_json * object;
 
@@ -345,22 +345,24 @@ int i2d_json_init(i2d_json ** result, i2d_config * config) {
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_json_create(&object->statements, &config->statements_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->statements_path);
-            } else if(i2d_json_create(&object->functions, &config->functions_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->functions_path);
-            } else if(i2d_json_create(&object->constants, &config->constants_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->constants_path);
-            } else if(i2d_json_create(&object->arguments, &config->arguments_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->arguments_path);
-            } else if(i2d_json_create(&object->bonus_file, &config->bonus_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->bonus_path);
-            } else if(i2d_json_create(&object->sc_start_file, &config->sc_start_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->sc_start_path);
-            } else if(i2d_json_create(&object->data_file, &config->data_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->data_path);
-            } else if(i2d_json_create(&object->print_file, &config->print_path)) {
-                status = i2d_panic("failed to load json file -- %s", &config->print_path);
+            if(i2d_config_init(&object->config, path)) {
+                status = i2d_panic("failed to create config object");
+            } else if(i2d_json_create(&object->statements, &object->config->statements_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->statements_path);
+            } else if(i2d_json_create(&object->functions, &object->config->functions_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->functions_path);
+            } else if(i2d_json_create(&object->constants, &object->config->constants_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->constants_path);
+            } else if(i2d_json_create(&object->arguments, &object->config->arguments_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->arguments_path);
+            } else if(i2d_json_create(&object->bonus_file, &object->config->bonus_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->bonus_path);
+            } else if(i2d_json_create(&object->sc_start_file, &object->config->sc_start_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->sc_start_path);
+            } else if(i2d_json_create(&object->data_file, &object->config->data_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->data_path);
+            } else if(i2d_json_create(&object->print_file, &object->config->print_path)) {
+                status = i2d_panic("failed to load json file -- %s", &object->config->print_path);
             } else {
                 object->bonus = json_object_get(object->bonus_file, "bonus");
                 object->bonus2 = json_object_get(object->bonus_file, "bonus2");
@@ -412,6 +414,7 @@ void i2d_json_deit(i2d_json ** result) {
     i2d_json_destroy(object->constants);
     i2d_json_destroy(object->functions);
     i2d_json_destroy(object->statements);
+    i2d_deit(object->config, i2d_config_deit);
     i2d_free(object);
     *result = NULL;
 }

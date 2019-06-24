@@ -2045,21 +2045,21 @@ int i2d_parser_expression_recursive(i2d_parser * parser, i2d_lexer * lexer, i2d_
     return status;
 }
 
-int i2d_script_init(i2d_script ** result, i2d_config * config, i2d_json * json) {
+int i2d_script_init(i2d_script ** result, i2d_json * json) {
     int status = I2D_OK;
     i2d_script * object;
     size_t i;
     size_t size;
     i2d_handler * handler;
 
-    if(i2d_is_invalid(result) || !config) {
+    if(i2d_is_invalid(result)) {
         status = i2d_panic("invalid paramater");
     } else {
         object = calloc(1, sizeof(*object));
         if(!object) {
             status = i2d_panic("out of memory");
         } else {
-            if(i2d_db_init(&object->db, config)) {
+            if(i2d_db_init(&object->db, json->config)) {
                 status = i2d_panic("failed to create database object");
             } else if(i2d_lexer_init(&object->lexer)) {
                 status = i2d_panic("failed to create lexer object");

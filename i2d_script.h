@@ -240,7 +240,7 @@ struct i2d_script {
 
 typedef struct i2d_script i2d_script;
 
-int i2d_script_init(i2d_script **, i2d_config *, i2d_json *);
+int i2d_script_init(i2d_script **, i2d_json *);
 void i2d_script_deit(i2d_script **);
 int i2d_script_compile(i2d_script *, i2d_string *, i2d_string *, i2d_rbt *);
 int i2d_script_compile_item(i2d_script *, i2d_item *);

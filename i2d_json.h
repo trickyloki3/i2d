@@ -44,6 +44,7 @@ int i2d_config_init(i2d_config **, i2d_string *);
 void i2d_config_deit(i2d_config  **);
 
 struct i2d_json {
+    i2d_config * config;
     json_t * statements;
     json_t * functions;
     json_t * constants;
@@ -82,6 +83,6 @@ struct i2d_json {
 
 typedef struct i2d_json i2d_json;
 
-int i2d_json_init(i2d_json **, i2d_config *);
+int i2d_json_init(i2d_json **, i2d_string *);
 void i2d_json_deit(i2d_json **);
 #endif
