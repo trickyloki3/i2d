@@ -5,6 +5,7 @@ CFLAGS+=-O1
 endif
 
 LDLIBS+=-ljansson
+LDLIBS+=-lyaml
 LDLIBS+=-lm
 
 OBJECT:=i2d_util.o
@@ -23,6 +24,7 @@ OBJECT+=i2d_json.o
 OBJECT+=i2d_script.o
 OBJECT+=i2d_print.o
 OBJECT+=i2d_data.o
+OBJECT+=i2d_yaml.o
 
 
 all: clean i2d
