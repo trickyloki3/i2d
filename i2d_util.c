@@ -925,7 +925,7 @@ int i2d_is_number(i2d_string * string) {
     int status = I2D_OK;
     size_t i = 0;
 
-    if(!strncmp("0x", string->string, 2))
+    if(string->length > 1 && !strncmp("0x", string->string, 2))
         i = 2;
 
     for(; i < string->length && !status; i++)
