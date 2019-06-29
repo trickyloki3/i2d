@@ -866,41 +866,43 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
 
     anchor = (char *) buffer->buffer;
     delimit = strchr(anchor, '\n');
-    while(delimit && !status) {
-        /*
-         * skip initial whitespace
-         */
-        while(isspace(*anchor))
-            anchor++;
-
-        /*
-         * skip empty lines
-         */
-        if(delimit > anchor) {
-            length = (size_t) delimit - (size_t) anchor + 1;
+    if(delimit) {
+        while(delimit && !status) {
+            /*
+             * skip initial whitespace
+             */
+            while(isspace(*anchor))
+                anchor++;
 
             /*
-             * skip comments
+             * skip empty lines
              */
-            if(isalnum(*anchor))
-                status = cb(anchor, length, data);
+            if(delimit > anchor) {
+                length = (size_t) delimit - (size_t) anchor + 1;
+
+                /*
+                 * skip comments
+                 */
+                if(isalnum(*anchor))
+                    status = cb(anchor, length, data);
+            }
+
+            anchor = delimit + 1;
+            delimit = strchr(anchor, '\n');
         }
 
-        anchor = delimit + 1;
-        delimit = strchr(anchor, '\n');
-    }
+        consume = (size_t) anchor - (size_t) buffer->buffer;
+        if(0 == consume) {
+            status = i2d_panic("line overflow");
+        } else if(buffer->offset < consume) {
+            status = i2d_panic("buffer overflow");
+        } else {
+            if(buffer->offset > consume)
+                memcpy(buffer->buffer, buffer->buffer + consume, buffer->offset - consume);
 
-    consume = (size_t) anchor - (size_t) buffer->buffer;
-    if(0 == consume) {
-        status = i2d_panic("line overflow");
-    } else if(buffer->offset < consume) {
-        status = i2d_panic("buffer overflow");
-    } else {
-        if(buffer->offset > consume)
-            memcpy(buffer->buffer, buffer->buffer + consume, buffer->offset - consume);
-
-        buffer->offset -= consume;
-        buffer->buffer[buffer->offset]= 0;
+            buffer->offset -= consume;
+            buffer->buffer[buffer->offset]= 0;
+        }
     }
 
     return status;
