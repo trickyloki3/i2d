@@ -9,7 +9,7 @@
         "bAddItemHealRate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -26,7 +26,7 @@
         "bAddStealRate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent100"
+                "percent100_absolute"
             ],
             "argument_order" : [
                 0,
@@ -121,7 +121,7 @@
         "bCastrate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -138,7 +138,7 @@
         "bCritAtkRate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -221,7 +221,7 @@
         "bDelayrate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -250,7 +250,7 @@
         "bFixedCast" : {
             "argument_type" : [
                 "increase_prefix",
-                "milliseconds"
+                "milliseconds_absolute"
             ],
             "argument_order" : [
                 0,
@@ -261,7 +261,7 @@
         "bFixedCastrate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -314,7 +314,7 @@
         "bHealPower" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -325,7 +325,7 @@
         "bHealPower2" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -390,7 +390,7 @@
         "bLongAtkDef" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -401,7 +401,7 @@
         "bLongAtkRate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -424,7 +424,7 @@
         "bMagicAtkDef" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -513,7 +513,7 @@
         "bMiscAtkDef" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
 
             "argument_order" : [
@@ -525,7 +525,7 @@
         "bNearAtkDef" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -566,7 +566,7 @@
         "bNoMagicDamage" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -577,7 +577,7 @@
         "bNoMiscDamage" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -606,7 +606,7 @@
         "bNoWeaponDamage" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -695,7 +695,7 @@
         "bUnbreakable" : {
             "argument_type" : [
                 "decrease_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -772,7 +772,7 @@
         "bUseSPrate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -783,7 +783,7 @@
         "bVariableCast" : {
             "argument_type" : [
                 "increase_prefix",
-                "milliseconds"
+                "milliseconds_absolute"
             ],
             "argument_order" : [
                 0,
@@ -794,7 +794,7 @@
         "bVariableCastrate" : {
             "argument_type" : [
                 "increase_prefix",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 0,
@@ -826,7 +826,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "classes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -839,7 +839,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "mob",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -852,7 +852,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "mob",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -886,7 +886,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "elements",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -906,7 +906,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "itemgroups",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -919,7 +919,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "item",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -932,7 +932,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "mob",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -945,7 +945,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "mob",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -972,7 +972,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -985,7 +985,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "mob_races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -998,7 +998,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "sizes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1018,7 +1018,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1045,7 +1045,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "races",
-                "integer"
+                "integer_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1058,7 +1058,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "classes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1071,7 +1071,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1084,7 +1084,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "classes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1097,7 +1097,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1110,7 +1110,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1207,7 +1207,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "classes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1220,7 +1220,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "elements",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1233,7 +1233,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1246,7 +1246,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "mob_races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1259,7 +1259,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "sizes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1272,7 +1272,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "elements",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1348,7 +1348,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1361,7 +1361,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "milliseconds"
+                "milliseconds_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1374,7 +1374,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "milliseconds"
+                "milliseconds_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1387,7 +1387,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "milliseconds"
+                "milliseconds_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1400,7 +1400,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1413,7 +1413,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1426,7 +1426,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "skill",
-                "integer"
+                "integer_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1439,7 +1439,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1452,7 +1452,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "milliseconds"
+                "milliseconds_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1472,7 +1472,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "classes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1485,7 +1485,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "elements",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1498,7 +1498,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "elements",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1511,7 +1511,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1524,7 +1524,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "mob_races",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1537,7 +1537,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "sizes",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1550,7 +1550,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1563,7 +1563,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "skill",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1576,7 +1576,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "weapons",
-                "integer"
+                "integer_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1610,7 +1610,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "weapons",
-                "percent"
+                "percent_absolute"
             ],
             "argument_order" : [
                 1,
@@ -1625,7 +1625,7 @@
             "argument_type" : [
                 "increase_prefix",
                 "elements",
-                "percent",
+                "percent_absolute",
                 "bf_type",
                 "bf_damage"
             ],
@@ -1642,7 +1642,7 @@
             "argument_type" : [
                 "decrease_prefix",
                 "elements",
-                "percent",
+                "percent_absolute",
                 "bf_type",
                 "bf_damage"
             ],

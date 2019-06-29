@@ -107,6 +107,7 @@ typedef int (*i2d_handler_range_cb)(i2d_script *, i2d_string_stack *, long);
 static int i2d_handler_range(i2d_script *, i2d_node *, i2d_local *, i2d_handler_range_cb);
 static int i2d_handler_expression(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_milliseconds(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_milliseconds_absolute(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_seconds(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_regen(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_splash(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
@@ -125,6 +126,7 @@ static int i2d_handler_percent_sign_inverse(i2d_script *, i2d_rbt *, i2d_node *,
 static int i2d_handler_percent_absolute(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_percent10(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_percent100(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
+static int i2d_handler_percent100_absolute(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_ignore(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
 static int i2d_handler_sizes_cb(i2d_script *, i2d_string_stack *, long);
 static int i2d_handler_sizes(i2d_script *, i2d_rbt *, i2d_node *, i2d_local *);
@@ -176,6 +178,7 @@ static int i2d_handler_sc_start4(i2d_script *, i2d_rbt *, i2d_node **, i2d_local
 
 i2d_handler argument_handlers[] = {
     { "milliseconds", single_node, {i2d_handler_milliseconds} },
+    { "milliseconds_absolute", single_node, {i2d_handler_milliseconds_absolute} },
     { "seconds", single_node, {i2d_handler_seconds} },
     { "regen", single_node, {i2d_handler_regen} },
     { "splash", single_node, {i2d_handler_splash} },
@@ -191,6 +194,7 @@ i2d_handler argument_handlers[] = {
     { "percent_absolute", single_node, {i2d_handler_percent_absolute} },
     { "percent10", single_node, {i2d_handler_percent10} },
     { "percent100", single_node, {i2d_handler_percent100} },
+    { "percent100_absolute", single_node, {i2d_handler_percent100_absolute} },
     { "ignore", single_node, {i2d_handler_ignore} },
     { "sizes", single_node, {i2d_handler_sizes} },
     { "skill", single_node, {i2d_handler_skill} },
@@ -4152,6 +4156,47 @@ static int i2d_handler_milliseconds(i2d_script * script, i2d_rbt * variables, i2
     return status;
 }
 
+static int i2d_handler_milliseconds_absolute(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    char * suffix = NULL;
+    long unit = 0;
+
+    i2d_range_get_range_absolute(&node->range, &min, &max);
+
+    if (min / 86400000 > 0) {
+        suffix = "day";
+        unit = 86400000;
+    } else if (min / 3600000 > 0) {
+        suffix = "hour";
+        unit = 3600000;
+    } else if (min / 60000 > 0) {
+        suffix = "minute";
+        unit = 60000;
+    } else if (min / 1000 > 0) {
+        suffix = "second";
+        unit = 1000;
+    } else {
+        suffix = "millisecond";
+        unit = 1;
+    }
+
+    min /= unit;
+    max /= unit;
+
+    if( min == max ?
+        i2d_buffer_printf(local->buffer, "%ld %s%s", min, suffix, min > 1 ? "s" : "") :
+        i2d_buffer_printf(local->buffer, "%ld ~ %ld %s%s", min, max, suffix, max > 1 ? "s" : "") ) {
+        status = i2d_panic("failed to write time range");
+    } else if(i2d_handler_expression(script, variables, node, local)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
 static int i2d_handler_seconds(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
     int status = I2D_OK;
     long min;
@@ -4436,6 +4481,27 @@ static int i2d_handler_percent100(i2d_script * script, i2d_rbt * variables, i2d_
     long max;
 
     i2d_range_get_range(&node->range, &min, &max);
+
+    min /= 100;
+    max /= 100;
+
+    if( min == max ?
+        i2d_buffer_printf(local->buffer, "%ld%%", min) :
+        i2d_buffer_printf(local->buffer, "%ld%% ~ %ld%%", min, max) ) {
+        status = i2d_panic("failed to write percent range");
+    } else if(i2d_handler_expression(script, variables, node, local)) {
+        status = i2d_panic("failed to write expression");
+    }
+
+    return status;
+}
+
+static int i2d_handler_percent100_absolute(i2d_script * script, i2d_rbt * variables, i2d_node * node, i2d_local * local) {
+    int status = I2D_OK;
+    long min;
+    long max;
+
+    i2d_range_get_range_absolute(&node->range, &min, &max);
 
     min /= 100;
     max /= 100;
