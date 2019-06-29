@@ -33,15 +33,14 @@ struct i2d_pet {
 
 typedef struct i2d_pet i2d_pet;
 
-int i2d_pet_init(i2d_pet **, char *, size_t);
+int i2d_pet_init(i2d_pet **);
 void i2d_pet_deit(i2d_pet **);
 void i2d_pet_append(i2d_pet *, i2d_pet *);
 void i2d_pet_remove(i2d_pet *);
 
 struct i2d_pet_db {
     i2d_pet * list;
-    size_t size;
-    i2d_rbt * index_by_id;
+    i2d_rbt * index;
 };
 
 typedef struct i2d_pet_db i2d_pet_db;
