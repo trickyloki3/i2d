@@ -871,7 +871,7 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
             /*
              * skip initial whitespace
              */
-            while(isspace(*anchor))
+            while(i2d_isspace(*anchor))
                 anchor++;
 
             /*
@@ -883,7 +883,7 @@ int i2d_by_line(i2d_buffer * buffer, i2d_by_line_cb cb, void * data) {
                 /*
                  * skip comments
                  */
-                if(isalnum(*anchor))
+                if(i2d_isalnum(*anchor))
                     status = cb(anchor, length, data);
             }
 
@@ -931,7 +931,7 @@ int i2d_is_number(i2d_string * string) {
         i = 2;
 
     for(; i < string->length && !status; i++)
-        if(!isdigit(string->string[i]))
+        if(!i2d_isdigit(string->string[i]))
             status = I2D_FAIL;
 
     return status;

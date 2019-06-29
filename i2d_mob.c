@@ -62,7 +62,7 @@ static int i2d_mob_parse(i2d_mob * mob, char * string, size_t length) {
         /*
          * check for \t, \r, \n (exclude space)
          */
-        if(isspace(string[i]) && ' ' != string[i]) 
+        if(i2d_isspace(string[i]) && ' ' != string[i])
             last = 1;
 
         /*
@@ -147,7 +147,7 @@ static int i2d_mob_parse(i2d_mob * mob, char * string, size_t length) {
         }
     }
 
-    if(!status && 57 != field) 
+    if(!status && 57 != field)
         status = i2d_panic("row is missing columns; %d", field);
 
     return status;
@@ -320,7 +320,7 @@ static int i2d_mob_race_parse(i2d_mob_race * mob_race, char * string, size_t len
                 /*
                  * check for \t, \r, \n (include space)
                  */
-                if(isspace(string[i])) 
+                if(i2d_isspace(string[i]))
                     last = 1;
 
                 /*
@@ -330,7 +330,7 @@ static int i2d_mob_race_parse(i2d_mob_race * mob_race, char * string, size_t len
                     i -= 1;
                     last = 1;
                 }
-                
+
                 if(',' == string[i] || last) {
                     string[i] = 0;
 
@@ -340,11 +340,11 @@ static int i2d_mob_race_parse(i2d_mob_race * mob_race, char * string, size_t len
                         extent = (size_t) (string + i) - (size_t) anchor;
                         switch(field) {
                             case 0: status = i2d_string_create(&mob_race->macro, anchor, extent); break;
-                            default: 
+                            default:
                                 if(mob_race->size >= comma_count) {
                                     status = i2d_panic("list overflow");
                                 } else {
-                                    status = i2d_strtol(&mob_race->list[mob_race->size], anchor, extent, 10); 
+                                    status = i2d_strtol(&mob_race->list[mob_race->size], anchor, extent, 10);
                                     mob_race->size++;
                                 }
                                 break;

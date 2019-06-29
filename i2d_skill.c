@@ -129,7 +129,7 @@ static int i2d_skill_parse(i2d_skill * skill, char * string, size_t length) {
         /*
          * check for \t, \r, \n (exclude space and tab)
          */
-        if(isspace(string[i]) && '\t' != string[i] && ' ' != string[i]) 
+        if(i2d_isspace(string[i]) && '\t' != string[i] && ' ' != string[i])
             last = 1;
 
         /*

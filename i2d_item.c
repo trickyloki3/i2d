@@ -101,7 +101,7 @@ static int i2d_item_parse(i2d_item * item, char * string, size_t length) {
                 /*
                  * check for \t, \r, \n (exclude space)
                  */
-                if(isspace(string[i]) && ' ' != string[i])
+                if(i2d_isspace(string[i]) && ' ' != string[i])
                     last = 1;
 
                 /*
@@ -447,7 +447,7 @@ static int i2d_item_combo_parse(i2d_item_combo * item_combo, char * string, size
                 /*
                  * check for \t, \r, \n (exclude space)
                  */
-                if(isspace(string[i]) && ' ' != string[i])
+                if(i2d_isspace(string[i]) && ' ' != string[i])
                     last = 1;
 
                 /*

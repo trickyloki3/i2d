@@ -87,7 +87,7 @@ static int i2d_produce_parse(i2d_produce * produce, char * string, size_t length
         /*
          * check for \t, \r, \n (include space)
          */
-        if(isspace(string[i])) 
+        if(i2d_isspace(string[i]))
             last = 1;
 
         /*

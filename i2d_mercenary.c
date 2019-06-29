@@ -58,7 +58,7 @@ static int i2d_mercenary_parse(i2d_mercenary * mercenary, char * string, size_t 
         /*
          * check for \t, \r, \n (exclude space)
          */
-        if(isspace(string[i]) && ' ' != string[i]) 
+        if(i2d_isspace(string[i]) && ' ' != string[i])
             last = 1;
 
         /*

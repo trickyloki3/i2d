@@ -21,6 +21,10 @@
 #include "assert.h"
 #endif
 
+#define i2d_isspace(x) isspace((unsigned char) (x))
+#define i2d_isalnum(x) isalnum((unsigned char) (x))
+#define i2d_isdigit(x) isdigit((unsigned char) (x))
+
 /*
  * maximum number of arguments per statement
  */

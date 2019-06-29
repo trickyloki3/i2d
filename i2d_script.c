@@ -855,7 +855,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                 case '"': status = i2d_lexer_token_init(lexer, &token, I2D_QUOTE); break;
                 case '\\': continue;
                 default:
-                    if('_' == symbol || isalpha(symbol) || isdigit(symbol)) {
+                    if('_' == symbol || i2d_isalnum(symbol)) {
                         if(state) {
                             switch(state->type) {
                                 case I2D_LITERAL:
@@ -913,7 +913,7 @@ int i2d_lexer_tokenize(i2d_lexer * lexer, i2d_string * script, i2d_token ** resu
                             status = i2d_lexer_token_init(lexer, &token, I2D_LITERAL) ||
                                      i2d_token_putc(token, symbol);
                         }
-                    } else if(isspace(symbol)) {
+                    } else if(i2d_isspace(symbol)) {
                         state = NULL;
                     } else {
                         status = i2d_panic("unknown symbol %c", symbol);

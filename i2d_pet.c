@@ -92,7 +92,7 @@ static int i2d_pet_parse_txt(i2d_pet * pet, char * string, size_t length) {
                 /*
                  * check for \t, \r, \n (exclude space)
                  */
-                if(isspace(string[i]) && ' ' != string[i])
+                if(i2d_isspace(string[i]) && ' ' != string[i])
                     last = 1;
 
                 /*
