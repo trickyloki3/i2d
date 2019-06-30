@@ -1,7 +1,18 @@
 #include "i2d_pet.h"
 
+struct i2d_pet_state {
+    i2d_pet_db * pet_db;
+};
+
+typedef struct i2d_pet_state i2d_pet_state;
+
+int i2d_pet_state_init(i2d_pet_state **, i2d_pet_db *);
+void i2d_pet_state_deit(i2d_pet_state **);
+
 static int i2d_pet_db_parse_txt(char *, size_t, void *);
 static int i2d_pet_parse_txt(i2d_pet *, char *, size_t);
+static int i2d_pet_db_parse_yml(i2d_pet_db *, i2d_string *);
+static int i2d_pet_parse_yml(yaml_event_t *, void *);
 
 int i2d_pet_init(i2d_pet ** result) {
     int status = I2D_OK;
@@ -51,6 +62,214 @@ void i2d_pet_remove(i2d_pet * x) {
     x->next->prev = x->prev;
     x->next = x;
     x->prev = x;
+}
+
+int i2d_pet_item_init(i2d_pet_item ** result) {
+    int status = I2D_OK;
+    i2d_pet_item * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->next = object;
+            object->prev = object;
+
+            if(status) {
+                i2d_pet_item_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+void i2d_pet_item_deit(i2d_pet_item ** result) {
+    i2d_pet_item * object;
+
+    object = *result;
+    i2d_string_destroy(&object->item);
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_pet_item_append(i2d_pet_item * x, i2d_pet_item * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_pet_item_remove(i2d_pet_item * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
+int i2d_pet_evolution_init(i2d_pet_evolution ** result) {
+    int status = I2D_OK;
+    i2d_pet_evolution * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->next = object;
+            object->prev = object;
+
+            if(status) {
+                i2d_pet_evolution_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+void i2d_pet_evolution_deit(i2d_pet_evolution ** result) {
+    i2d_pet_evolution * object;
+    i2d_pet_item * item_req;
+
+    object = *result;
+    if(object->item_list) {
+        while(object->item_list != object->item_list->next) {
+            item_req = object->item_list->next;
+            i2d_pet_item_remove(item_req);
+            i2d_pet_item_deit(&item_req);
+        }
+        i2d_pet_item_deit(&object->item_list);
+    }
+    i2d_string_destroy(&object->target);
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_pet_evolution_append(i2d_pet_evolution * x, i2d_pet_evolution * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_pet_evolution_remove(i2d_pet_evolution * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
+int i2d_pet_yml_init(i2d_pet_yml ** result) {
+    int status = I2D_OK;
+    i2d_pet_yml * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->hungry_delay = 60;
+            object->hungry_increase = 20;
+            object->intimacy_start = 250;
+            object->intimacy_fed = 50;
+            object->intimacy_overfed = -100;
+            object->intimacy_hungry = -5;
+            object->intimacy_owner_die = -20;
+            object->special_performance = 1;
+            object->next = object;
+            object->prev = object;
+
+            if(status) {
+                i2d_pet_yml_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+void i2d_pet_yml_deit(i2d_pet_yml ** result) {
+    i2d_pet_yml * object;
+    i2d_pet_evolution * evolution;
+
+    object = *result;
+    if(object->evolution_list) {
+        while(object->evolution_list != object->evolution_list->next) {
+            evolution = object->evolution_list->next;
+            i2d_pet_evolution_remove(evolution);
+            i2d_pet_evolution_deit(&evolution);
+        }
+        i2d_pet_evolution_deit(&object->evolution_list);
+    }
+    i2d_string_destroy(&object->support_script);
+    i2d_string_destroy(&object->script);
+    i2d_string_destroy(&object->food_item);
+    i2d_string_destroy(&object->equip_item);
+    i2d_string_destroy(&object->egg_item);
+    i2d_string_destroy(&object->tame_item);
+    i2d_string_destroy(&object->mob);
+    i2d_free(object);
+    *result = NULL;
+}
+
+void i2d_pet_yml_append(i2d_pet_yml * x, i2d_pet_yml * y) {
+    x->next->prev = y->prev;
+    y->prev->next = x->next;
+    x->next = y;
+    y->prev = x;
+}
+
+void i2d_pet_yml_remove(i2d_pet_yml * x) {
+    x->prev->next = x->next;
+    x->next->prev = x->prev;
+    x->next = x;
+    x->prev = x;
+}
+
+int i2d_pet_state_init(i2d_pet_state ** result, i2d_pet_db * pet_db) {
+    int status = I2D_OK;
+    i2d_pet_state * object = NULL;
+
+    if(i2d_is_invalid(result)) {
+        status = i2d_panic("invalid paramater");
+    } else {
+        object = calloc(1, sizeof(*object));
+        if(!object) {
+            status = i2d_panic("out of memory");
+        } else {
+            object->pet_db = pet_db;
+
+            if(status) {
+                i2d_pet_state_deit(&object);
+            } else {
+                *result = object;
+            }
+        }
+    }
+
+    return status;
+}
+
+void i2d_pet_state_deit(i2d_pet_state ** result) {
+    i2d_pet_state * object;
+
+    object = * result;
+    i2d_free(object);
+    *result = NULL;
 }
 
 static int i2d_pet_db_parse_txt(char * string, size_t length, void * data) {
@@ -149,6 +368,44 @@ static int i2d_pet_parse_txt(i2d_pet * pet, char * string, size_t length) {
     return status;
 }
 
+static int i2d_pet_db_parse_yml(i2d_pet_db * pet_db, i2d_string * path) {
+    int status = I2D_OK;
+    i2d_pet_state * state = NULL;
+
+    if(i2d_pet_state_init(&state, pet_db)) {
+        status = i2d_panic("failed to create pet yml state object");
+    } else {
+        if(i2d_yaml_parse(path, i2d_pet_parse_yml, state))
+            status = i2d_panic("failed to parse yml file -- %s", path->string);
+
+        i2d_pet_state_deit(&state);
+    }
+
+    return status;
+}
+
+static int i2d_pet_parse_yml(yaml_event_t * event, void * context) {
+    int status = I2D_OK;
+
+    switch(event->type) {
+        case YAML_STREAM_START_EVENT:
+        case YAML_DOCUMENT_START_EVENT:
+        case YAML_STREAM_END_EVENT:
+        case YAML_DOCUMENT_END_EVENT:
+        case YAML_ALIAS_EVENT:
+        case YAML_SCALAR_EVENT:
+        case YAML_SEQUENCE_START_EVENT:
+        case YAML_SEQUENCE_END_EVENT:
+        case YAML_MAPPING_START_EVENT:
+        case YAML_MAPPING_END_EVENT:
+        default:
+            status = i2d_panic("unsupport event type -- %d", event->type);
+            break;
+    }
+
+    return status;
+}
+
 int i2d_pet_db_init(i2d_pet_db ** result, i2d_string * path) {
     int status = I2D_OK;
     i2d_pet_db * object;
@@ -165,8 +422,15 @@ int i2d_pet_db_init(i2d_pet_db ** result, i2d_string * path) {
             } else if(i2d_rbt_init(&object->index, i2d_rbt_cmp_long)) {
                 status = i2d_panic("failed to create red black tree object");
             } else {
-                if(i2d_fd_load(path, i2d_pet_db_parse_txt, object))
-                    status = i2d_panic("failed to load pet db");
+                if(strstr(path->string, ".txt")) {
+                    if(i2d_fd_load(path, i2d_pet_db_parse_txt, object))
+                        status = i2d_panic("failed to load pet db -- %s", path->string);
+                } else if(strstr(path->string, ".yml")) {
+                    if(i2d_pet_db_parse_yml(object, path))
+                        status = i2d_panic("failed to load pet db -- %s", path->string);
+                } else {
+                    status = i2d_panic("unsupport file format -- %s", path->string);
+                }
             }
 
             if(status)
