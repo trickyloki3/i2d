@@ -1,18 +1,10 @@
 #include "i2d_pet.h"
 
-struct i2d_pet_state {
-    i2d_pet_db * pet_db;
-};
-
-typedef struct i2d_pet_state i2d_pet_state;
-
-int i2d_pet_state_init(i2d_pet_state **, i2d_pet_db *);
-void i2d_pet_state_deit(i2d_pet_state **);
-
+static int i2d_pet_parse(i2d_pet *, char *, size_t);
 static int i2d_pet_db_parse_txt(char *, size_t, void *);
-static int i2d_pet_parse_txt(i2d_pet *, char *, size_t);
+
 static int i2d_pet_db_parse_yml(i2d_pet_db *, i2d_string *);
-static int i2d_pet_parse_yml(yaml_event_t *, void *);
+static int i2d_pet_db_parse_yml_cb(yaml_event_t *, void *);
 
 int i2d_pet_init(i2d_pet ** result) {
     int status = I2D_OK;
@@ -48,6 +40,84 @@ void i2d_pet_deit(i2d_pet ** result) {
     i2d_string_destroy(&object->name);
     i2d_free(object);
     *result = NULL;
+}
+
+static int i2d_pet_parse(i2d_pet * pet, char * string, size_t length) {
+    int status = I2D_OK;
+
+    size_t i;
+    int brace_depth = 0;
+
+    char * anchor;
+    size_t extent;
+
+    int field = 0;
+    int last = 0;
+
+    anchor = string;
+    for(i = 0; i < length && !status && !last; i++) {
+        switch(string[i]) {
+            case '{': brace_depth++; break;
+            case '}': brace_depth--; break;
+            default:
+                /*
+                 * check for \t, \r, \n (exclude space)
+                 */
+                if(i2d_isspace(string[i]) && ' ' != string[i])
+                    last = 1;
+
+                /*
+                 * check for line comments
+                 */
+                if('/' == string[i] && i > 0 && '/' == string[i - 1]) {
+                    i -= 1;
+                    last = 1;
+                }
+
+                if((',' == string[i] || last) && !brace_depth) {
+                    string[i] = 0;
+
+                    if(string + i < anchor) {
+                        status = i2d_panic("line overflow");
+                    } else {
+                        extent = (size_t) (string + i) - (size_t) anchor;
+                        switch(field) {
+                            case 0: status = i2d_strtol(&pet->id, anchor, extent, 10); break;
+                            case 1: status = i2d_string_create(&pet->name, anchor, extent); break;
+                            case 2: status = i2d_string_create(&pet->jname, anchor, extent); break;
+                            case 3: status = i2d_strtol(&pet->lure_id, anchor, extent, 10); break;
+                            case 4: status = i2d_strtol(&pet->egg_id, anchor, extent, 10); break;
+                            case 5: status = i2d_strtol(&pet->equip_id, anchor, extent, 10); break;
+                            case 6: status = i2d_strtol(&pet->food_id, anchor, extent, 10); break;
+                            case 7: status = i2d_strtol(&pet->fullness, anchor, extent, 10); break;
+                            case 8: status = i2d_strtol(&pet->hungry_delay, anchor, extent, 10); break;
+                            case 9: status = i2d_strtol(&pet->r_hungry, anchor, extent, 10); break;
+                            case 10: status = i2d_strtol(&pet->r_full, anchor, extent, 10); break;
+                            case 11: status = i2d_strtol(&pet->intimate, anchor, extent, 10); break;
+                            case 12: status = i2d_strtol(&pet->die, anchor, extent, 10); break;
+                            case 13: status = i2d_strtol(&pet->capture, anchor, extent, 10); break;
+                            case 14: status = i2d_strtol(&pet->speed, anchor, extent, 10); break;
+                            case 15: status = i2d_strtol(&pet->s_performance, anchor, extent, 10); break;
+                            case 16: status = i2d_strtol(&pet->talk_convert_class, anchor, extent, 10); break;
+                            case 17: status = i2d_strtol(&pet->attack_rate, anchor, extent, 10); break;
+                            case 18: status = i2d_strtol(&pet->defence_attack_rate, anchor, extent, 10); break;
+                            case 19: status = i2d_strtol(&pet->change_target_rate, anchor, extent, 10); break;
+                            case 20: status = i2d_string_create(&pet->pet_script, anchor, extent); break;
+                            case 21: status = i2d_string_create(&pet->loyal_script, anchor, extent); break;
+                            default: status = i2d_panic("row has too many columns"); break;
+                        }
+                        field++;
+                    }
+
+                    anchor = (string + i + 1);
+                }
+        }
+    }
+
+    if(!status && 22 != field)
+        status = i2d_panic("row is missing columns");
+
+    return status;
 }
 
 void i2d_pet_append(i2d_pet * x, i2d_pet * y) {
@@ -240,38 +310,6 @@ void i2d_pet_yml_remove(i2d_pet_yml * x) {
     x->prev = x;
 }
 
-int i2d_pet_state_init(i2d_pet_state ** result, i2d_pet_db * pet_db) {
-    int status = I2D_OK;
-    i2d_pet_state * object = NULL;
-
-    if(i2d_is_invalid(result)) {
-        status = i2d_panic("invalid paramater");
-    } else {
-        object = calloc(1, sizeof(*object));
-        if(!object) {
-            status = i2d_panic("out of memory");
-        } else {
-            object->pet_db = pet_db;
-
-            if(status) {
-                i2d_pet_state_deit(&object);
-            } else {
-                *result = object;
-            }
-        }
-    }
-
-    return status;
-}
-
-void i2d_pet_state_deit(i2d_pet_state ** result) {
-    i2d_pet_state * object;
-
-    object = * result;
-    i2d_free(object);
-    *result = NULL;
-}
-
 static int i2d_pet_db_parse_txt(char * string, size_t length, void * data) {
     int status = I2D_OK;
     i2d_pet_db * pet_db = data;
@@ -279,112 +317,33 @@ static int i2d_pet_db_parse_txt(char * string, size_t length, void * data) {
 
     if(i2d_pet_init(&pet)) {
         status = i2d_panic("failed to create pet object");
-    } else if(i2d_pet_parse_txt(pet, string, length)) {
-        status = i2d_panic("failed to load pet -- %s", string);
-    } else if(i2d_rbt_insert(pet_db->index, &pet->id, pet)) {
-        status = i2d_panic("failed to index pet by id -- %ld", pet->id);
     } else {
-        i2d_pet_append(pet, pet_db->list);
-    }
+        if(i2d_pet_parse(pet, string, length))
+            status = i2d_panic("failed to load pet -- %s", string);
 
-    return status;
-}
+        if(status) {
+            i2d_pet_deit(&pet);
+        } else {
+            i2d_pet_append(pet, pet_db->list);
 
-static int i2d_pet_parse_txt(i2d_pet * pet, char * string, size_t length) {
-    int status = I2D_OK;
-
-    size_t i;
-    int brace_depth = 0;
-
-    char * anchor;
-    size_t extent;
-
-    int field = 0;
-    int last = 0;
-
-    anchor = string;
-    for(i = 0; i < length && !status && !last; i++) {
-        switch(string[i]) {
-            case '{': brace_depth++; break;
-            case '}': brace_depth--; break;
-            default:
-                /*
-                 * check for \t, \r, \n (exclude space)
-                 */
-                if(i2d_isspace(string[i]) && ' ' != string[i])
-                    last = 1;
-
-                /*
-                 * check for line comments
-                 */
-                if('/' == string[i] && i > 0 && '/' == string[i - 1]) {
-                    i -= 1;
-                    last = 1;
-                }
-
-                if((',' == string[i] || last) && !brace_depth) {
-                    string[i] = 0;
-
-                    if(string + i < anchor) {
-                        status = i2d_panic("line overflow");
-                    } else {
-                        extent = (size_t) (string + i) - (size_t) anchor;
-                        switch(field) {
-                            case 0: status = i2d_strtol(&pet->id, anchor, extent, 10); break;
-                            case 1: status = i2d_string_create(&pet->name, anchor, extent); break;
-                            case 2: status = i2d_string_create(&pet->jname, anchor, extent); break;
-                            case 3: status = i2d_strtol(&pet->lure_id, anchor, extent, 10); break;
-                            case 4: status = i2d_strtol(&pet->egg_id, anchor, extent, 10); break;
-                            case 5: status = i2d_strtol(&pet->equip_id, anchor, extent, 10); break;
-                            case 6: status = i2d_strtol(&pet->food_id, anchor, extent, 10); break;
-                            case 7: status = i2d_strtol(&pet->fullness, anchor, extent, 10); break;
-                            case 8: status = i2d_strtol(&pet->hungry_delay, anchor, extent, 10); break;
-                            case 9: status = i2d_strtol(&pet->r_hungry, anchor, extent, 10); break;
-                            case 10: status = i2d_strtol(&pet->r_full, anchor, extent, 10); break;
-                            case 11: status = i2d_strtol(&pet->intimate, anchor, extent, 10); break;
-                            case 12: status = i2d_strtol(&pet->die, anchor, extent, 10); break;
-                            case 13: status = i2d_strtol(&pet->capture, anchor, extent, 10); break;
-                            case 14: status = i2d_strtol(&pet->speed, anchor, extent, 10); break;
-                            case 15: status = i2d_strtol(&pet->s_performance, anchor, extent, 10); break;
-                            case 16: status = i2d_strtol(&pet->talk_convert_class, anchor, extent, 10); break;
-                            case 17: status = i2d_strtol(&pet->attack_rate, anchor, extent, 10); break;
-                            case 18: status = i2d_strtol(&pet->defence_attack_rate, anchor, extent, 10); break;
-                            case 19: status = i2d_strtol(&pet->change_target_rate, anchor, extent, 10); break;
-                            case 20: status = i2d_string_create(&pet->pet_script, anchor, extent); break;
-                            case 21: status = i2d_string_create(&pet->loyal_script, anchor, extent); break;
-                            default: status = i2d_panic("row has too many columns"); break;
-                        }
-                        field++;
-                    }
-
-                    anchor = (string + i + 1);
-                }
+            if(i2d_rbt_insert(pet_db->index, &pet->id, pet))
+                status = i2d_panic("failed to index pet by id -- %ld", pet->id);
         }
     }
-
-    if(!status && 22 != field)
-        status = i2d_panic("row is missing columns");
 
     return status;
 }
 
 static int i2d_pet_db_parse_yml(i2d_pet_db * pet_db, i2d_string * path) {
     int status = I2D_OK;
-    i2d_pet_state * state = NULL;
 
-    if(i2d_pet_state_init(&state, pet_db)) {
-        status = i2d_panic("failed to create pet yml state object");
-    } else {
-        if(i2d_yaml_parse(path, i2d_pet_parse_yml, state))
-            status = i2d_panic("failed to parse yml file -- %s", path->string);
-
-        i2d_pet_state_deit(&state);
-    }
+    if(i2d_yaml_parse(path, i2d_pet_db_parse_yml_cb, NULL))
+        status = i2d_panic("failed to parse yml file -- %s", path->string);
 
     return status;
 }
 
-static int i2d_pet_parse_yml(yaml_event_t * event, void * context) {
+static int i2d_pet_db_parse_yml_cb(yaml_event_t * event, void * context) {
     int status = I2D_OK;
 
     switch(event->type) {
